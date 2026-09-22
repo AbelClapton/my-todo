@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="warm" data-mode="light" data-accent="teal"
+      data-semantics="vivid" data-type="system">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Small Wins — onboarding lab</title>
+<link rel="stylesheet" href="tokens.css">
+<style>
+/* ============================================================================
+   ONBOARDING LAB
+
+   Seven screens, one at a time. Each screen is rendered four ways — a baseline
+   and then once through each of three design lenses — so the screens can be
+   decided by looking rather than by arguing.
+
+   What is FIXED, and therefore not on trial here:
+     - the token set (`design-tokens.md`) — closed, no new tokens, no new sizes
+     - the palette — warm light + cool dark, teal accent, vivid semantics
+     - the type scale, the icon set (Lucide), the row heights, the motion rules
+     - the copy on every screen (`06-flows/onboarding.md`)
+
+   So the lenses cannot move colour, type, or size. They can move composition,
+   hierarchy, density, what the progress indicator means, and whether a screen
+   adds anything beyond the sentence. That is the whole comparison.
+
+   The chore CSS below duplicates `palette-lab.html` deliberately: the palette
+   lab is a single self-contained file so it keeps working offline. Once
+   `src/ui/tokens.ts` exists, the chrome should read from one place and neither
+   lab should carry its own copy.
+   ============================================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: var(--space-9) var(--space-7) var(--space-10);
+  background: var(--bg-base);
+  color: var(--text-primary);
+}
+
+.shell { max-width: 1400px; margin: 0 auto; }
+
+/* ---- document chrome ---- */
+
+.masthead { border-bottom: 1px solid var(--border-default); padding-bottom: var(--space-7); }
+.masthead h1 { margin: 0 0 var(--space-4); }
+.masthead p { margin: 0 0 var(--space-4); max-width: 78ch; }
+.masthead p:last-child { margin-bottom: 0; }
+.tok {
+  font-family: var(--font-mono);
+  font-size: var(--type-caption-size);
+  letter-spacing: var(--type-caption-track);
+  color: var(--text-muted);
+}
+
+.bar {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: var(--space-5);
+  flex-wrap: wrap;
+  padding: var(--space-4) 0;
+  margin: var(--space-7) 0 0;
+  background: var(--bg-base);
+  border-bottom: 1px solid var(--border-default);
+}
+.bar .grow { flex: 1; }
+
+.tabs { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+.tab {
+  height: var(--control-sm); padding: 0 var(--space-4);
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  border: 1px solid var(--border-default); border-radius: var(--radius-md);
+  background: var(--surface-1); color: var(--text-secondary);
+  font: inherit; font-size: var(--type-subhead-size); cursor: pointer;
+}
+.tab[aria-selected="true"] {
+  background: var(--accent-default); border-color: var(--accent-default);
+  color: var(--on-fill); font-weight: 500;
+}
+.tab[disabled] { color: var(--text-disabled); cursor: default; }
+.tab .n {
+  font-family: var(--font-mono); font-size: var(--type-caption-size);
+  opacity: .75;
+}
+
+.toggle {
+  height: var(--control-sm); padding: 0 var(--space-4);
+  border: 1px solid var(--border-default); border-radius: var(--radius-md);
+  background: var(--surface-1); color: var(--text-secondary);
+  font: inherit; font-size: var(--type-subhead-size); cursor: pointer;
+}
+
+.lede { max-width: 78ch; margin: var(--space-8) 0 0; }
+.lede h2 { margin: 0 0 var(--space-4); }
+.lede p { margin: 0 0 var(--space-4); color: var(--text-secondary); }
+.lede p:last-child { margin-bottom: 0; }
+
+/* ---- the grid of variations ---- */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-7);
+  margin-top: var(--space-8);
+  align-items: start;
+}
+@media (max-width: 980px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+
+.vc {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--bg-raised);
+  overflow: hidden;
+}
+.vc-head { padding: var(--space-5) var(--space-6); border-bottom: 1px solid var(--border-default); }
+.vc-name { display: block; margin-bottom: var(--space-2); }
+.vc-stance { margin: 0; font-size: var(--type-footnote-size); line-height: var(--type-footnote-line); color: var(--text-secondary); }
+.vc-read {
+  display: block; margin-top: var(--space-3);
+  font-family: var(--font-mono); font-size: var(--type-caption-size);
+  line-height: 1.5; color: var(--text-muted);
+}
+.vc-stage { padding: var(--space-6); display: grid; place-items: center; background: var(--bg-sunken); }
+
+/* ---- the phone ---- */
+
+.phone {
+  width: 390px; max-width: 100%; height: 700px;
+  display: flex; flex-direction: column;
+  background: var(--bg-base);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  position: relative;
+}
+
+.ob-bar {
+  display: flex; align-items: center; gap: var(--space-5);
+  padding: var(--space-5) var(--space-7) 0;
+  flex: none;
+}
+.ob-bar .grow { flex: 1; }
+.ob-skip {
+  border: 0; background: none; cursor: pointer;
+  font: inherit; font-size: var(--type-subhead-size);
+  color: var(--text-secondary); padding: var(--space-2) 0;
+}
+.ob-skip:hover { color: var(--text-primary); }
+
+/* Seven segments (the spec's indicator) */
+.seg7 { display: flex; gap: var(--space-1); flex: 1; }
+.seg7 i {
+  flex: 1; height: 3px; border-radius: var(--radius-full);
+  background: var(--surface-3);
+}
+.seg7 i.on { background: var(--accent-default); }
+
+/* Three groups: setup · the win · land. The payoff segment is taller because
+   it is the only one the user came for. */
+.seg3 { display: flex; align-items: center; gap: var(--space-3); flex: 1; }
+.seg3 .grp { display: flex; gap: var(--space-1); flex: 1; }
+.seg3 i { flex: 1; height: 2px; border-radius: var(--radius-full); background: var(--surface-3); }
+.seg3 .grp.win i { height: 5px; }
+.seg3 i.on { background: var(--accent-default); }
+
+/* A single hairline, for the treatments that refuse the seven-segment device */
+.hairline { flex: 1; height: 1px; background: var(--border-default); position: relative; }
+.hairline span {
+  position: absolute; inset: 0 auto 0 0; width: 14%;
+  background: var(--accent-default); border-radius: var(--radius-full);
+}
+
+.ob-body {
+  flex: 1; min-height: 0;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: var(--space-9) var(--space-7);
+  gap: var(--space-5);
+}
+.ob-body.top { justify-content: flex-start; padding-top: var(--space-10); }
+.ob-body.stretch { justify-content: center; }
+
+.ob-actions {
+  flex: none;
+  padding: 0 var(--space-7) var(--space-7);
+  display: flex; flex-direction: column; gap: var(--space-3);
+}
+
+.btn {
+  height: var(--control-md); padding: 0 var(--space-5);
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-3);
+  border: 1px solid var(--border-default); border-radius: var(--radius-md);
+  background: var(--surface-1); color: var(--text-primary);
+  font: inherit; font-size: var(--type-body-size); cursor: pointer;
+}
+.btn-lg { height: var(--control-lg); font-size: var(--type-body-size); }
+.btn-primary { background: var(--accent-default); border-color: var(--accent-default); color: var(--on-fill); }
+.btn-ghost { background: none; border-color: transparent; color: var(--text-secondary); }
+.btn-block { width: 100%; }
+
+/* ---- rows and chips, for the screens that show an artifact ---- */
+
+.list { border: 1px solid var(--border-default); border-radius: var(--radius-lg); overflow: hidden; background: var(--surface-1); }
+.row { display: flex; align-items: center; gap: var(--space-5); padding: 0 var(--space-5); }
+.row.r-rich { height: var(--row-rich); }
+.row.r-default { height: var(--row-default); }
+.r-main { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; flex: 1; }
+.r-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.r-meta {
+  font-family: var(--font-mono); font-size: var(--type-footnote-size);
+  line-height: var(--type-footnote-line); color: var(--text-secondary);
+  display: flex; align-items: center; gap: var(--space-2);
+}
+.check {
+  flex: none; width: 24px; height: 24px;
+  border: 1.5px solid var(--border-strong); border-radius: var(--radius-sm);
+  background: var(--surface-1);
+}
+.check.done {
+  background: var(--accent-default); border-color: var(--accent-default);
+  position: relative;
+}
+.check.done::after {
+  content: ""; position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23FFFFFF' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 8.4l3 3 6-7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: center;
+  background-size: var(--icon-xs) var(--icon-xs);
+}
+.chip {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  height: var(--control-xs); padding: 0 var(--space-3);
+  border-radius: var(--radius-xs);
+  background: var(--surface-2); color: var(--text-secondary);
+  font-size: var(--type-caption-size); letter-spacing: var(--type-caption-track);
+  white-space: nowrap;
+}
+
+/* ---- icons ---- */
+
+.ic { fill: none; stroke: currentColor; stroke-width: 2;
+      stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.ic-xs { width: var(--icon-xs); height: var(--icon-xs); }
+.ic-sm { width: var(--icon-sm); height: var(--icon-sm); }
+.ic-md { width: var(--icon-md); height: var(--icon-md); }
+.ic-lg { width: var(--icon-lg); height: var(--icon-lg); }
+.ic-xl { width: var(--icon-xl); height: var(--icon-xl); }
+
+/* ---- the verdict under each variation ---- */
+
+.vc-foot { border-top: 1px solid var(--border-default); }
+.vc-line { display: flex; gap: var(--space-4); padding: var(--space-4) var(--space-6); }
+.vc-line + .vc-line { border-top: 1px solid var(--border-subtle); }
+.vc-line dt {
+  flex: none; width: 68px;
+  font-size: var(--type-caption-size); letter-spacing: var(--type-caption-track);
+  text-transform: uppercase; color: var(--text-muted); padding-top: 1px;
+}
+.vc-line dd { margin: 0; font-size: var(--type-footnote-size); line-height: var(--type-footnote-line); color: var(--text-secondary); }
+.vc-line.cost dd { color: var(--text-secondary); }
+
+/* ---- synthesis ---- */
+
+.panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-7); margin-top: var(--space-6); }
+.panel { border: 1px solid var(--border-default); border-radius: var(--radius-lg); background: var(--bg-raised); padding: var(--space-7); }
+.panel h3 { margin: 0 0 var(--space-5); }
+.panel ul { margin: 0; padding-left: var(--space-6); }
+.panel li { margin-bottom: var(--space-3); font-size: var(--type-callout-size); line-height: var(--type-callout-line); color: var(--text-secondary); }
+.panel li:last-child { margin-bottom: 0; }
+.panel li b { color: var(--text-primary); font-weight: 500; }
+
+.flag {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  height: var(--control-xs); padding: 0 var(--space-3);
+  border-radius: var(--radius-xs);
+  background: var(--warning-subtle); color: var(--warning-text);
+  font-size: var(--type-caption-size); letter-spacing: var(--type-caption-track);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <header class="masthead">
+    <h1 class="t-title-1">Onboarding lab</h1>
+    <p class="t-callout" style="color: var(--text-secondary);">
+      Seven screens, one at a time. Each screen is rendered four ways so it can be
+      decided by looking: a <b>baseline</b> that reads <code>06-flows/onboarding.md</code>
+      literally, and then once through each of three design lenses.
+    </p>
+    <p class="tok">
+      fixed: token set · palette · type scale · Lucide · row heights · motion rules · copy
+    </p>
+  </header>
+
+  <div class="bar">
+    <div class="tabs" role="tablist" aria-label="Screen">
+      <button class="tab" aria-selected="true"><span class="n">1</span> The premise</button>
+      <button class="tab" disabled><span class="n">2</span> Areas</button>
+      <button class="tab" disabled><span class="n">3</span> One habit</button>
+      <button class="tab" disabled><span class="n">4</span> First task</button>
+      <button class="tab" disabled><span class="n">5</span> First win</button>
+      <button class="tab" disabled><span class="n">6</span> Optional setup</button>
+      <button class="tab" disabled><span class="n">7</span> Land</button>
+    </div>
+    <span class="grow"></span>
+    <button class="toggle" id="mode">Dark</button>
+  </div>
+
+  <section class="lede">
+    <h2 class="t-title-2">Screen 1 — The premise</h2>
+    <p>
+      The spec fixes everything this screen carries: the identity sentence verbatim, one
+      action ("Get started"), one skip ("Just let me in"), a seven-segment indicator, and
+      a top-trailing "Skip" on screens 1–6. There is almost nothing to decide — which is
+      what makes it a good first test of the lenses. What is left is composition, what the
+      indicator means, and whether the screen adds anything at all.
+    </p>
+    <p>
+      <span class="flag">spec tension</span>
+      &nbsp;"Skip" top-trailing and "Just let me in" are two affordances for the same act on
+      the same screen. Every variation below has to choose: keep both, or keep the one that
+      says what happens.
+    </p>
+    <p class="tok">
+      the lenses, by installed skill name — 2 impeccable · 3 frontend-design · 4 design-taste-frontend
+    </p>
+  </section>
+
+  <div class="grid">
+
+    <!-- ================= V1 · baseline ================= -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The spec, read literally. Nothing added, nothing removed.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-bar">
+            <span class="seg7"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+            <button class="ob-skip">Skip</button>
+          </div>
+          <div class="ob-body stretch" style="text-align: center; align-items: center;">
+            <h2 class="t-display" style="margin: 0;">
+              A system for running small experiments on your own life.
+            </h2>
+          </div>
+          <div class="ob-actions">
+            <button class="btn btn-primary btn-lg btn-block">Get started</button>
+            <button class="btn btn-ghost">Just let me in</button>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>Nothing. The sentence is centred at <code>type-display</code>, the indicator is the spec's seven segments, both skips survive.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd>Two skips that do the same thing. And the screen asks for a tap before it has earned one — the sentence is a claim, and the user has no reason yet to believe it.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ================= V2 · impeccable ================= -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">Design-director craft. The playbook for first-run flows, applied strictly.</p>
+        <span class="vc-read">impeccable · onboard<br>mode: operate (the user completes a task)</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-bar">
+            <span class="hairline"><span></span></span>
+          </div>
+          <div class="ob-body top">
+            <h2 class="t-display" style="margin: 0;">
+              A system for running<br>small experiments<br>on your own life.
+            </h2>
+            <p class="t-body" style="margin: 0; color: var(--text-secondary); max-width: 30ch;">
+              Pick four areas, one habit, and finish one task.
+            </p>
+            <p class="t-footnote" style="margin: 0; color: var(--text-muted);">
+              About a minute.
+            </p>
+          </div>
+          <div class="ob-actions">
+            <button class="btn btn-primary btn-lg btn-block">Get started</button>
+            <button class="btn btn-ghost">Just let me in</button>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>Line breaks set at the sentence's own rhythm. The playbook's "say what they'll do and how long it takes" added as two short lines. The seven-segment device is replaced by a hairline, because six of its seven segments are decoration on screen 1.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd>"About a minute" is a promise the flow must keep. The three nouns are honest but they are also <i>telling</i>, and <code>identity.md</code> wants a lab notebook rather than a brochure. The hairline drops a spec detail the user cannot object to.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ================= V3 · frontend-design ================= -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">A distinctive point of view, one real risk, structure that carries information.</p>
+        <span class="vc-read">frontend-design<br>subject: a logbook, kept daily</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-bar">
+            <span class="seg3">
+              <span class="grp"><i class="on"></i><i></i><i></i><i></i></span>
+              <span class="grp win"><i></i></span>
+              <span class="grp"><i></i><i></i></span>
+            </span>
+          </div>
+          <div class="ob-body top">
+            <p class="t-footnote" style="margin: 0; color: var(--text-muted);">Before anything else</p>
+            <h2 class="t-display" style="margin: 0;">
+              A system for running small experiments on your own life.
+            </h2>
+            <div style="height: 1px; background: var(--border-default);"></div>
+            <dl style="margin: 0; display: grid; grid-template-columns: auto 1fr; gap: var(--space-3) var(--space-5);">
+              <dt class="t-footnote" style="color: var(--text-muted);">setup</dt>
+              <dd class="t-footnote" style="margin: 0; color: var(--text-secondary);">four areas, one habit</dd>
+              <dt class="t-footnote" style="color: var(--text-muted);">the win</dt>
+              <dd class="t-footnote" style="margin: 0; color: var(--text-secondary);">you finish one task</dd>
+            </dl>
+          </div>
+          <div class="ob-actions">
+            <button class="btn btn-primary btn-lg btn-block">Get started</button>
+            <button class="btn btn-ghost">Just let me in</button>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>The indicator now encodes the flow's real shape — four setup screens, one win, two to land — with the payoff segment taller, so the user can see where the reward is. The page reads left-aligned like a logbook entry, and a two-row legend names the sequence.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd>A legend on screen 1 is a small manual, and the screen is now a table of contents for a flow that takes a minute. The risk is real but it is spent on <i>explaining</i>, which is the one thing this app says it will not do.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ================= V4 · design taste ================= -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">Anti-slop: name the read, set the dials, remove one accessory before leaving the house.</p>
+        <span class="vc-read">design-taste-frontend<br>variance 3 · motion 2 · density 3</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-bar">
+            <span class="seg7"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+          </div>
+          <div class="ob-body top" style="padding-top: var(--space-10);">
+            <h2 class="t-display" style="margin: 0;">
+              A system for running small experiments on your own life.
+            </h2>
+          </div>
+          <div class="ob-actions">
+            <button class="btn btn-primary btn-lg btn-block">Get started</button>
+            <button class="btn btn-ghost">Just let me in</button>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>Almost nothing, and it says so. Left-aligned rather than centred, one skip instead of two, no gradient, no three-up, no illustration — its own anti-default list, applied. The seven segments stay because they are the product's, not a decoration.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd>The thinnest lever of the four. <span class="flag">out of scope</span> The skill's own header reads "not dashboards, not data tables, not multi-step product UI" — and a seven-screen first-run flow is multi-step product UI. It contributed discipline, not direction.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <section class="lede">
+    <h2 class="t-title-2">What the four agree on</h2>
+    <p>
+      The agreements are the strongest signal, because four different lenses arriving at the
+      same answer is not a style preference.
+    </p>
+    <div class="panels">
+      <div class="panel">
+        <h3 class="t-title-3">Agreed</h3>
+        <ul>
+          <li><b>The sentence is the whole screen.</b> No variation added an image, a logo, or a second idea. V3's legend is the only addition and it reads as the odd one out.</li>
+          <li><b>One primary action, bottom, full width.</b> All four put "Get started" in the thumb zone at <code>control-lg</code>.</li>
+          <li><b>The indicator belongs at the top.</b> It survives in all four, as seven segments or as something quieter.</li>
+          <li><b>Nothing animates on arrival.</b> Consistent with ADR 0019 and with the app having no entrance choreography.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3 class="t-title-3">In conflict</h3>
+        <ul>
+          <li><b>Does the screen say what happens next?</b> V2 and V3 both decided a bare claim is not enough. V1 and V4 both decided it is. This is the real question on this screen.</li>
+          <li><b>Do the seven segments mean anything?</b> V1 and V4 keep them as progress. V2 finds them decorative. V3 makes them carry the flow's shape.</li>
+          <li><b>One skip or two?</b> V1 keeps both because the spec says so. The other three drop the top-trailing one and keep the sentence that states its own consequence.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3 class="t-title-3">Against the app's own rules</h3>
+        <ul>
+          <li><span class="flag">V3</span> A legend is explanation, and <code>onboarding.md</code> keeps the flow free of explaining.</li>
+          <li><span class="flag">V2</span> A time estimate is new copy. It is true, but the spec owns this screen's words and does not have it.</li>
+          <li><span class="flag">V2</span> Dropping the seven-segment indicator removes a spec requirement. A design lens may argue for it; it cannot decide it.</li>
+          <li><span class="flag">all</span> None of the three lenses can move type or colour, so a genuine "distinctive visual identity" is not available here. That is the token set working as intended, and it is why the differences are composition rather than style.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  document.getElementById('mode').onclick = (e) => {
+    const dark = document.documentElement.dataset.mode === 'dark';
+    document.documentElement.dataset.mode = dark ? 'light' : 'dark';
+    document.documentElement.dataset.palette = dark ? 'warm' : 'cool';
+    e.target.textContent = dark ? 'Dark' : 'Light';
+  };
+</script>
+</body>
+</html>
