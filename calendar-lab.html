@@ -22,6 +22,156 @@
   /* A week column, for the week view when it arrives. */
   .week { display: grid; grid-template-columns: 44px repeat(7, 1fr); gap: 0 var(--space-2); }
 
+  /* ---- the week grid -------
+     Seven columns and ONE time gutter. The gutter is drawn once because seven
+     axes in 390px is seven more things than there is room for, and all seven
+     would be labelling the same hours. */
+  .wk, .wk-allday, .wk-body, .wk-counts { margin: 0 var(--space-5); }
+  .wk, .wk-allday, .wk-counts {
+    display: grid; grid-template-columns: 44px repeat(7, minmax(0, 1fr));
+  }
+  .wk { flex: none; align-items: end; border-bottom: 1px solid var(--border-subtle); }
+  .wk-day {
+    display: flex; flex-direction: column; align-items: center; gap: 1px;
+    min-width: 0; padding: var(--space-3) 0 var(--space-2);
+    border-left: 1px solid var(--border-subtle);
+  }
+  .wk-day .dow {
+    font-size: var(--type-caption-size); letter-spacing: var(--type-caption-track);
+    text-transform: uppercase; color: var(--text-muted);
+  }
+  .wk-day .num { font-size: var(--type-footnote-size); color: var(--text-secondary); }
+  .wk-day.today .dow, .wk-day.today .num { color: var(--accent-text); }
+  .wk-day.today { box-shadow: inset 0 -2px 0 0 var(--accent-default); }
+
+  /* The all-day band. Only a week can draw this: an item covering two days needs
+     two days on screen at once, and no day view can show it whole. */
+  .wk-allday { flex: none; align-items: center; padding: var(--space-2) 0 0; }
+  .wk-allday .band {
+    grid-column: 5 / 7; height: 18px; border-radius: var(--radius-xs);
+    background: var(--surface-3); color: var(--text-secondary);
+    display: flex; align-items: center; padding: 0 var(--space-3);
+    font-size: var(--type-caption-size); white-space: nowrap; overflow: hidden;
+  }
+
+  /* The proportional grid: one axis, seven columns, blocks placed by clock time.
+     `inset: 0` on the grid resolves against the padding box, so the margin above
+     lives on `.wk-body` — padding there would have been ignored. */
+  .wk-body { flex: 1; min-height: 0; position: relative; padding-top: var(--space-3); }
+  .wk-grid {
+    position: absolute; inset: var(--space-3) 0 0;
+    display: grid; grid-template-columns: 44px repeat(7, minmax(0, 1fr));
+  }
+  .wk-axis { position: relative; }
+  .wk-axis .h {
+    position: absolute; right: var(--space-2); transform: translateY(-50%);
+    font-family: var(--font-mono); font-size: var(--type-caption-size);
+    color: var(--text-muted);
+  }
+  .wk-col {
+    position: relative; overflow: hidden;
+    border-left: 1px solid var(--border-subtle);
+    background-image: repeating-linear-gradient(to bottom,
+      var(--border-subtle) 0, var(--border-subtle) 1px, transparent 1px, transparent 20%);
+  }
+  .wk-col.today { background-color: var(--surface-2); }
+  .wk-col.sel { box-shadow: inset 0 0 0 2px var(--accent-default); }
+  .wk-block {
+    position: absolute; left: 2px; right: 2px; overflow: hidden;
+    border-radius: var(--radius-xs);
+    background: var(--accent-subtle); border-left: 2px solid var(--accent-default);
+    padding: 0 3px;
+  }
+  .wk-block.mirrored { background: var(--surface-3); border-left-color: var(--border-strong); }
+  .wk-block .t {
+    display: block; font-size: var(--type-caption-size); line-height: 1.3;
+    color: var(--text-primary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  /* The now rule. In a week "now" is a line, not a point — which is the one thing
+     the grid can say that a day view's timeline cannot. */
+  .wk-now { position: absolute; left: 0; right: 0; border-top: 2px solid var(--accent-default); }
+  .wk-now .lab {
+    position: absolute; left: 0; transform: translateY(-50%);
+    background: var(--bg-base); padding-right: 3px;
+    font-family: var(--font-mono); font-size: var(--type-caption-size);
+    color: var(--accent-text);
+  }
+
+  /* The counts strip: the spec's "tasks and habits collapse to counts", spent on
+     telling the seven days apart rather than on naming anything. */
+  .wk-counts {
+    flex: none; align-items: center; padding: var(--space-3) 0 var(--space-4);
+    border-top: 1px solid var(--border-default);
+  }
+  .wk-counts .k {
+    font-size: var(--type-caption-size); letter-spacing: var(--type-caption-track);
+    text-transform: uppercase; color: var(--text-muted);
+  }
+  .wk-counts .c {
+    text-align: center; font-family: var(--font-mono);
+    font-size: var(--type-footnote-size); color: var(--text-secondary);
+  }
+  .wk-counts .c.on { color: var(--accent-text); }
+
+  /* The focus line: which day is selected, and what it holds. A chart you cannot
+     interrogate is a dead end, so the selection has somewhere to be read. */
+  .wk-focus {
+    flex: none; display: flex; align-items: baseline; gap: var(--space-4);
+    padding: var(--space-3) var(--space-5);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .wk-focus .sel { color: var(--accent-text); }
+
+  /* The rotated variant: days as rows, time running left to right. */
+  .wk-rows { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 0 var(--space-5); }
+  .wk-rhead {
+    display: grid; grid-template-columns: 44px minmax(0, 1fr) 24px;
+    padding-bottom: var(--space-2); border-bottom: 1px solid var(--border-subtle);
+  }
+  .wk-rhead .t { grid-column: 2; position: relative; height: 14px; }
+  .wk-rhead .t span {
+    position: absolute; transform: translateX(-50%);
+    font-family: var(--font-mono); font-size: var(--type-caption-size); color: var(--text-muted);
+  }
+  .wk-rrow {
+    display: grid; grid-template-columns: 44px minmax(0, 1fr) 24px;
+    align-items: center; flex: 1; min-height: 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .wk-rrow .d { font-size: var(--type-caption-size); color: var(--text-muted); }
+  .wk-rrow.today .d, .wk-rrow.today .c { color: var(--accent-text); }
+  .wk-rrow .track {
+    position: relative; height: 22px; border-left: 1px solid var(--border-subtle);
+    background-image: repeating-linear-gradient(to right,
+      var(--border-subtle) 0, var(--border-subtle) 1px, transparent 1px, transparent 20%);
+  }
+  .wk-rrow .b {
+    position: absolute; top: 2px; bottom: 2px; overflow: hidden;
+    border-radius: var(--radius-xs); padding: 0 3px;
+    background: var(--accent-subtle); border-left: 2px solid var(--accent-default);
+    font-size: var(--type-caption-size); line-height: 17px; color: var(--text-primary);
+    white-space: nowrap;
+  }
+  .wk-rrow .b.mirrored { background: var(--surface-3); border-left-color: var(--border-strong); }
+  .wk-rrow .c {
+    text-align: right; font-family: var(--font-mono);
+    font-size: var(--type-caption-size); color: var(--text-muted);
+  }
+
+  /* The agenda variant: seven day sections, no axis at all. */
+  .wk-agenda { flex: 1; min-height: 0; position: relative; overflow: hidden; padding: 0 var(--space-5); }
+  .wk-asec { padding: var(--space-4) 0 var(--space-3); border-bottom: 1px solid var(--border-subtle); }
+  .wk-asec .hd { display: flex; align-items: baseline; gap: var(--space-4); margin-bottom: var(--space-2); }
+  .wk-asec .hd .d { font-size: var(--type-subhead-size); color: var(--text-primary); }
+  .wk-asec.today .hd .d { color: var(--accent-text); }
+  .wk-asec .hd .n { margin-left: auto; font-size: var(--type-caption-size); color: var(--text-muted); }
+  .wk-ae { display: flex; align-items: baseline; gap: var(--space-4); min-height: 24px; }
+  .wk-ae .at { flex: none; width: 44px; font-family: var(--font-mono); font-size: var(--type-caption-size); color: var(--text-muted); }
+  .wk-ae .ti { font-size: var(--type-footnote-size); color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .wk-ae.mirrored .ti { color: var(--text-secondary); }
+
   /* The fit overlay: what a clipped phone is hiding, stated rather than implied.
      A screen that overflows silently is the defect these labs exist to catch, so
      the mock draws the boundary. */
@@ -68,7 +218,7 @@
   <div class="bar">
     <div class="tabs" role="tablist" aria-label="View">
       <button class="tab" data-go="day" aria-selected="true"><span class="n">1</span> Day</button>
-      <button class="tab" data-go="week" disabled><span class="n">2</span> Week</button>
+      <button class="tab" data-go="week"><span class="n">2</span> Week</button>
       <button class="tab" data-go="month" disabled><span class="n">3</span> Month</button>
       <button class="tab" data-go="year" disabled><span class="n">4</span> Year</button>
       <button class="tab" data-go="event" disabled><span class="n">5</span> Event detail</button>
@@ -398,14 +548,518 @@
     </section>
   </section>
 
+  <!-- ==================== THE WEEK VIEW ==================== -->
+  <section class="screen" id="week" hidden>
+    <section class="lede">
+      <h2 class="t-title-2">Week view — one sentence, and it is a hard one</h2>
+      <p>
+        `calendar.md` gives the Day view eight numbered parts, its token decisions, and a
+        measurement. It gives the Week this, in full:
+      </p>
+      <blockquote class="t-callout" style="margin: 0 0 var(--space-5); padding-left: var(--space-5); border-left: 2px solid var(--accent-default); color: var(--text-secondary);">
+        “<b>Week view</b> — 7 days side by side. Events only; tasks and habits collapse to counts.”
+      </blockquote>
+      <p>
+        One sentence of layout. Everything else — the axis, its window, whether a title is
+        ever drawn, what “collapse to counts” counts, where the now line goes, what a bare
+        week looks like — is undecided. So this view is not being checked against a layout.
+        It is being asked whether the sentence can be drawn at all.
+      </p>
+      <p>
+        It can. But not the way the Day view works, and <b>the measurement below is why</b>.
+      </p>
+    </section>
+
+    <div class="grid">
+
+      <!-- ================= V1 · baseline ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Baseline</span>
+          <p class="vc-stance">“7 days side by side”, read literally: seven equal columns, every event in the column it falls in, with its title.</p>
+          <span class="vc-read">no lens · the control arm</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Week 39</span>
+                <span class="t-footnote" style="color: var(--text-muted);">21–27 Sep</span>
+              </div>
+              <div class="wk">
+                <span></span>
+                <span class="wk-day"><span class="dow">Mon</span><span class="num">21</span></span>
+                <span class="wk-day today"><span class="dow">Tue</span><span class="num">22</span></span>
+                <span class="wk-day"><span class="dow">Wed</span><span class="num">23</span></span>
+                <span class="wk-day"><span class="dow">Thu</span><span class="num">24</span></span>
+                <span class="wk-day"><span class="dow">Fri</span><span class="num">25</span></span>
+                <span class="wk-day"><span class="dow">Sat</span><span class="num">26</span></span>
+                <span class="wk-day"><span class="dow">Sun</span><span class="num">27</span></span>
+              </div>
+              <div class="wk-allday"><span></span><span class="band">Offsite</span></div>
+              <div class="wk-body">
+                <div class="wk-grid">
+                  <div class="wk-axis">
+                    <span class="h" style="top: 0%">08</span>
+                    <span class="h" style="top: 20%">10</span>
+                    <span class="h" style="top: 40%">12</span>
+                    <span class="h" style="top: 60%">14</span>
+                    <span class="h" style="top: 80%">16</span>
+                    <span class="h" style="top: 100%">18</span>
+                  </div>
+                  <div class="wk-col">
+                    <span class="wk-block" style="top: 10%; height: 5%;"><span class="t">Standup</span></span>
+                    <span class="wk-block" style="top: 60%; height: 10%;"><span class="t">Design review</span></span>
+                    <span class="wk-block" style="top: 90%; height: 7.5%;"><span class="t">Gym</span></span>
+                  </div>
+                  <div class="wk-col today">
+                    <span class="wk-block" style="top: 10%; height: 5%;"><span class="t">Standup</span></span>
+                    <span class="wk-block" style="top: 37%; height: 5%;"><span class="t">Design review</span></span>
+                    <span class="wk-block mirrored" style="top: 50%; height: 10%;"><span class="t">Lunch with Sarah</span></span>
+                    <span class="wk-block" style="top: 85%; height: 7.5%;"><span class="t">Physio</span></span>
+                  </div>
+                  <div class="wk-col">
+                    <span class="wk-block" style="top: 10%; height: 5%;"><span class="t">Standup</span></span>
+                    <span class="wk-block" style="top: 20%; height: 5%;"><span class="t">1:1 with Mark</span></span>
+                    <span class="wk-block" style="top: 70%; height: 10%;"><span class="t">Dentist</span></span>
+                  </div>
+                  <div class="wk-col">
+                    <span class="wk-block" style="top: 10%; height: 5%;"><span class="t">Standup</span></span>
+                    <span class="wk-block" style="top: 30%; height: 15%;"><span class="t">Offsite planning</span></span>
+                    <span class="wk-block mirrored" style="top: 50%; height: 10%;"><span class="t">Lunch</span></span>
+                    <span class="wk-block" style="top: 70%; height: 5%;"><span class="t">1:1 with Priya</span></span>
+                    <span class="wk-block" style="top: 85%; height: 10%;"><span class="t">Retro</span></span>
+                  </div>
+                  <div class="wk-col">
+                    <span class="wk-block" style="top: 10%; height: 5%;"><span class="t">Standup</span></span>
+                    <span class="wk-block mirrored" style="top: 40%; height: 15%;"><span class="t">Team lunch</span></span>
+                  </div>
+                  <div class="wk-col">
+                    <span class="wk-block" style="top: 20%; height: 10%;"><span class="t">Park run</span></span>
+                  </div>
+                  <div class="wk-col"></div>
+                  <div class="wk-now" style="top: 34%"><span class="lab">11:24</span></div>
+                </div>
+              </div>
+              <div class="wk-counts">
+                <span class="k">tasks</span>
+                <span class="c">2</span><span class="c on">3</span><span class="c">1</span><span class="c">0</span><span class="c">2</span><span class="c">1</span><span class="c">0</span>
+                <span class="k">habits</span>
+                <span class="c">1/3</span><span class="c on">2/4</span><span class="c">3/4</span><span class="c">1/4</span><span class="c">0/4</span><span class="c">2/3</span><span class="c">0/3</span>
+              </div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>Nothing. Seven equal columns sharing one time gutter, events placed by clock time, each carrying its title.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd id="wk-cost">…</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>None — this <i>is</i> the sentence, and nothing but the sentence. Which is the finding: the sentence cannot be drawn legibly, and there is no other sentence to draw.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= V2 · impeccable ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Impeccable</span>
+          <p class="vc-stance">The Week is a chart, not an index. Its job is comparing seven days; naming things is the Day view's job.</p>
+          <span class="vc-read">impeccable · operate<br>scanability outranks expression</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Week 39</span>
+                <span class="t-footnote" style="color: var(--text-muted);">21–27 Sep</span>
+              </div>
+              <div class="wk">
+                <span></span>
+                <span class="wk-day"><span class="dow">Mon</span><span class="num">21</span></span>
+                <span class="wk-day today"><span class="dow">Tue</span><span class="num">22</span></span>
+                <span class="wk-day"><span class="dow">Wed</span><span class="num">23</span></span>
+                <span class="wk-day"><span class="dow">Thu</span><span class="num">24</span></span>
+                <span class="wk-day"><span class="dow">Fri</span><span class="num">25</span></span>
+                <span class="wk-day"><span class="dow">Sat</span><span class="num">26</span></span>
+                <span class="wk-day"><span class="dow">Sun</span><span class="num">27</span></span>
+              </div>
+              <div class="wk-allday"><span></span><span class="band">Offsite</span></div>
+              <div class="wk-body">
+                <div class="wk-grid">
+                  <div class="wk-axis">
+                    <span class="h" style="top: 0%">08</span>
+                    <span class="h" style="top: 20%">10</span>
+                    <span class="h" style="top: 40%">12</span>
+                    <span class="h" style="top: 60%">14</span>
+                    <span class="h" style="top: 80%">16</span>
+                    <span class="h" style="top: 100%">18</span>
+                  </div>
+                  <div class="wk-col">
+                    <span class="wk-block" style="top: 10%; height: 5%;"></span>
+                    <span class="wk-block" style="top: 60%; height: 10%;"></span>
+                    <span class="wk-block" style="top: 90%; height: 7.5%;"></span>
+                  </div>
+                  <div class="wk-col today">
+                    <span class="wk-block" style="top: 10%; height: 5%;"></span>
+                    <span class="wk-block" style="top: 37%; height: 5%;"></span>
+                    <span class="wk-block mirrored" style="top: 50%; height: 10%;"></span>
+                    <span class="wk-block" style="top: 85%; height: 7.5%;"></span>
+                  </div>
+                  <div class="wk-col">
+                    <span class="wk-block" style="top: 10%; height: 5%;"></span>
+                    <span class="wk-block" style="top: 20%; height: 5%;"></span>
+                    <span class="wk-block" style="top: 70%; height: 10%;"></span>
+                  </div>
+                  <div class="wk-col">
+                    <span class="wk-block" style="top: 10%; height: 5%;"></span>
+                    <span class="wk-block" style="top: 30%; height: 15%;"></span>
+                    <span class="wk-block mirrored" style="top: 50%; height: 10%;"></span>
+                    <span class="wk-block" style="top: 70%; height: 5%;"></span>
+                    <span class="wk-block" style="top: 85%; height: 10%;"></span>
+                  </div>
+                  <div class="wk-col">
+                    <span class="wk-block" style="top: 10%; height: 5%;"></span>
+                    <span class="wk-block mirrored" style="top: 40%; height: 15%;"></span>
+                  </div>
+                  <div class="wk-col">
+                    <span class="wk-block" style="top: 20%; height: 10%;"></span>
+                  </div>
+                  <div class="wk-col"></div>
+                  <div class="wk-now" style="top: 34%"><span class="lab">11:24</span></div>
+                </div>
+              </div>
+              <div class="wk-counts">
+                <span class="k">tasks</span>
+                <span class="c">2</span><span class="c on">3</span><span class="c">1</span><span class="c">0</span><span class="c">2</span><span class="c">1</span><span class="c">0</span>
+                <span class="k">habits</span>
+                <span class="c">1/3</span><span class="c on">2/4</span><span class="c">3/4</span><span class="c">1/4</span><span class="c">0/4</span><span class="c">2/3</span><span class="c">0/3</span>
+              </div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>Titles leave the grid. A block is a block — position and length carry the meaning, and the only text left is in the column headers. <b>Today</b> is tinted and its header accented. A <b>now rule</b> crosses all seven columns, which no other Calendar view can draw. The <b>counts strip</b> spends the spec's own “collapse to counts” on telling the seven days apart.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>An event's name is now unreachable from this view, and a block gives no hint that tapping it leads anywhere. The counts strip is two unlabelled rows of numbers: “2” and “1/3” under Monday mean nothing without a legend this mock does not draw.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd><b>None — and that is the finding.</b> `calendar.md` gives the Week no parts to break. Every choice here, including the ones that feel like decisions, is filling a gap the spec left open rather than breaking a rule it set.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= V3 · frontend design ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Frontend design</span>
+          <p class="vc-stance">Rotate the instrument: time left to right, days stacked as rows. Seven full-width tracks instead of seven slivers.</p>
+          <span class="vc-read">frontend-design<br>if the columns are the problem, change the columns</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Week 39</span>
+                <span class="t-footnote" style="color: var(--text-muted);">21–27 Sep</span>
+              </div>
+              <div class="wk-rows">
+                <div class="wk-rhead">
+                  <span></span>
+                  <span class="t">
+                    <span style="left: 0; transform: none">08</span>
+                    <span style="left: 20%">10</span>
+                    <span style="left: 40%">12</span>
+                    <span style="left: 60%">14</span>
+                    <span style="left: 80%">16</span>
+                    <span style="left: 100%; transform: translateX(-100%)">18</span>
+                  </span>
+                  <span></span>
+                </div>
+                <div class="wk-rrow">
+                  <span class="d">Mon 21</span>
+                  <span class="track">
+                    <span class="b" style="left: 10%; width: 5%;">Standup</span>
+                    <span class="b" style="left: 60%; width: 10%;">Design review</span>
+                    <span class="b" style="left: 90%; width: 7.5%;">Gym</span>
+                  </span>
+                  <span class="c">3</span>
+                </div>
+                <div class="wk-rrow today">
+                  <span class="d">Tue 22</span>
+                  <span class="track">
+                    <span class="b" style="left: 10%; width: 5%;">Standup</span>
+                    <span class="b" style="left: 37%; width: 5%;">Design rev…</span>
+                    <span class="b mirrored" style="left: 50%; width: 10%;">Lunch with Sarah</span>
+                    <span class="b" style="left: 85%; width: 7.5%;">Physio</span>
+                  </span>
+                  <span class="c">4</span>
+                </div>
+                <div class="wk-rrow">
+                  <span class="d">Wed 23</span>
+                  <span class="track">
+                    <span class="b" style="left: 10%; width: 5%;">Standup</span>
+                    <span class="b" style="left: 20%; width: 5%;">1:1 with Mark</span>
+                    <span class="b" style="left: 70%; width: 10%;">Dentist</span>
+                  </span>
+                  <span class="c">3</span>
+                </div>
+                <div class="wk-rrow">
+                  <span class="d">Thu 24</span>
+                  <span class="track">
+                    <span class="b" style="left: 10%; width: 5%;">Standup</span>
+                    <span class="b" style="left: 30%; width: 15%;">Offsite planning</span>
+                    <span class="b mirrored" style="left: 50%; width: 10%;">Lunch</span>
+                    <span class="b" style="left: 70%; width: 5%;">1:1</span>
+                    <span class="b" style="left: 85%; width: 10%;">Retro</span>
+                  </span>
+                  <span class="c">5</span>
+                </div>
+                <div class="wk-rrow">
+                  <span class="d">Fri 25</span>
+                  <span class="track">
+                    <span class="b" style="left: 10%; width: 5%;">Standup</span>
+                    <span class="b mirrored" style="left: 40%; width: 15%;">Team lunch</span>
+                  </span>
+                  <span class="c">2</span>
+                </div>
+                <div class="wk-rrow">
+                  <span class="d">Sat 26</span>
+                  <span class="track">
+                    <span class="b" style="left: 20%; width: 10%;">Park run</span>
+                  </span>
+                  <span class="c">1</span>
+                </div>
+                <div class="wk-rrow">
+                  <span class="d">Sun 27</span>
+                  <span class="track"></span>
+                  <span class="c">0</span>
+                </div>
+              </div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>The axes swap. Days become rows, the clock becomes a horizontal track, and every block gets the whole width of the phone to be read in. The trailing number is the day's load, so the counts survive without a separate strip.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd><b>It does not work, and the measurement says so.</b> Ten hours across a track is far less than the phone is wide, so a 30-minute event ends up <i>narrower</i> than the column it was meant to replace. Rotation moves the constraint; it does not remove it. And with the days stacked, two days can no longer be compared by eye — which was the one thing the columns were for.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>Two. “7 days side by side” is explicit, and `motion-vocabulary.md` requires that during a calendar zoom “events hold their visual position” — a 90° rotation is the opposite of holding position.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= V4 · design taste ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Design taste</span>
+          <p class="vc-stance">Delete the axis. A week is seven days, and a day is a list of what is on it.</p>
+          <span class="vc-read">design-taste-frontend<br>remove the accessory the others defend</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Week 39</span>
+                <span class="t-footnote" style="color: var(--text-muted);">21–27 Sep</span>
+              </div>
+              <div class="wk-agenda">
+                <div class="wk-asec">
+                  <div class="hd"><span class="d">Mon 21</span><span class="n">3 events</span></div>
+                  <div class="wk-ae"><span class="at">09:00</span><span class="ti">Standup</span></div>
+                  <div class="wk-ae"><span class="at">14:00</span><span class="ti">Design review</span></div>
+                  <div class="wk-ae"><span class="at">17:00</span><span class="ti">Gym</span></div>
+                </div>
+                <div class="wk-asec today">
+                  <div class="hd"><span class="d">Tue 22</span><span class="n">4 events</span></div>
+                  <div class="wk-ae"><span class="at">09:00</span><span class="ti">Standup</span></div>
+                  <div class="wk-ae"><span class="at">11:42</span><span class="ti">Design review</span></div>
+                  <div class="wk-ae mirrored"><span class="at">13:00</span><span class="ti">Lunch with Sarah · as of 2 hours ago</span></div>
+                  <div class="wk-ae"><span class="at">16:30</span><span class="ti">Physio</span></div>
+                </div>
+                <div class="wk-asec">
+                  <div class="hd"><span class="d">Wed 23</span><span class="n">3 events</span></div>
+                  <div class="wk-ae"><span class="at">09:00</span><span class="ti">Standup</span></div>
+                  <div class="wk-ae"><span class="at">10:00</span><span class="ti">1:1 with Mark</span></div>
+                  <div class="wk-ae"><span class="at">15:00</span><span class="ti">Dentist</span></div>
+                </div>
+                <div class="wk-asec">
+                  <div class="hd"><span class="d">Thu 24</span><span class="n">5 events</span></div>
+                  <div class="wk-ae"><span class="at">09:00</span><span class="ti">Standup</span></div>
+                  <div class="wk-ae"><span class="at">11:00</span><span class="ti">Offsite planning</span></div>
+                  <div class="wk-ae mirrored"><span class="at">13:00</span><span class="ti">Lunch · as of 2 hours ago</span></div>
+                  <div class="wk-ae"><span class="at">15:00</span><span class="ti">1:1 with Priya</span></div>
+                  <div class="wk-ae"><span class="at">16:30</span><span class="ti">Retro</span></div>
+                </div>
+                <div class="wk-asec">
+                  <div class="hd"><span class="d">Fri 25</span><span class="n">2 events</span></div>
+                  <div class="wk-ae"><span class="at">09:00</span><span class="ti">Standup</span></div>
+                  <div class="wk-ae mirrored"><span class="at">12:00</span><span class="ti">Team lunch · as of 2 hours ago</span></div>
+                </div>
+                <div class="wk-asec">
+                  <div class="hd"><span class="d">Sat 26</span><span class="n">1 event</span></div>
+                  <div class="wk-ae"><span class="at">10:00</span><span class="ti">Park run</span></div>
+                </div>
+                <div class="wk-asec">
+                  <div class="hd"><span class="d">Sun 27</span><span class="n">nothing</span></div>
+                  <div class="wk-ae"><span class="at">—</span><span class="ti" style="color: var(--text-muted);">Nothing scheduled.</span></div>
+                </div>
+                <div class="clipnote">the rest of the week continues past the fold</div>
+              </div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>The proportional grid goes entirely. Seven day sections, each a short agenda with times and full titles — no gutter, no axis, no blocks, no scale. Everything is legible; nothing is positioned by time.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>It is the Day view seven times over, in the place where the Day already works. And a five-event Thursday and a one-event Saturday differ only in how many lines they take — the <b>shape</b> of the week, which is the only thing a week view is for, is not in the picture at all.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>Two. “7 days side by side” is gone, and the time axis goes with it — `calendar.md`'s Day layout calls the axis the Calendar's instrument, and this view does not have one.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= recommended ================= -->
+      <article class="vc rec">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Recommended</span>
+          <p class="vc-stance">Keep the seven columns and drop the titles. The Week answers “which days are heavy”; the Day answers “what is that thing”.</p>
+          <span class="vc-read">baseline's shape + impeccable's blocks<br>V3's proof + V4's reminder</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Week 39</span>
+                <span class="t-footnote" style="color: var(--text-muted);">21–27 Sep</span>
+              </div>
+              <div class="wk">
+                <span></span>
+                <span class="wk-day"><span class="dow">Mon</span><span class="num">21</span></span>
+                <span class="wk-day today"><span class="dow">Tue</span><span class="num">22</span></span>
+                <span class="wk-day"><span class="dow">Wed</span><span class="num">23</span></span>
+                <span class="wk-day"><span class="dow">Thu</span><span class="num">24</span></span>
+                <span class="wk-day"><span class="dow">Fri</span><span class="num">25</span></span>
+                <span class="wk-day"><span class="dow">Sat</span><span class="num">26</span></span>
+                <span class="wk-day"><span class="dow">Sun</span><span class="num">27</span></span>
+              </div>
+              <div class="wk-allday"><span></span><span class="band">Offsite</span></div>
+              <!-- The one thing a chart needs and a chart alone cannot supply: somewhere
+                   for the selection to be read. Tapping a column is the Week's only action. -->
+              <div class="wk-focus">
+                <span class="t-footnote sel">Thu 24 Sep</span>
+                <span class="t-caption" style="color: var(--text-secondary);">5 events · heaviest day</span>
+                <span class="t-caption" style="margin-left: auto; color: var(--text-muted);">tap any column to open its day</span>
+              </div>
+              <div class="wk-body">
+                <div class="wk-grid">
+                  <div class="wk-axis">
+                    <span class="h" style="top: 0%">08</span>
+                    <span class="h" style="top: 20%">10</span>
+                    <span class="h" style="top: 40%">12</span>
+                    <span class="h" style="top: 60%">14</span>
+                    <span class="h" style="top: 80%">16</span>
+                    <span class="h" style="top: 100%">18</span>
+                  </div>
+                  <div class="wk-col">
+                    <span class="wk-block" style="top: 10%; height: 5%;"></span>
+                    <span class="wk-block" style="top: 60%; height: 10%;"></span>
+                    <span class="wk-block" style="top: 90%; height: 7.5%;"></span>
+                  </div>
+                  <div class="wk-col today">
+                    <span class="wk-block" style="top: 10%; height: 5%;"></span>
+                    <span class="wk-block" style="top: 37%; height: 5%;"></span>
+                    <span class="wk-block mirrored" style="top: 50%; height: 10%;"></span>
+                    <span class="wk-block" style="top: 85%; height: 7.5%;"></span>
+                  </div>
+                  <div class="wk-col">
+                    <span class="wk-block" style="top: 10%; height: 5%;"></span>
+                    <span class="wk-block" style="top: 20%; height: 5%;"></span>
+                    <span class="wk-block" style="top: 70%; height: 10%;"></span>
+                  </div>
+                  <div class="wk-col sel">
+                    <span class="wk-block" style="top: 10%; height: 5%;"></span>
+                    <span class="wk-block" style="top: 30%; height: 15%;"></span>
+                    <span class="wk-block mirrored" style="top: 50%; height: 10%;"></span>
+                    <span class="wk-block" style="top: 70%; height: 5%;"></span>
+                    <span class="wk-block" style="top: 85%; height: 10%;"></span>
+                  </div>
+                  <div class="wk-col">
+                    <span class="wk-block" style="top: 10%; height: 5%;"></span>
+                    <span class="wk-block mirrored" style="top: 40%; height: 15%;"></span>
+                  </div>
+                  <div class="wk-col">
+                    <span class="wk-block" style="top: 20%; height: 10%;"></span>
+                  </div>
+                  <div class="wk-col"></div>
+                  <div class="wk-now" style="top: 34%"><span class="lab">11:24</span></div>
+                </div>
+              </div>
+              <div class="wk-counts">
+                <span class="k">tasks</span>
+                <span class="c">2</span><span class="c on">3</span><span class="c">1</span><span class="c">0</span><span class="c">2</span><span class="c">1</span><span class="c">0</span>
+                <span class="k">habits</span>
+                <span class="c">1/3</span><span class="c on">2/4</span><span class="c">3/4</span><span class="c">1/4</span><span class="c">0/4</span><span class="c">2/3</span><span class="c">0/3</span>
+              </div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for seven columns and one shared gutter — the sentence is right, it is simply not a layout. <b>Impeccable</b> for the realisation that proportionality and legibility are the same decision, so the Week earns its chart by giving up the names. <b>Frontend design</b> for testing rotation and proving the constraint is the clock rather than the column count. <b>Design taste</b> for showing what deleting the axis produces: the Day view, seven times, in the place where the Day already works.</dd></div>
+          <div class="vc-line cost"><dt>Fixes</dt><dd>The Week becomes a chart with exactly one affordance. <b>Tap a column</b> and it outlines, and the focus line names the day and its load; the selection defaults to today, which is already the tinted and accented column. The <b>all-day band</b> spans Thu–Fri — an item covering two days, which no other Calendar surface can draw whole. The <b>counts strip</b> spends “collapse to counts” on telling the days apart rather than on naming anything, and the <b>now rule</b> crosses all seven columns but belongs to none of them.</dd></div>
+          <div class="vc-line open"><dt>Still needs</dt><dd>Five decisions this view cannot make for itself. <b>One:</b> `calendar.md`'s Scope gives the Week a sentence and the Day eight numbered parts — the Week needs a layout section of its own, or this row stands in for one. <b>Two:</b> that doc's <b>Surfaces</b> section lists five surfaces and omits Week, Month and Year, all three of which `03-experience/surfaces.md` lists as screens. <b>Three:</b> “The Calendar has no whole-view empty state” is <b>false for the Week</b>, and the reason given for it — “the Daily Note always exists” — is a Day-view argument. A week with nothing on it is genuinely bare; Sunday's column above is that case in every variant. <b>Four:</b> `06-flows/doing-the-day.md` ties the now line to “the calendar <i>day view</i> and the header of other modes”. The Week is neither, so it has no specified now line, while every variant here needs one and this one draws it as a rule. <b>Five:</b> the axis window is unspecified — a fixed clock range (this mock uses 08:00–18:00) or one derived from the week's own earliest and latest events. It decides whether two weeks can be compared at a glance, which is the view's entire purpose.</dd></div>
+        </dl>
+      </article>
+
+    </div>
+
+    <section class="lede">
+      <h2 class="t-title-2">The measurement</h2>
+      <div class="panel" style="margin-top: var(--space-5);">
+        <div class="measure" id="measure-week"></div>
+      </div>
+    </section>
+  </section>
+
 </div>
 
 <script>
   const tabs = [...document.querySelectorAll('.tab[data-go]')];
   const screens = [...document.querySelectorAll('.screen')];
+  // A hidden section measures zero for everything inside it, so the Week is
+  // measured the first time it is actually shown. Measuring it at load would
+  // have produced a page of confident zeros.
+  let weekMeasured = false;
+  // The Week cannot measure the Day once the Day is hidden — a hidden element
+  // reports zero for everything — so the Day's timeline height is captured while
+  // it is still on screen.
+  let daySlotH = 0;
   function go(id) {
     screens.forEach(s => { s.hidden = s.id !== id; });
     tabs.forEach(t => t.setAttribute('aria-selected', String(t.dataset.go === id)));
+    if (id === 'week' && !weekMeasured) { measureWeek(); weekMeasured = true; }
     window.scrollTo({ top: 0 });
   }
   tabs.forEach(t => t.addEventListener('click', () => go(t.dataset.go)));
@@ -468,8 +1122,80 @@
     }).join('') +
     '<div><span class="n">' + (recLast.last || 0) + ' of ' + recLast.of + '</span>' +
     '<span class="l">recommended — parts above the fold before any scroll</span></div>';
+
+    const slot = document.querySelector('#day .tl .slot');
+    daySlotH = slot ? slot.getBoundingClientRect().height : 0;
   }
   measure();
+
+  // The Week's fit test, which is a WIDTH test. The Day failed on height; the Week
+  // fails on width, and for a different reason than it first appears: the problem is
+  // not that there are seven columns, it is that a proportional axis and a text
+  // label are incompatible at this size, whichever way the axis is turned.
+  function measureWeek() {
+    const host = document.getElementById('measure-week');
+    const col = document.querySelector('#week .wk-col');
+    const grid = document.querySelector('#week .wk-grid');
+    const track = document.querySelector('#week .wk-rrow .track');
+    if (!host || !col || !grid) return;
+
+    const colW = col.getBoundingClientRect().width;
+    const gridH = grid.getBoundingClientRect().height;
+    const trackW = track ? track.getBoundingClientRect().width : 0;
+
+    // Both axes span the same ten hours, so the same half-hour event can be
+    // compared in each: placed down a column, and along a row.
+    const halfV = gridH / 20;
+    const halfH = trackW / 20;
+
+    const rows = [...document.querySelectorAll('#week .vc')];
+    const stats = rows.map(v => {
+      const titles = [...v.querySelectorAll('.wk-block .t, .wk-rrow .b')];
+      const agenda = v.querySelector('.wk-agenda');
+      return {
+        name: v.querySelector('.vc-name').textContent.trim(),
+        titles: titles.length,
+        clipped: titles.filter(t => t.scrollWidth > t.clientWidth + 1).length,
+        isAgenda: !!agenda,
+        over: agenda ? Math.max(0, agenda.scrollHeight - agenda.clientHeight) : 0,
+      };
+    });
+
+    const kept = stats.filter(s => s.titles);
+    const totalTitles = kept.reduce((n, s) => n + s.titles, 0);
+    const totalClipped = kept.reduce((n, s) => n + s.clipped, 0);
+
+    document.getElementById('wk-cost').innerHTML =
+      'A column is <b>' + Math.round(colW) + 'px</b> wide. The Day view’s timeline gives every item <b>' +
+      Math.round(daySlotH) + 'px</b> of height whatever its duration — a 30-minute standup and a 3-hour workshop ' +
+      'are drawn identically, because that timeline is a <b>list with a time gutter</b>, not a chart. The Week is the ' +
+      'first Calendar surface asked to be proportional, and proportionality is what spends the titles: a 30-minute event ' +
+      'is <b>' + Math.round(halfV) + 'px</b> tall, so its name is clipped into ' + Math.round(colW) + 'px of width. ' +
+      '<b>' + totalClipped + ' of the ' + totalTitles + ' titles</b> drawn by the two variants that keep them do not fit. ' +
+      'The Day view never had this problem, because it was never proportional.';
+
+    host.innerHTML =
+      '<div><span class="n">' + Math.round(colW) + 'px</span>' +
+      '<span class="l">one column — everything an event in the grid has, horizontally</span></div>' +
+      '<div><span class="n">' + Math.round(halfV) + 'px</span>' +
+      '<span class="l">a 30-minute event placed down a column, at 10 hours to the frame</span></div>' +
+      '<div><span class="n">' + Math.round(daySlotH) + 'px</span>' +
+      '<span class="l">a timeline item in the Day view — every item, whatever its duration</span></div>' +
+      '<div><span class="n">' + Math.round(halfH) + 'px</span>' +
+      '<span class="l">the same 30-minute event rotated: days as rows, time left to right</span></div>' +
+      stats.map(s => {
+        if (s.isAgenda) {
+          return '<div><span class="n">' + s.over + 'px</span><span class="l">' + s.name +
+            ' — over the fold, with every title legible; that is the trade</span></div>';
+        }
+        if (!s.titles) {
+          return '<div><span class="n">0</span><span class="l">' + s.name +
+            ' — titles drawn in the grid, by design</span></div>';
+        }
+        return '<div><span class="n">' + s.clipped + ' / ' + s.titles + '</span><span class="l">' + s.name +
+          ' — titles that do not fit their block</span></div>';
+      }).join('');
+  }
 </script>
 <script src="nav.js"></script>
 </body>
