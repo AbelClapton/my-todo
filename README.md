@@ -4,7 +4,7 @@ Throwaway evaluation artifacts. **Not the app, not the implementation pattern,
 not the component library.** Delete the folder when the design work stops being
 the bottleneck.
 
-## The four files
+## The files
 
 - `tokens.css` — the design tokens from `docs/03-experience/design-tokens.md`,
   name for name, as CSS custom properties. The doc says tokens are "defined
@@ -16,16 +16,29 @@ the bottleneck.
   about to copy it, and the trigger was concrete rather than theoretical: a
   spacing bug in the row table had to be fixed once, and with three copies it
   would have had to be fixed three times.
-- `palette-lab.html` — the palette and primitives lab. **Self-contained:** it
-  carries its own copy of the chrome and does not link `lab.css`.
-- `onboarding-lab.html` — the seven first-run screens, four ways each.
-  **Self-contained**, same reason.
+- `palette-lab.html` — the palette and primitives lab. **Self-contained on
+  purpose.** 217 of its 256 selectors exist nowhere else, and it is the frozen
+  evidence for decisions already recorded in the specs. It opts out of the
+  injected toggle with `<body data-lab-toggle="off">`, because its own controls
+  *are* the experiment.
+- `onboarding-lab.html` — the seven first-run screens, five rows each. Links
+  `lab.css`; it used to carry its own copy of the chrome, and those 408 lines
+  were deleted rather than maintained twice.
 - `calendar-lab.html` — the Calendar's views, one at a time. Links `lab.css`.
+- `nav.js` — the nav between labs, and the light/dark toggle. It injects the nav
+  *and its own CSS*, so a lab gets a working bar from one `<script>` tag whether
+  or not it links `lab.css`. It publishes its own height as `--labnav-h`,
+  because a lab with its own sticky toolbar has to pin *below* the nav — two
+  bars both at `top: 0` is one bar silently painted over, and which one vanishes
+  then comes down to a z-index nobody chose on purpose.
+- `index.html` — the entry point, and the honest status board: what is designed,
+  what is not, and on what evidence.
 
-`palette-lab.html` and `onboarding-lab.html` work and were not rewritten to
-prove a point — churning a working artifact is the kind of change this repo's
-own rules reject. If either is touched again it should link `lab.css` and delete
-its block, so the harness ends up in one place.
+One rule survives from the original arrangement: **a lab links `lab.css` or it
+carries its own chrome, but it never carries a near-copy of it.**
+`palette-lab.html` is the one deliberate exception, and the condition for
+revisiting it is unchanged — touching that lab means making it link `lab.css`
+and deleting its block.
 
 ## How to read a lab
 
@@ -612,8 +625,10 @@ any other.
 
 ## What this deliberately does not do
 
-- **No icon set.** The rail and header use text glyphs. `design-tokens.md` says
-  icons are assets, not tokens, so there is nothing to load.
+- **No icon set of its own.** Icons are assets, not tokens, so there is nothing
+  to load — every glyph in every lab is a real Lucide SVG, inlined as a
+  `<symbol>`. `docs/03-experience/components.md` holds the thirteen-glyph
+  inventory and the rules about where a glyph belongs.
 - **No motion** beyond hover, pressed, focus, and the toast countdown ring.
 - **No framework, no build, no state.** Hover, press, focus, and the toggles are
   the only interactivity.
@@ -622,3 +637,26 @@ any other.
 - **Not the app.** `09-roadmap/build-order.md` still holds: projections before
   modes. This is a lab, and the task row designed here still has to be honoured
   in code.
+
+## Publishing
+
+The labs are published so they can be read from a phone — which is where a
+design that will be used on a phone should be judged.
+
+- **Source: the `gh-pages` branch, root.** A branch rather than an Actions
+  workflow, for the same reason the labs have no build: the deployed artifact
+  *is* the source, so there is no tooling to rot. It is also a whitelist —
+  `docs/` and, later, `src/` are never served, which deploying the repository
+  root could not promise.
+- **Live at** <https://abelclapton.github.io/my-todo/>
+- **To re-publish**, after changing anything in this folder:
+
+  ```sh
+  git branch -D gh-pages
+  git subtree split --prefix=design -b gh-pages
+  git push -f origin gh-pages
+  ```
+
+  `subtree split` refuses to run when the branch already exists, hence the
+  delete. There is deliberately no incremental story here: the whole site is a
+  handful of files.
