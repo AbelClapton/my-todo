@@ -34,8 +34,9 @@ is the Day.
 - **Week view** — 7 days side by side, as a **proportional chart**
   rather than a list. Events only; tasks and habits collapse to
   counts. See "The Week view layout" below.
-- **Month view** — a grid. Days show event density, not event
-  titles. Tapping a day opens it.
+- **Month view** — a grid, fixed at **six rows**. Days show event density
+  as position, not as a count, and never as titles. Tapping a day opens
+  it. See "The Month view layout" below.
 - **Year view** — 12 month grids at reduced density. Used for
   browsing, not acting.
 
@@ -168,6 +169,47 @@ own earliest and latest events would make two weeks incomparable at a glance,
 which is the view's entire purpose. The bounds are a constant; the lab draws
 08:00–18:00 for legibility, not as a proposal.
 
+### The Month view layout
+
+Seven columns and, always, **six rows — 42 cells** — with the neighbouring
+months' days drawn muted rather than blanked. The fixed row count is the
+load-bearing decision: a mark is positioned as a percentage of its cell's height,
+so a grid that grew a row would silently re-scale every other month's data.
+September 2026 needs five rows and March 2026 needs six, and six is what makes a
+mark mean the same thing in January as in June. The muted days are there because
+the fixed grid needs them — a month spanning five rows otherwise leaves a row of
+holes.
+
+Each cell holds two things, and nothing else:
+
+1. **The date.** Muted for the neighbouring months' days. It is the only text in
+   the grid.
+2. **A column of marks.** One per event, positioned by clock time, 2px tall — on
+   the same vertical window as the Week, so that pinching between the two views
+   draws the same day in the same place.
+
+**"Event density" means position, not a count.** Of everything in the Scope, this
+is the word that is not yet buildable. A single number per cell cannot tell apart
+two days that are nothing like each other: one clustering three events between
+09:00 and 11:30, another putting one at 08:30, one at 13:00 and one at 17:30. A
+mark that carries its own time can. The count is not lost — it is one tap away in
+the Day view, where it can be read.
+
+The layout uses `space-5` inset and `type-caption` throughout, as the Week does.
+
+### The Month's fit
+
+The cell is **50 × 115px** on a 390px phone, which is **9.5px per hour**. A mark
+is 2px, so the month's tightest gap — two events back to back — draws as a single
+mark, and two marks read as one at anything under about **13 minutes** apart. It
+is a coarser instrument than the Week, deliberately: at this size the question is
+*which days are shaped like this*, not *what is on Thursday*.
+
+**The fixed six rows cost resolution.** On a grid that tracked the month,
+September's cells would be **138px** and an hour would be **11.8px**. That is the
+price of comparability and it is the only price the view pays — at 50px wide,
+nothing in a cell is clipped, which is the Week's problem and not this one.
+
 ### Surfaces
 
 **Day view (default).** As above.
@@ -175,8 +217,9 @@ which is the view's entire purpose. The bounds are a constant; the lab draws
 **Week view.** As above — seven days as a proportional chart over one shared
 gutter, with titles omitted by rule rather than by omission.
 
-**Month view.** A grid. Days show event density, not event titles. Tapping a day
-opens it.
+**Month view.** As above — a grid fixed at six rows, each cell a column of marks
+positioned by time, with the neighbouring months' days drawn muted. Tapping a day
+opens the Day view for it; pinching is the gesture that reaches the Week.
 
 **Year view.** 12 month grids at reduced density. Used for browsing, not acting.
 
@@ -201,6 +244,7 @@ see the day as it was. Read-only. See
 | Zoom in/out | Pinch | Day ↔ Week ↔ Month ↔ Year |
 | Select a day (Week) | Tap a column | The column outlines; the focus line names it |
 | Open a day (Week) | Tap the focus line | The Day view for that day |
+| Open a day (Month) | Tap a day | The Day view for that day — pinch zooms, tap opens |
 | Next/prev day | Header arrows | Navigate |
 | Jump to today | Tap "Today" | Navigate |
 | Open event | Tap event | Event detail |

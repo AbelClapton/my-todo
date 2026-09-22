@@ -97,7 +97,14 @@ the bottom edge. Disappears after 5 seconds with `duration-default`,
 
 **Calendar zoom.** `duration-slow`, `ease-standard`. Day, week,
 month, and year views cross-scale smoothly. Events hold their
-visual position during the zoom where possible.
+visual position during the zoom where possible, and "possible" is
+specific rather than a hedge: **day → week** holds horizontal
+position, because a week column *is* a day; **week → month** holds
+vertical position, because a month cell keeps the week's time axis
+(`05-modules/calendar.md`, "The Month view layout"); and
+**month → year** holds neither, because a year cell is too small to
+position anything in. Two of the three steps hold — which makes this
+a constraint with a stated exception, not a preference.
 
 **Shared-element transition (list → detail).** `duration-slow`,
 `ease-standard`. The list row expands into the detail view. The

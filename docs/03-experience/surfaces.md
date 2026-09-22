@@ -61,7 +61,10 @@ line held in place (`05-modules/calendar.md`, "The fold").
 The Week view is not an order of parts but a single instrument: seven days as
 columns over one shared time gutter, with event titles omitted because a
 proportional column cannot hold one (`05-modules/calendar.md`, "The Week view
-layout").
+layout"). The Month view refines the same instrument rather than replacing it:
+seven columns and a fixed six rows, each cell a column of marks on the Week's own
+time window — which is what lets the zoom between them hold an event's vertical
+position ("The Month view layout").
 
 ### Tasks — `05-modules/tasks.md`
 
