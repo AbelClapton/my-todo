@@ -65,6 +65,23 @@ Top to bottom:
    no hero treatment — the order is the ranking. The row's own checkbox
    completes the task from here, playing the normal completion
    animation (`06-flows/completion.md`).
+8. **Completed.** Today's finished tasks, from `tasks_completed` in the
+   day projection, newest first, as standard task rows in their completed
+   state at `row-default`. The record closes the view: the sections above
+   are what the day holds, and this is what came out of it.
+
+**Why the Completed section exists.** `tasks_completed` is part of the
+Day projection (`02-architecture/day-as-unit.md`,
+`02-architecture/object-model.md`) and until now no surface rendered it —
+a projection field with no consumer. It also has to be somewhere: without
+it, a task completed today disappears from the day it belongs to, and the
+only place to find it is the Tasks mode's completed filter.
+
+**Completed rows are a record, not a control.** There is no direct toggle
+back to "open" — ADR 0010's toggle set is closed and holds only the three
+`habit.*` types. A mistaken completion is reversed through the undo
+toast's window (`06-flows/completion.md`); after that it is a new log
+entry, not a toggle here.
 
 The layout uses tokens from `03-experience/design-tokens.md`:
 `space-5` horizontal inset, `space-7` between sections, `row-default`
@@ -112,8 +129,18 @@ If the app is offline, the mirror shows "Offline — last sync
 
 ### Empty, waiting, error
 
-- **Empty day.** One line: "Nothing scheduled." One action:
-  "Capture something."
+- **Empty timeline.** One muted line in place: "Nothing scheduled." No
+  headline and no action. This is an **empty section, not an empty
+  view** — every Day has a Daily Note (`day.note_created`,
+  `02-architecture/day-as-unit.md`), so the view around it always has
+  content, and a centred `type-display` block here would be absurd.
+- **The action belongs to the now line.** When the day is bare the now
+  line reads "Nothing scheduled — [Capture]" and carries the one action
+  (`06-flows/doing-the-day.md`). It is present in every mode's header, so
+  the Calendar does not need to repeat it.
+- **The Calendar has no whole-view empty state.** It cannot have one: the
+  Daily Note always exists. `03-experience/states.md`'s empty-state form
+  applies to surfaces that can be genuinely bare, and this is not one.
 - **Waiting.** Past 400ms, a static `surface-2` placeholder block for
   the timeline (`03-experience/states.md`). Static — the app has no
   spinner and no shimmer anywhere (ADR 0019).

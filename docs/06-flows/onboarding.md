@@ -32,40 +32,74 @@ replace the app shell rather than floating over it
 (`03-experience/app-shell.md`):
 
 - A seven-segment progress indicator sits at the top, filled in
-  `accent-default`.
-- "Skip" sits top-trailing on screens 1–6 and jumps to screen 7.
+  `accent-default`. It stays seven segments: a variant that grouped them into
+  setup · the win · land was rejected, because an unread grouping is noise and
+  a read one needs a legend this flow has no room for.
+- "Skip" sits top-trailing where it differs from the screen's own path —
+  screens 2–5. On screens 1 and 6 the screen already carries a decline ("Just
+  let me in", "Not now"), and a second affordance for the same act would need
+  decoding at exactly the wrong moment.
 - Screen 7 carries no chrome at all — no progress, no skip — because
   there is nowhere left to go.
 - Pages transition with the screen push
   (`03-experience/motion-vocabulary.md`): forward is leftward, back is
   rightward, and back is available on screens 2–6.
+- **The primary action is the last thing on the page**, full width, at
+  `control-lg`. Every screen has exactly one.
+- **Nothing animates on arrival.** A screen is static until the user acts; the
+  only motion in the flow is motion the user caused.
 
 **Screen 1 — The premise.**
 
     One sentence:
       "A system for running small experiments on your own life."
 
+    One line, `type-footnote`, `text-muted`: "About a minute."
     One action: "Get started."
-    One skip: "Just let me in."
+    One decline: "Just let me in."
 
 The sentence is the identity sentence
 (`01-foundation/identity.md`), quoted verbatim. It is the first
-thing the user sees.
+thing the user sees, set at `type-display` and left-aligned, and it is
+the only `type-display` in the flow — a second one would dilute it.
+
+**"About a minute." is the flow's own invariant said out loud.** First-run's
+promise is "first win in 60 seconds" and the flow delivers it, so the line is a
+disclosure rather than a claim. It is also what earns the tap this screen asks
+for: without it the user is asked to spend attention before they know what it
+costs.
 
 **Screen 2 — Areas.**
 
     "Which parts of your life do you want to track?"
-    Four preselected: Health, Work, Home, Learning.
+    Four preselected, each with its Area glyph: Health, Work, Home, Learning.
     User can deselect any, add a custom one, or accept the defaults.
     Action: "Next."
 
 The four defaults seed the Areas layer
-(`05-modules/areas-and-goals.md`). The "Inbox" Area is created
-silently and cannot be deselected. It receives uncategorized tasks.
+(`05-modules/areas-and-goals.md`). Each chip carries the same glyph the task row
+uses for that Area (`03-experience/components.md`), so the iconography is learnt
+here rather than met for the first time in a list.
+
+**The "Inbox" Area is shown, not silent.** It is created on this screen and
+cannot be deselected, so it appears as a dashed chip reading "Inbox · always on"
+with one line saying what it is for. It was previously created silently, and the
+argument against silence belongs on this screen rather than in a doc: the user is
+choosing their Areas, and one of them is being chosen for them.
+
+**"Add" is a chip in the same row as the Areas.** One control type and one place
+for the same act, rather than a separate button below the chips.
+
+The question stays a question. Recasting it as a statement ("Four areas to
+start.") was rejected: the chips are pre-filled either way, so the statement
+saves the user no tap, and asking is what makes this screen the first act of the
+experiment rather than a confirmation dialog.
 
 **Screen 3 — One habit.**
 
     "Pick one habit to start."
+    One line above the list, `type-callout`: "All daily, and every one has a
+      version you can finish in a minute."
     A curated list of eight:
       - Meditate
       - Walk
@@ -79,8 +113,19 @@ silently and cannot be deselected. It receives uncategorized tasks.
     preset.
     Action: "Next."
 
-Each habit in the list has a preset cadence and minimum-viable
-definition (`05-modules/habits.md`). The presets:
+Every preset is daily and every minimum is deliberately small, so **"daily" is
+said once above the list rather than eight times inside it**, and the column the
+user reads down is the column that differs. Each row's minimum sits on the
+trailing edge at `type-callout` in `text-secondary`: scannable down the list, and
+never louder than the habit's own name. A variant that promoted the minimum above
+the habit name was rejected for reading oddly outside this screen.
+
+The order is the spec's order, as listed below. Sorting by size of commitment
+was rejected: a non-obvious order needs a footnote to explain it, and the
+footnote costs more than the sort gives.
+
+Each habit in the list has a preset cadence and minimum-viable definition
+(`05-modules/habits.md`). The presets:
 
 | Habit | Cadence | Minimum |
 |---|---|---|
@@ -93,27 +138,37 @@ definition (`05-modules/habits.md`). The presets:
 | Sleep by 11pm | daily | within 30 min |
 | Wake at a consistent time | daily | within 30 min |
 
-The user can accept the preset or skip this screen entirely.
+The cadence column is why it is said once above the list: every row is `daily`.
+
+The user can accept the preset or decline the screen entirely.
 
 **Screen 4 — First task.**
 
     "What's one thing you need to do today?"
-    One input field. The user types anything.
-    Tier 1 parses it.
-    Action: "Add it."
+    One input field, focused on arrival.
+    Tier 1 parses it, and the parse appears as a chip as the user types.
+    Action: the keyboard's own return key, labelled "Add it."
+
+**The action is the keyboard.** There is no separate button. The field is focused
+when the screen appears, so the keyboard — and its return key — are on screen
+before the user does anything. A button below the field would be the first thing
+the keyboard covers, which is the mistake every other layout of this screen makes.
+
+**The question stays a heading.** It remains above the field while the user
+types, so the screen keeps answering what it is for.
 
 **Note on build order.** Before Tier 1 ships (Phases 0–2 of
-`09-roadmap/build-order.md`), screen 4 falls back to raw capture:
-the task is created with the literal text, no parsing, no chip. The
-onboarding flow ships in Phase 0 with this fallback and is upgraded
-to Tier 1 parsing in Phase 3. The UX is identical; the only
-difference is whether the "parsed" chip appears.
+`09-roadmap/build-order.md`), screen 4 falls back to raw capture: the task is
+created with the literal text. The flow ships in Phase 0 with this fallback and
+is upgraded in Phase 3. The UX is identical — the only difference is whether the
+chip appears — so there is one copy of this screen, not two, and no line may
+refer to the parse.
 
 **Screen 5 — First win.**
 
     The task appears in a minimal list. The user taps the checkbox.
     Completion animation, haptic, undo toast.
-    Copy: "That's the loop."
+    Copy: "That's the loop." at `type-title-1`.
     Action: "Continue."
 
 This is the "first win in 60 seconds" moment. The user has now
@@ -121,15 +176,39 @@ experienced capture → parse → complete → undo, in under a minute.
 The undo toast is shown but the user is not prompted to use it; it
 is there if they want it.
 
+**The row stays, and stays checked.** It is the proof of what just happened and
+the only thing still on screen once the toast has gone. A variant that drew the
+moment after the row left the list was rejected: it removes the proof and leaves
+the sentence carrying alone what a checked checkbox was carrying.
+
+**The action sits above the toast's band.** This is the only screen in the app
+where an undo toast and a flow action are on screen together
+(`03-experience/components.md`), so the action block lifts rather than being
+covered by it.
+
+**No recap and no celebration.** A variant naming the three steps (captured ·
+parsed · completed) was rejected twice over: it explains, which this flow does
+not do, and it names the parse on a screen that must read the same before Tier 1
+ships. `06-flows/completion.md`'s celebration card belongs to the third of the
+top three, and on day one there is no streak to earn it.
+
 **Screen 6 — Optional setup.**
 
     "Want to connect your calendar?"
-    Explains: "Your events will appear in the app. Two-way sync.
-    You can disconnect anytime."
+    Two labelled rows:
+      Reads — events already in your calendar
+      Writes — events you add here
+    One line: "Two-way sync, and you can disconnect anytime."
     Actions: "Connect calendar" / "Not now."
 
     If "Connect calendar," the OAuth flow runs. If it succeeds,
     today's events appear in the calendar view.
+
+**"Two-way sync" is unpacked into two rows**, because it is the whole consent
+question compressed into two words the user has no way to read. A third row
+covering disconnection was rejected: it repeats "you can disconnect anytime",
+and three rows of terms is a heavier ask than the last screen before the app
+should make. The two button labels are the spec's, word for word.
 
 If the user declines, the app still works. The Calendar mode will
 show only in-app events until a calendar is connected.
@@ -137,11 +216,20 @@ show only in-app events until a calendar is connected.
 **Screen 7 — Land.**
 
     The user lands on the Calendar day view.
-    The now line shows the day's next scheduled item, or nothing if
-    the day is empty (`06-flows/doing-the-day.md`).
+    The day shows the task completed on screen 5, in the Completed
+    section (`05-modules/calendar.md`).
+    The now line shows the day's next scheduled item, or
+    "Nothing scheduled — [Capture]" if the day is bare
+    (`06-flows/doing-the-day.md`).
     The morning plan is suppressed for the rest of today — the setup
     flow was the day's ritual. It fires on the first open of the
     next day (`06-flows/morning-plan.md`).
+
+**The arrival shows what the last sixty seconds produced.** The task completed on
+screen 5 appears in the day's Completed section, so the flow's first win is the
+first thing the day's record holds rather than something the user has to go
+looking for. This is what makes the arrival continuous with the flow instead of a
+fresh start.
 
 The user's first morning plan fires on day 2 of use. This is
 deliberate: the user should experience the app once before it asks
@@ -153,8 +241,9 @@ If the user skips onboarding (taps "Just let me in"):
 
 - They land on the Calendar day view.
 - Areas are seeded with the four defaults.
-- No habit, no task.
-- Empty states have a single primary action: "Capture something."
+- No habit, no task, so the timeline is empty and the now line reads
+  "Nothing scheduled — [Capture]". The Day view has no whole-view empty state:
+  the Daily Note always exists (`05-modules/calendar.md`).
 - The full app is available.
 
 Skipping is not "incomplete setup." It is a valid path. The user

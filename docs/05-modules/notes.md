@@ -43,6 +43,27 @@ can have).
   by other flows (reviews, retrospectives) appear under Recent and
   All.
 
+### Empty states
+
+The form is `03-experience/states.md`; the action repairs the cause
+(`05-modules/tasks.md`).
+
+| Scope, empty | Headline | Detail line | Action |
+|---|---|---|---|
+| **Recent** | Nothing written lately. | The last 14 days of notes, newest first. | New note |
+| **All** | Nothing written. | A note attaches to a task, a person, a day, or a protocol. | New note |
+| **Daily** | — | — | — |
+
+**The Daily scope is never empty.** A Daily Note is created for every
+Day at rollover (`day.note_created`,
+`02-architecture/day-as-unit.md`), so the scope always holds at least
+today's. This is the same reason the Calendar has no whole-view empty
+state (`05-modules/calendar.md`).
+
+The **New note** action opens the attachment target picker rather than
+a bare editor, because a note without a parent is not a thing this app
+has (`05-modules/notes.md`, Attaching and reattaching).
+
 ### The note row
 
     Title (or first line)                   [attachment chip]

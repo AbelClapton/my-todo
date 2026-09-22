@@ -25,9 +25,10 @@ shows it.
 - An empty state has exactly one action, and the action repairs the cause
   of the emptiness — capture when there is no data, clear the filter when
   nothing matches, widen the window when nothing falls inside it. Where the
-  emptiness needs no repair there is no action: **Someday is the only such
-  surface in the app**, and a second one is a change to this doc rather than a
-  local decision (`05-modules/tasks.md`).
+  emptiness needs no repair there is no action: **the list is exactly two
+  entries long** — Someday (`05-modules/tasks.md`) and the People mode's
+  Quiet scope (`05-modules/people.md`). A third is a change to this doc
+  rather than a local decision.
 - **An empty state never carries a glyph.** `icon-xl`'s row in
   `03-experience/design-tokens.md` anticipated one, and no surface ever
   grew one.
@@ -78,7 +79,7 @@ edited.
 | Surface family | Empty | Waiting | Stale |
 |---|---|---|---|
 | Mode lists (Tasks, Habits, Notes, People) | Yes | Rarely — local projections | No |
-| Day view sections | Yes — a day with nothing scheduled | No | Yes, for mirrored events and weather |
+| Day view sections | Sections only — one line in place, never a block | No | Yes, for mirrored events and weather |
 | Cards in a stream | No — a card that has nothing to say does not appear | No | Yes, for AI-gathered content |
 | Sheets and pickers | Yes — an empty picker offers creation | No | No |
 | Search and the palette | Yes | Yes — semantic search may wait | No |
@@ -103,6 +104,13 @@ An empty state is not an error, and it is not a dead end. The rules:
 - Its one action repairs the cause, and where there is nothing to repair
   there is no action. `05-modules/tasks.md` carries the strings and the
   three causes.
+- **A section can be empty without the view being empty.** An empty section
+  states itself in one muted line, in place — no headline, no action. The
+  centred block is reserved for a surface that is genuinely bare. The Day
+  view is the case in point: its timeline can be empty while the view still
+  holds habits, a metric, and the Daily Note, and the Daily Note always
+  exists, so the Day view has no whole-view empty state at all
+  (`05-modules/calendar.md`).
 
 ## Examples
 

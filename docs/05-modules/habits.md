@@ -37,6 +37,22 @@ The Habits mode is not a streak game. It tracks compliance —
 - **History.** Per-habit history: compliance over time, with a
   window selector (7 days, 30 days, 90 days, custom).
 
+### Empty states
+
+The form is `03-experience/states.md`; the action repairs the cause
+(`05-modules/tasks.md`).
+
+| Scope, empty | Headline | Detail line | Action |
+|---|---|---|---|
+| **Today** | Nothing due today. | Habits appear here on the days their cadence falls on. | Add a habit |
+| **All** | Nothing tracked. | Every habit gets a version you can do on a bad day. | Add a habit |
+| **History** | Nothing to show. | This fills in as you check the habit off. | Add a habit |
+
+The action is the same in all three because the cause is the same:
+there are no habits yet. Once habits exist, no scope can be empty except
+**History** on a habit created today, which is the only case where the
+detail line is doing real work rather than pointing at the action.
+
 ### Cadence model
 
 A cadence is one of:

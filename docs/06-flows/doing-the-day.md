@@ -35,7 +35,7 @@ or:
 
 or:
 
-    NOW: Nothing scheduled — [Pick a task]
+    NOW: Nothing scheduled — [Capture]
 
 Sources, in order:
 
@@ -44,7 +44,13 @@ Sources, in order:
 3. The next event today, if one is within 2 hours.
 4. The next scheduled task today.
 5. The top-priority open task.
-6. "Nothing scheduled — [Pick a task]."
+6. "Nothing scheduled — [Capture]."
+
+**Why capture and not "pick a task" here.** This source fires only when
+there are no events and no open tasks — if any open task existed, source
+5 would have caught it. So an action that offers to pick a task has
+nothing to pick. Capture is the only action that works in the state that
+shows it, and capture is available from every mode.
 
 Tapping the now line opens the relevant surface: focus session,
 event detail, or task detail.
@@ -148,6 +154,11 @@ focus, the queue may fire a gap nudge:
 The suggestions are open tasks that fit the gap length based on
 user-estimated duration (if available) or a heuristic. The user
 taps one → starts focus on it.
+
+**The nudge does not fire without a candidate.** If no open task fits the
+gap, the suggestion row would be empty and the nudge would offer to pick a
+task with nothing to pick — the same defect the now line's sixth source was
+corrected for above. The queue skips it.
 
 A gap nudge is a `contextual` variant, not a surface of its own: it
 spends the `contextual` slot and shares its urgency band and TTL, has

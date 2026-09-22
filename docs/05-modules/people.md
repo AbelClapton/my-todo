@@ -33,6 +33,24 @@ other modules.
 - **Quiet.** People with no activity in >30 days (opt-in view;
   see `06-flows/resurfacing.md`).
 
+### Empty states
+
+The form is `03-experience/states.md`; the action repairs the cause
+(`05-modules/tasks.md`).
+
+| Scope, empty | Headline | Detail line | Action |
+|---|---|---|---|
+| **All** | Nobody added. | People appear here when you link them to a task, an event, or a note. | Add a person |
+| **Recent** | Nobody added. | Activity in the last 30 days puts someone here. | Add a person |
+| **Quiet** | Everyone's current. | This is where people go when you have not touched anything of theirs in a month. | **None** |
+
+**Quiet carries no action, and it is the second such surface in the app.**
+A quiet list with nobody in it is good news, so there is nothing to repair
+— which is why the headline states the good news rather than the absence,
+and why the same reasoning that gives Someday no action
+(`05-modules/tasks.md`) applies here. `03-experience/states.md` now lists
+both exceptions and holds the count at two.
+
 ### The person row
 
     Sarah Chen                              [last: 3w ago]

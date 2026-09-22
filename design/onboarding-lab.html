@@ -649,11 +649,7 @@ body {
         <div class="vc-stage">
           <div class="phone">
             <div class="ob-bar">
-              <span class="seg3">
-                <span class="grp"><i class="on"></i><i></i><i></i><i></i></span>
-                <span class="grp win"><i></i></span>
-                <span class="grp"><i></i><i></i></span>
-              </span>
+              <span class="seg7"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
             </div>
             <div class="ob-body stretch" style="justify-content: center; gap: var(--space-5);">
               <h2 class="t-display" style="margin: 0;">A system for running<br>small experiments<br>on your own life.</h2>
@@ -666,10 +662,11 @@ body {
           </div>
         </div>
         <dl class="vc-foot">
-          <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for the sentence, verbatim and alone. <b>Impeccable</b> for one line of honest commitment — the flow's own invariant is a sixty-second promise, so saying it is a disclosure rather than a claim. <b>Frontend design</b> for the indicator that encodes the flow's real shape. <b>Design taste</b> for taking an affordance away.</dd></div>
-          <div class="vc-line cost"><dt>Fixes</dt><dd>The duplicate skip: the top one goes and "Just let me in" stays, because it says what happens. The indicator stops being decoration and becomes the shape of the flow, with the payoff segment taller. And the tap is earned — the user knows what it costs before spending it.</dd></div>
-          <div class="vc-line open"><dt>Still needs</dt><dd>A decision on whether "About a minute." is this screen's to write. It is true, and it is the app's own claim, but <code>onboarding.md</code> owns the words here.</dd></div>
+          <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for the sentence, verbatim and alone. <b>Impeccable</b> for one line of honest commitment — the flow's own invariant is a sixty-second promise, so saying it is a disclosure rather than a claim. <b>Design taste</b> for taking an affordance away.</dd></div>
+          <div class="vc-line cost"><dt>Fixes</dt><dd>The duplicate skip: the top one goes and "Just let me in" stays, because it says what happens. And the tap is earned — the user knows what it costs before spending it. The indicator is left exactly as the spec wrote it: frontend-design's grouped version was rejected, because the grouping either goes unread or needs a legend.</dd></div>
+          <div class="vc-line open"><dt>Decided</dt><dd>"About a minute." is in. It is the flow's own invariant — first win in 60 seconds — said out loud, so the line is a disclosure rather than a claim. The seven-segment indicator stays; the grouped version was rejected because an unread grouping is noise and a read one needs a legend.</dd></div>
         </dl>
+      </article>
   </div>
 
   <section class="lede">
@@ -692,7 +689,7 @@ body {
         <h3 class="t-title-3">In conflict</h3>
         <ul>
           <li><b>Does the screen say what happens next?</b> V2 and V3 both decided a bare claim is not enough. V1 and V4 both decided it is. This is the real question on this screen.</li>
-          <li><b>Do the seven segments mean anything?</b> V1 and V4 keep them as progress. V2 finds them decorative. V3 makes them carry the flow's shape.</li>
+          <li><b>Do the seven segments mean anything?</b> V1, V3 and V4 keep them as progress. V2 finds them decorative. V3 makes them carry the flow's shape — and that is the one the spec rejected: an unread grouping is noise, and a read one needs a legend the flow has no room for.</li>
           <li><b>One skip or two?</b> V1 keeps both because the spec says so. The other three drop the top-trailing one and keep the sentence that states its own consequence.</li>
         </ul>
       </div>
@@ -891,8 +888,9 @@ body {
         <dl class="vc-foot">
           <div class="vc-line"><dt>Takes</dt><dd><b>Impeccable</b> for turning the question into a statement and for showing the Inbox. <b>Frontend design</b> for the glyphs — but placed in the chips, where the icon rules already allow one, instead of in a tile that repeats the word. <b>Design taste</b> for making "add" a chip in the same row rather than a second control type.</dd></div>
           <div class="vc-line cost"><dt>Fixes</dt><dd>The screen no longer quizzes the user about a decision it has already made. The Inbox is disclosed before a task can land in it. And the iconography is taught on screen 2 without the 2×2 grid that cost twice the height and broke the icon rule.</dd></div>
-          <div class="vc-line open"><dt>Still needs</dt><dd>A decision on the wording change: "Four areas to start." is not <code>onboarding.md</code>'s sentence, and the change should be made there, not here.</dd></div>
+          <div class="vc-line open"><dt>Decided</dt><dd>The question stays a question — rejecting this row's own statement rewrite. The chips are pre-filled either way, so the statement saves no tap, and asking is what makes this screen the first act rather than a confirmation dialog. What was taken is the Inbox disclosure, the glyphs, and "Add" as a chip. Inbox was previously created silently; <code>onboarding.md</code> now shows it.</dd></div>
         </dl>
+      </article>
     </div>
   </section>
   <!-- /s2 -->
@@ -1103,8 +1101,9 @@ body {
         <dl class="vc-foot">
           <div class="vc-line"><dt>Takes</dt><dd><b>Impeccable</b> for the insight: the minimum is what the user is choosing, and it deserves its own column. <b>Baseline</b> for keeping the spec's order and the spec's full preset. <b>Design taste</b> for the radio on the trailing edge and no chrome beyond it.</dd></div>
           <div class="vc-line cost"><dt>Fixes</dt><dd>"daily" is said once instead of eight times. The minimum is set at <code>type-callout</code> in <code>text-secondary</code> — scannable down the column, but no longer outranking the habit's name. No reordering to explain, and no prose in the mono face.</dd></div>
-          <div class="vc-line open"><dt>Still needs</dt><dd>The line under the heading is new copy, and it is the only thing on this screen that teaches why the minimums are small.</dd></div>
+          <div class="vc-line open"><dt>Decided</dt><dd>The line is in. It is the only thing on this screen that teaches why the minimums are small, which is the app's actual idea, and it buys the removal of eight repetitions of "daily".</dd></div>
         </dl>
+      </article>
     </div>
   </section>
   <!-- /s3 -->
@@ -1287,8 +1286,9 @@ body {
         <dl class="vc-foot">
           <div class="vc-line"><dt>Takes</dt><dd><b>Design taste</b> for the realisation that the keyboard already has the action on it. <b>Impeccable</b> for showing the parse as it happens rather than describing it. <b>Baseline</b> for keeping the question on screen as a heading, where it survives typing.</dd></div>
           <div class="vc-line cost"><dt>Fixes</dt><dd>Focusing the field on arrival removes design-taste's cost: the keyboard, and its "Add it" key, are there before the user does anything, so the action is never invisible. The heading stays, so the screen keeps answering what it is for. The parse chip sits above the keyboard, where it is not covered.</dd></div>
-          <div class="vc-line open"><dt>Still needs</dt><dd>Two copies of the chip line until Phase 3 — with Tier 1 and with raw capture. And auto-focusing a field opens the keyboard on arrival, which is a platform behaviour worth confirming rather than assuming.</dd></div>
+          <div class="vc-line open"><dt>Decided</dt><dd>One copy, not two. The only difference between the phases is whether the chip appears, so no line may refer to the parse — which is why impeccable's "correct anything" line was dropped. What is left to confirm is a platform behaviour: that focusing the field actually opens the keyboard on arrival.</dd></div>
         </dl>
+      </article>
     </div>
   </section>
   <!-- /s4 -->
@@ -1485,8 +1485,9 @@ body {
         <dl class="vc-foot">
           <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for the moment: the row stays, checked, because the proof is the point. <b>Impeccable</b> for the three chips that name what just happened, without its forbidden footnote. <b>Frontend design</b> for the sentence's prominence — at <code>type-title-1</code>, not a second <code>type-display</code>.</dd></div>
           <div class="vc-line cost"><dt>Fixes</dt><dd>The toast and the action no longer occupy the same place: the action area lifts so the toast sits below it. The line is loud enough to be the answer without competing with the identity sentence. The proof of the win stays on screen after the toast has gone.</dd></div>
-          <div class="vc-line open"><dt>Still needs</dt><dd>A decision on the toast position. <code>components.md</code> says the undo toast slides up from the bottom edge, and on this screen the bottom edge is where the flow's action lives. This is the only screen where the two meet.</dd></div>
+          <div class="vc-line open"><dt>Decided</dt><dd>The action lifts above the toast's band, and this is recorded as the only screen in the app where an undo toast and a flow action share the screen. The recap chips were dropped twice over: they explain, and "parsed" names a concept the flow must not depend on before Tier 1 ships.</dd></div>
         </dl>
+      </article>
     </div>
   </section>
   <!-- /s4b -->
@@ -1670,8 +1671,9 @@ body {
         <dl class="vc-foot">
           <div class="vc-line"><dt>Takes</dt><dd><b>Frontend design</b> for treating the permission as the screen's subject rather than a footnote to a benefit. <b>Baseline</b> for keeping the spec's question and both button labels exactly as written. <b>Design taste</b> for cutting the line count — but the cut is the third row, not the terms.</dd></div>
           <div class="vc-line cost"><dt>Fixes</dt><dd>"Two-way sync" stops being a phrase and becomes two labelled rows. The top Skip goes, so there is one way to decline rather than two. And nothing promises anything about the server, so the screen cannot be inaccurate.</dd></div>
-          <div class="vc-line open"><dt>Still needs</dt><dd>A check against <code>sync-engine.md</code> before anything stronger can be said about disconnecting — and the string for that, if it is wanted.</dd></div>
+          <div class="vc-line open"><dt>Decided</dt><dd>The two rows are in and the third is out, because it only repeated "you can disconnect anytime". No claim is made about what the server keeps, so the screen cannot be inaccurate — and the check this row asked for is therefore not needed yet.</dd></div>
         </dl>
+      </article>
     </div>
   </section>
   <!-- /s6 -->
@@ -1682,14 +1684,15 @@ body {
       <h2 class="t-title-2">Screen 7 — Land</h2>
       <p>
         No progress, no skip, no chrome. The user arrives in the Calendar day view, which is the
-        app's primary view of the Day. The spec says the now line shows the day's next scheduled
-        item, or nothing if the day is empty — and on day one of a user who declined the calendar,
-        <b>the day is empty</b>. Every variant below had to answer that, and only one chose to.
+        app's primary view of the Day — and which is where the flow's continuity is either kept or
+        thrown away.
       </p>
       <p>
-        <span class="flag">doc gap</span>
-        &nbsp;<code>calendar.md</code> still owes its empty-state strings. The copy in V4 is
-        shaped like the Tasks scopes' and marked, not decided.
+        <span class="flag">I was wrong here</span>
+        &nbsp;This screen's first draft claimed <code>calendar.md</code> owed its empty-state
+        strings. It did not. It had one, and the string was fine — the <i>action</i> was wrong, and
+        so was the thing it described: the Day view cannot be empty as a view, because every Day
+        has a Daily Note. What can be empty is the timeline, which is a section, not the surface.
       </p>
     </section>
 
@@ -1839,8 +1842,8 @@ body {
         </div>
         <dl class="vc-foot">
           <div class="vc-line"><dt>Changed</dt><dd>It draws the frame a user who declined screen 6 actually lands on, and answers it with the one action that changes it. The action repairs the cause, which is the rule the Tasks scopes already settled.</dd></div>
-          <div class="vc-line cost"><dt>Cost</dt><dd>It answers a question the spec did not ask — <code>onboarding.md</code> describes screen 7 as landing on the day view with a now line, not as an empty state. The copy here is borrowed from the Tasks scopes and <code>calendar.md</code> has not written its own.</dd></div>
-          <div class="vc-line rules"><dt>Against rules</dt><dd>One: the copy is borrowed. <code>states.md</code> says an empty state's string lives with the surface that shows it, and <code>calendar.md</code> has not written one.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>It invents a frame that cannot occur. The Day view has no whole-view empty state — every Day has a Daily Note, so the view always has content — and the copy is borrowed from the Tasks scopes, where the surfaces really can be bare.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>One: the copy is borrowed. <code>states.md</code> says an empty state's string lives with the surface that shows it, and this surface does not have one to give.</dd></div>
         </dl>
       </article>
 
@@ -1881,8 +1884,9 @@ body {
         <dl class="vc-foot">
           <div class="vc-line"><dt>Takes</dt><dd><b>Impeccable</b> for the continuity — the task the flow just completed is the first thing the day view shows, so the flow's first win becomes the app's first log entry. <b>Baseline</b> for keeping the now line a marker rather than a message.</dd></div>
           <div class="vc-line cost"><dt>Fixes</dt><dd>The arrival is not a fresh start: the user sees what they just did in the place it now lives. And the now line stays silent about gaps, so it measures the day instead of commenting on it.</dd></div>
-          <div class="vc-line open"><dt>Still needs</dt><dd>Two things, both docs rather than design. An answer to whether a completed task belongs in the Calendar day view — the Day is the join key, so it should, but no doc states it. And <code>calendar.md</code> owes its own empty-state strings, with the action depending on whether a calendar is connected: "Connect calendar" if it is not, capture if it is.</dd></div>
+          <div class="vc-line open"><dt>Decided</dt><dd>Both questions answered, and both answers were already implied by other docs. <code>calendar.md</code> gains a section 8, Completed, which renders <code>tasks_completed</code> — a projection field that had no surface. And the empty case is the timeline's, not the view's: every Day has a Daily Note, so the Calendar has no whole-view empty state at all, and the action lives in the now line.</dd></div>
         </dl>
+      </article>
     </div>
   </section>
   <!-- /s7 -->

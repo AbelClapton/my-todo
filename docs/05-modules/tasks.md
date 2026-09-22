@@ -139,11 +139,13 @@ and the detail line states what actually puts a task in the scope.
 | **All, filtered** | No tasks match. | The active filters, named — e.g. "Area: Work · due within 7 days" | Clear filters |
 | **Completed, empty** | Nothing completed. | The log covers the last 30 days by default. | Show all time |
 
-**Someday is the only surface in the app whose empty state carries no
-action.** A parking lot with nothing parked is not a dead end and not a
+**Someday carries no action, and it is the first of exactly two such
+surfaces.** A parking lot with nothing parked is not a dead end and not a
 problem, so there is nothing to repair. Offering "Capture something" there
 would be the one thing this scope must never do: read as a prompt to fill
-it. Every other empty state in the app carries exactly one action.
+it. Every other empty state in the app carries exactly one action; the
+second exception is the People mode's Quiet scope
+(`05-modules/people.md`).
 
 **Today-empty and Someday-empty mean opposite things.** Today empty means
 nothing has a day; Someday empty means nothing has been set aside. Neither

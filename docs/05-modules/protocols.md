@@ -53,6 +53,25 @@ which is the most common case.
 - **Proposed.** Protocols in `proposed` status, awaiting adoption.
 - **Past.** Completed and abandoned protocols.
 
+### Empty states
+
+The form is `03-experience/states.md`; the action repairs the cause
+(`05-modules/tasks.md`).
+
+| Scope, empty | Headline | Detail line | Action |
+|---|---|---|---|
+| **Active** | Nothing running. | A protocol is a window of days with a metric and a few habits. | Propose one |
+| **Proposed** | Nothing proposed. | Protocols arrive from a Goal, or from what the app notices in your log. | Open a Goal |
+| **Past** | Nothing finished. | Protocols land here once their window closes. | Propose one |
+
+**The Propose action is a Tier 3 request, not a form.** A protocol is
+proposed with a hypothesis, a metric, and a baseline period
+(`05-modules/protocols.md`, Adoption), which the user does not write by
+hand. The empty state's action therefore opens the Goal it is proposed
+from rather than a creation form. This is also why onboarding does not
+onboard into protocols: they are discovered once there are two weeks of
+data to propose from (`06-flows/onboarding.md`).
+
 ### The protocol card
 
 In the Protocols view (accessible from the command palette, from
