@@ -379,6 +379,51 @@ rule is load-bearing (Someday's suppression of the metadata line is a visible
 difference, not a technicality), and the accent reads correctly as a priority dot
 at 8px — its smallest use in the app.
 
+## Icons, in the lab
+
+Three blocks: the size reference, the task row three ways, and the empty state with
+and without a glyph. The glyphs are hand-drawn stand-ins — the repo has no icon
+set — drawn to the rules a set would have to meet (24px grid, 2px stroke, round
+caps and joins, `currentColor` so a glyph inherits its colour and can never
+introduce one).
+
+**Finding 22 · Two documented icon usages don't exist.** `design-tokens.md` lists
+`icon-md 20` as the default in a **list row** and `icon-xl 32` for an **empty
+state**. Neither surface has an icon. So this was never "should we add decoration"
+— an icon was already specified and simply never drawn.
+
+**Finding 23 · "Feature callouts" is an orphan.** It is named as an `icon-xl` use
+and no surface by that name exists anywhere in the doc set.
+
+**What the comparison showed, on the row.** Adding a leading glyph pushes the
+checkbox inward and **breaks the checkbox column's alignment down the list**, which
+is the one thing a task list relies on for scanning. Neutral glyphs (panel B) repeat
+the metadata line in a second channel — a grey briefcase beside grey text saying
+"Work". Coloured glyphs (panel C) need a category colour system, and the four demo
+hues collide immediately: amber is `warning`, green is `success`, and violet is
+close to the accent. Worst of all, the Work row then carries a **blue category glyph
+and a teal priority dot** — two coloured marks in one row doing different jobs,
+which is the same collision that ruled teal out against green.
+
+So: **the row stays icon-free.** The metadata line is the category channel, and it
+is a better one, because it says "Work" in words rather than a hue that has to be
+learned.
+
+**What the comparison showed, on the empty state.** `states.md` forbids an
+*illustration* and says nothing about a glyph, so an `icon-xl` here is compatible
+with the rule rather than an exception to it. I'd take it with one condition: a
+single neutral glyph, never coloured, because an empty state's job is orientation
+and a coloured glyph would read as a state the surface does not have.
+
+### Still open
+
+- **Choose an icon set.** Lucide is the natural candidate — shadcn already assumes
+  it, it is a 24px grid with a uniform 2px stroke, and the licence is clean. The
+  set plus its drawing rules belong in `03-experience/components.md` as **assets**:
+  the size table stays as it is, no new tokens, so no ADR.
+- **Decide the empty-state glyph.** The token anticipates it; the surface doesn't
+  have one yet.
+
 ## What this deliberately does not do
 
 - **No icon set.** The rail and header use text glyphs. `design-tokens.md` says
