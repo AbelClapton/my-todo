@@ -925,6 +925,49 @@ body.no-annot .tok { display: none; }
   font-size: var(--type-body-size);
 }
 
+/* ============================== ICONS ===================================
+   Sizes are tokens (`design-tokens.md`); the glyphs are ASSETS, which that doc
+   says explicitly. There is no icon set in the repo, so these are hand-drawn
+   stand-ins that follow the drawing rules a set would have to meet: a 24px
+   grid, a uniform 2px stroke, round caps and joins, and `currentColor` so a
+   glyph inherits its colour and can never introduce one.
+
+   The stroke width and the grid are NOT tokens, and they should not become
+   tokens: they are drawing rules and belong with the asset set.
+   ======================================================================== */
+.ic {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: none;
+}
+.ic-xs { width: var(--icon-xs); height: var(--icon-xs); }
+.ic-sm { width: var(--icon-sm); height: var(--icon-sm); }
+.ic-md { width: var(--icon-md); height: var(--icon-md); }
+.ic-lg { width: var(--icon-lg); height: var(--icon-lg); }
+.ic-xl { width: var(--icon-xl); height: var(--icon-xl); }
+
+.icon-sizes { display: flex; flex-direction: column; gap: var(--space-5); }
+.icon-size-row { display: flex; align-items: center; gap: var(--space-5); }
+.icon-size-row .ic { color: var(--text-secondary); }
+.icon-size-row code {
+  font-family: var(--font-mono);
+  font-size: var(--type-footnote-size);
+  color: var(--text-primary);
+  width: 72px;
+  flex: none;
+}
+.icon-size-row span { font-size: var(--type-callout-size); color: var(--text-secondary); }
+
+/* The demo hues are deliberately NOT tokens. That is the finding: a category
+   colour system has no room in a palette that reserves colour for meaning. */
+.cat-work  { color: #2563EB; }
+.cat-home  { color: #D97706; }
+.cat-health { color: #16A34A; }
+.cat-learn { color: #7C3AED; }
+
 /* ============================== CONTRAST TABLE ========================== */
 .ct { width: 100%; border-collapse: collapse; }
 .ct th, .ct td {
@@ -1009,6 +1052,7 @@ body.no-annot .tok { display: none; }
   <nav class="lab-jump">
     <a href="#rows">Rows</a>
     <a href="#taskrow">Task row</a>
+    <a href="#icons">Icons</a>
     <a href="#tasksmode">Tasks mode</a>
     <a href="#controls">Controls</a>
     <a href="#chips">Chips</a>
@@ -1284,6 +1328,158 @@ body.no-annot .tok { display: none; }
       <span class="tok">switch Accent above and read this row as a pair</span>
     </div>
   </div>
+</section>
+
+<!-- ============================== ICONS ============================== -->
+<section id="icons">
+  <!-- Glyphs as symbols, referenced with <use>. Stand-ins for a real set:
+       24px grid, 2px stroke, round caps and joins. -->
+  <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-work" viewBox="0 0 24 24"><path d="M3 8h18v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></symbol>
+      <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V9.5"/></symbol>
+      <symbol id="i-health" viewBox="0 0 24 24"><path d="M12 20.5S4.5 15.8 4.5 10.4A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 3.2c0 5.4-7.5 10.1-7.5 10.1z"/></symbol>
+      <symbol id="i-learn" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M6 17h12"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5.2l3.4 2"/></symbol>
+      <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M4 6h16v14H4z"/><path d="M4 10h16"/><path d="M8 3v4M16 3v4"/></symbol>
+      <symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.3 3.1-5.2 7-5.2s7 1.9 7 5.2"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="m4.5 12.5 5 5 10-11"/></symbol>
+      <symbol id="i-clip" viewBox="0 0 24 24"><path d="M8 12.5 15 5.5a3.5 3.5 0 0 1 5 5l-8.6 8.6a5.5 5.5 0 0 1-7.8-7.8L11 4"/></symbol>
+    </defs>
+  </svg>
+
+  <div class="sec-head">
+    <h2 class="t-title-1">Icons</h2>
+    <span class="tok">sizes are tokens · the glyphs are assets</span>
+  </div>
+  <p class="sec-note">
+    Two icon usages are already documented and don't exist yet: <code>icon-md 20</code>
+    is listed as the default in a <em>list row</em>, and <code>icon-xl 32</code> for
+    an <em>empty state</em>. Neither surface has one. This section exists to settle
+    both by looking, rather than by arguing.
+  </p>
+  <p class="sec-note">
+    There is no icon set in the repo, so the glyphs here are stand-ins drawn to the
+    rules a set would need to meet — a 24px grid, a uniform 2px stroke, round caps
+    and joins, and <code>currentColor</code> so a glyph inherits its colour and can
+    never introduce one.
+  </p>
+
+  <div class="variant">
+    <div class="vlabel">
+      <span class="vnum">01</span>
+      <span class="t-title-3">The sizes, at real size</span>
+      <span class="tok">design-tokens.md · every value below is a token</span>
+    </div>
+    <div class="card" style="margin-top: var(--space-4);">
+      <div class="icon-sizes">
+        <div class="icon-size-row"><code>icon-xs 12</code><svg class="ic ic-xs"><use href="#i-check"/></svg><span>Inline with caption text</span></div>
+        <div class="icon-size-row"><code>icon-sm 16</code><svg class="ic ic-sm"><use href="#i-check"/></svg><span>Inline with body text, chips</span></div>
+        <div class="icon-size-row"><code>icon-md 20</code><svg class="ic ic-md"><use href="#i-check"/></svg><span>List rows, buttons, tab bar</span></div>
+        <div class="icon-size-row"><code>icon-lg 24</code><svg class="ic ic-lg"><use href="#i-check"/></svg><span>Mode switcher, prominent actions</span></div>
+        <div class="icon-size-row"><code>icon-xl 32</code><svg class="ic ic-xl"><use href="#i-check"/></svg><span>Empty state, feature callouts</span></div>
+      </div>
+      <div class="annot-row">
+        <span class="tok">"feature callouts" names no surface in the doc set — an orphan</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="variant">
+    <div class="vlabel">
+      <span class="vnum">02</span>
+      <span class="t-title-3">The row, three ways</span>
+      <span class="tok">icon-md in a list row, per the token table</span>
+    </div>
+    <p class="sec-note" style="margin-top: 0;">
+      Read the checkbox column, not the glyphs. Adding a leading icon pushes the
+      checkbox in and <strong>breaks its alignment down the list</strong>, which is
+      the one thing a task list relies on for scanning.
+    </p>
+
+    <div class="panels" style="margin-top: var(--space-5);">
+      <div class="panel">
+        <div class="panel-head">
+          <span class="t-title-2">A · No row icon</span>
+          <span class="tok">what is designed today</span>
+          <span class="rule">Checkbox, title, metadata. The metadata line already says "Work".</span>
+        </div>
+        <div class="list">
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Draft the Q3 retro</span><span class="r-meta-mono">Work · due today</span></div><span class="pdot"></span></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Call the landlord</span><span class="r-meta-mono">Home · due today</span></div></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span><span class="r-meta-mono">Health · due Thu</span></div></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Read the two papers</span><span class="r-meta-mono">Learning · est 40m</span></div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <span class="t-title-2">B · Leading, neutral</span>
+          <span class="tok">one grey glyph per row</span>
+          <span class="rule">Says "this has a category" without saying which one — so it repeats the metadata line without adding to it.</span>
+        </div>
+        <div class="list">
+          <div class="row r-rich"><svg class="ic ic-md" style="color: var(--text-muted);"><use href="#i-work"/></svg><span class="check"></span><div class="r-main"><span class="t-body r-title">Draft the Q3 retro</span><span class="r-meta-mono">Work · due today</span></div><span class="pdot"></span></div>
+          <div class="row r-rich"><svg class="ic ic-md" style="color: var(--text-muted);"><use href="#i-home"/></svg><span class="check"></span><div class="r-main"><span class="t-body r-title">Call the landlord</span><span class="r-meta-mono">Home · due today</span></div></div>
+          <div class="row r-rich"><svg class="ic ic-md" style="color: var(--text-muted);"><use href="#i-health"/></svg><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span><span class="r-meta-mono">Health · due Thu</span></div></div>
+          <div class="row r-rich"><svg class="ic ic-md" style="color: var(--text-muted);"><use href="#i-learn"/></svg><span class="check"></span><div class="r-main"><span class="t-body r-title">Read the two papers</span><span class="r-meta-mono">Learning · est 40m</span></div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <span class="t-title-2">C · Leading, coloured</span>
+          <span class="tok">each area its own hue</span>
+          <span class="rule">Read these against the accent and the three semantics. Blue competes with nothing, amber is the warning hue, green is success, violet is nearest the accent.</span>
+        </div>
+        <div class="list">
+          <div class="row r-rich"><svg class="ic ic-md cat-work"><use href="#i-work"/></svg><span class="check"></span><div class="r-main"><span class="t-body r-title">Draft the Q3 retro</span><span class="r-meta-mono">Work · due today</span></div><span class="pdot"></span></div>
+          <div class="row r-rich"><svg class="ic ic-md cat-home"><use href="#i-home"/></svg><span class="check"></span><div class="r-main"><span class="t-body r-title">Call the landlord</span><span class="r-meta-mono">Home · due today</span></div></div>
+          <div class="row r-rich"><svg class="ic ic-md cat-health"><use href="#i-health"/></svg><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span><span class="r-meta-mono">Health · due Thu</span></div></div>
+          <div class="row r-rich"><svg class="ic ic-md cat-learn"><use href="#i-learn"/></svg><span class="check"></span><div class="r-main"><span class="t-body r-title">Read the two papers</span><span class="r-meta-mono">Learning · est 40m</span></div></div>
+        </div>
+        <div class="annot-row">
+          <span class="tok">these four hues are not tokens — that is the finding</span>
+          <span class="tok">the priority dot is also in this row, and it is the accent</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="variant">
+    <div class="vlabel">
+      <span class="vnum">03</span>
+      <span class="t-title-3">The empty state, two ways</span>
+      <span class="tok">icon-xl 32 · states.md forbids illustrations, not icons</span>
+    </div>
+    <p class="sec-note" style="margin-top: 0;">
+      The token table anticipates an `icon-xl` here. `states.md` forbids an
+      <em>illustration</em> — a picture — and says nothing about a glyph, so the two
+      are compatible. The condition I'd attach: one glyph, neutral, never coloured,
+      because an empty state's job is orientation and a coloured glyph would read as
+      a state the surface does not have.
+    </p>
+    <div class="panels" style="margin-top: var(--space-5);">
+      <div class="panel">
+        <div class="panel-head"><span class="t-title-2">Without</span><span class="tok">as specified today</span></div>
+        <div class="empty">
+          <h3 class="t-display">Nothing for today.</h3>
+          <p class="t-body" style="color: var(--text-secondary); max-width: 30ch;">Anything you capture lands in the inbox, and you can schedule it from there.</p>
+          <button class="btn btn-primary btn-lg">Capture something</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="t-title-2">With an icon</span><span class="tok">icon-xl · text-muted · no colour</span></div>
+        <div class="empty">
+          <svg class="ic ic-xl" style="color: var(--text-muted);"><use href="#i-check"/></svg>
+          <h3 class="t-display">Nothing for today.</h3>
+          <p class="t-body" style="color: var(--text-secondary); max-width: 30ch;">Anything you capture lands in the inbox, and you can schedule it from there.</p>
+          <button class="btn btn-primary btn-lg">Capture something</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </section>
 
 <!-- ============================== CONTROLS ============================== -->
