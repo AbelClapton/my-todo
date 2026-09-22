@@ -968,6 +968,35 @@ body.no-annot .tok { display: none; }
 .cat-health { color: #16A34A; }
 .cat-learn { color: #7C3AED; }
 
+/* Inline icons inside the metadata line. The metadata is `type-footnote` (13px),
+   so the glyph is `icon-xs` (12px, "inline with caption text") and it inherits the
+   line's colour — `text-secondary` — rather than introducing one.
+
+   An earlier version put a negative margin here to tighten icon-to-word and it
+   collapsed the gap to nothing, because it was fighting the flex `gap` as well as
+   the glyph's own 1px of internal padding at this size. The flex gap alone is
+   correct. */
+.meta-line {
+  display: flex; align-items: center; gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.meta-line .sep { color: var(--text-muted); }
+
+/* A labelled value: a glyph, a label, then the value. Used where the label is a
+   fixed word the user will learn once — Goal, Metric — and the icon is
+   unambiguous. This is the case where an icon is not decoration: it marks a
+   slot in a repeated card. */
+.labelled { display: flex; align-items: center; gap: var(--space-3); }
+.labelled .ic { color: var(--text-muted); }
+.labelled .name {
+  font-size: var(--type-subhead-size);
+  font-weight: var(--type-subhead-weight);
+  letter-spacing: var(--type-subhead-track);
+  color: var(--text-secondary);
+  min-width: 52px;
+}
+.labelled .value { font-size: var(--type-callout-size); color: var(--text-primary); }
+
 /* ============================== CONTRAST TABLE ========================== */
 .ct { width: 100%; border-collapse: collapse; }
 .ct th, .ct td {
@@ -1332,19 +1361,27 @@ body.no-annot .tok { display: none; }
 
 <!-- ============================== ICONS ============================== -->
 <section id="icons">
-  <!-- Glyphs as symbols, referenced with <use>. Stand-ins for a real set:
-       24px grid, 2px stroke, round caps and joins. -->
+  <!-- Lucide 0.469.0 — the real icon data, inlined so the lab stays offline.
+       ISC licence. Lucide's drawing rules are 24px grid, 2px stroke, round caps
+       and joins, and `currentColor` — which is why a glyph inherits its colour
+       and can never introduce one. The app would install `lucide-react` instead
+       of inlining, but the shapes and the rules are the same. -->
   <svg width="0" height="0" style="position: absolute" aria-hidden="true">
     <defs>
-      <symbol id="i-work" viewBox="0 0 24 24"><path d="M3 8h18v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></symbol>
-      <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V9.5"/></symbol>
-      <symbol id="i-health" viewBox="0 0 24 24"><path d="M12 20.5S4.5 15.8 4.5 10.4A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 3.2c0 5.4-7.5 10.1-7.5 10.1z"/></symbol>
-      <symbol id="i-learn" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M6 17h12"/></symbol>
-      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5.2l3.4 2"/></symbol>
-      <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M4 6h16v14H4z"/><path d="M4 10h16"/><path d="M8 3v4M16 3v4"/></symbol>
-      <symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.3 3.1-5.2 7-5.2s7 1.9 7 5.2"/></symbol>
-      <symbol id="i-check" viewBox="0 0 24 24"><path d="m4.5 12.5 5 5 10-11"/></symbol>
-      <symbol id="i-clip" viewBox="0 0 24 24"><path d="M8 12.5 15 5.5a3.5 3.5 0 0 1 5 5l-8.6 8.6a5.5 5.5 0 0 1-7.8-7.8L11 4"/></symbol>
+      <symbol id="i-work" viewBox="0 0 24 24"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></symbol>
+      <symbol id="i-home" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+      <symbol id="i-health" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></symbol>
+      <symbol id="i-learn" viewBox="0 0 24 24"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+      <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol>
+      <symbol id="i-person" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+      <symbol id="i-clip" viewBox="0 0 24 24"><path d="M13.234 20.252 21 12.3"/><path d="m16 6-8.414 8.586a2 2 0 0 0 0 2.828 2 2 0 0 0 2.828 0l8.414-8.586a4 4 0 0 0 0-5.656 4 4 0 0 0-5.656 0l-8.415 8.585a6 6 0 1 0 8.486 8.486"/></symbol>
+      <symbol id="i-goal" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+      <symbol id="i-metric" viewBox="0 0 24 24"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></symbol>
+      <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol>
+      <symbol id="i-timer" viewBox="0 0 24 24"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></symbol>
+      <symbol id="i-flag" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></symbol>
     </defs>
   </svg>
 
@@ -1388,13 +1425,16 @@ body.no-annot .tok { display: none; }
   <div class="variant">
     <div class="vlabel">
       <span class="vnum">02</span>
-      <span class="t-title-3">The row, three ways</span>
-      <span class="tok">icon-md in a list row, per the token table</span>
+      <span class="t-title-3">The row, six ways</span>
+      <span class="tok">icon-md leading · icon-xs inline · per the token table</span>
     </div>
     <p class="sec-note" style="margin-top: 0;">
-      Read the checkbox column, not the glyphs. Adding a leading icon pushes the
-      checkbox in and <strong>breaks its alignment down the list</strong>, which is
-      the one thing a task list relies on for scanning.
+      Read the checkbox column, not the glyphs. A <strong>leading</strong> icon pushes
+      the checkbox in and breaks its alignment down the list — the one thing a task
+      list relies on for scanning. An <strong>inline</strong> icon leaves that column
+      alone and sits with the metadata it describes, which is the same trick the
+      metadata line already plays: put the information where it belongs rather than
+      where the grid allows.
     </p>
 
     <div class="panels" style="margin-top: var(--space-5);">
@@ -1443,6 +1483,52 @@ body.no-annot .tok { display: none; }
           <span class="tok">the priority dot is also in this row, and it is the accent</span>
         </div>
       </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <span class="t-title-2">D · Inline with the category</span>
+          <span class="tok">icon-xs 12, neutral, in the metadata line</span>
+          <span class="rule">The checkbox column stays aligned. The glyph sits beside the word it describes, and it is the same grey as the line, so it reads as part of the metadata rather than as a mark.</span>
+        </div>
+        <div class="list">
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Draft the Q3 retro</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-work"/></svg><span>Work</span><span class="sep">·</span><span>due today</span></span></div><span class="pdot"></span></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Call the landlord</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-home"/></svg><span>Home</span><span class="sep">·</span><span>due today</span></span></div></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-health"/></svg><span>Health</span><span class="sep">·</span><span>due Thu</span></span></div></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Read the two papers</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-learn"/></svg><span>Learning</span><span class="sep">·</span><span>est 40m</span></span></div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <span class="t-title-2">E · Inline with the time</span>
+          <span class="tok">icon-xs 12, neutral, on the time expression</span>
+          <span class="rule">Here the glyph sometimes <em>replaces a word</em> — "est 40m" becomes a timer and "40m" — which is the only version of this that removes ink instead of adding it.</span>
+        </div>
+        <div class="list">
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Draft the Q3 retro</span><span class="r-meta-mono meta-line"><span>Work</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-calendar"/></svg><span>due today</span></span></div><span class="pdot"></span></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Call the landlord</span><span class="r-meta-mono meta-line"><span>Home</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-calendar"/></svg><span>due today</span></span></div></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Plan next week's meals</span><span class="r-meta-mono meta-line"><span>Home</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-repeat"/></svg><span>weekly</span></span></div></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Read the two papers</span><span class="r-meta-mono meta-line"><span>Learning</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-timer"/></svg><span>40m</span></span></div></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span><span class="r-meta-mono meta-line"><span>Health</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-clock"/></svg><span>deferred 2d</span></span></div><span class="chip">deferred 2d</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <span class="t-title-2">F · Inline with both</span>
+          <span class="tok">two glyphs in a 13px line</span>
+          <span class="rule">The density check. Four elements before a single word of value, and the line is 13px — this is where the idea either holds or collapses.</span>
+        </div>
+        <div class="list">
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Draft the Q3 retro</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-work"/></svg><span>Work</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-calendar"/></svg><span>due today</span></span></div><span class="pdot"></span></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Read the two papers</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-learn"/></svg><span>Learning</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-timer"/></svg><span>40m</span></span></div></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Plan next week's meals</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-home"/></svg><span>Home</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-repeat"/></svg><span>weekly</span><span class="sep">·</span><span>@Priya</span></span></div></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-health"/></svg><span>Health</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-clock"/></svg><span>deferred 2d</span></span></div><span class="chip">deferred 2d</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="annot-row">
+      <span class="tok">D, E and F use icon-xs 12 — what the token table gives caption-sized text. icon-sm 16 is the alternative if 12px reads too faint at a 1px stroke.</span>
     </div>
   </div>
 
@@ -1477,6 +1563,49 @@ body.no-annot .tok { display: none; }
           <button class="btn btn-primary btn-lg">Capture something</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div class="variant">
+    <div class="vlabel">
+      <span class="vnum">04</span>
+      <span class="t-title-3">Labels: goal and metric</span>
+      <span class="tok">the case where an icon is not decoration</span>
+    </div>
+    <p class="sec-note" style="margin-top: 0;">
+      A protocol card repeats the same two slots on every card of its kind. The labels
+      are fixed words the user learns once, the glyphs are unambiguous, and the icon
+      <em>marks a slot</em> rather than decorating a value. That is the difference
+      between this and a category glyph on every row: one is a legend, the other is a
+      second copy of a word that is already there.
+    </p>
+    <div class="panels" style="margin-top: var(--space-5);">
+      <div class="panel">
+        <div class="panel-head"><span class="t-title-2">Protocol card</span><span class="tok">row-hero 96 · icon-sm 16</span></div>
+        <div class="row r-hero" style="border-bottom: 0;">
+          <div class="r-main" style="gap: var(--space-3);">
+            <div style="display: flex; align-items: center; gap: var(--space-3);">
+              <span class="t-title-3">Sleep protocol</span>
+              <span class="chip chip-accent">active</span>
+            </div>
+            <div class="labelled"><svg class="ic ic-sm"><use href="#i-goal"/></svg><span class="name">Goal</span><span class="value">7.5h average</span></div>
+            <div class="labelled"><svg class="ic ic-sm"><use href="#i-metric"/></svg><span class="name">Metric</span><span class="value">sleep_hours · day 12 of 30</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="t-title-2">Metric log</span><span class="tok">control-md buttons · icon-sm label</span></div>
+        <div style="padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-5);">
+          <div class="labelled"><svg class="ic ic-sm"><use href="#i-metric"/></svg><span class="name">Sleep (hours)</span></div>
+          <span class="metric-row">
+            <button>4</button><button>5</button><button aria-pressed="true">6</button><button>7</button><button>8</button><button>9</button>
+          </span>
+          <span class="r-meta-mono">last logged 2d ago</span>
+        </div>
+      </div>
+    </div>
+    <div class="annot-row">
+      <span class="tok">both labels inherit text-muted · neither introduces a hue</span>
     </div>
   </div>
 

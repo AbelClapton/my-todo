@@ -381,11 +381,14 @@ at 8px — its smallest use in the app.
 
 ## Icons, in the lab
 
-Three blocks: the size reference, the task row three ways, and the empty state with
-and without a glyph. The glyphs are hand-drawn stand-ins — the repo has no icon
-set — drawn to the rules a set would have to meet (24px grid, 2px stroke, round
-caps and joins, `currentColor` so a glyph inherits its colour and can never
-introduce one).
+**Lucide is adopted**, and the lab now inlines the real icon data (0.469.0, ISC
+licence) rather than stand-ins, so it stays offline. Lucide's drawing rules are a
+24px grid, a uniform 2px stroke, round caps and joins, and `currentColor` — which
+is why a glyph inherits its colour and can never introduce one. The app would
+install `lucide-react`; the shapes and the rules are the same either way.
+
+Blocks: the size reference, the task row **six ways**, and the empty state with and
+without a glyph, plus a block for icons on labelled values.
 
 **Finding 22 · Two documented icon usages don't exist.** `design-tokens.md` lists
 `icon-md 20` as the default in a **list row** and `icon-xl 32` for an **empty
@@ -395,34 +398,51 @@ state**. Neither surface has an icon. So this was never "should we add decoratio
 **Finding 23 · "Feature callouts" is an orphan.** It is named as an `icon-xl` use
 and no surface by that name exists anywhere in the doc set.
 
-**What the comparison showed, on the row.** Adding a leading glyph pushes the
-checkbox inward and **breaks the checkbox column's alignment down the list**, which
-is the one thing a task list relies on for scanning. Neutral glyphs (panel B) repeat
-the metadata line in a second channel — a grey briefcase beside grey text saying
-"Work". Coloured glyphs (panel C) need a category colour system, and the four demo
-hues collide immediately: amber is `warning`, green is `success`, and violet is
-close to the accent. Worst of all, the Work row then carries a **blue category glyph
-and a teal priority dot** — two coloured marks in one row doing different jobs,
-which is the same collision that ruled teal out against green.
+**Finding 24 · No inline icon size matches `type-footnote`.** The table gives
+`icon-xs 12` for "inline with caption text" (12px) and `icon-sm 16` for "inline with
+body text" (16px). Our metadata line is **13px** — between the two. `icon-xs` is
+the closer fit and is what the lab uses, but the table has a gap where the app
+lives.
 
-So: **the row stays icon-free.** The metadata line is the category channel, and it
-is a better one, because it says "Work" in words rather than a hue that has to be
-learned.
+### What the six row variants settled
 
-**What the comparison showed, on the empty state.** `states.md` forbids an
-*illustration* and says nothing about a glyph, so an `icon-xl` here is compatible
-with the rule rather than an exception to it. I'd take it with one condition: a
-single neutral glyph, never coloured, because an empty state's job is orientation
-and a coloured glyph would read as a state the surface does not have.
+| | Verdict |
+|---|---|
+| **A · no icon** | Still the baseline. Nothing is missing from it. |
+| **B · leading, neutral** | **Rejected.** Pushes the checkbox inward and breaks that column's alignment down the list — the one thing a task list relies on for scanning — and a grey glyph beside grey text saying "Work" is the same information twice. |
+| **C · leading, coloured** | **Rejected.** Needs a category colour system, and the demo hues collide immediately: amber *is* `warning`, green *is* `success`, violet sits near the accent. The Work row then carries a **blue category glyph and a teal priority dot** — two coloured marks in one row doing different jobs, the same collision that ruled teal out against green. |
+| **D · inline with the category** | **Holds.** The checkbox column stays aligned, and the glyph sits with the word it describes. It reads as part of the metadata rather than as a mark on the row. |
+| **E · inline with the time** | **Holds, and is the only variant that removes ink.** "est 40m" becomes a timer glyph and "40m"; "repeats weekly" becomes a repeat glyph and "weekly". |
+| **F · inline with both** | **Holds.** Two glyphs in a 13px line, four elements before a word of value — the density check passes, though it is at the limit. |
+
+So the rule is: **an icon belongs where a word belongs, not where the row begins.**
+A leading glyph competes with the checkbox column; an inline glyph replaces or
+accompanies a word in the line that already carries it.
+
+### Labels: goal and metric
+
+The case where an icon is not decoration at all. A protocol card repeats the same
+two slots on every card of its kind, the labels are fixed words the user learns
+once, and `target` and `activity` are unambiguous — so the glyph **marks a slot**
+rather than duplicating a value. One is a legend; the other is a second copy of a
+word that is already there.
+
+Both labels inherit `text-muted`; neither introduces a hue, which is the whole
+reason it works.
 
 ### Still open
 
-- **Choose an icon set.** Lucide is the natural candidate — shadcn already assumes
-  it, it is a 24px grid with a uniform 2px stroke, and the licence is clean. The
-  set plus its drawing rules belong in `03-experience/components.md` as **assets**:
-  the size table stays as it is, no new tokens, so no ADR.
+- **Decide the row treatment.** D, E, and F all hold. E removes ink; F is the
+  densest and the most explicit.
+- **Decide the inline size.** Finding 24 needs closing either way — widen `icon-xs`'s
+  documented use to include footnote-sized text, or add a size to the table (which
+  is a new token, so an ADR).
 - **Decide the empty-state glyph.** The token anticipates it; the surface doesn't
-  have one yet.
+  have one.
+
+The set and its drawing rules belong in `03-experience/components.md` as **assets**:
+the size table stays as it is, so no new tokens and no ADR — unless finding 24 is
+closed by adding one.
 
 ## What this deliberately does not do
 
