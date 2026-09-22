@@ -1125,7 +1125,7 @@ body.no-annot .tok { display: none; }
     <div class="row r-hero">
       <div class="r-main">
         <span class="t-title-3 r-title">Sleep protocol</span>
-        <span class="t-callout r-meta">Goal: 7.5h average · day 12 of 30</span>
+        <span class="labelled"><svg class="ic ic-sm"><use href="#i-goal"/></svg><span class="name">Goal</span><span class="value">7.5h average · day 12 of 30</span></span>
         <span class="r-meta-mono">metric: sleep_hours · 6.8 · 7.1 · 7.4</span>
       </div>
       <span class="chip chip-accent">active</span>
@@ -1136,7 +1136,7 @@ body.no-annot .tok { display: none; }
       <span class="check"></span>
       <div class="r-main">
         <span class="t-body r-title">Draft the Q3 retro</span>
-        <span class="r-meta-mono">due Fri · deferred 2d · est 45m</span>
+        <span class="labelled"><svg class="ic ic-sm"><use href="#i-metric"/></svg><span class="name">Metric</span><span class="value">sleep_hours</span></span>
       </div>
       <span class="chip">deferred 2d</span>
       <span class="tok">row-rich · Task with metadata</span>
@@ -1249,37 +1249,46 @@ body.no-annot .tok { display: none; }
         <span class="check"></span>
         <div class="r-main">
           <span class="t-body r-title">Draft the Q3 retro</span>
-          <span class="r-meta-mono">Work · due Tue · 1 note · @Sarah</span>
+          <span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-work"/></svg><span>Work</span><span class="sep">·</span><span>1 note</span><span class="sep">·</span><span>@Sarah</span></span>
         </div>
-        <span class="pdot"></span>
-        <span class="chip">deferred 2d</span>
+        <div class="row-trail">
+          <span class="pdot"></span>
+          <span class="chip"><svg class="ic ic-xs"><use href="#i-calendar"/></svg>due Tue</span>
+          <span class="chip"><svg class="ic ic-xs"><use href="#i-clock"/></svg>deferred 2d</span>
+        </div>
       </div>
       <div class="row r-rich">
         <span class="check"></span>
         <div class="r-main">
           <span class="t-body r-title">Book the dentist</span>
-          <span class="r-meta-mono">Health · due Thu</span>
+          <span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-health"/></svg><span>Health</span></span>
         </div>
-        <span class="pdot"></span>
+        <div class="row-trail">
+          <span class="pdot"></span>
+          <span class="chip"><svg class="ic ic-xs"><use href="#i-calendar"/></svg>due Thu</span>
+        </div>
       </div>
       <div class="row r-rich">
         <span class="check"></span>
         <div class="r-main">
           <span class="t-body r-title">Reply to Priya about the offsite</span>
-          <span class="r-meta-mono">Work · 2 notes · @Priya</span>
+          <span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-work"/></svg><span>Work</span><span class="sep">·</span><span>2 notes</span><span class="sep">·</span><span>@Priya</span></span>
         </div>
       </div>
       <div class="row r-rich">
         <span class="check"></span>
         <div class="r-main">
           <span class="t-body r-title">Call the landlord about the radiator</span>
-          <span class="r-meta-mono">Home · overdue 3d</span>
+          <span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-home"/></svg><span>Home</span></span>
         </div>
-        <span class="chip" style="color: var(--text-secondary);">overdue 3d</span>
+        <div class="row-trail">
+          <span class="chip" style="color: var(--text-secondary);"><svg class="ic ic-xs"><use href="#i-clock"/></svg>overdue 3d</span>
+        </div>
       </div>
     </div>
     <div class="annot-row">
-      <span class="tok">row-rich · title line 1, composed metadata line 2</span>
+      <span class="tok">row-rich · title line 1, identity line 2, time in chips</span>
+      <span class="tok">at most two chips — deferred, overdue, due, cadence, duration</span>
       <span class="tok">priority dot is accent-default, per tasks.md</span>
       <span class="tok">overdue is text-secondary — never red</span>
     </div>
@@ -1606,6 +1615,10 @@ body.no-annot .tok { display: none; }
     </div>
     <div class="annot-row">
       <span class="tok">D, E and F use icon-xs 12 — what the token table gives caption-sized text. icon-sm 16 is the alternative if 12px reads too faint at a 1px stroke.</span>
+    </div>
+    <div class="annot-row">
+      <span class="tok">E and F are superseded by V4: the time glyph moved into the chip, so what survives from F is the category glyph inline — panel D. Chips carry their own glyph.</span>
+      <span class="tok">A, B and C predate the time-channel decision, so their metadata line still shows time as text — read them for icon <em>position</em>, not for the line's content.</span>
     </div>
   </div>
 
@@ -2151,24 +2164,24 @@ body.no-annot .tok { display: none; }
           <div class="list" style="border: 1px solid var(--border-default); border-radius: var(--radius-lg); overflow: hidden;">
             <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Draft the Q3 retro</span></div><span class="chip">deferred 2d</span></div>
             <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Reply to Priya about the offsite</span></div><span class="pdot"></span></div>
-            <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span><span class="r-meta-mono">overdue 3d · est 5m</span></div></div>
+            <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-health"/></svg><span>Health</span></span></div><div class="row-trail"><span class="chip" style="color: var(--text-secondary);"><svg class="ic ic-xs"><use href="#i-clock"/></svg>overdue 3d</span><span class="chip"><svg class="ic ic-xs"><use href="#i-timer"/></svg>5m</span></div></div>
             <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Send the invoice</span></div></div>
             <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Review the sleep protocol numbers</span></div></div>
             <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Pick a birthday present for Sam</span></div></div>
-            <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Write up the coaching call notes</span><span class="r-meta-mono">due Thu · linked: Sarah Chen</span></div></div>
+            <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Write up the coaching call notes</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-person"/></svg><span>@Sarah Chen</span></span></div><div class="row-trail"><span class="chip"><svg class="ic ic-xs"><use href="#i-calendar"/></svg>due Thu</span></div></div>
             <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Cancel the gym membership</span></div><span class="chip" style="color: var(--text-secondary);">overdue 3d</span></div>
             <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Water the plants</span></div></div>
             <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Read the two papers on sleep debt</span></div></div>
-            <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Plan next week's meals</span><span class="r-meta-mono">est 20m · repeats weekly</span></div></div>
+            <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Plan next week's meals</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-home"/></svg><span>Home</span></span></div><div class="row-trail"><span class="chip"><svg class="ic ic-xs"><use href="#i-repeat"/></svg>weekly</span><span class="chip"><svg class="ic ic-xs"><use href="#i-timer"/></svg>20m</span></div></div>
             <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Fix the calendar sync error</span></div><span class="chip chip-warning">stale</span></div>
             <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Call the landlord about the radiator</span></div></div>
             <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Back up the photo library</span></div></div>
-            <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Summarise the retro for the team</span><span class="r-meta-mono">due Fri · est 45m</span></div></div>
+            <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Summarise the retro for the team</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-work"/></svg><span>Work</span></span></div><div class="row-trail"><span class="chip"><svg class="ic ic-xs"><use href="#i-calendar"/></svg>due Fri</span><span class="chip"><svg class="ic ic-xs"><use href="#i-timer"/></svg>45m</span></div></div>
             <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Order a new keyboard</span></div></div>
             <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Sign the lease</span></div></div>
             <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Think about the offsite agenda</span></div><span class="pdot"></span></div>
             <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Return the library books</span></div></div>
-            <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Draft the newsletter</span><span class="r-meta-mono">deferred 2d · est 30m</span></div></div>
+            <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Draft the newsletter</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-work"/></svg><span>Work</span></span></div><div class="row-trail"><span class="chip"><svg class="ic ic-xs"><use href="#i-clock"/></svg>deferred 2d</span><span class="chip"><svg class="ic ic-xs"><use href="#i-timer"/></svg>30m</span></div></div>
           </div>
         </div>
       </div>
@@ -2206,32 +2219,33 @@ body.no-annot .tok { display: none; }
           <span class="check"></span>
           <div class="r-main">
             <span class="t-body r-title">Book the dentist</span>
-            <span class="r-meta-mono">Health · deferred 2d</span>
+            <span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-health"/></svg><span>Health</span></span>
           </div>
-          <span class="chip">deferred 2d</span>
+          <div class="row-trail"><span class="chip"><svg class="ic ic-xs"><use href="#i-clock"/></svg>deferred 2d</span></div>
         </div>
         <div class="row r-rich">
           <span class="check"></span>
           <div class="r-main">
             <span class="t-body r-title">Draft the Q3 retro</span>
-            <span class="r-meta-mono">Work · due today</span>
+            <span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-work"/></svg><span>Work</span></span>
           </div>
-          <span class="pdot"></span>
+          <div class="row-trail"><span class="pdot"></span><span class="chip"><svg class="ic ic-xs"><use href="#i-calendar"/></svg>due today</span></div>
         </div>
         <div class="row r-rich">
           <span class="check"></span>
           <div class="r-main">
             <span class="t-body r-title">Reply to Priya about the offsite</span>
-            <span class="r-meta-mono">Work · due today · @Priya</span>
+            <span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-work"/></svg><span>Work</span><span class="sep">·</span><span>@Priya</span></span>
           </div>
-          <span class="pdot"></span>
+          <div class="row-trail"><span class="pdot"></span><span class="chip"><svg class="ic ic-xs"><use href="#i-calendar"/></svg>due today</span></div>
         </div>
         <div class="row r-rich">
           <span class="check"></span>
           <div class="r-main">
             <span class="t-body r-title">Call the landlord about the radiator</span>
-            <span class="r-meta-mono">Home · due today</span>
+            <span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-home"/></svg><span>Home</span></span>
           </div>
+          <div class="row-trail"><span class="chip"><svg class="ic ic-xs"><use href="#i-calendar"/></svg>due today</span></div>
         </div>
         <div class="row r-default">
           <span class="check"></span>
@@ -2253,29 +2267,31 @@ body.no-annot .tok { display: none; }
           <span class="check"></span>
           <div class="r-main">
             <span class="t-body r-title">Summarise the retro for the team</span>
-            <span class="r-meta-mono">Work · due Fri</span>
+            <span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-work"/></svg><span>Work</span></span>
           </div>
-          <span class="pdot"></span>
+          <div class="row-trail"><span class="pdot"></span><span class="chip"><svg class="ic ic-xs"><use href="#i-calendar"/></svg>due Fri</span></div>
         </div>
         <div class="row r-rich">
           <span class="check"></span>
           <div class="r-main">
             <span class="t-body r-title">Plan next week's meals</span>
-            <span class="r-meta-mono">Home · repeats weekly</span>
+            <span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-home"/></svg><span>Home</span></span>
           </div>
+          <div class="row-trail"><span class="chip"><svg class="ic ic-xs"><use href="#i-repeat"/></svg>weekly</span></div>
         </div>
         <div class="row r-rich">
           <span class="check"></span>
           <div class="r-main">
             <span class="t-body r-title">Read the two papers on sleep debt</span>
-            <span class="r-meta-mono">Learning · est 40m</span>
+            <span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-learn"/></svg><span>Learning</span></span>
           </div>
+          <div class="row-trail"><span class="chip"><svg class="ic ic-xs"><use href="#i-timer"/></svg>40m</span></div>
         </div>
         <div class="row r-rich">
           <span class="check"></span>
           <div class="r-main">
             <span class="t-body r-title">Order a new keyboard</span>
-            <span class="r-meta-mono">Home</span>
+            <span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-home"/></svg><span>Home</span></span>
           </div>
         </div>
         <div class="row r-default">
@@ -2313,39 +2329,41 @@ body.no-annot .tok { display: none; }
           <span class="check"></span>
           <div class="r-main">
             <span class="t-body r-title">Draft the Q3 retro</span>
-            <span class="r-meta-mono">Work · due today</span>
+            <span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-work"/></svg><span>Work</span></span>
           </div>
-          <span class="pdot"></span>
+          <div class="row-trail"><span class="pdot"></span><span class="chip"><svg class="ic ic-xs"><use href="#i-calendar"/></svg>due today</span></div>
         </div>
         <div class="row r-rich">
           <span class="check"></span>
           <div class="r-main">
             <span class="t-body r-title">Reply to Priya about the offsite</span>
-            <span class="r-meta-mono">Work · due today · @Priya</span>
+            <span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-work"/></svg><span>Work</span><span class="sep">·</span><span>@Priya</span></span>
           </div>
-          <span class="pdot"></span>
+          <div class="row-trail"><span class="pdot"></span><span class="chip"><svg class="ic ic-xs"><use href="#i-calendar"/></svg>due today</span></div>
         </div>
         <div class="row r-rich">
           <span class="check"></span>
           <div class="r-main">
             <span class="t-body r-title">Call the landlord about the radiator</span>
-            <span class="r-meta-mono">Home · due today</span>
+            <span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-home"/></svg><span>Home</span></span>
           </div>
+          <div class="row-trail"><span class="chip"><svg class="ic ic-xs"><use href="#i-calendar"/></svg>due today</span></div>
         </div>
         <div class="row r-rich">
           <span class="check"></span>
           <div class="r-main">
             <span class="t-body r-title">Book the dentist</span>
-            <span class="r-meta-mono">Health · due Thu</span>
+            <span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-health"/></svg><span>Health</span></span>
           </div>
+          <div class="row-trail"><span class="chip"><svg class="ic ic-xs"><use href="#i-calendar"/></svg>due Thu</span></div>
         </div>
         <div class="row r-rich">
           <span class="check"></span>
           <div class="r-main">
             <span class="t-body r-title">Summarise the retro for the team</span>
-            <span class="r-meta-mono">Work · due Fri</span>
+            <span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-work"/></svg><span>Work</span></span>
           </div>
-          <span class="pdot"></span>
+          <div class="row-trail"><span class="pdot"></span><span class="chip"><svg class="ic ic-xs"><use href="#i-calendar"/></svg>due Fri</span></div>
         </div>
         <div class="row r-default">
           <span class="check"></span>
@@ -2406,10 +2424,10 @@ body.no-annot .tok { display: none; }
         <span class="chip">filter: completed</span>
       </div>
       <div class="list">
-        <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Send the invoice</span></div><span class="r-meta-mono">Work · completed yesterday</span></div>
-        <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Water the plants</span></div><span class="r-meta-mono">Home · completed yesterday</span></div>
-        <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Sign the lease</span></div><span class="r-meta-mono">Home · completed 2d ago</span></div>
-        <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Book the design review</span></div><span class="r-meta-mono">Work · completed 4d ago</span></div>
+        <div class="row r-rich"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Send the invoice</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-work"/></svg><span>Work</span></span></div><div class="row-trail"><span class="chip"><svg class="ic ic-xs"><use href="#i-clock"/></svg>yesterday</span></div></div>
+        <div class="row r-rich"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Water the plants</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-home"/></svg><span>Home</span></span></div><div class="row-trail"><span class="chip"><svg class="ic ic-xs"><use href="#i-clock"/></svg>yesterday</span></div></div>
+        <div class="row r-rich"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Sign the lease</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-home"/></svg><span>Home</span></span></div><div class="row-trail"><span class="chip"><svg class="ic ic-xs"><use href="#i-clock"/></svg>2d ago</span></div></div>
+        <div class="row r-rich"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Book the design review</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-work"/></svg><span>Work</span></span></div><div class="row-trail"><span class="chip"><svg class="ic ic-xs"><use href="#i-clock"/></svg>4d ago</span></div></div>
       </div>
     </div>
   </div>

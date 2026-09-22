@@ -492,6 +492,30 @@ case a cap removes entirely.
 Both rules are now written into `05-modules/tasks.md`, and the chip vocabulary is
 in `03-experience/components.md`.
 
+## The V4 sweep, and what it caught
+
+Writing V4 into the spec left the lab's exhibits stale in four places, which is the
+failure class this repo exists to catch: a document confidently showing something no
+longer true. The rule applied was **exhibits that present the design get swept;
+comparisons stay**, because a comparison's job is to show rejected options — but it
+has to say which ones are rejected.
+
+| Surface | Action |
+|---|---|
+| The task row, in place | Swept to V4. |
+| Tasks mode — Today, Next, All | Swept to V4. |
+| The 20-row density sketch | Time rows swept. |
+| The row-height demo's protocol card | Goal and metric lines now use the labelled form. |
+| Icons A/B/C | **Kept as evidence**, annotated as predating the time-channel decision. |
+| Icons E/F | **Kept as evidence**, annotated as superseded — the time glyph moved into the chip, so what survives from F is D. |
+
+**A real violation the sweep caught:** the completed log had its rows at
+`row-default` **while carrying a metadata label**. `design-tokens.md` is explicit that
+the height follows whether metadata is present, so those rows were breaking the rule
+they were meant to demonstrate. They are `row-rich` now, with the completion time as a
+clock chip — which is also what V4 requires, since completion time is a time fact like
+any other.
+
 ## What this deliberately does not do
 
 - **No icon set.** The rail and header use text glyphs. `design-tokens.md` says
