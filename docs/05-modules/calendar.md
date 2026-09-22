@@ -1,0 +1,168 @@
+# Calendar
+
+## Purpose
+
+This doc defines the Calendar module: the app's default mode and the
+hub every other module attaches to. It exists because the calendar is
+the surface where the Day (`02-architecture/day-as-unit.md`) becomes
+visible, and it is where the user spends the most time orienting.
+
+The Calendar is a *view of time*, not a task list with dates. Tasks,
+habits, and protocols appear in it, but the calendar's primary object
+is the Day.
+
+## Invariants
+
+- The Calendar is the default mode on app open, unless the user has
+  changed `default_mode` (`05-modules/settings.md`).
+- The Calendar reads from the `day_view` projection
+  (`02-architecture/projections.md`). It does not define its own
+  projection.
+- Mirrored events are sourced from the calendar integration
+  (`calendar.mirrored`) and are not owned by the app; edits write
+  through to the source. In-app events are owned by the app.
+- Every event shown carries freshness metadata (Invariant 4).
+- Tasks shown in the calendar are scheduled tasks, not the full
+  task list. Unscheduled tasks do not appear.
+
+## Specification
+
+### Scope
+
+- **Day view** — the default. Shows events, scheduled tasks, habits
+  due, and the protocol metric if one is active.
+- **Week view** — 7 days side by side. Events only; tasks and
+  habits collapse to counts.
+- **Month view** — a grid. Days show event density, not event
+  titles. Tapping a day opens it.
+- **Year view** — 12 month grids at reduced density. Used for
+  browsing, not acting.
+
+Pinch zooms between views (`03-experience/gesture-vocabulary.md`).
+
+### The Day view layout
+
+Top to bottom:
+
+1. **Day header.** Date, day of week, week number. Previous/next
+   day arrows. Tap the date to open the date picker.
+2. **Now line** (`02-architecture/projections.md`). One line: the
+   current event or the next scheduled item.
+3. **Timeline.** A vertical time axis. Events and scheduled tasks
+   are positioned by time. All-day items sit above the axis.
+4. **Habits due.** A compact row of habit checkboxes for the day.
+5. **Metric log.** If a protocol is active, the metric input row.
+6. **Daily note preview.** The first two lines of the daily note,
+   tap to open.
+7. **Top three.** If set during shutdown
+   (`06-flows/shutdown.md`), shown here.
+
+The layout uses tokens from `03-experience/design-tokens.md`:
+`space-5` horizontal inset, `space-7` between sections, `row-default`
+(56px) for timeline items, `type-title-1` for the header.
+
+### Surfaces
+
+**Day view (default).** As above.
+
+**Event detail.** Opened by tapping an event. Shows title, time,
+attendees (People), linked notes, prep card (via Tier 2 "Prep me"),
+and an Edit action for in-app events.
+
+**New event.** Created via capture (`pull down`) or the `+` button
+in the header. Opens a form with title, time, attendees, and notes.
+In-app events sync to the source calendar.
+
+**Date picker.** A month grid overlay. Tap to jump to a day.
+
+**Time machine.** A mode within the Day view: pick a past date and
+see the day as it was. Read-only. See
+`02-architecture/data-lifecycle.md`.
+
+### Actions
+
+| Action | Gesture | Result |
+|---|---|---|
+| Zoom in/out | Pinch | Day ↔ Week ↔ Month ↔ Year |
+| Next/prev day | Header arrows | Navigate |
+| Jump to today | Tap "Today" | Navigate |
+| Open event | Tap event | Event detail |
+| Long-press event | Long-press | Tier 2 contextual menu (Prep me, Find related, Reschedule) |
+| Capture | Pull down | Opens capture field |
+| New event | `+` button | New event sheet |
+| Time machine | Tap date → "As of" | Opens read-only past date |
+
+### Freshness
+
+External calendar events display an "as of" annotation when the
+mirror is stale (>1 hour; see
+`02-architecture/data-lifecycle.md`). In-app events do not require
+the annotation (they are local).
+
+If the app is offline, the mirror shows "Offline — last sync
+<time>."
+
+### Empty, loading, error
+
+- **Empty day.** One line: "Nothing scheduled." One action:
+  "Capture something."
+- **Loading.** Skeleton for the timeline, not a spinner.
+- **Error (sync failed).** A subtle banner: "Calendar sync failed.
+  Retry." Non-blocking.
+
+### What the Calendar does not do
+
+- Does not create tasks. Tasks are created in the Tasks mode or via
+  capture; scheduling a task puts it in the calendar.
+- Does not manage habits. It shows habits due; checking happens
+  inline (the same `habit.checked` action).
+- Does not run AI. It defers to Tier 2 (long-press) and Tier 3
+  (command palette).
+
+## Examples
+
+**A typical day view.**
+
+    Tue, Sep 22 · Week 39
+    [<]  [Today]  [>]
+
+    NOW: Design review in 18 min
+
+    09:00  ─ Standup (30m)              [external]
+    11:00  ─ Design review with Sarah   [external]
+    13:00  ─ [ ] Draft Q4 plan          [task, 45m]
+    15:00  ─ 1:1 with Mark              [external]
+    16:30  ─ [ ] Buy groceries          [task]
+
+    Habits: [ ] Meditate  [x] Walk  [ ] Read
+    Metric: Sleep quality [ 1 2 3 4 5 ]
+    Daily note: "Felt sharp this morning..."
+    Top three: 1/3 done
+
+**A stale calendar.**
+
+    Banner at top: "Calendar as of 2 hours ago. Retry."
+    Events still shown, with the same banner treatment.
+
+**Tapping an event.**
+
+    Event detail opens as a sheet.
+    Title, time, attendees, notes.
+    Long-press on the event in the detail also opens Tier 2.
+    "Prep me" produces a text card (see
+    `04-ai/tier-2-contextual.md`).
+
+## What this doc must NOT do
+
+- This doc does not define the Day. The Day is
+  `02-architecture/day-as-unit.md`.
+- This doc does not define tokens. It references them.
+- This doc does not define gestures, motion, or haptics. It
+  references the vocabulary docs.
+- This doc does not define calendar sync. Sync lives in
+  `07-infrastructure/integrations.md`.
+- This doc does not define Tier 2 or Tier 3 behavior. It
+  references them.
+- This doc does not define other modules' behavior when they
+  appear in the calendar. Tasks live in `05-modules/tasks.md`,
+  habits in `05-modules/habits.md`.
