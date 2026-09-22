@@ -78,6 +78,24 @@ that promise past the first active user. The Worker implements ADR 0017.
 forwarding. Nothing before that point needs it, and development proceeds
 against Supabase's built-in email and a free host subdomain.
 
+**Where the string goes when it is bought.** The literal placeholder
+`in.<domain>` stands in three files, and the sending side in a fourth:
+
+1. `07-infrastructure/integrations.md` — the forwarding address itself.
+2. `07-infrastructure/stack.md` — the inbound email row.
+3. `prompts.md` — the forwarding build prompt.
+4. `07-infrastructure/auth.md` — names the sending subdomain. It carries
+   no placeholder today, so this is where the name is chosen. It must
+   stay distinct from `in.` so that inbound capture mail never shares a
+   sending reputation with transactional mail.
+
+Two decision records mention the placeholder and are **not** updated:
+this ADR's own alternatives below, and ADR 0017's quote of the
+pre-decision state of `integrations.md`. ADR 0015's Neutral consequences
+carries a live sentence — "every reference to it now reads `in.<domain>`"
+— which is retired when the purchase happens; it names only two of the
+four files above, so trust this list rather than that sentence.
+
 Docs updated in the same change: `07-infrastructure/stack.md` (a hosting
 row, a domain row, and two mail rows), `07-infrastructure/cost-model.md`
 (infrastructure costs, which the model did not list),

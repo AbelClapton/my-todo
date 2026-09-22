@@ -49,7 +49,7 @@ Docs are numbered. Read them in order. Each one assumes the previous ones.
 25. `05-modules/*` — one file per module
 26. `06-flows/*` — one file per user flow
 27. `07-infrastructure/*` — stack, sync, auth, cost, integrations
-28. `08-decisions/*` — architecture decision records (ADRs)
+28. `08-decisions/*` — architecture decision records; start at `08-decisions/README.md` for the index
 29. `09-roadmap/build-order.md` — the sequence of what to build, in order
 30. `09-roadmap/milestones.md` — the testable checkpoints
 31. `10-engineering/code-conventions.md` — how code is written
@@ -60,10 +60,11 @@ Docs are numbered. Read them in order. Each one assumes the previous ones.
 ## Doc structure
 
 Every doc in the numbered spec set follows the same five-section
-shape. Two files are deliberately not specs and do not follow it:
-`08-decisions/*` (ADRs carry Context, Decision, Consequences, and
-Alternatives considered) and `prompts.md` (an operational file, not
-a doc set member).
+shape. Three files are deliberately not specs and do not follow it:
+this `README.md` (an index), `08-decisions/*` (ADRs carry Context,
+Decision, Consequences, and Alternatives considered, and
+`08-decisions/README.md` is their index), and `prompts.md` (an
+operational file, not a doc set member).
 
     # Title
 
