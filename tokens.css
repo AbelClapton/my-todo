@@ -60,6 +60,19 @@
     "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
 
+  /* FINDING: these two tokens do not exist in `design-tokens.md`, which defines
+     exactly two families (sans, mono) and applies sans to all eleven type roles.
+     A display/prose split is a NEW TOKEN, and the token set is closed — adding
+     one requires an ADR. They default to the sans stack so nothing changes until
+     the type axis is switched.
+
+     The stacks below use LOCALLY AVAILABLE fonts on purpose: the lab must work
+     offline with no network fetch. They are stand-ins for the SHAPE of the
+     choice, not the final fonts. A real choice would be self-hosted, subset, and
+     counted against the cold-start budget. */
+  --font-display: var(--font-sans);
+  --font-prose: var(--font-sans);
+
   --type-display-size: 32px;   --type-display-line: 40px;
   --type-display-weight: 600;  --type-display-track: -0.02em;
   --type-title-1-size: 24px;   --type-title-1-line: 32px;
@@ -441,6 +454,42 @@
 
 /* Tabular figures for any column of numbers. */
 .tnum { font-variant-numeric: tabular-nums; }
+
+/* =============================== THE TYPE ================================
+   A fifth axis: which family carries the display roles, and which carries prose.
+
+   WHY THIS IS NOT FREE. `--font-sans` is the system stack: zero bytes, no
+   network, no FOUT, and it renders as whatever the OS believes text looks like.
+   A different display face is the first genuine BRAND ASSET the app would carry,
+   and it is paid for out of the < 3s cold-start budget and the service-worker
+   cache. System stack = no character and no cost; a chosen face = the reverse.
+
+   THE SPLIT MATTERS MORE THAN THE FACE. An editorial serif on `type-display` and
+   the report body, with the system sans left alone for every UI role, is the
+   conventional answer and the cheapest one — the app's lists, controls, and
+   labels keep the platform's readability, and the serif appears only where the
+   app is being read rather than operated.
+   ======================================================================== */
+
+[data-type="system"] {
+  --font-display: var(--font-sans);
+  --font-prose: var(--font-sans);
+}
+
+/* Serif for the display roles only. UI keeps the system sans. */
+[data-type="editorial"] {
+  --font-display: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  --font-prose: var(--font-sans);
+}
+
+/* Serif for display AND for the long-form reading surface. */
+[data-type="prose"] {
+  --font-display: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  --font-prose: Georgia, "Iowan Old Style", "Times New Roman", serif;
+}
+
+/* Display roles take the display family; everything else stays sans. */
+.t-display, .t-title-1, .t-title-2 { font-family: var(--font-display); }
 
 /* ============================== PALETTE THEME ============================ */
 

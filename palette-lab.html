@@ -245,11 +245,42 @@ body.no-annot .tok { display: none; }
   border-bottom: 2px solid var(--bg-base);
   transform: rotate(45deg);
 }
+/* The spec says the task row's metadata line is `type-callout` at
+   `text-secondary`. The mono treatment is a PROPOSAL borrowed from both design
+   briefs, so this axis switches every metadata line in the lab at once. */
+[data-meta="callout"] .r-meta-mono {
+  font-family: var(--font-sans);
+  font-size: var(--type-callout-size);
+  line-height: var(--type-callout-line);
+  letter-spacing: var(--type-callout-track);
+}
+
+/* Priority dot. `tasks.md`: "`priority: now` shows a small dot in
+   `accent-default`." It was amber in the first draft of this lab, which was a
+   spec violation and, it turns out, hid the most useful finding in the type
+   pass — see the task row section. */
 .pdot {
   width: var(--space-3); height: var(--space-3);
   border-radius: var(--radius-full);
-  background: var(--warning-default);
+  background: var(--accent-default);
   flex: none;
+}
+
+/* Task-row variants */
+.variant { margin-top: var(--space-8); }
+.vlabel {
+  display: flex; gap: var(--space-3); align-items: baseline;
+  flex-wrap: wrap; margin-bottom: var(--space-3);
+}
+.vnum {
+  font-family: var(--font-mono);
+  font-size: var(--type-caption-size);
+  color: var(--text-muted);
+}
+.vlist {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
 }
 .min-under { border-bottom: 2px solid var(--text-disabled); padding-bottom: 1px; }
 
@@ -521,6 +552,7 @@ body.no-annot .tok { display: none; }
 
 /* ============================== REPORT ================================== */
 .report { max-width: var(--measure); }
+.report p, .report td, .report th { font-family: var(--font-prose); }
 .report p { margin: 0 0 var(--space-5); }
 .report table { width: 100%; border-collapse: collapse; margin: var(--space-6) 0; }
 .report th, .report td {
@@ -653,6 +685,19 @@ body.no-annot .tok { display: none; }
   </div>
 
   <div class="lab-group">
+    <span class="lab-label">Type</span>
+    <button class="lab-btn" id="y-system" aria-pressed="true">System</button>
+    <button class="lab-btn" id="y-editorial">Editorial</button>
+    <button class="lab-btn" id="y-prose">Editorial + prose</button>
+  </div>
+
+  <div class="lab-group">
+    <span class="lab-label">Metadata</span>
+    <button class="lab-btn" id="x-callout" aria-pressed="true">Callout</button>
+    <button class="lab-btn" id="x-mono">Mono</button>
+  </div>
+
+  <div class="lab-group">
     <span class="lab-label">Mode</span>
     <button class="lab-btn" id="m-light" aria-pressed="true">Light</button>
     <button class="lab-btn" id="m-dark" aria-pressed="false">Dark</button>
@@ -666,6 +711,7 @@ body.no-annot .tok { display: none; }
 
   <nav class="lab-jump">
     <a href="#rows">Rows</a>
+    <a href="#taskrow">Task row</a>
     <a href="#controls">Controls</a>
     <a href="#chips">Chips</a>
     <a href="#accent">Accent</a>
@@ -793,6 +839,150 @@ body.no-annot .tok { display: none; }
       <span class="check" style="border-color: var(--text-disabled);"></span>
       <div class="r-main"><span class="t-body r-title">Disabled</span></div>
       <span class="tok">text-disabled</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== TASK ROW ============================== -->
+<section id="taskrow">
+  <div class="sec-head">
+    <h2 class="t-title-1">The task row</h2>
+    <span class="tok">row-rich 72 · row-default 56 · 05-modules/tasks.md</span>
+  </div>
+  <p class="sec-note">
+    The row the app is mostly made of — a Tasks list is twenty of these, and the
+    same shape appears in the Day view, the palette, and a search result. Four
+    things need deciding on it, and the first three are settled by the spec
+    rather than by taste: the metadata line's family (see the Metadata toggle),
+    what the priority dot is, and the height rule.
+  </p>
+
+  <div class="variant">
+    <div class="vlabel">
+      <span class="vnum">01</span>
+      <span class="t-title-3">The row in place</span>
+      <span class="tok">priority dot, deferred chip, overdue chip</span>
+    </div>
+    <div class="vlist">
+      <div class="row r-rich">
+        <span class="check"></span>
+        <div class="r-main">
+          <span class="t-body r-title">Draft the Q3 retro</span>
+          <span class="r-meta-mono">Work · due Tue · 1 note · @Sarah</span>
+        </div>
+        <span class="pdot"></span>
+        <span class="chip">deferred 2d</span>
+      </div>
+      <div class="row r-rich">
+        <span class="check"></span>
+        <div class="r-main">
+          <span class="t-body r-title">Book the dentist</span>
+          <span class="r-meta-mono">Health · due Thu</span>
+        </div>
+        <span class="pdot"></span>
+      </div>
+      <div class="row r-rich">
+        <span class="check"></span>
+        <div class="r-main">
+          <span class="t-body r-title">Reply to Priya about the offsite</span>
+          <span class="r-meta-mono">Work · 2 notes · @Priya</span>
+        </div>
+      </div>
+      <div class="row r-rich">
+        <span class="check"></span>
+        <div class="r-main">
+          <span class="t-body r-title">Call the landlord about the radiator</span>
+          <span class="r-meta-mono">Home · overdue 3d</span>
+        </div>
+        <span class="chip" style="color: var(--text-secondary);">overdue 3d</span>
+      </div>
+    </div>
+    <div class="annot-row">
+      <span class="tok">row-rich · title line 1, composed metadata line 2</span>
+      <span class="tok">priority dot is accent-default, per tasks.md</span>
+      <span class="tok">overdue is text-secondary — never red</span>
+    </div>
+  </div>
+
+  <div class="variant">
+    <div class="vlabel">
+      <span class="vnum">02</span>
+      <span class="t-title-3">Priority states</span>
+      <span class="tok">priority: now shows a dot; next and later show nothing</span>
+    </div>
+    <p class="sec-note" style="margin-top: 0;">
+      The absence of an indicator is the signal for every other priority level.
+      So the dot has to be legible at 8px against a row of text, and it is the
+      accent's third job after the filled control and the mode indicator.
+    </p>
+    <div class="vlist">
+      <div class="row r-default">
+        <span class="check"></span>
+        <div class="r-main"><span class="t-body r-title">priority: now</span></div>
+        <span class="pdot"></span>
+      </div>
+      <div class="row r-default">
+        <span class="check"></span>
+        <div class="r-main"><span class="t-body r-title">priority: next</span></div>
+      </div>
+      <div class="row r-default">
+        <span class="check"></span>
+        <div class="r-main"><span class="t-body r-title">priority: later</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="variant">
+    <div class="vlabel">
+      <span class="vnum">03</span>
+      <span class="t-title-3">No metadata, and completed</span>
+      <span class="tok">row-default 56 · completion reveals a green checkmark</span>
+    </div>
+    <p class="sec-note" style="margin-top: 0;">
+      Two things to look at here. A row with no metadata drops to 56px, which is
+      the whole reason the height rule exists. And a completed row puts the
+      <em>success</em> green on screen — in the same row as an accent dot, when
+      the task also has priority.
+    </p>
+    <div class="vlist">
+      <div class="row r-default">
+        <span class="check"></span>
+        <div class="r-main"><span class="t-body r-title">No metadata, no priority</span></div>
+      </div>
+      <div class="row r-default">
+        <span class="check done"></span>
+        <div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Completed</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="variant">
+    <div class="vlabel">
+      <span class="vnum">04</span>
+      <span class="t-title-3">The pair to watch</span>
+      <span class="tok">accent dot + success checkmark, same row</span>
+    </div>
+    <p class="sec-note" style="margin-top: 0;">
+      This is the finding the type pass produced. The priority dot is the accent
+      and the completed checkbox is success green — so they appear as two small
+      coloured marks in the same row, at the same size, doing the same job. That
+      makes the accent's hue distance from <code>success</code> load-bearing,
+      which is exactly the property teal fails at 33°.
+    </p>
+    <div class="vlist">
+      <div class="row r-default">
+        <span class="check done"></span>
+        <div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Completed, and was priority: now</span></div>
+        <span class="pdot"></span>
+      </div>
+      <div class="row r-default">
+        <span class="check"></span>
+        <div class="r-main"><span class="t-body r-title">Open, priority: now</span></div>
+        <span class="pdot"></span>
+      </div>
+    </div>
+    <div class="annot-row">
+      <span class="tok">switch Accent above and read this row as a pair</span>
     </div>
   </div>
 </section>
@@ -1433,6 +1623,8 @@ let lightPal = "warm";
 let darkPal = "cool";
 let accent = "blue";
 let semantics = "standard";
+let typePref = "system";
+let metaPref = "callout";
 let modePref = "light";
 
 function resolveMode() {
@@ -1449,6 +1641,8 @@ function apply() {
   root.dataset.palette = mode === "dark" ? darkPal : lightPal;
   root.dataset.accent = accent;
   root.dataset.semantics = semantics;
+  root.dataset.type = typePref;
+  root.dataset.meta = metaPref;
 
   press("l-cool", lightPal === "cool");
   press("l-warm", lightPal === "warm");
@@ -1461,6 +1655,11 @@ function apply() {
   press("s-standard", semantics === "standard");
   press("s-muted", semantics === "muted");
   press("s-vivid", semantics === "vivid");
+  press("y-system", typePref === "system");
+  press("y-editorial", typePref === "editorial");
+  press("y-prose", typePref === "prose");
+  press("x-callout", metaPref === "callout");
+  press("x-mono", metaPref === "mono");
   press("m-light", modePref === "light");
   press("m-dark", modePref === "dark");
   press("m-system", modePref === "system");
@@ -1480,6 +1679,11 @@ $("a-violet").onclick = () => { accent = "violet"; apply(); };
 $("s-standard").onclick = () => { semantics = "standard"; apply(); };
 $("s-muted").onclick = () => { semantics = "muted"; apply(); };
 $("s-vivid").onclick = () => { semantics = "vivid"; apply(); };
+$("y-system").onclick = () => { typePref = "system"; apply(); };
+$("y-editorial").onclick = () => { typePref = "editorial"; apply(); };
+$("y-prose").onclick = () => { typePref = "prose"; apply(); };
+$("x-callout").onclick = () => { metaPref = "callout"; apply(); };
+$("x-mono").onclick = () => { metaPref = "mono"; apply(); };
 $("m-light").onclick = () => { modePref = "light"; apply(); };
 $("m-dark").onclick = () => { modePref = "dark"; apply(); };
 $("m-system").onclick = () => { modePref = "system"; apply(); };

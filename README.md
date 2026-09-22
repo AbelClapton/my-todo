@@ -15,7 +15,7 @@ call is made.
   screens at real row heights, and a contrast table computed from the live
   values. Open it directly in a browser; there is no build step and no network.
 
-Four independent axes, all over the same token set (never two token sets —
+Six independent axes, all over the same token set (never two token sets —
 that is an invariant):
 
 - **Light palette** — **cool** (Zinc) or **warm** (Stone, the paper direction).
@@ -28,14 +28,20 @@ that is an invariant):
 - **Semantics** — standard, muted, or vivid. Red, green, and amber keep their
   meanings in every case; only their *character* moves. Light mode only — see
   finding 13.
+- **Type** — system, editorial display, or editorial display plus prose. See
+  finding 16 for why this needs an ADR before it can ship.
+- **Metadata** — the task row's second line as `type-callout` (what the spec
+  says) or mono (the proposal both briefs point at). Switches every row in the
+  lab at once.
 
 Only the neutral comparison is one-axis-at-a-time; the accent and semantics
 deliberately interact, which is the point of having them as separate axes.
 
 ## How to read it
 
-Toggle **Light**, **Dark**, **Accent**, **Semantics**, **Mode**, and
-**Annotated** in the top bar, then look at these five, in this order:
+Toggle **Light**, **Dark**, **Accent**, **Semantics**, **Type**, **Metadata**,
+**Mode**, and **Annotated** in the top bar, then look at these six, in this
+order:
 
 1. **Tasks, Today** — twenty rows at real height. A ground can look lovely on a
    card and tiring after twenty rows. This is the screen that decides it.
@@ -49,6 +55,8 @@ Toggle **Light**, **Dark**, **Accent**, **Semantics**, **Mode**, and
    weakest of the four: see *Where the evidence points* below.
 5. **Accent** — the accent beside danger, success, and warning, which is a hue
    question that no ratio answers.
+6. **Task row** — variant 04, *the pair to watch*, and the accented row of
+   figures that goes with it.
 
 ## Findings
 
@@ -167,6 +175,43 @@ low-chroma, so a vivid hue reads fine on it and the accent's character stops
 competing. Harmonising chroma there buys nothing, which is why the axis is
 mode-scoped rather than palette-scoped and dark always uses the standard set.
 
+**14. The priority dot is the accent, and that settles the accent question.**
+`05-modules/tasks.md`: "`priority: now` shows a small dot in `accent-default`",
+and completion "reveals a green checkmark". So **`accent-default` and
+`success-default` appear as two small marks in the same row, at the same size,
+doing the same job** — and that makes the accent's hue distance from `success`
+load-bearing. Teal is 33° from success and the two merge: verified visually, the
+teal dot and the green checkmark read as one family. Blue (79°) and indigo
+(101°) keep them distinct.
+
+This also **refutes the defence offered for teal earlier** — that the accent and
+the semantics never appear as the same kind of object. On this row they are the
+same kind of object.
+
+*A correction to this lab:* the first draft drew the dot in `warning-default`.
+That was a spec violation, and it hid this finding for a whole pass.
+
+**15. The metadata line's family is a real decision, not a default.** The spec
+says `type-callout` (15px) at `text-secondary`; mono is a proposal from both
+briefs. The toggle switches every row so the whole app can be judged both ways.
+Switching does not move row heights, because it re-dresses the existing second
+line rather than adding one — which is what makes it cheap enough to try.
+
+**16. A display/prose font split needs a token that does not exist.**
+`design-tokens.md` defines exactly two families (sans, mono) and applies sans to
+all eleven type roles, so `--font-display` and `--font-prose` are **new tokens**,
+and the token set is closed — adding one requires an ADR. The cost side matters
+too: the system stack is zero bytes, no network, and no FOUT, so a chosen face
+would be the **first genuine brand asset the app carries**, paid for out of the
+`< 3s` cold-start budget and the service-worker cache. The lab's serif stacks use
+locally available fonts, so they show the *shape* of the choice and not the
+finished thing.
+
+**17. The row heights hold.** `row-rich` (72) carries a title plus the composed
+metadata line from the spec ("Work · due Tue · 1 note · @Sarah") on one line, at
+390px. `row-default` (56) carries a title alone. The height rule is doing real
+work rather than being a size convention.
+
 **Checked and holding:** `row-rich` (72px) does carry the title, the metadata
 line, and a chip without crowding, and twenty rows at `row-default` / `row-rich`
 read cleanly at desktop width.
@@ -235,6 +280,18 @@ Brief 2 needs a product to screenshot. Brief 1 does not. For a pre-launch app
 with no store listing and no shipped screens, **Product-Led Minimalism is
 blocked on having something to demonstrate**, and the paper direction is not.
 That is an argument about timing, not about taste.
+
+## The task row, in the lab
+
+Four variants, in the order they need deciding. The first three are settled by
+the spec; only the metadata family is genuinely open.
+
+| Variant | What it settles |
+|---|---|
+| 01 · The row in place | Title line, composed metadata line, priority dot, deferred chip, overdue chip. At `row-rich`. |
+| 02 · Priority states | `now` shows the dot; `next` and `later` show nothing, because absence is the signal. So the dot must be legible at 8px, and it is the accent's third job after the filled control and the mode indicator. |
+| 03 · No metadata, and completed | The height rule, and the success green on screen. |
+| 04 · The pair to watch | The accent dot and the success checkmark in one row. Switch the accent and read them as a pair. |
 
 ## What this deliberately does not do
 
