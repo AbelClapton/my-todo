@@ -11,8 +11,10 @@ The theme is: **be quiet, then be exactly right.**
 
 ## Invariants
 
-- The now line is always visible in the calendar day view and in
-  the header of other modes (`02-architecture/projections.md`).
+- The now line is always visible in the Calendar and in the header of
+  every other mode (`02-architecture/projections.md`). Within the
+  Calendar it lives in the mode's header, so it is present in the week,
+  month and year views as well as the day view.
 - Focus mode suppresses all nudges
   (`03-experience/attention-budget.md`).
 - Contextual nudges fire at most once per hour and never during an
@@ -62,6 +64,14 @@ It is a persistent instrument.
 (`05-modules/calendar.md`, "The fold"), because an instrument that leaves the
 screen when you read is not always present. In every other mode the now line is
 in a header that does not scroll either.
+
+**The week view draws it twice, on purpose.** Its grid carries a now *rule*
+across all seven columns, because a continuous time axis with no "you are here"
+on it is unreadable — and in a week, now is a line rather than a point. The
+header keeps the textual line, and the rule is the same fact drawn for the axis.
+This is the only place in the app where one fact is stated twice on one screen,
+and it is allowed because the two statements answer different questions: what is
+next, and where am I in the day.
 
 ### Focus mode
 

@@ -31,8 +31,9 @@ is the Day.
 
 - **Day view** — the default. Shows events, scheduled tasks, habits
   due, and the protocol metric if one is active.
-- **Week view** — 7 days side by side. Events only; tasks and
-  habits collapse to counts.
+- **Week view** — 7 days side by side, as a **proportional chart**
+  rather than a list. Events only; tasks and habits collapse to
+  counts. See "The Week view layout" below.
 - **Month view** — a grid. Days show event density, not event
   titles. Tapping a day opens it.
 - **Year view** — 12 month grids at reduced density. Used for
@@ -115,9 +116,69 @@ row, metric, Daily Note and top three are all above it. That is the right part
 to lose. Completed is a record — read at the end of the day, not scanned during
 it — which is also why it is the last section rather than the first.
 
+### The Week view layout
+
+Seven days as columns over **one shared time gutter**. The gutter is drawn once:
+seven axes in 390px is seven more things than there is room for, and all seven
+would be labelling the same hours anyway.
+
+1. **Column headers.** Day-of-week abbreviation and date number, with the
+   week's own header above them (`Week 39 · 21–27 Sep`). Today's column is
+   tinted and its header accented.
+2. **All-day band.** Above the axis, and the one part only this view can draw: an
+   item covering two days needs two days on screen at once.
+3. **The grid.** Events and scheduled tasks as proportional blocks, positioned by
+   clock time across the shared gutter, and a **now rule** spanning all seven
+   columns. The selected column is outlined.
+4. **Focus line.** The selected day's date and load, and the way into it. Tapping
+   a column selects it and updates this line; tapping the line opens that day.
+   One tap cannot both pick a column out and leave the week, so it does not try.
+   The selection starts on today.
+5. **Counts strip.** Tasks due and habits per day, as counts — the "collapse to
+   counts" the scope calls for, spent on telling the seven days apart.
+
+**Titles are not drawn in the grid.** This is the one rule the view cannot bend,
+and it is a measurement rather than a preference: a column is 45px wide and a
+30-minute event is 28px tall, so a proportional block has no room for a name at
+either scale. Identity comes from the Day view, which is one tap away. A
+selection may reveal a title; the grid itself does not carry one.
+
+The layout uses tokens from `03-experience/design-tokens.md`: `space-5` inset,
+`space-7` between regions, and `type-caption` for the whole instrument — column
+headers, axis labels, counts and the now rule's label alike, because a grid is
+read as a whole and does not need a type scale to be read.
+
+### The Week's fit
+
+The Day view's problem is height; the Week's is width, and the two have the same
+cause. The Day's timeline gives **every item 52px** whatever its duration — a
+30-minute standup and a 3-hour workshop are drawn identically — because it is a
+**list with a time gutter**, not a chart. The Week is the first Calendar surface
+asked to be proportional, and proportionality is what costs the titles.
+
+Measured at 390px: a column is **45px**, a 30-minute event is **28px** tall, and
+**15 of the 18** titles a literal reading draws do not fit. Rotating the axis —
+days as rows, the clock running left to right — makes it worse rather than
+better: ten hours across a row is 288px, so the same 30-minute event is **14px**
+wide, narrower than the column it replaced, and all 18 titles clip. **The
+constraint is the clock, not the column count.**
+
+**The axis window is fixed from week to week.** A window derived from each week's
+own earliest and latest events would make two weeks incomparable at a glance,
+which is the view's entire purpose. The bounds are a constant; the lab draws
+08:00–18:00 for legibility, not as a proposal.
+
 ### Surfaces
 
 **Day view (default).** As above.
+
+**Week view.** As above — seven days as a proportional chart over one shared
+gutter, with titles omitted by rule rather than by omission.
+
+**Month view.** A grid. Days show event density, not event titles. Tapping a day
+opens it.
+
+**Year view.** 12 month grids at reduced density. Used for browsing, not acting.
 
 **Event detail.** Opened by tapping an event. Shows title, time,
 attendees (People), linked notes, prep card (via Tier 2 "Prep me"),
@@ -138,6 +199,8 @@ see the day as it was. Read-only. See
 | Action | Gesture | Result |
 |---|---|---|
 | Zoom in/out | Pinch | Day ↔ Week ↔ Month ↔ Year |
+| Select a day (Week) | Tap a column | The column outlines; the focus line names it |
+| Open a day (Week) | Tap the focus line | The Day view for that day |
 | Next/prev day | Header arrows | Navigate |
 | Jump to today | Tap "Today" | Navigate |
 | Open event | Tap event | Event detail |
@@ -170,9 +233,17 @@ instead (`07-infrastructure/integrations.md`).
   line reads "Nothing scheduled — [Capture]" and carries the one action
   (`06-flows/doing-the-day.md`). It is present in every mode's header, so
   the Calendar does not need to repeat it.
-- **The Calendar has no whole-view empty state.** It cannot have one: the
-  Daily Note always exists. `03-experience/states.md`'s empty-state form
-  applies to surfaces that can be genuinely bare, and this is not one.
+- **The Day view has no whole-view empty state.** It cannot have one: the
+  Daily Note always exists (`02-architecture/day-as-unit.md`), so the view around
+  it always has content, and a centred `type-display` block here would be absurd.
+  `03-experience/states.md`'s empty-state form applies to surfaces that can be
+  genuinely bare, and the Day is not one.
+- **The Week can be bare, and is.** The reasoning above is a Day-view argument and
+  does not survive the zoom levels: a week with nothing on it has no Daily Note
+  and no other content, so the **Week and Month views carry the standard
+  empty-state form**. An empty day inside a populated week is the other case — a
+  **section**, not a view: its column renders empty and its counts read zero,
+  with no headline and no action.
 - **Waiting.** Past 400ms, a static `surface-2` placeholder block for
   the timeline (`03-experience/states.md`). Static — the app has no
   spinner and no shimmer anywhere (ADR 0019).

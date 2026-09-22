@@ -58,6 +58,11 @@ due, metric log row, day-note preview cards, top three, completed. The order
 is fixed and the height is not — the view scrolls, with the header and the now
 line held in place (`05-modules/calendar.md`, "The fold").
 
+The Week view is not an order of parts but a single instrument: seven days as
+columns over one shared time gutter, with event titles omitted because a
+proportional column cannot hold one (`05-modules/calendar.md`, "The Week view
+layout").
+
 ### Tasks — `05-modules/tasks.md`
 
 | Surface | Kind | Entry |
