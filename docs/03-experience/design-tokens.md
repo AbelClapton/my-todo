@@ -292,15 +292,16 @@ only to signal layering, not decoration.
 
 | Token | px | Used for |
 |---|---|---|
-| `icon-xs` | 12 | Inline with caption text |
+| `icon-xs` | 12 | Inline with caption text, and inline in a task row's metadata line |
 | `icon-sm` | 16 | Inline with body text, chips |
-| `icon-md` | 20 | List rows, buttons, tab bar |
+| `icon-md` | 20 | Rail and dock items, icon-only buttons |
 | `icon-lg` | 24 | Mode switcher, prominent actions |
-| `icon-xl` | 32 | Empty state, feature callouts |
+| `icon-xl` | 32 | **Unused.** No surface claims it (`03-experience/states.md`) |
 
-Default icon size in a list row is `icon-md` (20px). In a button,
-`icon-sm` (16px) for text buttons and `icon-md` (20px) for icon-only
-buttons.
+A task row carries no leading icon. Where a glyph appears in a row it is
+inline in the metadata line, at `icon-xs`, beside the word it describes
+(`05-modules/tasks.md`). In a button, `icon-sm` (16px) for text buttons and
+`icon-md` (20px) for icon-only buttons.
 
 ### Touch targets
 

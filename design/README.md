@@ -362,7 +362,7 @@ rather than a proposal.
 | Block | What it settles |
 |---|---|
 | A · The four scopes | Today (deferred-past first, with a chip), Next (sorted by priority, one dot), Someday (flat, `row-default`, **no metadata line**), All (due ascending, the sort key visible). |
-| B · Empty states, twice | Two scopes can be empty for opposite reasons — nothing scheduled is a good day, nothing parked is fine — so they must not share copy. |
+| B · Empty states, six of them | Two scopes can be empty for opposite reasons — nothing has a day, nothing is parked — so they must not share copy. Someday's carries no action. |
 | C · The completed log | Newest first, reached through the filter, and the metadata line carries *when* rather than *when due*. |
 | D · The filter sheet | Four groups, exactly as listed: Area, Person, due within, and the completed switch. A sheet, not a popover. |
 | E · The detail view | The metadata block is a definition list rather than chips — these are facts about the task, not state belonging to it. |
@@ -370,9 +370,25 @@ rather than a proposal.
 
 **Finding 21 · `tasks.md` specifies no empty-state copy for the four scopes.**
 `states.md` requires an empty state to carry one action and forbids "No results
-found", but the strings themselves exist nowhere. The lab's are provisional and
-marked as such. It matters more than it sounds: **Today-empty and Someday-empty
-mean opposite things**, and the second one should not read as a prompt to fill it.
+found", but the strings themselves exist nowhere. It mattered more than it
+sounded: **Today-empty and Someday-empty mean opposite things**, and the second
+one should not read as a prompt to fill it.
+
+**Closed.** All six strings are in `05-modules/tasks.md`, with the rule that
+organises them: **the action repairs the cause of the emptiness** — capture when
+there is no data, clear the filter when nothing matches, widen the window when
+nothing falls inside it. The Someday case turned out to be the interesting one.
+Forcing an action there is exactly the prompt the scope must not give, so
+**Someday's empty state carries no action**, and that is now the single recorded
+exception to `states.md`'s invariant. The invariant is refined rather than broken:
+an empty state carries one action *where there is something to repair*, and a
+parking lot with nothing parked is not a repair.
+
+**A real bug fell out of writing the copy.** `states.md`'s own Today example read
+"Nothing here yet. / Capture something and it lands here." Capture lands a task in
+Inbox; a task reaches Today by *getting a day*. The line promised something the
+projection does not do, and it was in the doc that defines empty states. The
+line is now "Tasks appear here once they have a day."
 
 The mode also confirmed two things the earlier passes only predicted: the height
 rule is load-bearing (Someday's suppression of the metadata line is a visible
@@ -397,6 +413,15 @@ state**. Neither surface has an icon. So this was never "should we add decoratio
 
 **Finding 23 · "Feature callouts" is an orphan.** It is named as an `icon-xl` use
 and no surface by that name exists anywhere in the doc set.
+
+**Both closed.** `icon-md`'s row lost "list rows" and gained the two uses that are
+real — icon-only buttons and the tab bar. The row's glyph is inline at `icon-xs`,
+which the row now records. `icon-xl` has no user at all: the empty state does not
+take a glyph (below), and "feature callouts" named nothing, so it is recorded as
+**Unused** rather than given a surface invented to justify it. The size stays in
+the table because a four-step scale that skips a step is harder to reason about
+than one honest unused row — and removing a token is a change to
+`design-tokens.md`, which is a different decision than correcting a usage.
 
 **Finding 24 · No inline icon size matches `type-footnote`.** The table gives
 `icon-xs 12` for "inline with caption text" (12px) and `icon-sm 16` for "inline with
@@ -430,15 +455,25 @@ word that is already there.
 Both labels inherit `text-muted`; neither introduces a hue, which is the whole
 reason it works.
 
+### The empty-state glyph
+
+Rejected, for the same reason the row's leading glyph was rejected. The headline
+already orients — "Nothing on today." says what the surface holds — so a neutral
+glyph above it is decoration, and a glyph carrying a meaning of its own
+duplicates the action below it. The clipboard variant proved the second half: it
+reads as a second "Capture something", which is the one thing Someday's empty
+state must not do.
+
+`states.md` forbade an *illustration* — a picture — and said nothing about a
+glyph, which is how `icon-xl` kept a use it never had. The rule is now explicit
+in both directions: no illustration, no glyph.
+
 ### Still open
 
-- **Decide the row treatment.** D, E, and F all hold. E removes ink; F is the
-  densest and the most explicit.
-- **Decide the inline size.** Finding 24 needs closing either way — widen `icon-xs`'s
-  documented use to include footnote-sized text, or add a size to the table (which
-  is a new token, so an ADR).
-- **Decide the empty-state glyph.** The token anticipates it; the surface doesn't
-  have one.
+- **The inline size.** Finding 24 is the one item from this pass left open: the
+  table's nearest row is `icon-xs 12` for caption text, and the metadata line is
+  13px. Closing it means widening that row's documented use, or adding a size —
+  and a size is a token, so an ADR.
 
 The set and its drawing rules belong in `03-experience/components.md` as **assets**:
 the size table stays as it is, so no new tokens and no ADR — unless finding 24 is

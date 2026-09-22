@@ -111,6 +111,59 @@ with four rows.
 **Someday pile.** The Someday scope is a flat list with no dates
 and no metadata line. It is a parking lot, not a backlog.
 
+### Empty states
+
+`03-experience/states.md` owns the form — a `type-display` headline, one
+line in `text-secondary`, one action, `space-10` padding, static, no
+glyph. This section owns the strings and the reason for each.
+
+**The action repairs the cause of the emptiness.** There are three causes
+and three repairs, and no fourth:
+
+| Cause | Repair |
+|---|---|
+| There is no data | Capture |
+| Nothing matches the filter | Clear the filter |
+| Nothing falls inside the window | Widen the window |
+
+Where the cause cannot be repaired from this surface, the action falls
+back to capture — the one action that is always available and never wrong —
+and the detail line states what actually puts a task in the scope.
+
+| Scope, empty | Headline | Detail line | Action |
+|---|---|---|---|
+| **Today** | Nothing on today. | Tasks appear here once they have a day. | Capture something |
+| **Next** | Nothing flagged. | Flag a task now or next and it appears here. | Capture something |
+| **Someday** | Nothing parked. | Setting a task aside keeps it out of Today without deleting it. | **None** |
+| **All** | Nothing open. | Everything you capture lands here first. | Capture something |
+| **All, filtered** | No tasks match. | The active filters, named — e.g. "Area: Work · due within 7 days" | Clear filters |
+| **Completed, empty** | Nothing completed. | The log covers the last 30 days by default. | Show all time |
+
+**Someday is the only surface in the app whose empty state carries no
+action.** A parking lot with nothing parked is not a dead end and not a
+problem, so there is nothing to repair. Offering "Capture something" there
+would be the one thing this scope must never do: read as a prompt to fill
+it. Every other empty state in the app carries exactly one action.
+
+**Today-empty and Someday-empty mean opposite things.** Today empty means
+nothing has a day; Someday empty means nothing has been set aside. Neither
+is a failure and neither headline says so — but they are different states
+and they do not share a sentence.
+
+**The filtered empty state names the filter, never the absence.**
+"No results found" is banned by `03-experience/states.md`; naming what is
+excluding the tasks, and offering to remove it, is the same information
+with a way out. This is also the one empty state whose action is not
+capture, because the list is not empty — the query is.
+
+Today's detail line is deliberate. Capture puts a task in Inbox, not on
+today, so the line says what does put it there.
+
+**Checked at 390px.** Every headline fits on one line at `type-display`,
+the widest being "Nothing completed." at 280px. Every detail line is two
+lines or fewer. The block is therefore the same height in all six scopes,
+which is why no scope needs its own layout argument.
+
 ### Actions
 
 | Action | Gesture | Result |
@@ -216,6 +269,30 @@ not the task.
     Completion haptic, completion animation, undo toast.
     Row removes from list.
 
+**The Someday scope, empty.**
+
+    Nothing parked.
+    Setting a task aside keeps it out of Today without deleting it.
+
+    ← and nothing below it. No action.
+
+The Someday pile is the only surface in the app where this is right: an
+empty parking lot is an answer, not a dead end, so there is nothing to
+repair and nothing to offer.
+
+**The All scope, filtered, empty.**
+
+    Nothing open.
+
+    [filter] Area: Work · due within 7 days
+
+         No tasks match.
+         Area: Work · due within 7 days · has a person
+         [ Clear filters ]
+
+The list is not empty; the query is. So the action clears the query rather
+than adding to the list.
+
 **Long-press for AI.**
 
     User long-presses "Buy standing desk."
@@ -240,6 +317,8 @@ not the task.
   `06-flows/capture.md`.
 - This doc does not define the shutdown flow. It lives in
   `06-flows/shutdown.md`.
+- This doc does not define the form of a state. It owns the empty-state
+  strings, but the form they sit in is `03-experience/states.md`.
 - This doc does not define other modules. Areas live in
   `05-modules/areas-and-goals.md`; People in
   `05-modules/people.md`.

@@ -22,8 +22,15 @@ shows it.
 - **Waiting never animates.** There are no spinners and no shimmer in
   this app, and the decision is recorded as **ADR 0019**. See below for
   why.
-- An empty state has exactly one primary action
-  (`06-flows/onboarding.md`).
+- An empty state has exactly one action, and the action repairs the cause
+  of the emptiness — capture when there is no data, clear the filter when
+  nothing matches, widen the window when nothing falls inside it. Where the
+  emptiness needs no repair there is no action: **Someday is the only such
+  surface in the app**, and a second one is a change to this doc rather than a
+  local decision (`05-modules/tasks.md`).
+- **An empty state never carries a glyph.** `icon-xl`'s row in
+  `03-experience/design-tokens.md` anticipated one, and no surface ever
+  grew one.
 - No state is red except an error. Stale is labelled, not alarmed
   (`02-architecture/data-lifecycle.md`).
 
@@ -34,7 +41,7 @@ shows it.
 | State | When | Form |
 |---|---|---|
 | **Content** | The normal case | The surface as specified by its owner |
-| **Empty** | The surface is valid and has nothing to show | Centred block: `type-display` headline, one line in `text-secondary`, one primary action. `space-10` vertical padding. Static |
+| **Empty** | The surface is valid and has nothing to show | Centred block: `type-display` headline, one line in `text-secondary`, one action. `space-10` vertical padding. Static. No glyph, no illustration |
 | **Waiting** | Work is in flight | Nothing for the first 400ms. Then a static placeholder block in `surface-2` (`radius-md`), plus one line in `text-secondary` when the wait is countable |
 | **Stale** | Data is older than its threshold | The freshness annotation: "as of 2 hours ago", `type-footnote`, `stale-bg` / `stale-text`. Data stays visible |
 | **Partial** | Some data arrived, some did not | The arrived data renders normally; the missing part carries its own waiting or stale treatment. Never a blank screen |
@@ -86,8 +93,16 @@ An empty state is not an error, and it is not a dead end. The rules:
 - It offers exactly one action, and that action is the fastest way to put
   something in the surface.
 - It never says "No results found" — that phrasing belongs to search,
-  where the user asked a question that has an answer of "none".
+  where the user asked a question that has an answer of "none". Where a
+  filter is the reason the surface is empty, the state names the filter
+  instead of the absence, and its one action removes it.
 - It never shows an illustration. The app has no illustration system.
+- It never carries a glyph. An empty state's job is orientation, and the
+  headline does that job; a neutral glyph above it is decoration, and a
+  coloured one reads as a state the surface does not have.
+- Its one action repairs the cause, and where there is nothing to repair
+  there is no action. `05-modules/tasks.md` carries the strings and the
+  three causes.
 
 ## Examples
 
@@ -95,11 +110,16 @@ An empty state is not an error, and it is not a dead end. The rules:
 
     [ Tasks ]  Today            [filter] [gear]
 
-         Nothing here yet.
-         Capture something and it lands here.
-         [ Capture something ]        ← primary action, control-lg
+         Nothing on today.
+         Tasks appear here once they have a day.
+         [ Capture something ]        ← the one action, control-lg
 
 Static. No animation. The action opens the capture field.
+
+Note what the detail line does not say: that captured tasks appear here.
+Capture puts a task in Inbox; a task reaches Today by getting a day. The
+line states what puts it there rather than making a promise the projection
+does not keep.
 
 **The same scope, waiting on the first sync.**
 

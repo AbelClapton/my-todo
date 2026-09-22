@@ -1476,16 +1476,18 @@ body.no-annot .tok { display: none; }
     <span class="tok">sizes are tokens · the glyphs are assets</span>
   </div>
   <p class="sec-note">
-    Two icon usages are already documented and don't exist yet: <code>icon-md 20</code>
-    is listed as the default in a <em>list row</em>, and <code>icon-xl 32</code> for
-    an <em>empty state</em>. Neither surface has one. This section exists to settle
-    both by looking, rather than by arguing.
+    Two icon usages were documented and did not exist: <code>icon-md 20</code> as the
+    default in a <em>list row</em>, and <code>icon-xl 32</code> for an <em>empty
+    state</em>. Neither surface ever grew one. Both are settled now — the row's glyph
+    is inline, at <code>icon-xs</code>, and the empty state's is nothing at all — and
+    <code>design-tokens.md</code> records <code>icon-xl</code> as unused.
   </p>
   <p class="sec-note">
-    There is no icon set in the repo, so the glyphs here are stand-ins drawn to the
-    rules a set would need to meet — a 24px grid, a uniform 2px stroke, round caps
-    and joins, and <code>currentColor</code> so a glyph inherits its colour and can
-    never introduce one.
+    <strong>Lucide is adopted</strong> (0.469.0, ISC), and the glyphs below are its real
+    icon data, inlined so the lab stays offline. Lucide's drawing rules are a 24px
+    grid, a uniform 2px stroke, round caps and joins, and <code>currentColor</code> —
+    which is why a glyph inherits its colour and can never introduce one. The app
+    installs <code>lucide-react</code>; the shapes and the rules are the same.
   </p>
 
   <div class="variant">
@@ -1498,12 +1500,13 @@ body.no-annot .tok { display: none; }
       <div class="icon-sizes">
         <div class="icon-size-row"><code>icon-xs 12</code><svg class="ic ic-xs"><use href="#i-check"/></svg><span>Inline with caption text</span></div>
         <div class="icon-size-row"><code>icon-sm 16</code><svg class="ic ic-sm"><use href="#i-check"/></svg><span>Inline with body text, chips</span></div>
-        <div class="icon-size-row"><code>icon-md 20</code><svg class="ic ic-md"><use href="#i-check"/></svg><span>List rows, buttons, tab bar</span></div>
+        <div class="icon-size-row"><code>icon-md 20</code><svg class="ic ic-md"><use href="#i-check"/></svg><span>Icon-only buttons, tab bar</span></div>
         <div class="icon-size-row"><code>icon-lg 24</code><svg class="ic ic-lg"><use href="#i-check"/></svg><span>Mode switcher, prominent actions</span></div>
-        <div class="icon-size-row"><code>icon-xl 32</code><svg class="ic ic-xl"><use href="#i-check"/></svg><span>Empty state, feature callouts</span></div>
+        <div class="icon-size-row"><code>icon-xl 32</code><svg class="ic ic-xl" style="opacity: .4"><use href="#i-check"/></svg><span><strong>Unused</strong> — no surface claims it</span></div>
       </div>
       <div class="annot-row">
-        <span class="tok">"feature callouts" names no surface in the doc set — an orphan</span>
+        <span class="tok">"feature callouts" named no surface in the doc set — an orphan, corrected rather than invented for</span>
+        <span class="tok">the row's documented icon-md default was false too — the row glyph is inline, at icon-xs</span>
       </div>
     </div>
   </div>
@@ -1625,31 +1628,35 @@ body.no-annot .tok { display: none; }
   <div class="variant">
     <div class="vlabel">
       <span class="vnum">03</span>
-      <span class="t-title-3">The empty state, two ways</span>
-      <span class="tok">icon-xl 32 · states.md forbids illustrations, not icons</span>
+      <span class="t-title-3">The empty state: with and without a glyph</span>
+      <span class="tok">icon-xl 32 · decided: without</span>
     </div>
     <p class="sec-note" style="margin-top: 0;">
-      The token table anticipates an `icon-xl` here. `states.md` forbids an
-      <em>illustration</em> — a picture — and says nothing about a glyph, so the two
-      are compatible. The condition I'd attach: one glyph, neutral, never coloured,
-      because an empty state's job is orientation and a coloured glyph would read as
-      a state the surface does not have.
+      <code>design-tokens.md</code> listed <code>icon-xl 32</code> for an empty state,
+      so the token anticipated a glyph here and none was ever drawn.
+      <code>states.md</code> forbids an <em>illustration</em> — a picture — and says
+      nothing about a glyph, so the two looked compatible. They are not. An empty
+      state's whole job is orientation, and the headline already does it: a neutral
+      glyph above the headline is decoration, and a glyph with a meaning of its own
+      repeats the action below it, which is why the clipboard reads as a second
+      "Capture something". The comparison is kept because the conclusion depends on
+      seeing it. Copy is from <code>tasks.md</code>.
     </p>
     <div class="panels" style="margin-top: var(--space-5);">
       <div class="panel">
-        <div class="panel-head"><span class="t-title-2">Without</span><span class="tok">as specified today</span></div>
+        <div class="panel-head"><span class="t-title-2">Without a glyph</span><span class="tok">decided · states.md</span></div>
         <div class="empty">
-          <h3 class="t-display">Nothing for today.</h3>
-          <p class="t-body" style="color: var(--text-secondary); max-width: 30ch;">Anything you capture lands in the inbox, and you can schedule it from there.</p>
+          <h3 class="t-display">Nothing on today.</h3>
+          <p class="t-body" style="color: var(--text-secondary); max-width: 30ch;">Tasks appear here once they have a day.</p>
           <button class="btn btn-primary btn-lg">Capture something</button>
         </div>
       </div>
       <div class="panel">
-        <div class="panel-head"><span class="t-title-2">With an icon</span><span class="tok">icon-xl · text-muted · no colour</span></div>
+        <div class="panel-head"><span class="t-title-2">With a glyph</span><span class="tok">rejected · it says what the button already says</span></div>
         <div class="empty">
-          <svg class="ic ic-xl" style="color: var(--text-muted);"><use href="#i-check"/></svg>
-          <h3 class="t-display">Nothing for today.</h3>
-          <p class="t-body" style="color: var(--text-secondary); max-width: 30ch;">Anything you capture lands in the inbox, and you can schedule it from there.</p>
+          <svg class="ic ic-xl" style="color: var(--text-muted);"><use href="#i-clip"/></svg>
+          <h3 class="t-display">Nothing on today.</h3>
+          <p class="t-body" style="color: var(--text-secondary); max-width: 30ch;">Tasks appear here once they have a day.</p>
           <button class="btn btn-primary btn-lg">Capture something</button>
         </div>
       </div>
@@ -2014,11 +2021,11 @@ body.no-annot .tok { display: none; }
 
   <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-6); margin-top: var(--space-7);">
     <div class="card card-dense">
-      <span class="tok">Empty · type-display · space-10</span>
+      <span class="tok">Empty · type-display · space-10 · no glyph</span>
       <div class="empty">
-        <h3 class="t-display">Nothing here yet.</h3>
+        <h3 class="t-display">Nothing open.</h3>
         <p class="t-body" style="color: var(--text-secondary); max-width: 32ch;">
-          Capture something and it lands here.
+          Everything you capture lands here first.
         </p>
         <button class="btn btn-primary btn-lg">Capture something</button>
       </div>
@@ -2202,8 +2209,9 @@ body.no-annot .tok { display: none; }
     was settled above.
   </p>
   <p class="sec-note">
-    What the docs did <em>not</em> carry is empty-state copy for the four scopes,
-    so the strings below are provisional and marked as such. `tasks.md` owns them.
+    The empty states below were once provisional here, because `tasks.md` did not
+    specify them. It does now, so these are the specified strings and the block is
+    a reading of the spec rather than a proposal.
   </p>
 
   <div class="panels" style="margin-top: var(--space-8);">
@@ -2377,32 +2385,70 @@ body.no-annot .tok { display: none; }
   <div class="variant">
     <div class="vlabel">
       <span class="vnum">A</span>
-      <span class="t-title-3">The empty state, twice</span>
-      <span class="tok">states.md · one action, no illustration, never "No results found"</span>
+      <span class="t-title-3">Empty states, all six</span>
+      <span class="tok">states.md gives the form · tasks.md owns these strings</span>
     </div>
     <p class="sec-note" style="margin-top: 0;">
-      Two scopes can be empty for completely different reasons, and they should not
-      say the same thing. Today empty means nothing is scheduled — a good day. Someday
-      empty means nothing has been parked — which is fine, and not a prompt to fill it.
-      All copy here is provisional: `tasks.md` does not specify it.
+      The action repairs the cause of the emptiness. Three causes, three repairs and no
+      fourth: <strong>capture</strong> where there is no data, <strong>clear the
+      filter</strong> where nothing matches, <strong>widen the window</strong> where
+      nothing falls inside it. Where there is nothing to repair there is no action —
+      and Someday is the only surface in the app where that is true. Today-empty and
+      Someday-empty mean opposite things, so they do not share a sentence, and
+      "No results found" appears nowhere.
     </p>
     <div class="panels">
       <div class="panel">
-        <div class="panel-head"><span class="t-title-2">Today, empty</span><span class="tok">provisional copy</span></div>
+        <div class="panel-head"><span class="t-title-2">Today</span><span class="tok">nothing has a day</span></div>
         <div class="empty">
-          <h3 class="t-display">Nothing for today.</h3>
-          <p class="t-body" style="color: var(--text-secondary); max-width: 30ch;">Anything you capture lands in the inbox, and you can schedule it from there.</p>
+          <h3 class="t-display">Nothing on today.</h3>
+          <p class="t-body" style="color: var(--text-secondary); max-width: 30ch;">Tasks appear here once they have a day.</p>
           <button class="btn btn-primary btn-lg">Capture something</button>
         </div>
       </div>
       <div class="panel">
-        <div class="panel-head"><span class="t-title-2">Someday, empty</span><span class="tok">provisional copy</span></div>
+        <div class="panel-head"><span class="t-title-2">Next</span><span class="tok">nothing flagged</span></div>
         <div class="empty">
-          <h3 class="t-display">Nothing parked here.</h3>
-          <p class="t-body" style="color: var(--text-secondary); max-width: 30ch;">Swipe down on a task to move it out of the way without losing it.</p>
-          <button class="btn btn-secondary btn-lg">Capture something</button>
+          <h3 class="t-display">Nothing flagged.</h3>
+          <p class="t-body" style="color: var(--text-secondary); max-width: 30ch;">Flag a task now or next and it appears here.</p>
+          <button class="btn btn-primary btn-lg">Capture something</button>
         </div>
       </div>
+      <div class="panel">
+        <div class="panel-head"><span class="t-title-2">Someday</span><span class="tok">nothing to repair · no action</span></div>
+        <div class="empty">
+          <h3 class="t-display">Nothing parked.</h3>
+          <p class="t-body" style="color: var(--text-secondary); max-width: 30ch;">Setting a task aside keeps it out of Today without deleting it.</p>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="t-title-2">All</span><span class="tok">no data at all · first run</span></div>
+        <div class="empty">
+          <h3 class="t-display">Nothing open.</h3>
+          <p class="t-body" style="color: var(--text-secondary); max-width: 30ch;">Everything you capture lands here first.</p>
+          <button class="btn btn-primary btn-lg">Capture something</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="t-title-2">All, filtered</span><span class="tok">nothing matches · the query, not the list</span></div>
+        <div class="empty">
+          <h3 class="t-display">No tasks match.</h3>
+          <p class="t-body" style="color: var(--text-secondary); max-width: 30ch;">Area: Work · due within 7 days · has a person</p>
+          <button class="btn btn-secondary btn-lg">Clear filters</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="t-title-2">Completed</span><span class="tok">nothing inside the window</span></div>
+        <div class="empty">
+          <h3 class="t-display">Nothing completed.</h3>
+          <p class="t-body" style="color: var(--text-secondary); max-width: 30ch;">The log covers the last 30 days by default.</p>
+          <button class="btn btn-secondary btn-lg">Show all time</button>
+        </div>
+      </div>
+    </div>
+    <div class="annot-row">
+      <span class="tok">Someday is the only empty state in the app with no action — a parking lot with nothing parked is an answer, not a dead end</span>
+      <span class="tok">Someday's detail line states what the pile is for rather than how to fill it, which is the difference between a fact and a prompt</span>
     </div>
   </div>
 
