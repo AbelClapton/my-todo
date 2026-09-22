@@ -113,15 +113,23 @@ body {
 
 .vc {
   display: grid;
-  grid-template-columns: 390px minmax(0, 1fr);
-  grid-template-rows: auto auto;
-  align-content: center;
+  /* 390 (the phone) + the stage's own padding either side. Without the padding in
+     the track the phone overflowed its column and ran into the text — the gap
+     between them was 8px, which is where the eye reads "one object". */
+  grid-template-columns: 438px minmax(0, 1fr);
+  /* Row 1 is the head at its natural height; row 2 takes everything else. The
+     phone spans both, so it forces the row to 700px — and `min-content min-content`
+     would split that surplus between the two text tracks, opening a 200px hole
+     between the name and its notes. A `1fr` second row absorbs all of it instead,
+     so the description reads top-down in one block and the slack falls below. */
+  grid-template-rows: min-content 1fr;
+  align-content: start;
   column-gap: var(--space-8);
   background: var(--bg-raised);
 }
 .vc + .vc { border-top: 1px solid var(--border-default); }
 .vc > .vc-stage { grid-column: 1; grid-row: 1 / span 2; }
-.vc > .vc-head  { grid-column: 2; grid-row: 1; align-self: end; }
+.vc > .vc-head  { grid-column: 2; grid-row: 1; align-self: start; }
 .vc > .vc-foot  { grid-column: 2; grid-row: 2; align-self: start; }
 
 @media (max-width: 1000px) {
