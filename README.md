@@ -429,6 +429,14 @@ body text" (16px). Our metadata line is **13px** — between the two. `icon-xs` 
 the closer fit and is what the lab uses, but the table has a gap where the app
 lives.
 
+**Closed, and the framing was the bug.** The table was being read as though the icon
+scale should mirror the type scale, so a 13px line with no 13px icon looked like a
+missing value. It is not missing: a glyph is sized by **optical fit against the line
+it sits in**, and one icon size serves a range of adjacent type roles. `icon-xs`'s row
+now reads "caption and footnote text" — a text change, so no new token and no ADR —
+and `design-tokens.md` carries the rule that the two scales are not 1:1. Paired
+exactly, the icon scale would need nine more tokens that nobody could tell apart.
+
 ### What the six row variants settled
 
 | | Verdict |
@@ -468,16 +476,23 @@ state must not do.
 glyph, which is how `icon-xl` kept a use it never had. The rule is now explicit
 in both directions: no illustration, no glyph.
 
+### Settled
+
+- **The row treatment.** D. The category glyph stays inline in the metadata line;
+the time glyph moved into the chip.
+- **The inline size.** Finding 24, closed above.
+- **The empty-state glyph.** Rejected, above.
+- **The inventory.** The thirteen data glyphs and two rules are in
+  `03-experience/components.md` as **assets**, with `design-tokens.md` untouched
+  except for the one usage line — no new token, so no ADR. Control affordances are
+  named there rather than enumerated by shape.
+
 ### Still open
 
-- **The inline size.** Finding 24 is the one item from this pass left open: the
-  table's nearest row is `icon-xs 12` for caption text, and the metadata line is
-  13px. Closing it means widening that row's documented use, or adding a size —
-  and a size is a token, so an ADR.
-
-The set and its drawing rules belong in `03-experience/components.md` as **assets**:
-the size table stays as it is, so no new tokens and no ADR — unless finding 24 is
-closed by adding one.
+- **Two mode glyphs.** `app-shell.md` leaves the rail's items unlabelled, so each mode
+  needs a glyph. Calendar reuses `calendar` and Habits reuses `repeat`; Tasks and
+  Notes are still undecided. It is the only open item in the icon pass, and it is
+  recorded in `components.md` rather than left to whoever builds the rail.
 
 ### The deferred tag — the redundancy is mine, not the design's
 
