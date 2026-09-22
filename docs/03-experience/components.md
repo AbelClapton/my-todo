@@ -60,6 +60,10 @@ Four row heights exist and every list uses one of them
 | Component | Height token | Defined in |
 |---|---|---|
 | Checkbox (task, habit) | `control-xs` | `05-modules/tasks.md`, `05-modules/habits.md` |
+
+A checkbox fills with `accent-default` and a white tick when checked. There is no
+separate "checked" colour: the accent is the app's way of saying "this is on",
+and a second one would compete with the priority dot that sits in the same row.
 | Segmented control (scopes) | `control-sm` | `05-modules/tasks.md`, `05-modules/notes.md` |
 | Metric input row `[1][2][3][4][5]` | `control-md` | `05-modules/protocols.md` |
 | Window selector (7 / 30 / 90 / custom) | `control-sm` | `05-modules/habits.md` |

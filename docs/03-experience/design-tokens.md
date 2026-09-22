@@ -27,7 +27,17 @@ are the rules. They are enforced by a linter, not by hope.
   shell apps, and email templates (if any) all read from the same
   source.
 - Dark mode and light mode are the same token set with different
-  values, not two token sets.
+  values, not two token sets. **Both are specified below** — a mode whose
+  values are left to the implementer is not a mode, it is a guess.
+- **Two contrast floors, and they are measured, not assumed.**
+  Meaningful text meets 4.5:1. Placeholder and disabled text meet 3:1 and
+  are the only text allowed below 4.5. A `*-subtle` background meets
+  **1.15:1** against the surface it sits on, or it is not a tint — it is
+  the same colour.
+- **The chosen palette is warm light with cool dark.** Light is paper
+  (warm neutral); dark is ink (cool neutral). They are not a matched pair,
+  and they do not need to be: one palette identity specifies both of its
+  values.
 
 ## Specification
 
@@ -86,81 +96,127 @@ characters. Beyond that, line length hurts readability.
 
 ### Color
 
-Semantic names only. Values below are the light-mode defaults;
-dark mode overrides the same tokens with different values.
+Semantic names only. Every token below is specified for **both** modes.
+Light is the paper palette; dark is the ink palette.
+
+Light and dark are not a matched pair and are not expected to be. They were
+chosen independently, from measurement: warm light fixes the stale
+annotation's contrast, and cool dark separates its surface steps better than
+warm dark does.
 
 **Backgrounds**
 
-| Token | Light | Used for |
-|---|---|---|
-| `bg-base` | #FFFFFF | App background |
-| `bg-raised` | #FAFAFA | Raised surface (cards) |
-| `bg-sunken` | #F4F4F5 | Sunken surface (input wells) |
-| `bg-overlay` | rgba(0,0,0,0.4) | Modal backdrop |
+| Token | Light | Dark | Used for |
+|---|---|---|---|
+| `bg-base` | #FFFDF9 | #09090B | App background |
+| `bg-raised` | #FAF7F1 | #18181B | Raised surface (cards) |
+| `bg-sunken` | #F4F1EA | #27272A | Sunken surface (input wells) |
+| `bg-overlay` | rgba(0,0,0,0.4) | rgba(0,0,0,0.6) | Modal backdrop |
 
 **Surfaces**
 
-| Token | Light | Used for |
-|---|---|---|
-| `surface-1` | #FFFFFF | Default surface |
-| `surface-2` | #F4F4F5 | Secondary surface (nested) |
-| `surface-3` | #E4E4E7 | Tertiary surface (tracks, wells) |
+| Token | Light | Dark | Used for |
+|---|---|---|---|
+| `surface-1` | #FFFDF9 | #18181B | Default surface |
+| `surface-2` | #F4F1EA | #27272A | Secondary surface (nested) |
+| `surface-3` | #E8E3D9 | #3F3F46 | Tertiary surface (tracks, wells) |
 
 **Borders**
 
-| Token | Light | Used for |
-|---|---|---|
-| `border-subtle` | #F4F4F5 | Dividers between related items |
-| `border-default` | #E4E4E7 | Card borders, input borders |
-| `border-strong` | #D4D4D8 | Emphasis borders, focus rings (outer) |
-| `border-focus` | #18181B | Focus ring (inner) |
+| Token | Light | Dark | Used for |
+|---|---|---|---|
+| `border-subtle` | #F4F1EA | #27272A | Dividers between related items |
+| `border-default` | #E8E3D9 | #3F3F46 | Card borders, input borders |
+| `border-strong` | #D8D1C4 | #52525B | Emphasis borders, focus rings (outer) |
+| `border-focus` | #1F1B16 | #FAFAFA | Focus ring (inner) |
 
 **Text**
 
-| Token | Light | Used for |
-|---|---|---|
-| `text-primary` | #18181B | Default text |
-| `text-secondary` | #52525B | Secondary text, list metadata |
-| `text-muted` | #A1A1AA | Placeholders, disabled labels |
-| `text-inverse` | #FAFAFA | Text on dark surfaces |
-| `text-disabled` | #D4D4D8 | Disabled text |
+| Token | Light | Dark | Used for |
+|---|---|---|---|
+| `text-primary` | #1F1B16 | #FAFAFA | Default text |
+| `text-secondary` | #57514A | #A1A1AA | Secondary text, list metadata |
+| `text-muted` | #948C81 | #71717A | Placeholders, disabled labels |
+| `text-inverse` | #FDFBF7 | #18181B | Text on a surface of the opposite mode |
+| `text-disabled` | #D8D1C4 | #52525B | Disabled text |
+| `on-fill` | #FFFFFF | #FFFFFF | Text on any saturated fill — accent, danger, success |
 
-**Accent** (the app has one accent; everything else is neutral)
+**`on-fill` replaces the old `accent-on`, and fixes a bug.** A destructive
+button used `text-inverse` for its label, which is #FDFBF7 in light but
+#18181B in dark — so a red button's text turned near-black in dark mode.
+`text-inverse` means "text on a surface of the opposite mode"; it was never
+the same token as "text on a coloured fill". One token now covers accent,
+danger, and success fills, because white measures 5.47 / 6.47 / 4.99 against
+them respectively and it is the same white in both modes.
 
-| Token | Light | Used for |
-|---|---|---|
-| `accent-default` | #2563EB | Primary action, active mode |
-| `accent-hover` | #1D4ED8 | Hover state |
-| `accent-active` | #1E40AF | Pressed state |
-| `accent-subtle` | #EFF6FF | Accent-tinted background |
-| `accent-text` | #1E3A8A | Accent-colored text on subtle |
+**Accent — teal** (the app has one accent; everything else is neutral)
 
-**Semantic states** (each has a subtle background and a text color)
+| Token | Light | Dark | Used for |
+|---|---|---|---|
+| `accent-default` | #0F766E | #0F766E | Primary action, active mode, priority dot |
+| `accent-hover` | #115E59 | #14B8A6 | Hover state |
+| `accent-active` | #134E4A | #115E59 | Pressed state |
+| `accent-subtle` | #99F6E4 | #042F2E | Accent-tinted background |
+| `accent-text` | #115E59 | #99F6E4 | Accent-colored text on subtle |
 
-| Token | Light | Used for |
-|---|---|---|
-| `danger-default` | #DC2626 | Destructive action |
-| `danger-subtle` | #FEF2F2 | Error surface |
-| `danger-text` | #991B1B | Error text |
-| `success-default` | #16A34A | Completion confirmation |
-| `success-subtle` | #F0FDF4 | Success surface |
-| `success-text` | #166534 | Success text |
-| `warning-default` | #D97706 | Warning action |
-| `warning-subtle` | #FFFBEB | Warning surface |
-| `warning-text` | #92400E | Warning text |
+**The accent does not lighten in dark mode**, and its ramp starts one step
+deeper than the hue's conventional value. Both come from measurement: white on
+teal-600 is 3.35:1 and fails, so the ramp begins at teal-700; and blue-500 under
+white text is 3.68:1, which is what a "lighten the accent for dark mode" edit
+gets you. The accent serves three jobs — a filled control under white text, an
+indicator on the ground, and the priority dot — and it cannot be optimised for
+one without breaking the others. `#0F766E` is 5.47:1 under white and 3.64:1 on
+the dark ground.
+
+**Semantic states — the teal-tuned family** (each has a subtle background and
+a text color)
+
+| Token | Light | Dark | Used for |
+|---|---|---|---|
+| `danger-default` | #B91C1C | #DC2626 | Destructive action |
+| `danger-subtle` | #FECACA | #450A0A | Error surface |
+| `danger-text` | #7F1D1D | #FCA5A5 | Error text |
+| `success-default` | #4D7C0F | #4D7C0F | Completion, compliance, confirmation |
+| `success-subtle` | #D9F99D | #1A2E05 | Success surface |
+| `success-text` | #365314 | #BEF264 | Success text |
+| `warning-default` | #B45309 | #FBBF24 | Warning action |
+| `warning-subtle` | #FDE68A | #451A03 | Warning surface |
+| `warning-text` | #78350F | #FCD34D | Warning text |
+
+**Red, green, and amber keep their meanings. Their character is tuned, and one
+hue actually moved — deliberately.**
+
+`success` is **olive-green (hue 86°) rather than green (hue 142°)**, because the
+task row puts the accent and success in the same place: the priority dot is
+`accent-default` and a completed row carries a filled checkbox. Teal is 175°, so
+green sat 33° away and the two small marks read as one family. Olive is 89° away.
+
+**The cost, stated plainly:** "done" is olive now, not green. That is a real loss
+of convention, taken because keeping both teal and a conventional green means one
+of them is wrong in every row.
+
+The subtle backgrounds are one step deeper than the usual values (`#FDE68A`
+rather than `#FFFBEB` for warning, `#FECACA` rather than `#FEF2F2` for danger).
+On paper that is not decoration — it is required. The ground is already light and
+already tinted, so a tint has to go a step deeper to clear the 1.15:1 floor and
+be visible at all. Against the old value the warning chip measured 1.02:1, which
+is to say it had no background.
 
 **Stale data annotation** (Invariant 4)
 
-| Token | Light | Used for |
-|---|---|---|
-| `stale-bg` | #F4F4F5 | Background for "as of" labels |
-| `stale-text` | #71717A | Text for "as of" labels |
+| Token | Light | Dark | Used for |
+|---|---|---|---|
+| `stale-bg` | #F4F1EA | #27272A | Background for "as of" labels |
+| `stale-text` | #6E675E | #A1A1AA | Text for "as of" labels |
 
 Stale labels are never red. Stale data is not an error; it is
 labeled data.
 
-**Contrast.** Every text/background pairing meets WCAG AA (4.5:1
-for body, 3:1 for large text). This is enforced by axe in CI.
+**Contrast.** Meaningful text meets WCAG AA (4.5:1 — the app has no large text).
+**Placeholder and disabled text meet 3:1, and are the only text allowed below
+4.5:1.** The previous wording claimed every pairing met AA, which was untrue of
+`text-muted` in either light palette: the claim was wrong, not the value. Both
+floors, plus the 1.15:1 floor for subtle grounds, are enforced by axe in CI.
 
 ### Interaction states
 

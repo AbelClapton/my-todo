@@ -225,7 +225,7 @@ the help sheet (accessible via `?`).
 **Completing a task with a gesture.**
 
     User swipes a task row to the right past 40%.
-    Row reveals a green checkmark on the success-subtle background.
+    Row reveals a checkmark in `accent-default` on the `accent-subtle` background.
     User releases.
     Completion animation plays (see motion-vocabulary).
     "Completed" haptic fires.

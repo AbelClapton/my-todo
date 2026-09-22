@@ -183,7 +183,7 @@ latest.
 **Completing via swipe.**
 
     User swipes "Call contractor" right past 40%.
-    Row reveals green checkmark.
+    Row reveals a checkmark in the accent.
     User releases.
     Commit. Same animation, same haptic, same toast.
 

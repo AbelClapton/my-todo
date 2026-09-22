@@ -72,8 +72,10 @@ Row height is `row-default` (56px).
 protocol (if any), compliance chart, and history.
 
 **Compliance chart.** A small horizontal strip of the last 28 days
-with each day colored: green (full), light green (minimum), gray
-(skip), light red (missed), and outlined accent (repair). Repairs
+with each day colored by token: full (`success-default`), minimum
+(`success-subtle` with a 1px `success-default` ring), repair
+(`surface-1` with a 1px `accent-default` ring), skip (`surface-3`),
+and missed (`border-strong`). Repairs
 are visually distinct from full checks because they are not full
 compliance — they are logged to keep a streak alive, and the chart
 records this honestly.
@@ -103,7 +105,8 @@ lesser check. Examples:
 - Full: "Run 5k." Minimum: "Walk to the mailbox."
 
 When checked at minimum, the habit still counts for compliance. The
-chart distinguishes full (green) from minimum (light green), but
+chart distinguishes full (`success-default`) from minimum
+(`success-subtle`), but
 both are "done."
 
 The minimum is what makes a habit survivable. A missed day is a

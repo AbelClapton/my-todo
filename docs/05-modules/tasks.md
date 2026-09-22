@@ -52,7 +52,7 @@ due within N days, by completion date (for the completed log).
 
 - **Checkbox.** Tap completes. Swipe right also completes.
 - **Title.** `type-body`. Tap opens detail.
-- **Metadata line.** `type-callout`, `text-secondary`. Composed
+- **Metadata line.** `type-footnote`, `text-secondary`. Composed
   from: Area name, due date (if any), note count, person links,
   parent task indicator.
 - **Priority indicator.** `priority: now` shows a small dot in
@@ -63,6 +63,19 @@ due within N days, by completion date (for the completed log).
 
 Row height is `row-rich` (72px) when metadata is present,
 `row-default` (56px) when it is not.
+
+**The checked state is the accent, not a separate green.** A checked box fills
+with `accent-default` and carries a white tick (`on-fill`). This is the
+convention every platform already uses for a checkbox, and it resolves a real
+collision: the priority dot is also the accent, so the two marks in a row are
+now distinguished by form — an 8px dot versus a 24px filled box — instead of by
+two similar colours pretending to be different. `success` keeps its job for
+compliance, confirmation, and the completion toast.
+
+**Metadata is `type-footnote` (13px), not `type-callout` (15px).** The line sits
+under a `type-body` title and reads as subordinate apparatus; at 15px it competed
+with the title it belongs to. It must fit on one line at 390px —
+"Work · due Tue · 1 note · @Sarah" does.
 
 ### Surfaces
 
@@ -182,7 +195,7 @@ not the task.
 **Completing from the list.**
 
     User swipes right past 40%.
-    Row reveals a green checkmark.
+    Row reveals a checkmark.
     User releases.
     Completion haptic, completion animation, undo toast.
     Row removes from list.

@@ -240,6 +240,37 @@ rather than ink, and every step above it is harder to tell apart. So the
 pairing currently loaded by default is **warm light + cool dark**, which is also
 the pairing the eye preferred before the numbers were run.
 
+## Resolutions, 2026-09-22
+
+Every finding above was acted on, and the docs changed rather than the lab.
+
+| Finding | Resolution |
+|---|---|
+| 1 · no dark values | **Written.** `design-tokens.md` now specifies both modes, with light as paper and dark as ink. |
+| 2 · dark accent failed AA | Written as a rule, with the measurements: the accent does not lighten in dark mode. |
+| 3 · `stale-text` below AA in cool light | Fixed by the palette choice — light is warm now, where it measures 4.95:1. |
+| 4 · `warning-subtle` invisible | Every `*-subtle` ground deepened to clear a **1.15:1 floor**, now a stated rule. Warning went 1.02 → **1.23**. On paper a tint must be one step deeper than usual. |
+| 5 · false contrast claim | Narrowed to two floors: meaningful text 4.5:1, placeholder and disabled 3:1. Light `text-muted` went 2.74 → **3.27**. |
+| 6 · `type-mono` 14 vs metadata 13 | **Moot.** Metadata is `type-footnote` — 13px, sans. Mono is not used in the row at all. |
+| 7 · compliance colours unspecified | Specified by token — and a contradiction fixed: missed days were **"light red"**, which `states.md` forbids ("no state is red except an error") and the product explicitly rejects ("skipping is not failing"). Missed is a neutral now. |
+| 8 · dock indicator undefined | Specified: the rail uses a 3px leading bar, the dock a 2px centred underline. |
+| 14 · accent | **Teal, kept** — and the collision fixed two ways. The checkbox fill is now the accent, so the dot and the check differ by *form* rather than by a near-identical hue; and `success` moved from green (142°) to olive (86°), which is 89° from teal instead of 33°. **Cost: "done" is olive, not green.** |
+| 15 · metadata family | **`type-footnote`** — sans at 13px. Not `type-callout` (it competed with the title it belongs to), not mono. |
+| 17 · row heights | Hold. |
+
+Three more problems surfaced while fixing those:
+
+- **18 · Semantic fills had no "on" token.** Danger buttons used `text-inverse` for their label, which is `#FDFBF7` in light but `#18181B` in dark — so a red button's text turned near-black in dark mode. Added `--on-fill`, which replaces `accent-on` and covers accent, danger, and success fills.
+- **19 · The compliance strip's missed days were red**, contradicting the two rules quoted above. Fixed to a neutral.
+- **20 · The lab was missing `box-sizing: border-box`**, which is why the bordered compliance cells rendered 2px larger than their neighbours. Boxes are uniform now.
+
+Lab changes in the same pass: live `:hover` and `:active` on rows (they had only been shown as static swatches), icon sizes applied from the tokens (`icon-lg` in the rail and dock, `icon-md` in icon-only buttons), and the checkbox tick redrawn as a white SVG, because the border-trick version had ragged corners and the polygon version rendered as a block.
+
+### And what is still open
+
+- **16 · The type family.** Needs a decision and then an ADR, because `--font-display` and `--font-prose` are **new tokens** and the token set is closed.
+- **Motion is still not demonstrated.** The lab shows hover, pressed, and focus; it does not show the transition catalog — the completion animation, the sheet, the toast, or the screen push. A pattern sheet has nothing to animate without a prototype, so those need either a small replay section or the real screens.
+
 ## The briefs in play
 
 Two reference briefs have been run against the doc set. Neither is an app brief —

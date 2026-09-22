@@ -40,9 +40,14 @@ it is reached from the header's gear or the command palette
 | Desktop, tablet | **Rail**, fixed at the leading edge | Always visible. Labels are not shown; icons carry a tooltip. |
 | Mobile | **Dock**, fixed at the bottom edge | Above the safe-area inset. |
 
-One indicator marks the active mode in `accent-default`. Switching slides
-the indicator and cross-fades the content — both `duration-default`,
-`ease-standard`, no horizontal slide
+One indicator marks the active mode in `accent-default`. It takes a different
+form in each navigation, because the same mark does not transfer: on the **rail**
+it is a 3px bar on the leading edge, and in the **dock** it is a 2px underline
+below the icon. Drawn literally as a leading-edge bar, the dock's indicator
+detaches from its icon and floats at the far edge of the bar.
+
+Switching slides the indicator and cross-fades the content — both
+`duration-default`, `ease-standard`, no horizontal slide
 (`03-experience/motion-vocabulary.md`). The page you were on in the old
 mode is remembered and restored when you return.
 

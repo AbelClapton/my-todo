@@ -151,9 +151,22 @@
 /* ============================ PALETTE VALUES ==============================
    Four combinations. Selectors are mutually exclusive and equal in
    specificity, so order does not matter.
+
+   CHOSEN: warm light + cool dark. The other two are kept as the untouched
+   baseline for comparison, and they are KNOWN to fail the floors established
+   here — cool light's `text-muted` is 2.56:1, and warm dark's surface steps
+   separate worse than cool dark's. That is the evidence for the choice.
+
+   TWO FLOORS, established by measurement rather than assumed:
+     1. Text that carries meaning: 4.5:1. Placeholder and disabled text: 3:1.
+        The doc's original claim was "every pairing meets AA", which is false
+        for placeholder text in either light palette.
+     2. A `*-subtle` ground must reach 1.15:1 against the surface it sits on, or
+        it is not a tint, it is the same colour. On a paper ground every tint has
+        to go one step deeper, because the ground is already tinted and light.
    ======================================================================== */
 
-/* --- COOL · LIGHT (the current default) --- */
+/* --- COOL · LIGHT (alternate — the untouched baseline) --- */
 [data-palette="cool"][data-mode="light"] {
   --bg-base: #FFFFFF;
   --bg-raised: #FAFAFA;
@@ -182,7 +195,7 @@
   --stale-text: #71717A;
 }
 
-/* --- COOL · DARK (derived) --- */
+/* --- COOL · DARK (CHOSEN DARK) --- */
 [data-palette="cool"][data-mode="dark"] {
   --bg-base: #09090B;
   --bg-raised: #18181B;
@@ -211,7 +224,7 @@
   --stale-text: #A1A1AA;
 }
 
-/* --- WARM · LIGHT (paper) ---
+/* --- WARM · LIGHT (CHOSEN LIGHT, paper) ---
    The ramp relationships are preserved step for step from the cool set:
    base is lightest, raised is one step down, sunken two. That is what keeps
    the contrast ratios roughly intact — only the hue moves. --- */
@@ -232,7 +245,9 @@
 
   --text-primary: #1F1B16;
   --text-secondary: #57514A;
-  --text-muted: #A19A8F;
+  /* Deepened from #A19A8F, which measured 2.74:1 on paper and failed the 3:1
+     floor for placeholder text. Now 3.27:1. */
+  --text-muted: #948C81;
   --text-inverse: #FDFBF7;
   --text-disabled: #D8D1C4;
 
@@ -243,7 +258,7 @@
   --stale-text: #6E675E;
 }
 
-/* --- WARM · DARK (derived) --- */
+/* --- WARM · DARK (alternate — derives worse than cool dark) --- */
 [data-palette="warm"][data-mode="dark"] {
   --bg-base: #14110D;
   --bg-raised: #1C1813;
@@ -298,26 +313,27 @@
 [data-accent="blue"] {
   --a-strong: #2563EB;  --a-strong-hover: #1D4ED8;  --a-strong-active: #1E40AF;
   --a-mid: #2563EB;     --a-lit: #3B82F6;
-  --a-subtle-l: #EFF6FF; --a-subtle-d: #172554;
+  --a-subtle-l: #DBEAFE; --a-subtle-d: #172554;
   --a-text-l: #1E3A8A;   --a-text-d: #BFDBFE;
 }
 [data-accent="indigo"] {
   --a-strong: #4F46E5;  --a-strong-hover: #4338CA;  --a-strong-active: #3730A3;
   --a-mid: #4F46E5;     --a-lit: #6366F1;
-  --a-subtle-l: #EEF2FF; --a-subtle-d: #1E1B4B;
+  --a-subtle-l: #C7D2FE; --a-subtle-d: #1E1B4B;
   --a-text-l: #3730A3;   --a-text-d: #C7D2FE;
 }
 [data-accent="teal"] {
-  /* Shifted one step darker than its siblings: white on teal-600 fails AA. */
+  /* CHOSEN. Shifted one step darker than its siblings: white on teal-600
+     (#0D9488) is 3.35:1 and fails AA, so the ramp starts at teal-700. */
   --a-strong: #0F766E;  --a-strong-hover: #115E59;  --a-strong-active: #134E4A;
   --a-mid: #14B8A6;     --a-lit: #14B8A6;
-  --a-subtle-l: #F0FDFA; --a-subtle-d: #042F2E;
+  --a-subtle-l: #99F6E4; --a-subtle-d: #042F2E;
   --a-text-l: #115E59;   --a-text-d: #99F6E4;
 }
 [data-accent="violet"] {
   --a-strong: #7C3AED;  --a-strong-hover: #6D28D9;  --a-strong-active: #5B21B6;
   --a-mid: #7C3AED;     --a-lit: #8B5CF6;
-  --a-subtle-l: #F5F3FF; --a-subtle-d: #2E1065;
+  --a-subtle-l: #DDD6FE; --a-subtle-d: #2E1065;
   --a-text-l: #5B21B6;   --a-text-d: #DDD6FE;
 }
 
@@ -329,7 +345,7 @@
   --accent-active: var(--a-strong-active);
   --accent-subtle: var(--a-subtle-l);
   --accent-text: var(--a-text-l);
-  --accent-on: #FFFFFF;
+  --accent-on: var(--on-fill);
 }
 [data-mode="dark"] {
   --accent-default: var(--a-strong);
@@ -337,8 +353,18 @@
   --accent-active: var(--a-strong-hover);
   --accent-subtle: var(--a-subtle-d);
   --accent-text: var(--a-text-d);
-  --accent-on: #FFFFFF;
+  --accent-on: var(--on-fill);
 }
+
+/* Text on any saturated fill. One token, not one per fill: white measures
+   5.47 on teal, 6.47 on danger-700, 4.99 on success-700, 5.02 on warning-700,
+   and it is the same white in both modes.
+
+   THIS WAS A BUG. Danger buttons used `--text-inverse`, which is #FDFBF7 in
+   light but #18181B in dark — so a destructive button changed its label to
+   near-black in dark mode. `text-inverse` means "text on a light surface", not
+   "text on a coloured one"; those were never the same token. */
+:root { --on-fill: #FFFFFF; }
 
 /* ============================= THE SEMANTICS ==============================
    A fourth axis. Red, green, and amber mean danger, success, and warning, and
@@ -385,6 +411,39 @@
   --danger-default: #EF4444;  --danger-subtle: #FEF2F2;  --danger-text: #991B1B;
   --success-default: #22C55E; --success-subtle: #F0FDF4; --success-text: #166534;
   --warning-default: #F59E0B; --warning-subtle: #FFFBEB; --warning-text: #92400E;
+}
+
+/* TEAL-TUNED. CHOSEN. Built for a teal accent on a paper ground.
+
+   Its reason to exist is the task row, where the accent and `success` used to
+   collide: the priority dot is `accent-default` and the completed checkbox was
+   success green, so they appeared as two small marks in one row, 33° apart, and
+   merged. Two changes fix it — the checkbox fill is now the accent (see the lab),
+   and `success` moves from green (hue 142°) to lime (hue 86°), which is 89° from
+   teal instead of 33°.
+
+   THE COST, stated plainly: "done" is now olive-green rather than green. That is
+   a real loss of convention, taken deliberately because keeping both teal and a
+   conventional green means one of them has to be wrong in the row.
+
+   Everything else is pulled to teal's character: deep, low-chroma, warm-neutral.
+   The subtle grounds are one step deeper than the standard set, because on paper
+   a tint has to clear the 1.15:1 floor to be visible at all. */
+[data-semantics="teal"][data-mode="light"] {
+  --danger-default: #B91C1C;  --danger-subtle: #FECACA;  --danger-text: #7F1D1D;
+  --success-default: #4D7C0F; --success-subtle: #D9F99D; --success-text: #365314;
+  --warning-default: #B45309; --warning-subtle: #FDE68A; --warning-text: #78350F;
+}
+
+/* Teal-tuned, dark. Success keeps the SAME fill value as light mode, because the
+   checkbox tick is white in both modes: white on #4D7C0F is 4.99:1, and the fill
+   itself is 3.69:1 on the dark ground. Danger is one step lighter here only
+   because white on #B91C1C is fine but #B91C1C on a near-black ground is dim;
+   #DC2626 is 4.66:1 under white and 4.22:1 on the ground. */
+[data-semantics="teal"][data-mode="dark"] {
+  --danger-default: #DC2626;  --danger-subtle: #450A0A;  --danger-text: #FCA5A5;
+  --success-default: #4D7C0F; --success-subtle: #1A2E05; --success-text: #BEF264;
+  --warning-default: #FBBF24; --warning-subtle: #451A03; --warning-text: #FCD34D;
 }
 
 /* Dark always uses the standard set. Higher specificity than any [data-mode]
