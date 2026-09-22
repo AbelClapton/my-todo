@@ -961,11 +961,12 @@
               </div>
               <div class="wk-allday"><span></span><span class="band">Offsite</span></div>
               <!-- The one thing a chart needs and a chart alone cannot supply: somewhere
-                   for the selection to be read. Tapping a column is the Week's only action. -->
+                   for the selection to be read. Selecting and opening are two steps,
+                   because one tap cannot both pick a column out and leave the week. -->
               <div class="wk-focus">
                 <span class="t-footnote sel">Thu 24 Sep</span>
                 <span class="t-caption" style="color: var(--text-secondary);">5 events · heaviest day</span>
-                <span class="t-caption" style="margin-left: auto; color: var(--text-muted);">tap any column to open its day</span>
+                <span class="t-caption" style="margin-left: auto; color: var(--text-muted);">tap here to open</span>
               </div>
               <div class="wk-body">
                 <div class="wk-grid">
@@ -1028,7 +1029,7 @@
         </div>
         <dl class="vc-foot">
           <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for seven columns and one shared gutter — the sentence is right, it is simply not a layout. <b>Impeccable</b> for the realisation that proportionality and legibility are the same decision, so the Week earns its chart by giving up the names. <b>Frontend design</b> for testing rotation and proving the constraint is the clock rather than the column count. <b>Design taste</b> for showing what deleting the axis produces: the Day view, seven times, in the place where the Day already works.</dd></div>
-          <div class="vc-line cost"><dt>Fixes</dt><dd>The Week becomes a chart with exactly one affordance. <b>Tap a column</b> and it outlines, and the focus line names the day and its load; the selection defaults to today, which is already the tinted and accented column. The <b>all-day band</b> spans Thu–Fri — an item covering two days, which no other Calendar surface can draw whole. The <b>counts strip</b> spends “collapse to counts” on telling the days apart rather than on naming anything, and the <b>now rule</b> crosses all seven columns but belongs to none of them.</dd></div>
+          <div class="vc-line cost"><dt>Fixes</dt><dd>The Week becomes a chart with a <b>two-step way in</b>. <b>Tap a column</b> and it outlines while the focus line names that day and its load; <b>tap the focus line</b> and the day opens. One tap cannot both pick a column out and leave the week, so it does not try. The selection starts on today, which is already the tinted and accented column. The <b>all-day band</b> spans Thu–Fri — an item covering two days, which no other Calendar surface can draw whole. The <b>counts strip</b> spends “collapse to counts” on telling the days apart rather than on naming anything, and the <b>now rule</b> crosses all seven columns but belongs to none of them.</dd></div>
           <div class="vc-line open"><dt>Still needs</dt><dd>Five decisions this view cannot make for itself. <b>One:</b> `calendar.md`'s Scope gives the Week a sentence and the Day eight numbered parts — the Week needs a layout section of its own, or this row stands in for one. <b>Two:</b> that doc's <b>Surfaces</b> section lists five surfaces and omits Week, Month and Year, all three of which `03-experience/surfaces.md` lists as screens. <b>Three:</b> “The Calendar has no whole-view empty state” is <b>false for the Week</b>, and the reason given for it — “the Daily Note always exists” — is a Day-view argument. A week with nothing on it is genuinely bare; Sunday's column above is that case in every variant. <b>Four:</b> `06-flows/doing-the-day.md` ties the now line to “the calendar <i>day view</i> and the header of other modes”. The Week is neither, so it has no specified now line, while every variant here needs one and this one draws it as a rule. <b>Five:</b> the axis window is unspecified — a fixed clock range (this mock uses 08:00–18:00) or one derived from the week's own earliest and latest events. It decides whether two weeks can be compared at a glance, which is the view's entire purpose.</dd></div>
         </dl>
       </article>
