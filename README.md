@@ -15,24 +15,27 @@ call is made.
   screens at real row heights, and a contrast table computed from the live
   values. Open it directly in a browser; there is no build step and no network.
 
-Three independent axes, all over the same token set (never two token sets —
+Four independent axes, all over the same token set (never two token sets —
 that is an invariant):
 
 - **Light palette** — **cool** (Zinc) or **warm** (Stone, the paper direction).
 - **Dark palette** — cool or warm, chosen separately. Light and dark are not a
   matched pair: the palette is one identity that specifies both of its values,
   so warm-light with cool-dark is a legitimate pairing and not a contradiction.
-- **Accent** — blue, indigo, teal, or violet. This is a third axis and not a
-  property of the neutral ramp. It is identical across both palettes so the
-  neutral comparison stays honest.
+- **Accent** — blue, indigo, teal, or violet. Not a property of the neutral
+  ramp, and identical across both palettes so the neutral comparison stays
+  honest.
+- **Semantics** — standard, muted, or vivid. Red, green, and amber keep their
+  meanings in every case; only their *character* moves. Light mode only — see
+  finding 13.
 
-Semantic colours are identical everywhere, so the contrast table measures one
-axis at a time.
+Only the neutral comparison is one-axis-at-a-time; the accent and semantics
+deliberately interact, which is the point of having them as separate axes.
 
 ## How to read it
 
-Toggle **Light**, **Dark**, **Accent**, **Mode**, and **Annotated** in the top
-bar, then look at these five, in this order:
+Toggle **Light**, **Dark**, **Accent**, **Semantics**, **Mode**, and
+**Annotated** in the top bar, then look at these five, in this order:
 
 1. **Tasks, Today** — twenty rows at real height. A ground can look lovely on a
    card and tiring after twenty rows. This is the screen that decides it.
@@ -131,6 +134,39 @@ choosing a ramp, and the ramp's first step is not the same for every hue.
 own them, which is why every accent option is cool. Warm hues are not a taste
 question here, they are a collision.
 
+**11. The accent's nearest semantic neighbour is the pair to watch — and which
+one it is depends on the accent.** Measured in hue degrees, the accent against
+danger, success, and warning:
+
+| Accent | Hue | Danger Δ | Success Δ | Warning Δ |
+|---|---|---|---|---|
+| Blue | 221° | 139 | 79 | 171 |
+| Indigo | 243° | 117 | 101 | 149 |
+| Teal | 175° | 175 | **33** | 143 |
+| Violet | 262° | **98** | 120 | 130 |
+
+**Indigo is the only accent with no neighbour closer than 100°**, and it is also
+the most comfortable under white text (finding 9). Two independent measures
+agree on it.
+
+**Teal's nearest neighbour is `success`, 33° away** — not warning, which is what
+everyone assumes. Teal and "done" are the same family.
+
+**12. The "pastel" problem is chroma, not hue.** Teal sat badly with the other
+colours even though its hue is 33° from success — because teal is deep and
+low-chroma while the standard success green is vivid and lighter. Close in hue
+and far apart in character reads as neither harmony nor contrast. This is why
+`muted` semantics fix it: measured on warm light, the text/subtle pairs go from
+7.60 / 6.81 / 6.84 to **9.16 / 8.70 / 8.75**, and the four colours finally read
+as one family. **Muting fixes the character mismatch; it does not fix the family
+resemblance** — teal and success still look related, which is a judgement call
+the lab lets you make by eye.
+
+**13. Semantics are a light-mode problem.** The dark ground is near-neutral and
+low-chroma, so a vivid hue reads fine on it and the accent's character stops
+competing. Harmonising chroma there buys nothing, which is why the axis is
+mode-scoped rather than palette-scoped and dark always uses the standard set.
+
 **Checked and holding:** `row-rich` (72px) does carry the title, the metadata
 line, and a chip without crowding, and twenty rows at `row-default` / `row-rich`
 read cleanly at desktop width.
@@ -158,6 +194,47 @@ ground at the dark end has no such compensation — it reads as brown-black
 rather than ink, and every step above it is harder to tell apart. So the
 pairing currently loaded by default is **warm light + cool dark**, which is also
 the pairing the eye preferred before the numbers were run.
+
+## The briefs in play
+
+Two reference briefs have been run against the doc set. Neither is an app brief —
+both are landing-page templates — and each contributed something real.
+
+**1 · Print-Tech Paper (Stillpage).** Warm editorial × print DNA: a warm paper
+ground, mono coordinate labels, a single accent word, halftone imagery, a
+floating pill nav.
+
+- *Adopted as an axis:* the paper ground, which is the warm palette.
+- *Adopted as a proposal:* mono coordinate labels for metadata — two independent
+  briefs point at mono for small labels (finding 6, and brief 2's nav).
+- *Adopted as an axis:* the single-alert accent, which is the accent axis.
+- *Rejected:* halftone imagery (an illustration system, which `states.md` rules
+  out), and the floating pill nav (a floating control, which `app-shell.md`
+  rules out). Both would need ADRs superceding those docs.
+
+**2 · Product-Led Minimalism (Tasktrox).** Near-black on white, a large tight
+display headline, restrained chrome, a mono-ish small-label nav, a contrasting
+CTA pair, and — the interesting part — **real interface fragments as the hero
+imagery**, joined by dashed connectors with tag pills.
+
+- *Contributes:* **"framed interface demonstration"** means the imagery is the
+  product's own screens. That satisfies `states.md`'s no-illustration rule and
+  needs no generated assets at all, which makes it a much cheaper landing page
+  than the halftone one.
+- *Converges:* mono for navigation and small labels, matching brief 1.
+- *Confirms:* restrained chrome, a clear sans hierarchy, and a primary plus
+  secondary CTA pair — the lab already holds all three.
+- *Conflicts:* the hero (same shell problem as brief 1), a **two-accent** system
+  (violet primary with amber as a second highlight — amber is our `warning`), and
+  arbitrary per-tag colours, which break "the app has one accent, everything else
+  is neutral".
+
+### The sequencing point
+
+Brief 2 needs a product to screenshot. Brief 1 does not. For a pre-launch app
+with no store listing and no shipped screens, **Product-Led Minimalism is
+blocked on having something to demonstrate**, and the paper direction is not.
+That is an argument about timing, not about taste.
 
 ## What this deliberately does not do
 
