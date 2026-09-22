@@ -461,9 +461,36 @@ a defer, and one with only a duration.
 | **V1 · Two channels** | **Recommended.** The line carries due, duration, and repeat; the chip carries defer. They cannot overlap, so the redundancy cannot come back. **No change to the spec — this is the spec followed exactly.** |
 | **V2 · The glyph replaces the chip's word** | Rejected. Buys one word and spends clarity: "2d" alone could mean deferred 2 days or due in 2 days. The word was doing work. |
 | **V3 · Defer in the line, chip dropped** | Rejected, but the closest runner-up. One channel for both time facts, differentiated by glyph — and it removes a component. It costs the chip, which is the only element in the row that is scannable *without reading*, and deferral is a signal about your behaviour, which is what the app exists to show. |
-| **V4 · All time as chips** | Coherent in principle — chips are time and state, the line is identity — but two chips start to read as tags on a card, and the metadata line loses its purpose. |
+| **V4 · All time as chips** | **ADOPTED.** Chips are time and state; the metadata line is identity. The worry turned out backwards: with time out of the line, the line finally has exactly one job, and the chips read as a column down the trailing edge. It needs one rule it did not have — see below — which is a real cost rather than a paper one. |
 
-V2 and V3 need the deferred-chip bullet in `tasks.md` changed. V1 and V4 do not.
+V1 and V4 needed no spec change; V2 and V3 needed the deferred-chip bullet rewritten.
+
+#### V4's cost, measured
+
+`design-tokens.md` is absolute about height — *"Every list uses one of these four.
+No custom row heights."* So the question was whether a row carrying several chips
+still fits `row-rich`. It does, which is the problem. Measured at 390px:
+
+| Chips | Title gets | Cluster gets |
+|---|---|---|
+| 1 | 195px | 97px |
+| 2 | 144px | 148px |
+| **3 + dot** | **60px** | **232px** |
+
+Nothing overflows and nothing clips, because the height is **fixed** — so the
+pressure surfaces as **title starvation** instead. At three chips the title is down
+to a fifth of the row and wraps, while the secondary content takes 59% of it, and
+the row still looks fine at a glance. That is worse than an overflow, which at
+least announces itself.
+
+So V4 requires **a cap of two chips**, in a fixed priority order — **deferred,
+overdue, due, cadence, duration** — with everything beyond it living in the detail
+view. Two chips leave the title 144px, which is what a title needs; three do not.
+A fifth row height would also solve it and is worse: a new token, so an ADR, for a
+case a cap removes entirely.
+
+Both rules are now written into `05-modules/tasks.md`, and the chip vocabulary is
+in `03-experience/components.md`.
 
 ## What this deliberately does not do
 
