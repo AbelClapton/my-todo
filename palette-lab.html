@@ -28,6 +28,10 @@
 /* ============================== LAB FURNITURE =============================
    Deliberately marked as instrument, never mistaken for product chrome.
    ========================================================================= */
+/* The lab was missing this. Without it, the bordered compliance cells rendered
+   2px larger than their neighbours, because the border added to the size. */
+*, *::before, *::after { box-sizing: border-box; }
+
 .lab {
   position: sticky; top: 0; z-index: 100;
   display: flex; align-items: center; gap: var(--space-5);
@@ -154,7 +158,12 @@ body.no-annot .tok { display: none; }
   border-radius: var(--radius-md);
   color: var(--text-muted);
   border: 0; background: none; cursor: pointer;
+  /* `design-tokens.md`: the mode switcher uses icon-lg (24). */
+  font-size: var(--icon-lg);
+  transition: background var(--duration-instant) var(--ease-standard),
+              color var(--duration-instant) var(--ease-standard);
 }
+.rail-item:hover { background: var(--surface-2); color: var(--text-secondary); }
 .rail-item[aria-current="page"] { color: var(--accent-default); }
 .rail-item[aria-current="page"]::before {
   content: ""; position: absolute; inset-inline-start: calc(var(--space-4) * -1);
@@ -205,6 +214,11 @@ body.no-annot .tok { display: none; }
 .r-hero    { height: var(--row-hero); }
 .row.is-hover { background: var(--surface-2); }
 .row.is-pressed { background: var(--surface-3); }
+/* Live states, so rows are not only demonstrated as static swatches. A row is
+   interactive (`design-tokens.md`: four states apply to every interactive
+   element), so hover and pressed move the surface here for real. */
+.row:hover { background: var(--surface-2); }
+.row:active { background: var(--surface-3); }
 .row.is-focus { box-shadow: inset 0 0 0 2px var(--border-strong), inset 0 0 0 3px var(--border-focus); }
 .row.is-disabled .r-title { color: var(--text-disabled); }
 
@@ -215,13 +229,18 @@ body.no-annot .tok { display: none; }
    and `type-footnote` is 13px; this is mono at footnote size, which does not
    exist in the token doc yet. If the borrow lands, that is either a usage
    change to `type-mono` or a new role. */
-.r-meta-mono {
-  font-family: var(--font-mono);
-  font-size: var(--type-footnote-size);
-  line-height: var(--type-footnote-line);
-  letter-spacing: var(--type-footnote-track);
-  color: var(--text-secondary);
-  font-variant-numeric: tabular-nums;
+/* The metadata slot. The old `.r-meta-mono` declaration was replaced above by
+   the three-way Metadata axis. */
+
+/* Priority dot. `tasks.md`: "`priority: now` shows a small dot in
+   `accent-default`." It was amber in the first draft of this lab, which was a
+   spec violation and, it turns out, hid the most useful finding of the row
+   pass — see variant 04. */
+.pdot {
+  width: var(--space-3); height: var(--space-3);
+  border-radius: var(--radius-full);
+  background: var(--accent-default);
+  flex: none;
 }
 .check {
   width: var(--control-xs); height: var(--control-xs);
@@ -234,20 +253,39 @@ body.no-annot .tok { display: none; }
 }
 .check:hover { background: var(--surface-2); }
 .check.done {
-  background: var(--success-default);
-  border-color: var(--success-default);
+  /* The fill is the ACCENT, not success. This is the shadcn convention — a
+     checkbox takes the primary colour when checked — and it resolves the row
+     collision at the root: the priority dot and the check are now the same
+     colour, distinguished by form (an 8px dot versus a 24px filled box), rather
+     than two similar colours pretending to be different. */
+  background: var(--accent-default);
+  border-color: var(--accent-default);
   position: relative;
 }
+/* The tick is an asset, not a token (`design-tokens.md`: icons are assets), and
+   it is drawn white with a data URI because the border-trick version rendered
+   with ragged corners and the polygon version rendered as a block. White is
+   always right here: the fill is saturated in both modes. */
 .check.done::after {
-  content: ""; position: absolute;
-  inset: 26% 28% 22% 28%;
-  border-right: 2px solid var(--bg-base);
-  border-bottom: 2px solid var(--bg-base);
-  transform: rotate(45deg);
+  content: ""; position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23FFFFFF' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 8.4l3 3 6-7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: var(--icon-xs) var(--icon-xs);
 }
-/* The spec says the task row's metadata line is `type-callout` at
-   `text-secondary`. The mono treatment is a PROPOSAL borrowed from both design
-   briefs, so this axis switches every metadata line in the lab at once. */
+/* OLD COMMENT — now 3-way on the Metadata axis: callout 15, footnote 13, mono 13.
+   The class name is historical (it was the mono proposal that introduced it).
+   Base = footnote 13: sans, one step down from the spec's `type-callout`, which
+   is what the row wanted. */
+.r-meta-mono {
+  font-family: var(--font-sans);
+  font-size: var(--type-footnote-size);
+  line-height: var(--type-footnote-line);
+  letter-spacing: var(--type-footnote-track);
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
 [data-meta="callout"] .r-meta-mono {
   font-family: var(--font-sans);
   font-size: var(--type-callout-size);
@@ -255,16 +293,7 @@ body.no-annot .tok { display: none; }
   letter-spacing: var(--type-callout-track);
 }
 
-/* Priority dot. `tasks.md`: "`priority: now` shows a small dot in
-   `accent-default`." It was amber in the first draft of this lab, which was a
-   spec violation and, it turns out, hid the most useful finding in the type
-   pass — see the task row section. */
-.pdot {
-  width: var(--space-3); height: var(--space-3);
-  border-radius: var(--radius-full);
-  background: var(--accent-default);
-  flex: none;
-}
+[data-meta="mono"] .r-meta-mono { font-family: var(--font-mono); }
 
 /* Task-row variants */
 .variant { margin-top: var(--space-8); }
@@ -308,7 +337,7 @@ body.no-annot .tok { display: none; }
 .btn-secondary:hover { background: var(--surface-2); }
 .btn-ghost { background: none; color: var(--text-secondary); }
 .btn-ghost:hover { background: var(--surface-2); color: var(--text-primary); }
-.btn-danger { background: var(--danger-default); color: var(--text-inverse); }
+.btn-danger { background: var(--danger-default); color: var(--on-fill); }
 .btn-lg { height: var(--control-lg); }
 .btn-sm { height: var(--control-sm); padding: 0 var(--space-4); }
 .btn:focus-visible, .check:focus-visible, .rail-item:focus-visible,
@@ -323,6 +352,8 @@ body.no-annot .tok { display: none; }
   display: grid; place-items: center;
   border: 0; border-radius: var(--radius-md);
   background: none; color: var(--text-secondary); cursor: pointer;
+  /* `design-tokens.md`: an icon-only button uses icon-md (20). */
+  font-size: var(--icon-md);
   transition: background var(--duration-instant) var(--ease-standard);
 }
 .icon-btn:hover { background: var(--surface-2); color: var(--text-primary); }
@@ -671,17 +702,18 @@ body.no-annot .tok { display: none; }
 
   <div class="lab-group">
     <span class="lab-label">Accent</span>
-    <button class="lab-btn" id="a-blue" aria-pressed="true">Blue</button>
+    <button class="lab-btn" id="a-blue">Blue</button>
     <button class="lab-btn" id="a-indigo">Indigo</button>
-    <button class="lab-btn" id="a-teal">Teal</button>
+    <button class="lab-btn" id="a-teal" aria-pressed="true">Teal</button>
     <button class="lab-btn" id="a-violet">Violet</button>
   </div>
 
   <div class="lab-group">
     <span class="lab-label">Semantics</span>
-    <button class="lab-btn" id="s-standard" aria-pressed="true">Standard</button>
+    <button class="lab-btn" id="s-standard">Standard</button>
     <button class="lab-btn" id="s-muted">Muted</button>
     <button class="lab-btn" id="s-vivid">Vivid</button>
+    <button class="lab-btn" id="s-teal" aria-pressed="true">Teal-tuned</button>
   </div>
 
   <div class="lab-group">
@@ -693,8 +725,9 @@ body.no-annot .tok { display: none; }
 
   <div class="lab-group">
     <span class="lab-label">Metadata</span>
-    <button class="lab-btn" id="x-callout" aria-pressed="true">Callout</button>
-    <button class="lab-btn" id="x-mono">Mono</button>
+    <button class="lab-btn" id="x-callout">Callout 15</button>
+    <button class="lab-btn" id="x-footnote" aria-pressed="true">Footnote 13</button>
+    <button class="lab-btn" id="x-mono">Mono 13</button>
   </div>
 
   <div class="lab-group">
@@ -1621,10 +1654,10 @@ const $ = (id) => document.getElementById(id);
    palette blocks, so this resolves which one applies for the current mode. */
 let lightPal = "warm";
 let darkPal = "cool";
-let accent = "blue";
-let semantics = "standard";
+let accent = "teal";
+let semantics = "teal";
 let typePref = "system";
-let metaPref = "callout";
+let metaPref = "footnote";
 let modePref = "light";
 
 function resolveMode() {
@@ -1655,10 +1688,12 @@ function apply() {
   press("s-standard", semantics === "standard");
   press("s-muted", semantics === "muted");
   press("s-vivid", semantics === "vivid");
+  press("s-teal", semantics === "teal");
   press("y-system", typePref === "system");
   press("y-editorial", typePref === "editorial");
   press("y-prose", typePref === "prose");
   press("x-callout", metaPref === "callout");
+  press("x-footnote", metaPref === "footnote");
   press("x-mono", metaPref === "mono");
   press("m-light", modePref === "light");
   press("m-dark", modePref === "dark");
@@ -1679,10 +1714,12 @@ $("a-violet").onclick = () => { accent = "violet"; apply(); };
 $("s-standard").onclick = () => { semantics = "standard"; apply(); };
 $("s-muted").onclick = () => { semantics = "muted"; apply(); };
 $("s-vivid").onclick = () => { semantics = "vivid"; apply(); };
+$("s-teal").onclick = () => { semantics = "teal"; apply(); };
 $("y-system").onclick = () => { typePref = "system"; apply(); };
 $("y-editorial").onclick = () => { typePref = "editorial"; apply(); };
 $("y-prose").onclick = () => { typePref = "prose"; apply(); };
 $("x-callout").onclick = () => { metaPref = "callout"; apply(); };
+$("x-footnote").onclick = () => { metaPref = "footnote"; apply(); };
 $("x-mono").onclick = () => { metaPref = "mono"; apply(); };
 $("m-light").onclick = () => { modePref = "light"; apply(); };
 $("m-dark").onclick = () => { modePref = "dark"; apply(); };
