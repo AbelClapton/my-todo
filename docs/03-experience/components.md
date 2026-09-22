@@ -32,7 +32,7 @@ Four row heights exist and every list uses one of them
 
 | Component | Height token | Defined in | Notes |
 |---|---|---|---|
-| Task row | `row-rich` (72) with metadata, `row-default` (56) without | `05-modules/tasks.md` | Carries checkbox, title, metadata line, priority dot, deferred chip |
+| Task row | `row-rich` (72) with metadata, `row-default` (56) without | `05-modules/tasks.md` | Carries checkbox, title, identity metadata line, priority dot, and at most two time chips |
 | Habit row | `row-default` (56) | `05-modules/habits.md` | Checkbox, name, cadence · area, compliance count, minimum underline |
 | Note row | `row-rich` (72) | `05-modules/notes.md` | Title or first line, two-line preview, attachment chip, "Edited 2d ago" |
 | Person row | `row-default` (56) | `05-modules/people.md` | Name, last activity, links summary |
@@ -100,8 +100,17 @@ and a second one would compete with the priority dot that sits in the same row.
 | Parsed chip / confirmation chip | `04-ai/tier-1-parsing.md` | Receipt and confirmation are different chips with different behaviour |
 | Status chip | `05-modules/protocols.md` | `proposed`, `baseline`, `active`, `completed`, `abandoned` |
 | Attachment chip | `05-modules/notes.md` | "→ Buy standing desk", "→ Sarah", "→ Today" |
+| Due chip | `05-modules/tasks.md` | "due Thu" — a time fact, so a chip and not metadata |
+| Duration chip | `05-modules/tasks.md` | "40m" |
+| Cadence chip | `05-modules/tasks.md` | "weekly" |
 | Deferred chip | `05-modules/tasks.md` | "deferred 2d" |
 | Overdue chip | `06-flows/disruption.md` | "overdue 3d" — `text-secondary`, never red |
+
+A row carries **at most two chips**, because three of them starve the title at
+390px. `05-modules/tasks.md` owns the cap and the priority order that decides
+which two survive. Chips may carry a leading glyph at `icon-xs`, which is how a
+time chip stays readable at a glance — the glyph and the word each carry the
+meaning, so neither has to be learned alone.
 
 ### Ambient and data display
 

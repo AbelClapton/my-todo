@@ -52,14 +52,30 @@ due within N days, by completion date (for the completed log).
 
 - **Checkbox.** Tap completes. Swipe right also completes.
 - **Title.** `type-body`. Tap opens detail.
-- **Metadata line.** `type-footnote`, `text-secondary`. Composed
-  from: Area name, due date (if any), note count, person links,
-  parent task indicator.
+- **Metadata line.** `type-footnote`, `text-secondary`. **Identity only:**
+  Area name, note count, person links, parent task indicator. Where an
+  Area is present it leads with the Area's glyph (`icon-xs`).
 - **Priority indicator.** `priority: now` shows a small dot in
   `accent-default`. `next` and `later` have no indicator (their
   absence is the signal).
-- **Deferred chip.** If defer is today or earlier, a subtle chip
-  appears: "deferred 2d."
+- **Time chips.** Every time fact is a chip on the trailing edge, not
+  text in the metadata line: **due** ("due Thu"), **duration**
+  ("40m"), **cadence** ("weekly"), and **deferred** ("deferred 2d").
+  Time changes constantly and identity does not, so separation keeps
+  the metadata line to one job and makes the chips a column the eye
+  can scan down.
+
+**The row shows at most two chips.** The cap is a measurement rather
+than a taste: at 390px, one chip leaves the title 195px, two leave it
+144px, and three take 232px of the row and leave the title 60px and
+wrapping. Since the row height is fixed at `row-rich`, the pressure
+never shows as overflow — it shows as **title starvation**, which looks
+fine at a glance and is therefore worse. Anything beyond the cap lives
+in the detail view.
+
+When a task has more than two time facts, the cap keeps them in this
+order: **deferred, overdue, due, cadence, duration**. The signals that
+change what the user does next are the ones that survive.
 
 Row height is `row-rich` (72px) when metadata is present,
 `row-default` (56px) when it is not.
@@ -190,7 +206,7 @@ not the task.
       Pick a date…
     User picks "Tomorrow."
     Row reanimates to its new position (it stays, defer is
-    tomorrow). The metadata line updates: "deferred tomorrow."
+    tomorrow). The deferred chip updates to "deferred tomorrow."
 
 **Completing from the list.**
 

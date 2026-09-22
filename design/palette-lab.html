@@ -997,6 +997,15 @@ body.no-annot .tok { display: none; }
 }
 .labelled .value { font-size: var(--type-callout-size); color: var(--text-primary); }
 
+/* The trailing cluster. Under V4 a row can carry several time chips, so the
+   cluster wraps rather than overflowing. The wrap is the risk this decision
+   takes on: three chips plus a priority dot is the worst case, and it is
+   rendered at 390px below. */
+.row-trail {
+  display: flex; align-items: center; justify-content: flex-end;
+  gap: var(--space-2); flex-wrap: wrap; margin-left: auto;
+}
+
 /* ============================== CONTRAST TABLE ========================== */
 .ct { width: 100%; border-collapse: collapse; }
 .ct th, .ct td {
@@ -1357,6 +1366,74 @@ body.no-annot .tok { display: none; }
       <span class="tok">switch Accent above and read this row as a pair</span>
     </div>
   </div>
+
+  <div class="variant">
+    <div class="vlabel">
+      <span class="vnum">05</span>
+      <span class="t-title-3">The chip cluster, at 390</span>
+      <span class="tok">the cost V4 takes on</span>
+    </div>
+    <p class="sec-note" style="margin-top: 0;">
+      V4 puts every time fact in a chip, which means a row can carry several. But
+      <code>design-tokens.md</code> is absolute about height: <em>"Every list uses one
+      of these four. No custom row heights."</em> A cluster that wraps pushes a row
+      past `row-rich`, so this block is a stress test rather than a demonstration.
+    </p>
+    <div class="frame f-mobile" style="margin-top: var(--space-5);">
+      <div class="list">
+        <div class="row r-rich" id="stress-3">
+          <span class="check"></span>
+          <div class="r-main">
+            <span class="t-body r-title">Book the dentist</span>
+            <span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-health"/></svg><span>Health</span></span>
+          </div>
+          <div class="row-trail">
+            <span class="chip"><svg class="ic ic-xs"><use href="#i-calendar"/></svg>due Thu</span>
+            <span class="chip"><svg class="ic ic-xs"><use href="#i-clock"/></svg>deferred 2d</span>
+            <span class="chip"><svg class="ic ic-xs"><use href="#i-clip"/></svg>1</span>
+            <span class="pdot"></span>
+          </div>
+        </div>
+        <div class="row r-rich" id="stress-2">
+          <span class="check"></span>
+          <div class="r-main">
+            <span class="t-body r-title">Read the two papers on sleep debt</span>
+            <span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-learn"/></svg><span>Learning</span><span class="sep">·</span><span>@Sarah</span></span>
+          </div>
+          <div class="row-trail">
+            <span class="chip"><svg class="ic ic-xs"><use href="#i-calendar"/></svg>due today</span>
+            <span class="chip"><svg class="ic ic-xs"><use href="#i-timer"/></svg>40m</span>
+          </div>
+        </div>
+        <div class="row r-rich" id="stress-1">
+          <span class="check"></span>
+          <div class="r-main">
+            <span class="t-body r-title">Call the landlord</span>
+            <span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-home"/></svg><span>Home</span></span>
+          </div>
+          <div class="row-trail">
+            <span class="chip"><svg class="ic ic-xs"><use href="#i-clock"/></svg>deferred 2d</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="annot-row">
+      <span class="tok">measured at 390px — 1 chip: title 195px / cluster 97 · 2 chips: 144 / 148 · 3 chips + dot: <strong>60 / 232</strong></span>
+    </div>
+    <p class="sec-note">
+      Nothing overflows and nothing clips, which is the problem: the row height is
+      <em>fixed</em>, so the pressure shows up as <strong>title starvation</strong>
+      instead. At three chips the title is down to a fifth of the row and wraps, while
+      the secondary content takes 59% of it — and it still looks fine at a glance.
+    </p>
+    <p class="sec-note">
+      So V4 needs one rule it does not currently have. The cheapest is a
+      <strong>cap of two chips</strong>, in a fixed priority order, with the rest
+      living in the detail view. Two chips leave the title 144px, which is what a
+      title needs; three do not. A fifth row height would also work and is worse — it
+      is a new token, so an ADR, for a case the cap removes entirely.
+    </p>
+  </div>
 </section>
 
 <!-- ============================== ICONS ============================== -->
@@ -1633,7 +1710,7 @@ body.no-annot .tok { display: none; }
       <div class="panel">
         <div class="panel-head">
           <span class="t-title-2">V1 · Two channels</span>
-          <span class="tok chip chip-accent">recommended</span>
+          <span class="tok">runner-up</span>
           <span class="rule">The line carries due, duration, and repeat; the chip carries defer. They never overlap, so the redundancy cannot come back.</span>
         </div>
         <div class="list">
@@ -1673,12 +1750,18 @@ body.no-annot .tok { display: none; }
       <div class="panel">
         <div class="panel-head">
           <span class="t-title-2">V4 · All time as chips</span>
-          <span class="rule">Coherent in principle — chips are time and state, the line is identity — but two chips start to read as tags on a card, and the metadata line loses its purpose.</span>
+          <span class="tok chip chip-accent">adopted</span>
+          <span class="rule">Adopted. Chips are time and state; the metadata line is identity. The worry was backwards: with time out of the line, the line finally has exactly one job, and the chips read as a scannable column on the trailing edge.</span>
         </div>
         <div class="list">
           <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Call the landlord</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-home"/></svg><span>Home</span></span></div><span class="chip"><svg class="ic ic-xs"><use href="#i-clock"/></svg>deferred 2d</span></div>
           <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-health"/></svg><span>Health</span></span></div><span class="chip"><svg class="ic ic-xs"><use href="#i-calendar"/></svg>due Thu</span><span class="chip"><svg class="ic ic-xs"><use href="#i-clock"/></svg>deferred 2d</span></div>
           <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Read the two papers</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-learn"/></svg><span>Learning</span></span></div><span class="chip"><svg class="ic ic-xs"><use href="#i-timer"/></svg>40m</span></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Plan next week's meals</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-home"/></svg><span>Home</span></span></div><span class="chip"><svg class="ic ic-xs"><use href="#i-repeat"/></svg>weekly</span></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Draft the Q3 retro</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-work"/></svg><span>Work</span><span class="sep">·</span><span>@Sarah</span></span></div><span class="pdot"></span><span class="row-trail"><span class="chip"><svg class="ic ic-xs"><use href="#i-calendar"/></svg>due today</span></span></div>
+        </div>
+        <div class="annot-row">
+          <span class="tok">the metadata line now has one job: identity — area, people, notes, parent</span>
         </div>
       </div>
 
