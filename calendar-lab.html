@@ -172,6 +172,59 @@
   .wk-ae .ti { font-size: var(--type-footnote-size); color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .wk-ae.mirrored .ti { color: var(--text-secondary); }
 
+  /* ---- the month grid -------
+     Seven columns and, always, six rows. The row count is fixed because the ticks
+     in a cell are positioned as a percentage of that cell's height, so a grid that
+     grew a row would silently re-scale every other month's data. */
+  .mo-dow {
+    flex: none; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr));
+    margin: 0 var(--space-5); padding-bottom: var(--space-2);
+  }
+  .mo-dow span {
+    text-align: center; font-size: var(--type-caption-size);
+    letter-spacing: var(--type-caption-track); color: var(--text-muted);
+  }
+  .mo {
+    flex: 1; min-height: 0; display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    grid-auto-rows: 1fr; gap: 1px;
+    background: var(--border-subtle);
+    margin: 0 var(--space-5) var(--space-3);
+  }
+  .mo-cell {
+    position: relative; display: flex; flex-direction: column; gap: 2px;
+    min-width: 0; overflow: hidden; padding: 2px var(--space-2);
+    background: var(--bg-base);
+  }
+  /* The adjacent months' days. Drawn rather than blanked, because the fixed six
+     rows need them: a month that spans five rows otherwise leaves a row of holes. */
+  .mo-cell.out { background: var(--bg-sunken); }
+  .mo-hd { display: flex; align-items: baseline; gap: var(--space-2); position: relative; }
+  .mo-hd .n {
+    font-family: var(--font-mono); font-size: var(--type-caption-size);
+    line-height: 1.1; color: var(--text-secondary);
+  }
+  .mo-cell.out .n { color: var(--text-disabled); }
+  .mo-cell.today .n { color: var(--accent-text); }
+  .mo-cell.today { box-shadow: inset 0 0 0 2px var(--accent-default); }
+  .mo-hd .c {
+    margin-left: auto; font-size: var(--type-caption-size); color: var(--text-secondary);
+  }
+  /* The cell's drawing area: whatever vertical room is left after the date. */
+  .mo-sheet { flex: 1; min-height: 0; position: relative; }
+  .mo-sheet .tick {
+    position: absolute; left: 1px; right: 1px; min-height: 2px;
+    border-radius: 1px; background: var(--accent-default);
+  }
+  .mo-sheet .tick.mirrored { background: var(--border-strong); }
+  .mo-dot {
+    width: 4px; height: 4px; margin-top: 3px;
+    border-radius: var(--radius-full); background: var(--accent-default);
+  }
+  /* The heat variant's ramp, built by interpolating opacity because the token set
+     has no discrete steps to reach for. That is the point of drawing it. */
+  .mo-heat { position: absolute; inset: 0; background: var(--accent-default); }
+
   /* The fit overlay: what a clipped phone is hiding, stated rather than implied.
      A screen that overflows silently is the defect these labs exist to catch, so
      the mock draws the boundary. */
@@ -219,7 +272,7 @@
     <div class="tabs" role="tablist" aria-label="View">
       <button class="tab" data-go="day" aria-selected="true"><span class="n">1</span> Day</button>
       <button class="tab" data-go="week"><span class="n">2</span> Week</button>
-      <button class="tab" data-go="month" disabled><span class="n">3</span> Month</button>
+      <button class="tab" data-go="month"><span class="n">3</span> Month</button>
       <button class="tab" data-go="year" disabled><span class="n">4</span> Year</button>
       <button class="tab" data-go="event" disabled><span class="n">5</span> Event detail</button>
       <button class="tab" data-go="new" disabled><span class="n">6</span> New event</button>
@@ -1044,6 +1097,207 @@
     </section>
   </section>
 
+  <!-- ==================== THE MONTH VIEW ==================== -->
+  <section class="screen" id="month" hidden>
+    <section class="lede">
+      <h2 class="t-title-2">Month view — the spec already answered the hard question</h2>
+      <p>
+        `calendar.md` gives the Month one sentence, and it is a better sentence than the Week's:
+      </p>
+      <blockquote class="t-callout" style="margin: 0 0 var(--space-5); padding-left: var(--space-5); border-left: 2px solid var(--accent-default); color: var(--text-secondary);">
+        “<b>Month view</b> — a grid. Days show event density, not event titles. Tapping a day opens it.”
+      </blockquote>
+      <p>
+        The Week spent a whole lab discovering that a proportional column cannot hold a title. The
+        Month was written presuming it — <b>“not event titles”</b> — which means the hard question is
+        already behind it. What is left is narrower and sharper: <b>what is “density”, and can a
+        50px cell carry it?</b>
+      </p>
+      <p>
+        Two things the sentence does not say, and both of them decide the grid: how many rows it has
+        — which sets every cell's height, and therefore whether two months can be compared at all —
+        and what a tap opens.
+      </p>
+    </section>
+
+    <div class="grid">
+
+      <!-- ================= V1 · baseline ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Baseline</span>
+          <p class="vc-stance">“A grid. Days show event density.” A count is the plainest reading of density there is.</p>
+          <span class="vc-read">no lens · the control arm</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">September</span>
+                <span class="t-footnote" style="color: var(--text-muted);">2026</span>
+              </div>
+              <div class="mo-dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+              <div class="mo" id="mo-count"></div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>Nothing. Seven columns, one row per week, a date and a count of events in every cell.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd id="mo-cost">…</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>None — this <i>is</i> the sentence. Which is the finding: the sentence's word “density” has no unit in it, and the plainest unit available cannot tell apart the two three-event days in the sample month, which are nothing like each other.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= V2 · impeccable ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Impeccable</span>
+          <p class="vc-stance">The month is scanned, not read. One comparable value per cell, and no numbers to read.</p>
+          <span class="vc-read">impeccable · operate<br>weight before precision</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">September</span>
+                <span class="t-footnote" style="color: var(--text-muted);">2026</span>
+              </div>
+              <div class="mo-dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+              <div class="mo" id="mo-heat"></div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>The number goes and weight arrives. Each cell is tinted by its load, so the month's shape reads from across the room, and today is ringed.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>A tint is coarser than a number: it says that Thursday is heavier than Wednesday, not that it holds five events rather than four. And it is relative to the busiest day in the month, so the same Thursday looks different in a quiet month — the scale moves and cannot be read off the page.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>One. <b>A continuous ramp is not in the token set.</b> The tokens are discrete — `surface-1/2/3`, `accent-subtle` — so a heat scale is either new tokens (which needs an ADR) or interpolated opacity, which is a colour axis nobody has agreed to. The cell above is drawn the second way, and it shows why the first way would be needed.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= V3 · frontend design ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Frontend design</span>
+          <p class="vc-stance">The cell is a Week column, shrunk. Position by time, one mark per event — the month keeps the shape of the day.</p>
+          <span class="vc-read">frontend-design<br>the Week's instrument, one zoom out</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">September</span>
+                <span class="t-footnote" style="color: var(--text-muted);">2026</span>
+              </div>
+              <div class="mo-dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+              <div class="mo" id="mo-ticks"></div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>Every cell becomes a miniature of the Week's grid: the same vertical time window, the same proportional placement, marks instead of blocks. Vertical position now means time of day <i>across the whole month</i> — mornings at the top, evenings at the bottom, every day at once.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>At 2px a mark, the month's tightest gap — two events back to back — draws as a single mark, so a day with two can read as a day with one. And there is no room left in the cell for a number, a title, or a stale-mirror annotation.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd><b>None — and it is the only variant here that satisfies `motion-vocabulary.md`.</b> That doc asks that events “hold their visual position during the zoom where possible”. A cell that keeps the Week's vertical axis is what makes it possible, which turns the hedge into a requirement.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= V4 · design taste ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Design taste</span>
+          <p class="vc-stance">A 50px cell cannot hold a density. It can hold a presence, so let it hold only that.</p>
+          <span class="vc-read">design-taste-frontend<br>ask what the cell can say, then say only that</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">September</span>
+                <span class="t-footnote" style="color: var(--text-muted);">2026</span>
+              </div>
+              <div class="mo-dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+              <div class="mo" id="mo-dot"></div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>The encoding drops to one bit. A dot when anything is on the day, nothing when nothing is — and the grid becomes a month-shaped dot matrix, legible from further away than any number in it.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>It throws away the spec's word. A day with eight events looks exactly like a day with one, so the month can no longer answer the question the Week answers — <i>which days are heavy</i>. It is honest about what fits in the cell, and it is not what the view is for.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>One. `calendar.md` says days show event <b>density</b>, and a dot is presence. Using the word and building the other thing is worse than changing the word.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= recommended ================= -->
+      <article class="vc rec">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Recommended</span>
+          <p class="vc-stance">The cell is a shrunk Week column, on a grid that is always six rows so every month's cells are the same height.</p>
+          <span class="vc-read">frontend-design's instrument<br>+ impeccable's no-numbers + taste's question</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">September</span>
+                <span class="t-footnote" style="color: var(--text-muted);">2026</span>
+              </div>
+              <div class="mo-dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+              <div class="mo" id="mo-rec"></div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Takes</dt><dd><b>Frontend design</b> for the encoding, which is the only one that satisfies “density” and the zoom rule at the same time. <b>Impeccable</b> for proving a tint is a colour ramp the token set does not have, so the cells stay untinted. <b>Design taste</b> for asking what a 50px cell can actually hold, which is how the marks ended up 2px rather than squares. <b>Baseline</b> for the count — kept, but one tap away in the day view, where it can be read.</dd></div>
+          <div class="vc-line cost"><dt>Fixes</dt><dd id="mo-fixes">…</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>One, and it is not avoidable by drawing better. `calendar.md`'s Freshness section requires a mirrored event's staleness to be shown wherever that event appears, and a 2px mark cannot carry an annotation. The month either gains an exception to the rule or the header carries the staleness for the whole view.</dd></div>
+          <div class="vc-line open"><dt>Still needs</dt><dd>Four decisions the view cannot make for itself. <b>One:</b> <b>“density” has no unit</b> in the spec — this row reads it as position-by-time rather than as a count, and one of the two has to be written down. <b>Two:</b> the month needs the Week's <b>axis window, and the same one</b>; the marks only mean what they mean because 08:00–18:00 sits behind them, so if the two views ever use different windows the pinch between them is drawing two different days in the same place. <b>Three:</b> the Month puts a <b>zoom target and a tap target in the same 50px cell.</b> `surfaces.md` gives the Month its entry — pinch from Week — and `calendar.md` says tapping a day opens it. Pinching is how you reach the Week; tapping is how you open a day. Two gestures, one small cell, and the doc should say which is which before somebody makes pinch open things. <b>Four:</b> the freshness collision above, which is the one item here that is not a choice, only a choice of where to put it.</dd></div>
+        </dl>
+      </article>
+
+    </div>
+
+    <section class="lede">
+      <h2 class="t-title-2">The measurement</h2>
+      <div class="panel" style="margin-top: var(--space-5);">
+        <div class="measure" id="measure-month"></div>
+      </div>
+    </section>
+  </section>
+
 </div>
 
 <script>
@@ -1053,6 +1307,7 @@
   // measured the first time it is actually shown. Measuring it at load would
   // have produced a page of confident zeros.
   let weekMeasured = false;
+  let monthMeasured = false;
   // The Week cannot measure the Day once the Day is hidden — a hidden element
   // reports zero for everything — so the Day's timeline height is captured while
   // it is still on screen.
@@ -1061,6 +1316,7 @@
     screens.forEach(s => { s.hidden = s.id !== id; });
     tabs.forEach(t => t.setAttribute('aria-selected', String(t.dataset.go === id)));
     if (id === 'week' && !weekMeasured) { measureWeek(); weekMeasured = true; }
+    if (id === 'month' && !monthMeasured) { measureMonth(); monthMeasured = true; }
     window.scrollTo({ top: 0 });
   }
   tabs.forEach(t => t.addEventListener('click', () => go(t.dataset.go)));
@@ -1196,6 +1452,208 @@
         return '<div><span class="n">' + s.clipped + ' / ' + s.titles + '</span><span class="l">' + s.name +
           ' — titles that do not fit their block</span></div>';
       }).join('');
+  }
+
+  // ==========================================================================
+  // THE MONTH
+  // ==========================================================================
+
+  // September 2026, weeks starting Monday, so the grid opens on Mon 31 August and
+  // closes on Sun 4 October. Events are `[startHour, startMinute, minutes]`.
+  // September needs five rows; March 2026 needs six, which is the point of the
+  // fixed six-row grid and of the cell-height figure in the measurement.
+  const SEPT = [
+    { d: 31, out: true, ev: [[9, 0, 30]] },
+    { d: 1,  ev: [[9, 0, 30], [14, 0, 60]] },
+    { d: 2,  ev: [[11, 0, 30]] },
+    { d: 3,  ev: [[9, 0, 30], [11, 0, 60], [15, 30, 30]] },
+    { d: 4,  ev: [[10, 0, 60], [16, 0, 30]] },
+    { d: 5,  ev: [] },
+    { d: 6,  ev: [] },
+    { d: 7,  ev: [[9, 0, 30]] },
+    // Three events between 09:00 and 11:30 — the clustered half of the pair, and
+    // deliberately not contiguous, so the tightest gap in the month belongs to one
+    // day rather than to two.
+    { d: 8,  ev: [[9, 0, 60], [10, 15, 45], [11, 30, 30]] },
+    // Two events back to back: the month's tightest gap, which is zero.
+    { d: 9,  ev: [[13, 0, 30], [13, 30, 30]] },
+    { d: 10, ev: [[9, 0, 30], [13, 0, 60]] },
+    { d: 11, ev: [[15, 0, 60]] },
+    { d: 12, ev: [] },
+    { d: 13, ev: [] },
+    { d: 14, ev: [[9, 0, 30], [11, 0, 30]] },
+    // Three events at 08:30, 13:00 and 17:30 — the same count as the 8th, and the
+    // opposite shape. This pair is the whole argument about the word "density".
+    { d: 15, ev: [[8, 30, 30], [13, 0, 60], [17, 30, 60]] },
+    { d: 16, ev: [[9, 0, 30]] },
+    { d: 17, ev: [[10, 0, 60], [14, 0, 30]] },
+    { d: 18, ev: [[9, 0, 30]] },
+    { d: 19, ev: [[10, 0, 60]] },
+    { d: 20, ev: [] },
+    // The week the Week lab measured, unchanged, so the two views can be compared.
+    { d: 21, ev: [[9, 0, 30], [14, 0, 60], [17, 0, 45]] },
+    { d: 22, ev: [[9, 0, 30], [11, 42, 30], [13, 0, 60], [16, 30, 45]], today: true },
+    { d: 23, ev: [[9, 0, 30], [10, 0, 30], [15, 0, 60]] },
+    { d: 24, ev: [[9, 0, 30], [11, 0, 90], [13, 0, 60], [15, 0, 30], [16, 30, 60]] },
+    { d: 25, ev: [[9, 0, 30], [12, 0, 90]] },
+    { d: 26, ev: [[10, 0, 60]] },
+    { d: 27, ev: [] },
+    { d: 28, ev: [[9, 0, 30], [13, 0, 60]] },
+    { d: 29, ev: [[11, 0, 30]] },
+    { d: 30, ev: [[9, 0, 30], [15, 0, 60]] },
+    { d: 1,  out: true, ev: [[10, 0, 60]] },
+    { d: 2,  out: true, ev: [] },
+    { d: 3,  out: true, ev: [] },
+    { d: 4,  out: true, ev: [] },
+    // The sixth row. September does not need it; the fixed grid draws it anyway,
+    // which is what makes every month's cells the same height.
+    { d: 5,  out: true, ev: [[9, 0, 30], [14, 0, 60]] },
+    { d: 6,  out: true, ev: [] },
+    { d: 7,  out: true, ev: [[11, 0, 60]] },
+    { d: 8,  out: true, ev: [] },
+    { d: 9,  out: true, ev: [[13, 0, 90]] },
+    { d: 10, out: true, ev: [] },
+    { d: 11, out: true, ev: [] }
+  ];
+
+  // The same window the Week uses. That is not a coincidence — the marks only mean
+  // what they mean because 08:00–18:00 sits behind them, and if the two views ever
+  // disagree about it, the pinch between them draws two different days in the same
+  // place.
+  const MONTH_WINDOW_START = 8 * 60;
+  const MONTH_WINDOW_MIN = 600;
+  const MARK_H = 2;   // `.mo-sheet .tick`'s minimum height, in px
+
+  function buildMonth(el, mode, count) {
+    if (!el) return;
+    el.innerHTML = SEPT.slice(0, count).map(c => {
+      const load = c.ev.length;
+      let overlay = '', tail = '';
+      let head = '<span class="n">' + c.d + '</span>';
+
+      if (mode === 'count') {
+        if (load) head += '<span class="c">' + load + '</span>';
+      } else if (mode === 'heat') {
+        // Interpolated opacity: the token set has no discrete steps to reach for.
+        if (load) overlay = '<span class="mo-heat" style="opacity:' +
+          (0.10 + 0.20 * (load - 1)).toFixed(2) + '"></span>';
+      } else if (mode === 'dot') {
+        if (load) tail = '<span class="mo-dot"></span>';
+      } else {
+        tail = '<span class="mo-sheet">' + c.ev.map(e => {
+          const centre = e[0] * 60 + e[1] + e[2] / 2;
+          const top = (centre - MONTH_WINDOW_START) / MONTH_WINDOW_MIN * 100;
+          const h = e[2] / MONTH_WINDOW_MIN * 100;
+          return '<span class="tick" style="top:' + top.toFixed(2) + '%;height:' + h.toFixed(2) + '%"></span>';
+        }).join('') + '</span>';
+      }
+
+      const cls = 'mo-cell' + (c.out ? ' out' : '') + (c.today ? ' today' : '');
+      return '<span class="' + cls + '">' + overlay +
+             '<span class="mo-hd">' + head + '</span>' + tail + '</span>';
+    }).join('');
+  }
+
+  // The four variations are drawn with as many rows as September needs — that is the
+  // literal reading of "a grid". The recommendation is the one that fixes the count
+  // at six, so the difference between them is on the page rather than in a claim.
+  const ROWS_AS_NEEDED = 35, ROWS_FIXED = 42;
+  ['mo-count:count', 'mo-heat:heat', 'mo-ticks:ticks', 'mo-dot:dot']
+    .forEach(p => { const [id, mode] = p.split(':');
+      buildMonth(document.getElementById(id), mode, ROWS_AS_NEEDED); });
+  buildMonth(document.getElementById('mo-rec'), 'ticks', ROWS_FIXED);
+
+  const IN_MONTH = SEPT.filter(c => !c.out);
+  const withEvents = IN_MONTH.filter(c => c.ev.length);
+  const distinctCounts = [...new Set(withEvents.map(c => c.ev.length))].sort();
+
+  // The tightest gap between two consecutive events in the month. This is the number
+  // that decides whether two marks can be told apart at all.
+  let tightest = Infinity, tightestDay = null;
+  IN_MONTH.forEach(c => {
+    const ev = c.ev.slice().sort((a, b) => (a[0] * 60 + a[1]) - (b[0] * 60 + b[1]));
+    for (let i = 1; i < ev.length; i++) {
+      const gap = (ev[i][0] * 60 + ev[i][1]) - (ev[i - 1][0] * 60 + ev[i - 1][1] + ev[i - 1][2]);
+      if (gap < tightest) { tightest = gap; tightestDay = c.d; }
+    }
+  });
+
+  function measureMonth() {
+    const host = document.getElementById('measure-month');
+    // The five-row grid has to be a tick grid, not the counting one: only the tick
+    // variants have a `.mo-sheet` to measure the day's resolution against.
+    const five = document.getElementById('mo-ticks');
+    const six = document.getElementById('mo-rec');
+    if (!host || !five || !six) return;
+
+    // Two grids, because the fixed row count is the one thing that separates them:
+    // the four variations draw as many rows as September needs, the recommendation
+    // draws six whatever the month needs.
+    const cell5 = five.querySelector('.mo-cell').getBoundingClientRect();
+    const cell6 = six.querySelector('.mo-cell').getBoundingClientRect();
+    const sheetEl = six.querySelector('.mo-sheet');
+    const sheetEl5 = five.querySelector('.mo-sheet');
+    if (!sheetEl || !sheetEl5) return;
+    const sheetH = sheetEl.getBoundingClientRect().height;
+    const perHour = sheetH / 10;
+    // The grid that tracks the month has taller cells, so it resolves the day more
+    // finely. That is the price of the fixed row count, and it is worth measuring.
+    const sheetH5 = sheetEl5.getBoundingClientRect().height;
+    const perHour5 = sheetH5 / 10;
+    const mergeUnder = MARK_H / perHour * 60;   // minutes below which two marks touch
+    // Counted from the DOM rather than from the data, because the grid draws the
+    // adjacent months' days too and a computed total would have missed them.
+    const ticksDrawn = document.querySelectorAll('#mo-ticks .tick').length;
+    const cells5 = five.querySelectorAll('.mo-cell').length;
+
+    document.getElementById('mo-cost').innerHTML =
+      '<b>' + withEvents.length + ' of the month\u2019s ' + IN_MONTH.length +
+      ' days</b> have something on them, and they are described by <b>' +
+      distinctCounts.length + ' values</b> \u2014 ' + distinctCounts.join(', ') +
+      '. The cell is <b>' + Math.round(cell5.width) + 'px</b> wide and <b>' +
+      Math.round(cell5.height) + 'px</b> tall. Two of those days hold three events and ' +
+      'could not be less alike: <b>8 September</b> puts all three between 09:00 and 11:30, ' +
+      '<b>15 September</b> puts one at 08:30, one at 13:00 and one at 17:30. The count says ' +
+      '\u201c3\u201d for both. That is true and it is useless \u2014 and it is the number the ' +
+      'spec\u2019s word \u201cdensity\u201d resolves to, which is why the view looks finished ' +
+      'while saying almost nothing.';
+
+    document.getElementById('mo-fixes').innerHTML =
+      '<b>Six rows always, 42 cells</b>, with the adjacent months’ days drawn muted rather than ' +
+      'blanked. September needs five rows and March needs six; a grid that changes height changes ' +
+      'every cell with it, and a mark whose position depends on how many rows the month happened ' +
+      'to need is not comparable with any other month. Fixing the grid is what makes a mark mean ' +
+      'the same thing in January as in June. <b>It is not free:</b> the cell drops from <b>' +
+      Math.round(cell5.height) + 'px to ' + Math.round(cell6.height) + 'px</b>, so an hour of the ' +
+      'day goes from <b>' + perHour5.toFixed(1) + 'px to ' + perHour.toFixed(1) + 'px</b>, and the ' +
+      'gap at which two marks merge widens with it. That is resolution, paid for comparability.';
+
+    host.innerHTML =
+      '<div><span class="n">' + Math.round(cell6.width) + 'px</span>' +
+      '<span class="l">one cell’s width — 390px, twenty of padding either side, seven columns</span></div>' +
+      '<div><span class="n">' + Math.round(cell6.height) + 'px</span>' +
+      '<span class="l">one cell’s height on the fixed six-row grid</span></div>' +
+      '<div><span class="n">' + Math.round(cell5.height) + 'px</span>' +
+      '<span class="l">the same cell when the grid tracks the month — September needs five rows, March needs six</span></div>' +
+      '<div><span class="n">' + perHour5.toFixed(1) + 'px</span>' +
+      '<span class="l">one hour in a cell that tracks the month — the resolution the fixed grid gives up</span></div>' +
+      '<div><span class="n">' + perHour.toFixed(1) + 'px</span>' +
+      '<span class="l">one hour in a cell on the fixed grid, which is what the marks are actually drawn against</span></div>' +
+      '<div><span class="n">' + tightest + ' min</span>' +
+      '<span class="l">the month’s tightest gap between two events (' + tightestDay +
+      ' September), which is ' + (tightest / 60 * perHour).toFixed(1) + 'px apart</span></div>' +
+      '<div><span class="n">' + Math.round(mergeUnder) + ' min</span>' +
+      '<span class="l">the gap below which two ' + MARK_H + 'px marks touch and read as one</span></div>' +
+      '<div><span class="n">' + withEvents.length + ' / ' + distinctCounts.length + '</span>' +
+      '<span class="l">Baseline — days with events, and the distinct values the grid describes them with</span></div>' +
+      '<div><span class="n">' + distinctCounts.length + '</span>' +
+      '<span class="l">Impeccable — steps the ramp must reach for, drawn instead as interpolated opacity</span></div>' +
+      '<div><span class="n">' + ticksDrawn + '</span>' +
+      '<span class="l">Frontend design — marks drawn, each positioned by the time it starts and ends</span></div>' +
+      '<div><span class="n">2</span>' +
+      '<span class="l">Design taste — values the grid describes ' + cells5 +
+      ' cells with; the recommendation draws ' + (ROWS_FIXED - ROWS_AS_NEEDED) +
+      ' more cells and loses none of them</span></div>';
   }
 </script>
 <script src="nav.js"></script>
