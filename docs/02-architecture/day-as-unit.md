@@ -11,8 +11,9 @@ It is short because it is a single idea, applied everywhere.
 
 ## Invariants
 
-- Every Event, Task completion, Habit compliance entry, Protocol
-  metric log, and Daily Note attaches to exactly one Day.
+- Every Event, Task completion, Task scheduling, Habit compliance
+  entry, Protocol metric log, and Daily Note attaches to exactly one
+  Day.
 - A Day is a local-timezone date (YYYY-MM-DD). It is not a 24-hour
   window in UTC. Two users in different timezones have different
   Days for the same UTC instant.
@@ -35,7 +36,7 @@ It is short because it is a single idea, applied everywhere.
 - **Habit skip** — `habit.skipped` has a `day` field.
 - **Protocol metric log** — `protocol.metric_logged` has a `day`
   field.
-- **Daily Note** — created once per Day by `daily_note.created`
+- **Daily Note** — created once per Day by `day.note_created`
   (`02-architecture/event-log.md`), attached to that Day.
 
 ### What does not attach to a Day
@@ -150,7 +151,7 @@ At the boundary, the app:
 1. Closes the outgoing Day (via `day.closed`, if the user closes it; otherwise nothing is logged).
 2. Opens the incoming Day (`day.opened`).
 3. Creates the Daily Note for the incoming Day
-   (`daily_note.created`).
+   (`day.note_created`).
 4. Recomputes `now_line` and `day_view`.
 
 Rollover happens once, triggered by the first app open after the

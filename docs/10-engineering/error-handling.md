@@ -43,8 +43,11 @@ response.
 
 **2. Network errors.** A request failed due to connectivity.
 
-- **Surfaced:** a subtle banner if persistent (>3s); nothing if
-  transient.
+- **Surfaced:** nothing while it is transient. One neutral line
+  appears once the failure is persistent — after the retry ladder
+  is exhausted for a user-initiated call, or after the sync
+  indicator's 1-hour threshold for a background cycle (see "Retry
+  policy"). It reports; it is not an error state.
 - **Recoverable:** yes, retry with backoff.
 - **Copy:** "Offline. Retrying." or "Can't reach the server."
 - **Logged:** yes, in the client console. Not to the log.
@@ -53,7 +56,7 @@ response.
 
 - **Surfaced:** a subtle indicator in settings and in the header.
 - **Recoverable:** yes, on next sync cycle.
-- **Copy:** "Last sync: 2 hours ago. Retry."
+- **Copy:** "Last sync: 2 hours ago. [Retry]"
 - **Logged:** client-side diagnostics buffer. Not an event log
   entry.
 
@@ -135,7 +138,7 @@ error" state, because the error is in the return type.
 Unexpected errors are caught at three levels:
 
 1. **App root.** A full-screen boundary with "Something went wrong.
-   [Reload]" and a bug report link.
+   [Reload] [Report]".
 2. **Mode root.** Each mode (Calendar, Tasks, Habits, Notes) has
    its own boundary. If a mode crashes, the rest of the app
    survives.
@@ -143,18 +146,19 @@ Unexpected errors are caught at three levels:
    boundaries. If an AI call crashes the sheet, the app survives.
 
 Boundaries report to a client-side error reporter (Sentry or
-equivalent) if the user has enabled crash reporting. By default,
-crash reports are opt-in.
+equivalent) if the user has enabled crash reporting
+(`05-modules/settings.md`). By default, crash reports are opt-in.
 
 ### Retry policy
 
 - **Network errors (user-initiated):** retry with exponential
-  backoff (2s, 4s, 8s, up to 60s). Maximum 5 retries, then
-  surface the error.
-- **Network errors (background sync):** retry indefinitely. The
-  sync engine does not surface these as errors unless the failure
-  persists past the freshness threshold
-  (`07-infrastructure/sync-engine.md`).
+  backoff — 2s, 4s, 8s, 16s, 32s. Five attempts, then surface the
+  error.
+- **Network errors (background sync):** retry indefinitely, with
+  the interval capped at 60s. The sync engine does not surface
+  these as errors until the failure passes the sync indicator's
+  1-hour threshold (`07-infrastructure/sync-engine.md`) — which is
+  also when the settings retry button appears.
 - **Sync errors:** retry on the next sync cycle. No user-facing
   retry button unless the failure persists > 1 hour.
 - **AI errors:** retry once automatically. If it fails again,
@@ -176,8 +180,11 @@ offline:
 - AI features that require cloud are disabled with a note.
 - Integrations show their last-synced state.
 
-No error is surfaced for being offline. Being offline is a normal
-state, not an error.
+Being offline is a normal state and never produces an error state.
+The only thing that can appear is the informational line in the copy
+table below, and only once the failure is persistent: "Offline.
+Changes will sync when you reconnect." It reports; it does not
+alarm; it never blocks.
 
 ### User-facing copy
 
@@ -217,7 +224,8 @@ Errors are logged per category:
 
 Logs never contain sensitive data (note bodies, health data,
 person names). Error logs for AI calls contain the call's
-`proposal_id` and error kind, not the input.
+`call_id` and error kind, not the input
+(`02-architecture/event-log.md`).
 
 ### Recovery flows
 
@@ -254,9 +262,14 @@ There is no fourth option. If an error is not handled, it is a bug.
     Returns Result.err({ kind: 'network' }).
     Retry scheduled in 2s.
     No UI surfaced (transient).
-    Second retry fails. Third fails.
-    At 8s, a subtle banner: "Offline. Changes will sync when you
-    reconnect."
+    Retries at 4s, 8s, 16s, and 32s all fail.
+    The ladder is exhausted, so one line appears: "Offline. Changes
+    will sync when you reconnect."
+    Nothing is blocked. Writes keep landing in the local log.
+
+    Had this been a background cycle instead of a foreground push,
+    nothing would have surfaced until the failure passed the 1-hour
+    threshold.
 
 **An AI call fails.**
 

@@ -27,6 +27,19 @@ completes it, and feels the loop before they understand the product.
 
 ### The flow
 
+The seven screens are full-screen pages, in the order below. They
+replace the app shell rather than floating over it
+(`03-experience/app-shell.md`):
+
+- A seven-segment progress indicator sits at the top, filled in
+  `accent-default`.
+- "Skip" sits top-trailing on screens 1–6 and jumps to screen 7.
+- Screen 7 carries no chrome at all — no progress, no skip — because
+  there is nowhere left to go.
+- Pages transition with the screen push
+  (`03-experience/motion-vocabulary.md`): forward is leftward, back is
+  rightward, and back is available on screens 2–6.
+
 **Screen 1 — The premise.**
 
     One sentence:
@@ -124,9 +137,11 @@ show only in-app events until a calendar is connected.
 **Screen 7 — Land.**
 
     The user lands on the Calendar day view.
-    The now line shows their habit for today.
-    The morning plan does not fire yet — it will fire on the next
-    day boundary.
+    The now line shows the day's next scheduled item, or nothing if
+    the day is empty (`06-flows/doing-the-day.md`).
+    The morning plan is suppressed for the rest of today — the setup
+    flow was the day's ritual. It fires on the first open of the
+    next day (`06-flows/morning-plan.md`).
 
 The user's first morning plan fires on day 2 of use. This is
 deliberate: the user should experience the app once before it asks
@@ -167,6 +182,12 @@ in a subtle banner on the second open of the app
 (`07-infrastructure/auth.md`).
 
 The banner is dismissable and does not return after dismissal.
+
+The banner is one of exactly three surfaces **exempt** from the
+attention budget: it fires once per install, dismissal is permanent
+for its trigger, and it never competes for the hourly slot. Exempt
+surfaces have no `SurfaceId` and no settings toggle
+(`03-experience/attention-budget.md`, ADR 0013).
 
 ### What onboarding does not do
 

@@ -49,6 +49,11 @@ calendar sync) and offers:
 
     [Shift]  [Keep as is]
 
+The offer is a `contextual` nudge, not a surface of its own: no
+`SurfaceId`, no separate toggle, and it spends budget as
+`contextual` when it fires
+(`03-experience/attention-budget.md`, ADR 0013).
+
 Tapping "Shift":
 
 1. Shifts all subsequent events today by the overrun amount (with
@@ -93,6 +98,12 @@ different category, surfaced as "overdue").
 
 This is a nudge, subject to the attention budget (surface ID:
 `what_slipped`). If dismissed, it does not fire again that day.
+
+When it fires inside shutdown completion it is content, not a
+surface, and spends nothing — shutdown already holds that hour's
+slot. The `what_slipped` budget is spent only by the standalone
+firing, on a day shutdown was skipped
+(`06-flows/shutdown.md`, ADR 0013).
 
 If the user has not opened the app for the configured lapse threshold
 (`lapse.threshold_days`, default 14 days — see
@@ -140,7 +151,7 @@ explicitly.
     `task.rescheduled` logged with `defer: tomorrow`.
     Row stays (it was scheduled today, defer is tomorrow), metadata
     updates: "deferred tomorrow."
-    No undo toast (the sheet was the confirmation).
+    Undo toast: "Deferred tomorrow. Undo?"
 
 **End-of-day digest.**
 

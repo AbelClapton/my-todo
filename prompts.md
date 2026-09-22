@@ -1231,10 +1231,16 @@ prompt:
     Implement email forwarding and weather.
 
     Email forwarding:
-    - Provide a `<user-slug>@in.your-app.com` address.
-    - On receipt: parse the subject with Tier 1, body becomes a
-      note, task created if parsed.
-    - Rate limit: 100 forwards/day.
+    - Provide a `<user-slug>@in.<domain>` address. Inbound is Cloudflare
+      Email Routing to a Worker; outbound is Resend (ADR 0018).
+    - Slug: generated, 8 lowercase alphanumeric characters, never
+      derived from name or email, rotatable (ADR 0017).
+    - The Worker relays only. The device parses with Tier 1 and writes
+      `note.created` with `sync: false`. No server-side log writes, no
+      server-side AI (ADR 0017).
+    - Undelivered messages wait in a transient buffer, dropped after 72
+      hours, disclosed where the address is shown.
+    - Rate limit: 100 forwards/day/user.
     - No mailbox reading.
 
     Weather:

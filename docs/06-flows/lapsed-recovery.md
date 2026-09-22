@@ -52,6 +52,12 @@ A single card:
 The two options are shown side by side (or stacked on narrow
 screens), equal visual weight. No default. The user chooses.
 
+The card is one of exactly three surfaces **exempt** from the
+attention budget: it fires once per lapse, dismissal is permanent
+for that lapse, and it never competes for the hourly slot. Exempt
+surfaces have no `SurfaceId` and no per-surface settings toggle
+(`03-experience/attention-budget.md`, ADR 0013).
+
 ### Start fresh
 
 Tapping "Start fresh":
@@ -77,7 +83,7 @@ A five-second undo toast appears after the confirmation, covering
 the entire archive as one atomic action (Invariant 1). Undo
 appends compensation entries for each archived task and each
 abandoned protocol. If the toast expires, the archive stands; the
-user can manually re-activate individual items later.
+user can manually re-activate individual tasks and protocols later.
 
 ### Catch up
 
@@ -88,16 +94,17 @@ Tapping "Catch up":
    - Open tasks scheduled during the lapse.
    - Events during the lapse (read-only).
    - Protocols that were active.
-   - Inbox items.
+   - Inbox captures.
 3. The list supports the sort-ritual gestures (swipe right to
-   keep, left to defer, up to attach, down to delete).
+   keep, left to defer, up to attach, down to remove — never
+   delete).
 4. The user processes at their own pace. There is no counter,
    no pressure.
 5. When the user exits the list, they land on today's calendar.
 
-The catch-up list is bounded. Items older than 60 days are
-collapsed into a single row: "47 older items [Review] [Archive
-all]." The user can choose to review or archive in one tap.
+The catch-up list is bounded. Anything older than 60 days collapses
+into a single row: "47 more [Review] [Archive all]." The user can
+choose to review or archive in one tap.
 
 ### Skipping
 
@@ -173,16 +180,16 @@ growth feature disguised as a product feature
       Task: Buy standing desk           Sep 5
       Task: Review pricing page         Sep 8
       ... (23 more)
-      + 47 older items [Review] [Archive all]
+      + 47 more [Review] [Archive all]
 
     User swipes:
       - File Q4 taxes → keep for today.
-      - Call contractor → delete.
+      - Call contractor → removed (archived).
       - Buy standing desk → someday.
       - Review pricing page → defer.
       - ...
 
-    User taps "47 older items → Archive all."
+    User taps "47 more → Archive all."
     All archived in one action.
 
     User exits the list.

@@ -5,8 +5,8 @@
 This doc defines the Protocols module: the surface where
 time-boxed experiments are proposed, adopted, tracked, and
 reviewed. It exists because protocols are the app's defining
-feature — the "system for running small experiments on your own
-life" from the identity sentence
+feature — they are what the identity sentence, "A system for
+running small experiments on your own life," describes
 (`01-foundation/identity.md`).
 
 Protocols are the module the app is built around, even though they

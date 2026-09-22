@@ -79,8 +79,15 @@ When the quota is exhausted:
     "Monthly research limit reached. Resets Oct 1."
     [Upgrade]  [OK]
 
-The "Upgrade" path is out of scope for v1 (no billing yet); it is
-shown as a placeholder.
+The "Upgrade" path is out of scope for v1: there is no billing, so
+Pro cannot be bought and the button is a placeholder with no
+destination.
+
+**Pro is specified, not purchasable.** Pro appears in this doc as an
+engineering target, not as a shipped gate. No feature is restricted
+by a tier the user cannot buy, and the Free-tier quotas below are a
+v1 product commitment — changing them requires a new ADR
+(`05-modules/settings.md`, ADR 0014).
 
 **Tier 3 complex query quota:**
 
@@ -157,9 +164,11 @@ This is intentionally generous on local features (which cost the
 app nothing) and metered on cloud features (which cost the app
 money).
 
-### Pro tier (planned)
+### Pro tier (specified, not purchasable)
 
-Not built in v1. Planned:
+Not purchasable in v1: there is no billing. The numbers below are
+engineering targets, not a gate (`05-modules/settings.md`,
+ADR 0014). Planned:
 
 - 100 research calls per month.
 - Unlimited Tier 3 complex queries (subject to rate limits).
@@ -178,6 +187,26 @@ cost discipline that makes pricing possible.
 
 The app does not price-gate basic functionality. It prices the
 expensive AI features.
+
+### Infrastructure costs
+
+Not per-user metering: the fixed and semi-fixed costs of running the
+service. Listed here because this doc is the cost authority and they
+were previously absent entirely (ADR 0018).
+
+| Item | Cost | Notes |
+|---|---|---|
+| Domain | ~$10/year | At cost, Cloudflare Registrar. The only unavoidable purchase, and it is deferred to the gate in ADR 0018. |
+| Hosting | $0 while building | Cloudflare Workers free tier, usable commercially. |
+| Inbound email | $0 | Cloudflare Email Routing. The documented 100/day/user forwarding cap is also a cost ceiling. |
+| Outbound email | $0 to 3,000/month, then paid tiers | A message per login. |
+
+**Why auth email is not metered, but is listed.** A magic link costs a
+fraction of a cent, and metering logins would be hostile for no gain. But
+it is the one cost that scales with the **whole user base** rather than
+with engagement — every user logs in, whether or not they use anything
+else — so it belongs in monitoring alongside cost per user, not behind a
+gate.
 
 ### Monitoring
 

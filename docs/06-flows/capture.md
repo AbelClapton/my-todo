@@ -62,10 +62,13 @@ confirmation. The user does not have to act on it.
 3. Three outcomes based on confidence:
    - **≥ 0.85.** Apply silently. Show a "parsed" chip.
    - **0.60 – 0.84.** Show a confirmation chip: "Did you mean X?"
+     Left unanswered, the parse is not applied: the raw text is kept
+     as an unparsed note, with the parse still on offer
+     (`04-ai/tier-1-parsing.md`).
    - **< 0.60.** Raw text becomes an inbox note with an
      "[unparsed]" title prefix.
 4. The user can tap the chip to edit the parse, or ignore it.
-5. The item is created (or noted in the inbox).
+5. The parsed result is created (or noted in the inbox).
 
 ### The capture outcomes
 
@@ -83,28 +86,32 @@ confirmation. The user does not have to act on it.
 
 ### The inbox
 
-Items that could not be parsed, or that the user marked as "don't
+Captures that could not be parsed, or that the user marked as "don't
 decide now," land in the inbox. The inbox is:
 
 - A list of unparsed notes and unclassified tasks.
 - Accessible from the Tasks mode (a filter) or via the command
   palette.
-- Surfaced by the sort ritual when it contains > 10 items
+- Surfaced by the sort ritual when it contains more than 10
+  captures
   (`03-experience/attention-budget.md`).
 
 ### The sort ritual
 
-When the inbox has > 10 items, a nudge fires (subject to the
-attention budget). Tapping opens the sort ritual: a 60-second sweep
-of the inbox, one item at a time.
+When the inbox holds more than 10 captures, a nudge fires (subject to
+the attention budget). Tapping opens the sort ritual: a 60-second
+sweep of the inbox, one capture at a time.
 
 Four gestures, no menus:
 
-- **Swipe right.** "Today." Creates or schedules the item for today.
-- **Swipe left.** "Someday." Marks the item as someday.
+- **Swipe right.** "Today." Creates or schedules the capture for
+  today.
+- **Swipe left.** "Someday." Marks the capture as someday.
 - **Swipe up.** "Attach." Opens the attachment picker (Person, Area,
   Goal, or an existing task).
-- **Swipe down.** "Delete." Tombstones the item (undoable).
+- **Swipe down.** "Remove." Takes the capture out of the inbox,
+  reversibly — never a delete. (Deleting is not a gesture; see
+  `03-experience/gesture-vocabulary.md`.)
 
 The ritual ends when the inbox is empty or the user exits. Progress
 is not saved mid-ritual (each gesture commits immediately).
@@ -211,14 +218,14 @@ a capture:
 
 **Sort ritual.**
 
-    Nudge: "12 items in your inbox. Sort now?"
+    Nudge: "12 captures in your inbox. Sort now?"
     User taps.
     Inbox opens in sort mode.
-    Item 1: "The thing with the stuff"
-    User swipes down → deleted.
-    Item 2: "Buy standing desk"
+    Capture 1: "The thing with the stuff"
+    User swipes down → removed from the inbox (reversibly).
+    Capture 2: "Buy standing desk"
     User swipes right → scheduled today.
-    Item 3: "Idea: try morning walks"
+    Capture 3: "Idea: try morning walks"
     User swipes up → attach to Health area as a habit draft.
     ... continues until inbox is empty or user exits.
 

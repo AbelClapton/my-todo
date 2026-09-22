@@ -17,9 +17,10 @@ that the user can dismiss permanently.
   (`03-experience/attention-budget.md`).
 - Two dismissals of a surface = 30-day suppression. Three =
   permanent (until re-enabled).
-- Resurfacing never repeats the same item twice in a row.
+- Resurfacing never repeats the same task, person, or capture twice
+  in a row.
 - Resurfacing is opt-out. People default to "worth maintaining";
-  captured items default to surfacing. Each can be disabled
+  captures default to surfacing. Each can be disabled
   individually or as a surface.
 - Resurfacing never shames. The copy is neutral
   (`01-foundation/identity.md`).
@@ -30,7 +31,7 @@ that the user can dismiss permanently.
 
 **1. The forgotten surface.**
 
-Items captured but never acted on:
+Captures never acted on:
 
 - Inbox notes with no follow-up.
 - Tasks created but never scheduled, deferred, or completed, older
@@ -43,7 +44,8 @@ Fires weekly, at most once. Shows the top 5 by age.
     [Review]  [Dismiss for 30 days]
 
 Review opens a list with the sort-ritual gestures (swipe right to
-schedule today, left to someday, up to attach, down to delete).
+schedule today, left to someday, up to attach, down to remove —
+never delete).
 
 **2. Low-energy matching.**
 
@@ -91,6 +93,10 @@ Repairing:
 - Does not count toward full compliance stats; it is shown
   distinctly in the chart.
 - Uses the monthly token.
+- Fires as the `streak_repair` surface, spending budget like any
+  other resurfacing surface, and merging with the others when they
+  are due in the same hour
+  (`03-experience/attention-budget.md`, ADR 0013).
 
 The framing is "life happens," not "you failed."
 
@@ -112,7 +118,8 @@ Each surface fires at most:
 - Forgotten: weekly.
 - Low-energy: on qualifying days, at most twice a week.
 - People: weekly.
-- Streak repair: when a break occurs, if a token is available.
+- Streak repair (`streak_repair`): when a break occurs, if a token
+  is available.
 
 Across all surfaces, resurfacing consumes the attention budget like
 any other nudge (`03-experience/attention-budget.md`). It competes
@@ -166,11 +173,11 @@ The app is a lab notebook. Resurfacing is a lab assistant saying
       - "Read the article on sleep"       Sep 12
 
     Swipes:
-      - Delete "The thing with the stuff."
+      - Remove "The thing with the stuff."
       - Someday "Try that restaurant..."
       - Schedule "Standing desk research" for today.
       - Keep "Kitchen color ideas" (no action).
-      - Delete "Read the article on sleep."
+      - Remove "Read the article on sleep."
 
 **Low-energy matching.**
 

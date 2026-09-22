@@ -4,6 +4,15 @@
 - **Date:** 2026-09-22
 - **Deciders:** [founder]
 
+> **Amended by ADR 0016.** The note mapping below ("Note → leaves
+> Recent") is withdrawn. A Note has no removal state, so the note
+> list's swipe down is disabled rather than repurposed. The rest of
+> this ADR stands unchanged, including the eight-gesture set, swipe
+> up = attach, and delete moving to long-press and overflow. One
+> wording fix: the attach picker's contents are the list in
+> `06-flows/capture.md` — Person, Area, Goal, or an existing task —
+> not the shorter parenthetical below.
+
 ## Context
 
 `03-experience/gesture-vocabulary.md` defines a closed set of six

@@ -36,11 +36,19 @@ The morning plan surfaces on the first app open of a day, if:
   run for today).
 - The user has not already planned that day.
 - The user has not skipped it that day.
+- The user has finished onboarding. It is suppressed for the rest of
+  the day onboarding completes, and first fires on the next day's
+  first open (`06-flows/onboarding.md`).
 
-It surfaces as a full-screen card, not a nudge, when the user opens
-the app in the morning. It is not a notification; it is the first
-screen after the calendar if the user opens in the morning window
-(default 5am–11am local).
+It surfaces as a full-screen card when the user opens the app in the
+morning. It is not a notification; it is the first screen after the
+calendar if the user opens in the morning window (default 5am–11am
+local).
+
+It is budget-governed all the same. The plan consumes a slot when it
+fires unprompted; it consumes no slot when the user opens it
+deliberately (`03-experience/attention-budget.md`, ADR 0013). Being
+full-screen is about the ritual, not about exemption.
 
 Outside the morning window, the plan is accessible via the command
 palette ("Plan today") but does not surface automatically.
@@ -54,7 +62,8 @@ unfinished tasks (top 5, sorted by priority then age). The user can
 swipe each one to:
 - **Keep** (swipe right) — schedule for today.
 - **Defer** (swipe left) — defer sheet.
-- **Drop** (swipe down) — mark someday or archive.
+- **Remove** (swipe down) — mark someday or archive. Never a
+  delete (`03-experience/gesture-vocabulary.md`).
 
 **Step 2 — What's today.** The day's events, shown as a compact
 timeline. Not editable here; the calendar handles that. The user
@@ -112,7 +121,7 @@ The proposal is shown as a list of scheduled blocks with accept/
 reject swipes:
 
 - **Swipe right.** Accept the block.
-- **Swipe left.** Reject. The item goes to a "pool" at the bottom.
+- **Swipe left.** Reject. The task goes to a "pool" at the bottom.
 - **Tap.** Edit the time.
 
 This is a negotiation, not an autopilot. The user accepts, rejects,
@@ -153,7 +162,7 @@ after the plan. One card, all checkboxes.
       [ ] Call contractor                  Home · @Mark
       [ ] Buy standing desk                Home
 
-      Swipe right to keep, left to defer, down to drop.
+      Swipe right to keep, left to defer, down to remove.
 
       ——— Today ———
 
@@ -172,7 +181,7 @@ after the plan. One card, all checkboxes.
 
     User swipes Draft and Call to keep.
     Defer's File Q4 taxes.
-    Drops Buy standing desk.
+    Removes Buy standing desk (someday).
     Picks three from the remaining list.
     Taps Done.
     Calendar day view appears.
@@ -201,7 +210,7 @@ after the plan. One card, all checkboxes.
 
       ——— Pool ———
 
-      (items you rejected go here)
+      (tasks you rejected go here)
 
     User accepts three, rejects the Call contractor block.
     Call contractor goes to the pool at the bottom.
@@ -215,7 +224,7 @@ after the plan. One card, all checkboxes.
       **Good morning — short on time?**
       Pick three, skip the rest.
 
-      (compressed view: carryover collapsed to a count, "3 items
+      (compressed view: carryover collapsed to a count, "3 tasks
        from yesterday")
 
       ——— Pick three ———

@@ -19,7 +19,9 @@ gear icon in the header of any mode.
   `02-architecture/event-log.md`. Adding a key is a doc change.
 - Changing a setting logs `system.settings_changed`.
 - Settings are grouped, not flat. Groups are stable.
-- No setting is hidden behind a premium tier in v1.
+- No setting is hidden behind a premium tier in v1: Pro is
+  specified in `07-infrastructure/cost-model.md` but is not
+  purchasable, and no feature is gated behind it (ADR 0014).
 - Destructive actions in Settings have a confirmation. There are
   exactly three in Settings: **Delete account**, **Revoke calendar
   access**, and **Sign out all devices**. All three are in the
@@ -53,7 +55,7 @@ gear icon in the header of any mode.
 
 **Day.**
 
-- Day boundary (midnight, 3am, 4am, 5am)
+- Day boundary (midnight, 3am, 4am, 5am; default 4am)
 - Timezone (read-only display; follows device)
 - Week starts on (Sunday, Monday)
 
@@ -75,9 +77,9 @@ gear icon in the header of any mode.
 
 **AI.**
 
-- Research usage this month (informational)
+- Research usage and remaining quota this month (informational)
 - Research quota reset date (informational)
-- Complex query usage this month (informational)
+- Complex query usage and remaining quota this month (informational)
 - AI audit mode (on/off)
 - On-device only (on/off; disables all cloud AI)
 
@@ -116,6 +118,7 @@ gear icon in the header of any mode.
 **About.**
 
 - Version
+- Crash reports (on/off; default off)
 - Privacy policy (link)
 - Terms of service (link)
 - Changelog
@@ -140,6 +143,11 @@ catalog (`03-experience/attention-budget.md`) has its own toggle,
 keyed as `nudge.surface.<SurfaceId>.enabled`. Disabling a surface
 removes it from the queue permanently until re-enabled.
 
+The three exempt surfaces — the onboarding local-only banner, the
+"all three done" card, and the lapse-recovery card — are not in the
+catalog and have no toggle. They do not consume budget either
+(ADR 0013).
+
 **Suppressed surfaces.** Surfaces auto-suppressed by two dismissals
 (then 30 days, then permanently) are listed here with a "Re-enable"
 button.
@@ -161,6 +169,13 @@ audit mode is for the user's own trust in the AI.
 
 **On-device only.** When enabled, Tier 3 complex queries and
 research are disabled. The app still runs Tier 1 and Tier 2 locally.
+
+**Crash reports.** Keyed as `crash_reports.enabled`. Off by
+default, and the only switch here that sends anything off the
+device. The report contains the stack trace and app version, never
+the log, note bodies, health data, or person names
+(`10-engineering/error-handling.md`,
+`10-engineering/quality-standards.md`).
 
 **Weather home location.** Stored as
 `integration.weather.home_location`, value `{ lat, lon, label }`.

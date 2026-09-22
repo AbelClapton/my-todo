@@ -32,7 +32,7 @@ consistently, forever.
 Fires on:
 - Task completion
 - Habit check (full)
-- Inbox item routed to "today"
+- Capture routed to "today"
 - A nudge actioned
 - A protocol metric logged
 

@@ -263,21 +263,64 @@ unwanted resolution.
 ### Sensitive data
 
 Per `02-architecture/local-first.md`, some categories of data
-(notes, metric logs, person data) are local-only by default. These
-categories have a `sync: false` flag on their log entries.
+(notes, metric logs, person data) are local-only by default. Entries
+in those categories carry a `sync: false` flag — a routing field on
+`LogEntry`, evaluated by this engine and never read by a projection
+(`02-architecture/event-log.md`, ADR 0012).
 
 - Entries with `sync: false` are never pushed to the server.
 - They are not visible to other devices.
 - If the user enables cloud backup, new entries use `sync: true`.
 
-See ADR 0008 for the full decision.
+**No backfill.** Enabling cloud backup applies to new entries only.
+Entries written while their category was local-only are not pushed
+retroactively, and the opt-in screen must say so at the point of
+consent rather than implying that history will follow.
+
+**The data-loss path.** A `sync: false` entry exists only on the
+device that wrote it. If that device is lost before cloud backup is
+enabled, the entry is gone. Neither the undo system nor the time
+machine is a recovery path here, because both read the same local
+log.
+
+**How a local-only entry reaches the server.** Not by backfill, and
+not by a migrate button — there is no migrate action in v1. It
+happens when the entry is written again: an edit is a *new* entry
+carrying the same content, and a new entry is written with
+`sync: true`. Editing a note after opting in therefore uploads its
+body, and the note becomes visible on the second device by being
+edited.
+
+That covers notes, because `note.edited` carries the whole body, and
+person names, via `person.renamed`. It does **not** cover metric-log
+history, which has no re-write path: a past day's log entry stays on
+the device that wrote it. The asymmetry is deliberate. The
+alternative — an explicit per-entry migrate action — cannot be undone
+once the server has the payload, so it would need a confirmation
+dialog, and Invariant 1 allows those for exactly four actions
+(`01-foundation/principles.md`, ADR 0008).
+
+See ADR 0008 for the privacy decision and ADR 0012 for the mechanism.
+
+### Forwarded captures
+
+Forwarding is the one path where the client is not the first writer. The
+server receives the message and relays it; the device parses it with Tier
+1 and writes the entry (`07-infrastructure/integrations.md`, ADR 0017).
+
+The relay payload is not a log entry and never becomes one: it is not
+merged, not projected, and not addressed by `seq`. Undelivered payloads
+wait in a bounded transient buffer and are dropped after 72 hours — long
+enough to survive a weekend offline, short enough to stay a relay buffer
+rather than a server-side store of note bodies.
 
 ### Server responsibilities
 
 - Store the merged log.
 - Broadcast entries.
 - Handle auth.
-- Provide a forwarding address.
+- Provide a forwarding address, and relay forwarded mail to the device
+  rather than authoring entries (ADR 0017).
 - Provide cloud AI.
 - Nothing else.
 
@@ -338,7 +381,8 @@ The server does not:
     It is never pushed.
     Other devices do not see it.
     If the user enables cloud backup, new notes use sync: true.
-    (The old note remains local-only; the user can migrate it.)
+    (The old note stays local-only until it is edited; editing it
+    writes a new, synced entry, which is how it reaches device 2.)
 
 **Multi-tab editing.**
 

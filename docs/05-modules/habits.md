@@ -83,8 +83,11 @@ records this honestly.
 1. Fires the Completion haptic.
 2. Fills the checkbox (150ms).
 3. Logs `habit.checked` with `version: 'full'`.
-4. No undo toast. Tapping again unchecks
-   (`habit.unchecked`).
+4. No undo toast. The checkbox is the reversing affordance and the
+   row stays visible for the session, so `habit.*` is one of the
+   three log types that use the direct-toggle mechanism
+   (`08-decisions/0010-undo-exemptions.md`). Tapping again logs
+   `habit.unchecked`.
 
 Long-press the checkbox to choose Minimum or Skip.
 
@@ -115,6 +118,9 @@ Skips are intentional. The user is saying "not today, on purpose."
 - Shown in the chart as gray, not red.
 - Does not break the streak (streaks count scheduled days, and
   skips are excluded).
+- Reversed by long-pressing again → [Full] [Minimum].
+  `habit.skipped` is in the closed set, so no toast is needed
+  (`08-decisions/0010-undo-exemptions.md`).
 
 A skip is different from a missed day. Missed days are derived (no
 entry on a scheduled day); skips are logged.
@@ -166,7 +172,8 @@ Habits can be archived. Archived habits:
 - Remain in the log.
 - Are findable in History.
 
-The user can re-activate an archived habit at any time.
+The user can re-activate an archived habit at any time
+(`habit.unarchived`, `02-architecture/event-log.md`).
 
 ## Examples
 

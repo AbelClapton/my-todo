@@ -133,10 +133,14 @@ changes are new values, not mutations.
 would work. `priority: 'now' | 'next' | 'later'` is better than
 `priority: string`.
 
-**No optional fields where a union would work.** Prefer
-`{ due: Date | null }` to `{ due?: Date }` when the field is
-logically present or absent, because optional fields propagate
-uncertainty through the codebase.
+**Optional means absent, not empty.** Prefer `{ due?: Date }` to
+`{ due: Date | null }`. An absent field is one state, and
+`exactOptionalPropertyTypes` keeps `undefined` from becoming a
+second. Use a discriminated union when the field's presence changes
+what the object *is* — a `task.completed` entry carries a
+`completion_note`, a `task.created` entry has no such field. Use a
+nullable field only when the value is genuinely present-and-empty.
+This is what the payloads in `02-architecture/event-log.md` do.
 
 **Use `type`, not `interface`,** for all app types. `interface` is
 only used when augmenting a third-party type.
@@ -159,9 +163,9 @@ exist." There is no registry file. The union itself is the registry.
       task_id: z.string().ulid(),
       title: z.string().min(1).max(500),
       area_id: z.string().ulid(),
-      due: z.string().datetime().nullable(),
-      defer: z.string().datetime().nullable(),
-      priority: z.enum(['now', 'next', 'later']).nullable(),
+      due: z.string().datetime().optional(),
+      defer: z.string().datetime().optional(),
+      priority: z.enum(['now', 'next', 'later']).optional(),
       source: z.enum(['user', 'ai.tier1']),
     });
 

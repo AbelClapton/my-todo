@@ -36,8 +36,9 @@ in the navigation.
 
 Reminders are expressed as:
 
-- **`due` on a Task.** A deadline. Surfaces in the now line and
-  the daily digest when the date approaches.
+- **`due` on a Task.** A deadline. It is not a now-line source; a
+  due date that passes shows as an "overdue" chip in the Today
+  scope and in the task detail (`06-flows/disruption.md`).
 - **`defer` on a Task.** A "remind me when this becomes visible"
   behavior. The task is hidden until the defer date, then appears
   in the Today scope.
@@ -46,9 +47,10 @@ Reminders are expressed as:
 
 Notification delivery is handled by the attention budget
 (`03-experience/attention-budget.md`), not by a separate reminders
-system. A `due` task that is not completed by end of day becomes
-part of the what-slipped digest
-(`06-flows/disruption.md`).
+system. A task that is not completed on the day it was *scheduled*
+becomes part of the what-slipped digest
+(`06-flows/disruption.md`); a `due` date that passes is a different
+category and is surfaced as "overdue" instead.
 
 ## Consequences
 

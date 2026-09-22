@@ -162,6 +162,35 @@ labeled data.
 **Contrast.** Every text/background pairing meets WCAG AA (4.5:1
 for body, 3:1 for large text). This is enforced by axe in CI.
 
+### Interaction states
+
+Four states apply to every interactive element. They introduce no new
+colour values — each names an existing token, so a dark-mode override
+carries the state with it.
+
+| State | Treatment | Token |
+|---|---|---|
+| Hover | Background shifts one step | `surface-2`; `accent-hover` on an accent control |
+| Pressed | Background shifts two steps | `surface-3`; `accent-active` on an accent control |
+| Focus | Two-part ring, no offset | `border-strong` (2px, outer) and `border-focus` (1px, inner) |
+| Disabled | Background unchanged, text muted | `text-disabled`; `text-muted` for a placeholder |
+
+**Focus is visible on the element, never only on its label.** It appears
+on `:focus-visible`, so a mouse click draws no ring, and it appears in
+`duration-instant` (`03-experience/motion-vocabulary.md`). Keyboard
+navigation is required on every interactive surface
+(`10-engineering/quality-standards.md`), and the ring is how a keyboard
+user knows where they are.
+
+Three borrowed treatments, so no component invents a value:
+
+- **Waiting placeholder.** A `surface-2` block, `radius-md`, **static**,
+  shown only past the 400ms delay in `03-experience/states.md`. It does
+  not shimmer, pulse, or animate in (ADR 0019).
+- **Tooltip.** Popover styling: `surface-1`, `border-default`,
+  `elevation-2`, `text-primary`, `type-footnote`.
+- **Backdrop.** `bg-overlay`, for sheets, the palette, and modals.
+
 ### Radius
 
 | Token | px | Used for |
@@ -233,7 +262,7 @@ difference.
 | `row-compact` | 44 | Dense lists (settings, filters) |
 | `row-default` | 56 | Default list row (task, event) |
 | `row-rich` | 72 | List row with subtitle (task with due, person with context) |
-| `row-hero` | 96 | Featured row (today's top task) |
+| `row-hero` | 96 | Featured card (protocol card) |
 
 Every list uses one of these four. No custom row heights.
 

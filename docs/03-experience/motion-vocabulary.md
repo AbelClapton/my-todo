@@ -37,7 +37,7 @@ explains what happened; it does not decorate.**
 | `duration-default` | 200ms | Most transitions: list row reveal, sheet open, popover |
 | `duration-slow` | 250ms | Larger transitions: screen push, modal, calendar zoom |
 | `duration-deliberate` | 400ms | Emphasis: completion confirmation, protocol report reveal |
-| `duration-longpress` | 400ms | Press-and-hold delay before a contextual menu |
+| `duration-longpress` | 400ms | Press-and-hold delay before a contextual menu; hover delay before a tooltip |
 
 `duration-deliberate` is used sparingly. If more than one animation
 per screen uses it, the screen is over-emphasizing.
@@ -108,6 +108,17 @@ between the two states.
 When a capture becomes a scheduled item, the capture field morphs
 into the item's detail view.
 
+**State change (hover, focus, press).** `duration-instant`,
+`ease-standard`. Colour and opacity only, never transform. A row
+that lifts, scales, or slides under the pointer is a bug in an
+interface whose philosophy is calm.
+
+**Waiting.** No motion. No spinner, no shimmer, no pulse — a wait
+under 400ms shows nothing at all, and a longer one shows a static
+placeholder plus a count when the app has one
+(`03-experience/states.md`). This is an entry in the catalog precisely
+because it is a transition the app has and never animates.
+
 ### Motion philosophy in practice
 
 - **Enter from where you came from.** A screen pushed from a list
@@ -123,6 +134,9 @@ into the item's detail view.
   them together.
 - **Nothing bounces.** No spring physics, no overshoot. The eye
   reads overshoot as unserious.
+- **Waiting does not perform.** Motion explains what happened; a wait
+  has not happened yet. Animating it would teach the user to distrust
+the app's silence, which is the normal case in a local-first app.
 
 ### Reduced motion
 

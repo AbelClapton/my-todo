@@ -47,8 +47,9 @@ matures (expected 2026–2027).
 ## Alternatives considered
 
 - **Tauri.** Better tech, less mature mobile story. Revisit later.
-- **React Native.** Would require rewriting the UI. Rejected —
-  violates the "one codebase" invariant.
+- **React Native.** Would require rewriting the UI a second time
+  and abandoning the web app. Rejected: it defeats the reason for
+  having a wrapper at all.
 - **Flutter.** Same problem as React Native.
 - **Native iOS + Android.** Two codebases. Not viable for a solo
   or small team.

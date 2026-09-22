@@ -40,6 +40,10 @@ If the architecture changes, this doc changes via an ADR.
 | Cloud AI | Model with native web search (Tier 3, research) | Research requires web search; synthesis benefits from a large model. |
 | Voice | Platform STT (on-device) via Capacitor plugin | Push-to-talk only. No wake word. |
 | Auth | Supabase Auth | Email magic-link, Apple and Google sign-in. Identity only — application data lives in SQLite/Turso, not in Supabase's Postgres. See `07-infrastructure/auth.md`. |
+| Hosting | Cloudflare Workers | Official TanStack Start partner. Its free tier is usable commercially, unlike Vercel's Hobby plan, which matters for an app with a store listing. One dashboard with the registrar, DNS, and inbound mail. Durable Objects are available for the sync engine's WebSocket path, with pull-on-foreground as the documented fallback. See ADR 0018. |
+| Domain and DNS | Cloudflare Registrar | Sells at cost, no renewal markup, free DNS, WHOIS privacy, SSL. The domain is chosen independently of the wordmark (ADR 0015, ADR 0018). |
+| Outbound email | Resend, via Supabase Auth's custom SMTP | Supabase's built-in email is development-only: rate-limited and unable to send to arbitrary recipients. Resend sends magic links from a dedicated sending subdomain. See `07-infrastructure/auth.md`. |
+| Inbound email | Cloudflare Email Routing to a Worker | Receives `<user-slug>@in.<domain>` and relays to the device; the device writes the capture (ADR 0017). Free and uncapped, which the documented 100/day-per-user limit requires (ADR 0018). |
 
 ### Why these, and not the alternatives
 

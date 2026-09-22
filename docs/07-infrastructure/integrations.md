@@ -52,8 +52,6 @@ The calendar integration syncs events only.
 while foregrounded. Push notifications where the provider supports
 them.
 
-**Freshness:** Fresh < 15 min, stale > 1 hour.
-
 **Permissions:** Read and write, per calendar the user grants.
 Revoking is one of the four actions that require a confirmation
 (Invariant 1, `01-foundation/principles.md`). The others are account
@@ -72,8 +70,6 @@ devices. The revoke control lives in `05-modules/settings.md`.
 to import; the app does not import silently.
 
 **Frequency:** Manual (a button) or weekly.
-
-**Freshness:** Fresh < 7 days, stale > 30 days.
 
 **Privacy:** Contact data is local-only
 (`02-architecture/local-first.md`). It is not sent to the server.
@@ -101,8 +97,6 @@ per habit.
 
 **Frequency:** On foreground, once per hour while foregrounded.
 
-**Freshness:** Fresh < 24 hours, stale > 72 hours.
-
 **Privacy:** Health data is local-only. It is not sent to the
 server.
 
@@ -113,11 +107,36 @@ records. Integrate wearables beyond Health/Fit.
 
 **A pipeline, not an OAuth integration.**
 
-The user gets a personal forwarding address:
-`<user-slug>@in.your-app.com`.
+**Mechanism:** Cloudflare Email Routing delivers to a Worker, which relays
+the message to the user's device (`07-infrastructure/stack.md`,
+ADR 0018).
+
+**The address.** The user gets `<user-slug>@in.<domain>`. The slug is
+generated, not chosen: 8 lowercase alphanumeric characters, no ambiguous
+pairs, never derived from the user's name or email address. It is an
+unauthenticated write endpoint — anyone who knows an address can put mail
+in it — so entropy is the control that matters, and it is rotatable.
+Rotation revokes the old slug the way account deletion revokes it
+(`02-architecture/data-lifecycle.md`).
+
+**Who writes the capture.** The Worker writes no log entries and runs no
+AI: Tier 1 is on-device (`07-infrastructure/stack.md`), so parsing happens
+where the log is. The device writes `note.created` — and `task.created`
+if the subject parses as a task — with `sync: false`, because notes are
+local-only (ADR 0008). The relay payload is not a log entry and never
+becomes one: it is not merged, not projected, and not addressed by `seq`.
+Whichever device syncs first writes the capture; the others are told it was
+handled and write nothing (ADR 0017).
+
+**The transit, and it is disclosed.** Mail forwarded to this address waits
+in a transient capture buffer until a device collects it, then is deleted;
+undelivered messages are dropped after 72 hours, and the device is told on
+next open that one expired. This is stated where the address is shown,
+because the address is a server endpoint and the user is the one choosing
+to send to it.
 
 Emails forwarded to this address become captures
-(`06-flows/capture.md`):
+(`06-flows/capture.md`), on the device:
 
 1. Subject is parsed by Tier 1.
 2. Body becomes a note.
@@ -150,7 +169,7 @@ provider. Store raw email headers beyond the Message-ID hash.
 
 **Frequency:** On receipt.
 
-**Freshness:** Captured items are timestamped with the forward
+**Freshness:** Captures are timestamped with the forward
 time.
 
 **Anti-abuse:** Rate limit 100 forwards per day per user. Forwarded
@@ -170,7 +189,7 @@ Photos, Maps — all route through it.
 
 **Frequency:** On share.
 
-**Freshness:** Captured items are timestamped with the share time.
+**Freshness:** Captures are timestamped with the share time.
 
 ### Weather
 
@@ -184,8 +203,6 @@ Photos, Maps — all route through it.
 user's location.
 
 **Frequency:** On foreground, cached for 30 minutes.
-
-**Freshness:** Fresh < 6 hours, stale > 24 hours.
 
 **Location:** The user sets a home location; the app does not
 track location continuously.
@@ -229,9 +246,10 @@ significant portion of users, it can be added via ADR. The test is:
 does it feed an existing loop? If yes, consider it. If it creates a
 new loop, do not.
 
-The extension protocol exists to acknowledge that the out-of-scope
-list is a *current* decision, not a permanent one. It changes via
-ADR, not by drift.
+The extension protocol exists to give "permanent" above its precise
+meaning: *not by drift, and not by request volume*. It does not
+mean unamendable. The out-of-scope list changes the same way every
+other decision in this doc set does — by ADR.
 
 ## Examples
 
@@ -287,9 +305,10 @@ ADR, not by drift.
   `06-flows/capture.md`.
 - This doc does not define the research pipeline. That is
   `04-ai/research-and-protocols.md`.
-- This doc does not define freshness thresholds in general. That
-  is `02-architecture/data-lifecycle.md`. This doc gives
-  integration-specific values.
+- This doc does not define freshness thresholds. Every threshold —
+  including the ones that apply to integration-sourced data — lives
+  in the staleness table in `02-architecture/data-lifecycle.md`.
+  This doc does not restate the numbers, so they cannot drift.
 - This doc does not define People. That is
   `05-modules/people.md`.
 - This doc does not define Health's role in habits. That is

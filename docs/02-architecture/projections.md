@@ -67,9 +67,12 @@ protocol, with per-habit compliance. Params: `{ protocol_id }`.
 slipped tasks, habit compliance, notable notes, next week's events.
 Params: `{ week_start }`.
 
-**`inbox`** — items captured but not yet classified. Derived from
-`task.created` entries with `source: 'capture'` that have not been
-subsequently scheduled or archived.
+**`inbox`** — captures not yet classified: unparsed notes and
+unclassified tasks. A task is included when it has been created
+but not subsequently scheduled, archived, or completed. There is no
+`source: 'capture'` marker to filter on — a captured task typed by
+the user is `source: 'user'` — so the projection reads lifecycle
+state, not provenance (ADR 0012).
 
 **`search_results`** — semantic search over notes, tasks, and events.
 Params: `{ query, filters }`. See `04-ai/retrieval-layer.md`.

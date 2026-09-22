@@ -30,6 +30,8 @@ This is Invariant 3 (`01-foundation/principles.md`), specified.
 - Surfaces with overlapping TTLs may be **merged at fire time**.
   A merged nudge counts as **one** nudge, not two.
 - The user can disable any surface permanently in settings.
+- Exactly three surfaces are exempt from the budget, and no others
+  (`08-decisions/0013-attention-budget-scope.md`).
 
 ## Specification
 
@@ -50,6 +52,8 @@ Surfaces that are *not* nudges:
   long-pressing a task — the user asked for these.
 - **Passive state.** A running timer, a sync indicator, a
   recording indicator. These are status, not nudges.
+- **Exempt surfaces.** Three surfaces interrupt without consuming
+  budget. They are named below and are not in the catalog.
 
 ### The queue
 
@@ -115,23 +119,73 @@ history modulates.
 
 ### The catalog of nudge surfaces
 
-Every surface that can produce a nudge is listed here. Adding a new
-one requires updating this doc and the `SurfaceId` union in
-`02-architecture/event-log.md`.
+Every surface that can produce a nudge is listed here. The catalog,
+the `SurfaceId` union in `02-architecture/event-log.md`, and the
+per-surface toggles in `05-modules/settings.md` are one set: adding a
+surface means updating all three in the same change (ADR 0013).
 
-| Surface ID | Typical urgency | Typical relevance | TTL | Mergeable |
-|---|---|---|---|---|
-| `prep_card` | 10 | 8 | Until event start | no |
-| `contextual` | 6 | 7 | 30 min | no |
-| `forgotten` | 3 | 4 | 7 days | yes |
-| `people` | 2 | 4 | 14 days | yes |
-| `weekly_review` | 4 | 6 | 7 days | yes |
-| `protocol_review` | 5 | 7 | 7 days | yes |
-| `price_drop` | 6 | 5 | 24 hours | no |
-| `what_slipped` | 4 | 5 | Until next day | yes |
-| `inbox_ritual` | 5 | 6 | 24 hours | no |
-| `streak_milestone` | 3 | 5 | 48 hours | yes |
-| `low_energy` | 2 | 3 | 4 hours | no |
+| Surface ID | Used for | Typical urgency | Typical relevance | TTL | Mergeable |
+|---|---|---|---|---|---|
+| `prep_card` | 10 min before an event with people or a note | 10 | 8 | Until event start | no |
+| `contextual` | a gap, a cancellation, a free slot | 6 | 7 | 30 min | no |
+| `forgotten` | captures never acted on | 3 | 4 | 7 days | yes |
+| `people` | a relationship gone quiet | 2 | 4 | 14 days | yes |
+| `weekly_review` | the week's aggregation | 4 | 6 | 7 days | yes |
+| `protocol_review` | a protocol's window comparison | 5 | 7 | 7 days | yes |
+| `price_drop` | prices moved on a research note | 6 | 5 | 24 hours | no |
+| `what_slipped` | tasks that slipped and were not rescheduled | 4 | 5 | Until next day | yes |
+| `inbox_ritual` | the inbox passed 10 captures | 5 | 6 | 24 hours | no |
+| `streak_milestone` | a streak reached a 30-day multiple | 3 | 5 | 48 hours | yes |
+| `streak_repair` | a streak broke, with a repair token available | 3 | 5 | 48 hours | yes |
+| `low_energy` | a light day and short tasks | 2 | 3 | 4 hours | no |
+
+The `Used for` column exists to keep adjacent IDs apart.
+`streak_milestone` and `streak_repair` sound related and are not:
+one celebrates a streak that reached a 30-day multiple
+(`05-modules/habits.md`), the other offers to restore a streak that
+just broke, spending the monthly repair token
+(`06-flows/resurfacing.md`, ADR 0013).
+
+### Contextual variants
+
+Three nudges in the flow docs look like surfaces of their own and are
+not. They are `contextual` firing with a different trigger:
+
+- the gap nudge ("No events for the next 45 min") —
+  `06-flows/doing-the-day.md`
+- the cancelled-event nudge ("Your 11am was cancelled") —
+  `06-flows/doing-the-day.md`
+- the calendar-shift nudge ("Design review ran 22 min over") —
+  `06-flows/disruption.md`
+
+Same surface, same urgency band, same TTL class. They count as
+`contextual` when they fire, they have no ID of their own, and they
+get no separate toggle. A synonym surface would make this table
+describe a scheduler that does not exist (ADR 0013).
+
+### Exempt surfaces
+
+Exactly three surfaces interrupt the user without consuming budget:
+
+- the onboarding local-only banner (`06-flows/onboarding.md`)
+- the "all three done" card (`06-flows/completion.md`)
+- the lapse-recovery card (`06-flows/lapsed-recovery.md`)
+
+A candidate is exempt only if it satisfies all three tests:
+
+1. It fires at most once per day, or once per lifetime.
+2. It is non-repeatable — dismissal is permanent for its trigger.
+3. It does not compete with a scheduled surface for the hourly
+   budget.
+
+Exempt surfaces:
+
+- Are not in the catalog and have no `SurfaceId`.
+- Have no per-surface settings toggle.
+- Still obey quiet hours, focus mode, and in-event suppression.
+
+Exemption is not an escape hatch. A candidate that fails any one
+test is a surface, and belongs in the catalog.
 
 **Prep cards and the hourly cap.** Prep cards are subject to the
 hourly cap like every other surface. A user with back-to-back
@@ -209,7 +263,8 @@ Settings exposes:
 - **Nudge frequency.** Standard (1/hour, 3/day) or reduced
   (1/2 hours, 1/day) or minimal (1/day).
 - **Per-surface toggles.** Enable/disable each surface from the
-  catalog.
+  catalog. Exempt surfaces are not in the catalog and have no
+  toggle.
 - **Suppressed list.** Surfaces auto-suppressed by repeated
   dismissals, with re-enable toggles.
 - **Notification channels.** Push, in-app banner, and badge, each

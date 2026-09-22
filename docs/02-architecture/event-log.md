@@ -43,6 +43,8 @@ architecture hangs on.
       schema_version: number;     // starts at 1
       device_id: string;          // which device produced this
       seq: number;                // per-device monotonic counter
+      sync?: boolean;             // routing; default true; false is
+                                  // local-only (ADR 0012)
     }
 
     interface Actor {
@@ -50,6 +52,15 @@ architecture hangs on.
       id?: string;                // device_id for user, tier for ai,
                                   // integration name for integration
     }
+
+`sync` is a **routing field, not a payload field**. The sync engine
+evaluates it; no projection ever reads it. It defaults to `true` and
+is set to `false` for the categories ADR 0008 keeps local-only: note
+bodies, metric logs, and person data
+(`08-decisions/0008-local-first-sensitive-defaults.md`). A client
+never pushes a `sync: false` entry and the server never receives its
+payload, so such an entry exists only on the device that wrote it
+(`07-infrastructure/sync-engine.md`).
 
 ### Naming convention
 
@@ -117,6 +128,7 @@ not appear in the type list below and are not synced.
 - `habit.unchecked` — { habit_id, day }
 - `habit.skipped` — { habit_id, day, reason? }
 - `habit.archived` — { habit_id }
+- `habit.unarchived` — { habit_id }
 
 **Note**
 - `note.created` — { note_id, body, title?, attached_to: { type, id } }
@@ -150,13 +162,22 @@ not appear in the type list below and are not synced.
 - `person.created` — { person_id, name, source: 'manual' | 'contacts' }
 - `person.renamed` — { person_id, name }
 - `person.archived` — { person_id }
+- `person.unarchived` — { person_id }
 
 **Day**
 - `day.opened` — { day, tz_offset_minutes }
 - `day.planned` — { day, top_three: TaskId[] }
 - `day.plan_skipped` — { day, kind: 'morning' | 'shutdown' }
 - `day.closed` — { day }
-- `daily_note.created` — { note_id, day }
+- `day.note_created` — { note_id, day }
+
+**Note on `day.note_created`.** This type was written as
+`daily_note.created` before ADR 0012. The old string remains valid:
+projections must keep accepting both, and new writes use
+`day.note_created`. The change is a type string, not a payload
+shape, so `schema_version` does **not** increment. The obligation is
+permanent rather than a migration that ends — old entries do not age
+out of validity.
 
 **AI**
 - `ai.proposed` — { proposal_id, tier: 1 | 2 | 3, context, proposal, explanation }
@@ -189,6 +210,7 @@ settings surface and the log stay in sync:
       | 'what_slipped'
       | 'inbox_ritual'
       | 'streak_milestone'
+      | 'streak_repair'
       | 'low_energy';
 
     type NotificationChannel = 'push' | 'in_app_banner' | 'badge';
@@ -211,6 +233,7 @@ settings surface and the log stay in sync:
       | 'default_mode'
       | 'haptics.enabled'
       | 'developer_mode'
+      | 'crash_reports.enabled'
       | 'auto_linking.enabled'
       | 'lapse.threshold_days'
       | 'locale.override'

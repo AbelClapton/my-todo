@@ -88,6 +88,8 @@ and no metadata line. It is a parking lot, not a backlog.
 |---|---|---|
 | Complete | Swipe right, tap checkbox | `task.completed`, undoable |
 | Defer | Swipe left | Defer sheet |
+| Attach | Swipe up | Attachment picker (`03-experience/gesture-vocabulary.md`) |
+| Remove | Swipe down | `task.marked_someday`, undoable |
 | Open detail | Tap | Detail view |
 | Contextual AI | Long-press | Tier 2 menu |
 | Capture | Pull down | Inline capture |

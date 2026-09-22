@@ -32,9 +32,9 @@ Relationships.
 
 - Areas are user-created. The app seeds four defaults on first
   launch: Health, Work, Home, Learning. The user can rename,
-  delete, or add.
+  archive, or add.
 - There is a built-in "Inbox" Area for uncategorized tasks. It
-  cannot be deleted.
+  cannot be archived.
 - A Task, Habit, or Goal belongs to one Area. It cannot belong to
   zero or two.
 - Areas have a name and a state (`active` | `archived`).
@@ -60,8 +60,8 @@ There is no dedicated mode for Areas and Goals. They appear as:
 
 **Area filter.** In the Tasks and Habits modes, a filter by Area.
 
-**Area list.** In settings, a list of Areas with rename,
-archive, and delete actions.
+**Area list.** In settings, a list of Areas with rename and
+archive actions.
 
 **Goal list.** Accessible from Settings, from the command palette
 ("Show goals"), and from any protocol detail (tapping the parent

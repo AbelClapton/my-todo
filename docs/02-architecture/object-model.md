@@ -163,7 +163,7 @@ The Day is the atomic product unit. Field set:
 
 The Day is a projection (`02-architecture/projections.md`), not
 logged state. Only `day.opened`, `day.planned`, `day.plan_skipped`,
-`day.closed`, and `daily_note.created` are logged; everything else
+`day.closed`, and `day.note_created` are logged; everything else
 is computed.
 
 ### The eleven canonical edges

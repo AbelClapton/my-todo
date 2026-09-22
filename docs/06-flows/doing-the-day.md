@@ -104,6 +104,10 @@ Contextual nudges:
 - Never fire during quiet hours.
 - Score by urgency, relevance, novelty, and history
   (`03-experience/attention-budget.md`).
+- Are one surface, however the trigger is shaped. The gap nudge,
+  the cancelled-event nudge, and the quick-task nudge are
+  `contextual` variants, not surfaces of their own. They have no
+  `SurfaceId` and no separate toggle (ADR 0013).
 
 ### The prep card
 
@@ -145,8 +149,11 @@ The suggestions are open tasks that fit the gap length based on
 user-estimated duration (if available) or a heuristic. The user
 taps one → starts focus on it.
 
-Gap nudges are subject to the hourly cap and the general nudge
-rules.
+A gap nudge is a `contextual` variant, not a surface of its own: it
+spends the `contextual` slot and shares its urgency band and TTL, has
+no `SurfaceId`, and has no toggle of its own. It is subject to the
+hourly cap and the general nudge rules
+(`03-experience/attention-budget.md`, ADR 0013).
 
 ### Running in the background
 

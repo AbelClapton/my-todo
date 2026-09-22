@@ -104,7 +104,8 @@ Resurfacing fires as a nudge, subject to the attention budget
 
 ### Contacts sync
 
-Settings toggle: "Sync contacts." When enabled:
+Settings toggle: "Sync contacts" (`integration.contacts.enabled`,
+`02-architecture/event-log.md`). When enabled:
 
 - The app reads the contacts list via the platform API.
 - Matching is by name + phone/email where available.
@@ -124,7 +125,8 @@ People can be archived. Archived People:
 - Remain in the log.
 - Their linked tasks, events, and notes remain.
 
-The user can re-activate at any time.
+The user can re-activate at any time (`person.unarchived`,
+`02-architecture/event-log.md`).
 
 ## Examples
 

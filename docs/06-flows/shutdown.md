@@ -57,7 +57,8 @@ incomplete tasks. The user swipes:
 
 - Right → keep for tomorrow.
 - Left → defer.
-- Down → drop (someday or archive).
+- Down → remove (someday or archive). Never a delete
+  (`03-experience/gesture-vocabulary.md`).
 
 **Prompt 3 — Tomorrow's top three.** A picker of candidates:
 
@@ -94,6 +95,12 @@ unfinished" step, the digest fires after the commit.
 The digest's copy, surfaces, and behavior are defined in
 `06-flows/disruption.md` under "The what-slipped digest." Shutdown
 calls it if not already fired; it does not maintain its own copy.
+
+Here the digest is **content inside shutdown completion**, not a
+surface of its own: shutdown already holds the hour's slot, so the
+digest consumes nothing. It only spends budget when it fires on its
+own — a standalone `what_slipped` nudge on a day shutdown was
+skipped (ADR 0013).
 
 ### Tomorrow preview
 
@@ -166,7 +173,7 @@ beyond incidental captures.
       [ ] Call contractor            Home · @Mark
       [ ] Buy standing desk          Home
 
-      Swipe right to keep, left to defer, down to drop.
+      Swipe right to keep, left to defer, down to remove.
 
       ——— Tomorrow's top three ———
 
@@ -179,7 +186,7 @@ beyond incidental captures.
 
     User types the "what went well" line.
     Keeps File Q4 taxes and Call contractor.
-    Drops Buy standing desk (someday).
+    Removes Buy standing desk (someday).
     Picks File Q4 taxes, Call contractor, Draft Q4 plan.
     Taps "Close day."
 

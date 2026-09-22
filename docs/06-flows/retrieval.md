@@ -51,6 +51,35 @@ Result rows:
     > Design review (event, today 11:00)
     > Ask: "what did I write about Sarah?"
 
+The surface itself is `03-experience/app-shell.md`: an overlay anchored
+to the top of the viewport, one input row, one result list of
+`row-compact` rows, first result preselected, `Esc` to close. This doc
+owns what appears in that list and in what order.
+
+### Search results
+
+Reached from the palette, or from a search field in any list. Results
+render as a screen:
+
+    [ Search: "reading before bed"              ]
+
+    Notes
+      Sleep protocol — "Reading before bed, 12 of 14 nights…"
+        matched: reading before bed
+      Weekly review — Sep 16–22
+    Tasks
+      Read before bed                    Sleep · nightly
+    Events
+      Sleep study follow-up              Oct 3, 14:00
+
+- Grouped by atom type, in the order notes, tasks, events, people.
+- Every row carries its "why this matched" line in `text-secondary`,
+  per the invariant above.
+- Rows are the standard row components. A result is not a new row type.
+- An empty result set uses the empty state
+  (`03-experience/states.md`) and says the query matched nothing — not
+  "No results found," which reads like an error.
+
 ### Semantic search
 
 From the palette or from a search field in any list.

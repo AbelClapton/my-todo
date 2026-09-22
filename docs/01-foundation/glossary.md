@@ -100,6 +100,21 @@ user should be doing right now. It is not a nudge; it does not
 consume attention budget. It is a single line of text: the current
 event or the next task.
 
+### Capture and the inbox
+
+**Capture** — the unit produced by one act of capture: whatever
+entered the app, whether Tier 1 parsed it into a Task, an Event, or
+a Habit, or left it as an unparsed Note. "Capture" is the noun; "to
+capture" is the action (`06-flows/capture.md`). It is not a synonym
+for Task: a capture may become a Task, and a Task is a capture only
+while it is still unclassified.
+
+**Inbox** — the projection listing the captures that have not been
+scheduled, archived, or completed: unparsed notes and unclassified
+tasks (`02-architecture/projections.md`). It is a view, not a
+container — nothing is moved into it, and nothing has to be taken
+out of it.
+
 ### Events and the log
 
 **Event log** — the append-only, immutable record of every state
@@ -163,7 +178,7 @@ embeddings. Runs on-device where possible.
 
 **Research** — the action of gathering external information
 (typically web search) in response to a user request. Output is a
-Note attached to the source item, with timestamps on every result.
+Note attached to the source Task, with timestamps on every result.
 
 ### Protocol terms
 
@@ -228,10 +243,11 @@ type size, color). Tokens are defined in
 `03-experience/design-tokens.md`. No screen may use a raw value;
 every value references a token.
 
-**Gesture vocabulary** — the closed set of six gestures the app
-recognizes. Swipe right = complete, swipe left = defer, long-press
-= contextual AI, pull down = capture, swipe from left edge = back,
-pinch = zoom. Defined in `03-experience/gesture-vocabulary.md`.
+**Gesture vocabulary** — the closed set of eight gestures the app
+recognizes. Swipe right = complete, swipe left = defer, swipe up =
+attach, swipe down = remove from this list, long-press = contextual
+AI, pull down = capture, swipe from left edge = back, pinch = zoom.
+Defined in `03-experience/gesture-vocabulary.md`.
 
 **Motion vocabulary** — the closed set of durations and easings.
 Six durations (100–400ms) and two easing curves. Defined in

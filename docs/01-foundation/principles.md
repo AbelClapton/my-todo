@@ -32,18 +32,35 @@ have priority order — all four apply to every surface.
 ### Invariant 1 — Reversibility
 
 **Statement.** Every action that changes state — user or AI — is
-undoable for five seconds with a visible countdown. No confirmation
-dialogs. Ever.
+undoable. Reversal is delivered by exactly one of two mechanisms: a
+five-second toast with a visible countdown ring, or, for a closed set
+of toggle actions, a reversing affordance that stays reachable. No
+confirmation dialogs. Ever.
 
 **Why.** Confirmations are where trust dies. They interrupt, they
 insult the user's competence, and they train people to tap "yes"
 without reading. Undo is where trust lives: it lets the user act
-freely, because the cost of a mistake is near zero.
+freely, because the cost of a mistake is near zero. The mechanism may
+differ to fit the action — a toast, or a toggle — but no action ever
+leaves the user with no way back.
 
 **Rules.**
 
-- Every mutating action shows a five-second undo toast with a
-  countdown ring. Tapping the toast reverses the action.
+- Every mutating action is undoable by exactly one of two
+  mechanisms:
+  - **The toast** (default). Five seconds with a countdown ring;
+    tapping it reverses the action.
+  - **A direct toggle.** A reversing affordance that stays reachable
+    in the same surface for the same session.
+- The direct toggle is limited to a closed set of three log types:
+  `habit.checked`, `habit.unchecked`, and `habit.skipped`. Adding a
+  type to the set requires a new ADR
+  (`08-decisions/0010-undo-exemptions.md`).
+- The toggle mechanism is valid only when the reversing affordance
+  stays reachable. The row must stay visible in the same surface, in
+  the same session, and the surface must not be dismiss-once. If the
+  surface can be dismissed, or the row can leave the viewport for
+  good, the toast is required.
 - Confirmation dialogs are prohibited for all actions except the
   following four, which end something consequential: deleting the
   account (irreversible), revoking calendar sync (irreversible),
@@ -68,15 +85,23 @@ freely, because the cost of a mistake is near zero.
   Undo?" Undo reverses all four as one atomic operation.
 - User deletes a note. Five-second toast. Undo restores it with its
   links intact.
+- User taps the checkbox for a habit. No toast appears: the checkbox
+  is the reversing affordance and the row stays on screen. Tapping
+  again logs `habit.unchecked`.
 
 **Violations.**
 
 - A confirmation dialog asking "Are you sure you want to delete this
-  task?" — violates, because it should be undo-able instead.
+task?" — violates, because it should be undo-able instead.
 - A destructive action with no undo path ("this cannot be undone") —
   violates, unless the action is one of the four confirmed actions
   listed above (account deletion, calendar sync revocation, protocol
   abandonment, signing out all devices).
+- Relying on a toggle whose reversing affordance can be dismissed or
+  scrolled away — violates, because the user is left with no path
+  back. Use the toast instead.
+- Suppressing the toast for a log type outside the closed set —
+  violates, even if the action looks like a toggle.
 - Undo that reverses only part of a multi-step AI action — violates,
   because the user's mental model is the whole action, not its parts.
 
@@ -118,6 +143,10 @@ always the final decision.
   morphs to show the parsed result with a "parsed" chip. Confidence
   was high, so no confirmation was required. If the user taps the
   chip, they can correct the parse.
+- User types "Meet Mark next week." Confidence is 0.71, so a
+  confirmation chip appears instead. The user is interrupted, never
+  answers, and the parse is not applied — the text sits in the inbox
+  as an unparsed note. Nothing was mutated, and nothing was lost.
 - User long-presses a task and taps "Research this." The AI returns
   a note proposal with 3–5 candidates. The note does not appear until
   the user taps "Add as note." If they do not tap, nothing happens.
@@ -212,12 +241,10 @@ nicety.
   mirror, health import, research result, email forward, price
   check) carries two fields: `retrieved_at` (ISO-8601, UTC) and
   `source` (the integration or AI tier that produced it).
-- Freshness thresholds are per-data-type and defined in
-  `07-infrastructure/integrations.md`. Default thresholds:
-  - Calendar mirror: fresh under 15 minutes, stale after 1 hour.
-  - Health data: fresh under 24 hours, stale after 72 hours.
-  - Research results: fresh under 7 days, stale after 30 days.
-  - Prices: fresh under 24 hours, stale after 7 days.
+- Freshness thresholds are per-data-type, and they are defined in
+  exactly one place: the staleness table in
+  `02-architecture/data-lifecycle.md`. Other docs point there
+  rather than restating the numbers.
 - Stale data is visually labeled (a small "as of [date]" annotation,
   not a red badge). It is never hidden.
 - The AI's context payload includes freshness for every retrieved
@@ -281,6 +308,19 @@ Now consider the "protocol review due" flow:
    version remains in the log. → Invariant 1 (reversibility):
    the user can revert to the prior version.
 
+And the daily obligations card, where both undo mechanisms appear in
+one surface:
+
+1. The card surfaces once per day with the habit checkboxes and the
+   protocol metric prompt. → Invariant 3 (attention): one card, not
+   one nudge per habit.
+2. User taps a habit checkbox. → Invariant 1 (reversibility): the
+   checkbox is the reversing affordance and the row stays visible
+   for the session, so no toast appears (ADR 0010).
+3. User taps a protocol metric value. → Invariant 1 again: the card
+   is dismiss-once, so there is no toggle-back path and the
+   five-second toast appears instead.
+
 ## What this doc must NOT do
 
 - This doc does not define the event log, the object model, or the
@@ -294,7 +334,7 @@ Now consider the "protocol review due" flow:
   these invariants but adds the AI-specific ones.
 - This doc does not define freshness thresholds. It defines the
   *rule* (label stale data). The thresholds live in
-  `07-infrastructure/integrations.md`.
+  `02-architecture/data-lifecycle.md`.
 - This doc does not list every action that is reversible or not.
   It defines the rule (everything is, except account deletion and
   sync revocation). The list of actions lives in each module doc.

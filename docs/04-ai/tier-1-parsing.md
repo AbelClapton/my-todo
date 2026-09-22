@@ -123,8 +123,15 @@ When confidence is 0.60–0.84:
 - The chip appears: "Did you mean: task · due Tue Sep 29?"
 - Two buttons: "Yes" and "Edit."
 - "Yes" logs `ai.applied`. "Edit" opens the item's editor.
-- If the user does nothing for 10 seconds, the parse is applied
-  anyway (with the chip changing to a "parsed" receipt).
+- **If the user does nothing, the parse is not applied.** The chip
+  fades, the raw text is kept as an unparsed note in the inbox, and
+  the parse stays available there as a suggestion.
+
+An unanswered confirmation never applies itself. A timer that turns
+silence into consent is a silent mutation, which is the one thing
+Invariant 2 forbids (`01-foundation/principles.md`). Leaving it
+unanswered costs nothing: the input is preserved verbatim in the
+inbox, and the parse remains on offer there.
 
 This is the only Tier 1 flow that has a visible confirmation. It
 exists because mid-confidence parses are more likely to be wrong,

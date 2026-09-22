@@ -47,15 +47,24 @@ Top to bottom:
 1. **Day header.** Date, day of week, week number. Previous/next
    day arrows. Tap the date to open the date picker.
 2. **Now line** (`02-architecture/projections.md`). One line: the
-   current event or the next scheduled item.
+   current event or the next scheduled task.
 3. **Timeline.** A vertical time axis. Events and scheduled tasks
    are positioned by time. All-day items sit above the axis.
 4. **Habits due.** A compact row of habit checkboxes for the day.
-5. **Metric log.** If a protocol is active, the metric input row.
-6. **Daily note preview.** The first two lines of the daily note,
-   tap to open.
+5. **Metric log.** If a protocol is in `baseline` or `active`, the
+   metric input row. Baseline logs the metric too
+   (`05-modules/protocols.md`).
+6. **Day notes.** A preview card for each note attached to this
+   day: the Daily Note first, then any other note attached to it —
+   a weekly or monthly review (`05-modules/review.md`), a
+   retrospective, a protocol report. First two lines each, tap to
+   open.
 7. **Top three.** If set during shutdown
-   (`06-flows/shutdown.md`), shown here.
+   (`06-flows/shutdown.md`), shown here as three task rows in order,
+   using the standard task row at `row-default`. No ordinal numbers and
+   no hero treatment — the order is the ranking. The row's own checkbox
+   completes the task from here, playing the normal completion
+   animation (`06-flows/completion.md`).
 
 The layout uses tokens from `03-experience/design-tokens.md`:
 `space-5` horizontal inset, `space-7` between sections, `row-default`
@@ -95,18 +104,19 @@ see the day as it was. Read-only. See
 ### Freshness
 
 External calendar events display an "as of" annotation when the
-mirror is stale (>1 hour; see
-`02-architecture/data-lifecycle.md`). In-app events do not require
-the annotation (they are local).
+mirror is stale (`02-architecture/data-lifecycle.md`). In-app
+events do not require the annotation (they are local).
 
 If the app is offline, the mirror shows "Offline — last sync
 <time>."
 
-### Empty, loading, error
+### Empty, waiting, error
 
 - **Empty day.** One line: "Nothing scheduled." One action:
   "Capture something."
-- **Loading.** Skeleton for the timeline, not a spinner.
+- **Waiting.** Past 400ms, a static `surface-2` placeholder block for
+  the timeline (`03-experience/states.md`). Static — the app has no
+  spinner and no shimmer anywhere (ADR 0019).
 - **Error (sync failed).** A subtle banner: "Calendar sync failed.
   Retry." Non-blocking.
 

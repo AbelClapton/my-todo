@@ -122,7 +122,15 @@ the user explicitly enables cloud backup.
 - Provide a forwarding address for email capture.
 - Provide cloud AI for research and reports (Tier 3 only).
 - Handle auth.
-- Nothing else. No projection storage, no business logic.
+- Track per-user quota state for the metered cloud features —
+  research calls and Tier 3 complex queries
+  (`07-infrastructure/cost-model.md`, ADR 0014).
+- Receive forwarded mail and **relay** it to the device. The server
+  writes no log entries and runs no AI on it, and undelivered messages
+  wait in a bounded transient capture buffer (ADR 0017).
+- Nothing else. No projection storage, no business logic. The transient
+  capture buffer is the one exception to "nothing else," and it holds
+  nothing but undelivered relay payloads.
 
 ### Client responsibilities
 

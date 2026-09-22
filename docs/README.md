@@ -1,4 +1,4 @@
-# [App Name] — Documentation
+# Small Wins — Documentation
 
 ## The identity sentence
 
@@ -36,26 +36,34 @@ Docs are numbered. Read them in order. Each one assumes the previous ones.
 12. `03-experience/motion-vocabulary.md` — one motion vocabulary, everywhere
 13. `03-experience/haptic-vocabulary.md` — four haptics, forever
 14. `03-experience/attention-budget.md` — the ranked queue and the nudge cap
-15. `04-ai/constitution.md` — the eight rules in every prompt
-16. `04-ai/retrieval-layer.md` — tools, not context dumps
-17. `04-ai/tier-1-parsing.md` — ambient natural language → structured data
-18. `04-ai/tier-2-contextual.md` — inline actions on focused items
-19. `04-ai/tier-3-assistant.md` — cross-module queries and mutations
-20. `04-ai/research-and-protocols.md` — the research → protocol → report loop
-21. `05-modules/*` — one file per module
-22. `06-flows/*` — one file per user flow
-23. `07-infrastructure/*` — stack, sync, auth, cost, integrations
-24. `08-decisions/*` — architecture decision records (ADRs)
-25. `09-roadmap/build-order.md` — the sequence of what to build, in order
-26. `09-roadmap/milestones.md` — the testable checkpoints
-27. `10-engineering/code-conventions.md` — how code is written
-28. `10-engineering/error-handling.md` — how errors are surfaced and recovered
-29. `10-engineering/testing.md` — what is tested and how
-30. `10-engineering/quality-standards.md` — what "done" means, and what runs in CI
+15. `03-experience/surfaces.md` — every surface the app renders, in one list
+16. `03-experience/components.md` — the app's UI primitives
+17. `03-experience/app-shell.md` — the chrome: navigation, layers, stacking
+18. `03-experience/states.md` — the states every surface shares
+19. `04-ai/constitution.md` — the eight rules in every prompt
+20. `04-ai/retrieval-layer.md` — tools, not context dumps
+21. `04-ai/tier-1-parsing.md` — ambient natural language → structured data
+22. `04-ai/tier-2-contextual.md` — inline actions on focused items
+23. `04-ai/tier-3-assistant.md` — cross-module queries and mutations
+24. `04-ai/research-and-protocols.md` — the research → protocol → report loop
+25. `05-modules/*` — one file per module
+26. `06-flows/*` — one file per user flow
+27. `07-infrastructure/*` — stack, sync, auth, cost, integrations
+28. `08-decisions/*` — architecture decision records (ADRs)
+29. `09-roadmap/build-order.md` — the sequence of what to build, in order
+30. `09-roadmap/milestones.md` — the testable checkpoints
+31. `10-engineering/code-conventions.md` — how code is written
+32. `10-engineering/error-handling.md` — how errors are surfaced and recovered
+33. `10-engineering/testing.md` — what is tested and how
+34. `10-engineering/quality-standards.md` — what "done" means, and what runs in CI
 
 ## Doc structure
 
-Every doc follows the same five-section shape:
+Every doc in the numbered spec set follows the same five-section
+shape. Two files are deliberately not specs and do not follow it:
+`08-decisions/*` (ADRs carry Context, Decision, Consequences, and
+Alternatives considered) and `prompts.md` (an operational file, not
+a doc set member).
 
     # Title
 

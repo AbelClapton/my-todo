@@ -68,18 +68,37 @@ storage. No re-auth.
 ### Sessions
 
 - Session tokens: JWT, 1-hour expiry, refreshed automatically.
-- Refresh tokens: 30-day expiry, rotated on use.
+- Refresh tokens: 30-day sliding expiry, rotated on use. Each use
+  restarts the 30 days.
 - Session storage: Secure Enclave (iOS), Keystore (Android),
   encrypted local storage (web).
 - Session revocation: from settings, "Sign out all devices."
 
-Sessions do not expire on a schedule. A user who opens the app once
-a month stays signed in.
+Sessions do not expire on a fixed schedule while they are in use.
+The refresh window is what expires, and it slides: a user who opens
+the app at least once every 30 days stays signed in indefinitely. A
+longer gap requires a re-auth. Short of "Sign out all devices," that
+is the only expiry path.
 
 ### Email magic-link
 
 The default. The user enters their email, receives a link, taps it.
 No password. Standard flow.
+
+**Return path.** The link has to land back in the app, which means a
+deep link: a universal link on iOS, an app link on Android, and the
+app's own URL scheme as the fallback where neither is available. On
+web it is an ordinary browser link. Which mechanism is used per
+platform is an implementation detail (`07-infrastructure/stack.md`);
+what is fixed is that every platform has a return path, and that
+tapping the link does not strand the user in a browser.
+
+**Delivery.** Links are sent through a custom SMTP provider (Resend) from
+a dedicated sending subdomain, not through Supabase's built-in email —
+which is rate-limited and cannot send to arbitrary recipients, and is
+therefore development-only (`07-infrastructure/stack.md`, ADR 0018).
+SPF and DKIM are configured on the sending subdomain so that inbound
+capture mail on `in.` never shares a reputation with transactional mail.
 
 If the user wants a password, they can set one after the first
 magic-link login (via settings). Not required.

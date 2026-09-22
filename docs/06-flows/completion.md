@@ -120,7 +120,11 @@ The card:
 - Uses `type-title-3`, `space-7` padding, `radius-lg`.
 - Has no confetti, no animation beyond the fade-in.
 - Does not fire a second time if the user unchecks and rechecks.
-- Can be disabled in settings.
+- Is one of exactly three surfaces **exempt** from the attention
+  budget: it fires at most once per day, dismissal is permanent for
+  its trigger, and it never competes for the hourly slot. Exempt
+  surfaces have no `SurfaceId` and no per-surface settings toggle
+  (`03-experience/attention-budget.md`, ADR 0013).
 
 ### Habit completion
 
@@ -129,7 +133,10 @@ Habit checks use a lighter completion:
 - Completion haptic (softer).
 - Checkbox fills over 150ms.
 - No scale-in, no row removal.
-- No undo toast (unchecking is a second tap).
+- No undo toast. The checkbox is the reversing affordance and the
+  row stays visible for the session, so this is the direct-toggle
+  mechanism in `08-decisions/0010-undo-exemptions.md`. Tapping again
+  logs `habit.unchecked`.
 - If checked at minimum: the checkbox gets a subtle underline.
 
 Habit completion does not trigger the "all three done" card.
@@ -149,11 +156,14 @@ Tapping a value:
 
 - Completion haptic.
 - The value fills in.
-- No undo toast (retapping changes it).
+- Five-second undo toast. The daily obligations card is
+  dismiss-once, so there is no toggle-back path — the toast is the
+  only reversal (`08-decisions/0010-undo-exemptions.md`).
 - The value is logged immediately.
 
-If the user taps the wrong value, they retap the correct one. The
-log records both entries; the projection uses the latest.
+If the user taps the wrong value, they undo it, or they retap the
+correct value. The log records both entries; the projection uses the
+latest.
 
 ## Examples
 
@@ -202,7 +212,7 @@ log records both entries; the projection uses the latest.
     Taps Minimum.
     Checkbox fills with a subtle underline.
     Completion haptic (softer).
-    No undo toast.
+    No undo toast (direct toggle — ADR 0010).
 
 **Logging a metric.**
 
@@ -211,6 +221,7 @@ log records both entries; the projection uses the latest.
     User taps 4.
     Value highlights.
     Completion haptic.
+    Undo toast: "Logged 4. Undo?"
     Card dismisses after all obligations are done.
 
 ## What this doc must NOT do

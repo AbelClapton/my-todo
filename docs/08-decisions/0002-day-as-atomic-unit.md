@@ -17,9 +17,13 @@ metrics on days, notes are written on days.
 
 ## Decision
 
-Adopt the **Day** as the atomic product unit. Every temporal entity
-attaches to exactly one Day. The Day is the join key across every
-module. The calendar is the primary view of Days.
+Adopt the **Day** as the atomic product unit. Everything that
+happens attaches to exactly one Day — an event, a completion, a
+habit check, a metric log, a scheduling, the Daily Note. The Day is
+the join key across every module. Things that span Days (a
+Protocol) or that are definitional rather than temporal (an Area, a
+Goal, a Person) do not attach to one; they are what Days are about.
+The calendar is the primary view of Days.
 
 See `02-architecture/day-as-unit.md`.
 
