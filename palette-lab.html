@@ -158,8 +158,8 @@ body.no-annot .tok { display: none; }
   border-radius: var(--radius-md);
   color: var(--text-muted);
   border: 0; background: none; cursor: pointer;
-  /* `design-tokens.md`: the mode switcher uses icon-lg (24). */
-  font-size: var(--icon-lg);
+  /* `design-tokens.md`: the mode switcher uses icon-lg (24). The glyph sets that
+     size itself now, so this rule carries no font-size. */
   transition: background var(--duration-instant) var(--ease-standard),
               color var(--duration-instant) var(--ease-standard);
 }
@@ -352,8 +352,8 @@ body.no-annot .tok { display: none; }
   display: grid; place-items: center;
   border: 0; border-radius: var(--radius-md);
   background: none; color: var(--text-secondary); cursor: pointer;
-  /* `design-tokens.md`: an icon-only button uses icon-md (20). */
-  font-size: var(--icon-md);
+  /* `design-tokens.md`: an icon-only button uses icon-md (20). The glyph sets
+     that size itself now, so this rule carries no font-size. */
   transition: background var(--duration-instant) var(--ease-standard);
 }
 .icon-btn:hover { background: var(--surface-2); color: var(--text-primary); }
@@ -692,7 +692,7 @@ body.no-annot .tok { display: none; }
 .m-behind {
   position: absolute; inset: 0; border-radius: var(--radius-md);
   background: var(--accent-subtle); display: grid; place-items: center;
-  color: var(--accent-text); font-size: var(--icon-md);
+  color: var(--accent-text);
 }
 .m-front {
   position: absolute; inset: 0; border-radius: var(--radius-md);
@@ -927,9 +927,10 @@ body.no-annot .tok { display: none; }
 
 /* ============================== ICONS ===================================
    Sizes are tokens (`design-tokens.md`); the glyphs are ASSETS, which that doc
-   says explicitly. There is no icon set in the repo, so these are hand-drawn
-   stand-ins that follow the drawing rules a set would have to meet: a 24px
-   grid, a uniform 2px stroke, round caps and joins, and `currentColor` so a
+   says explicitly. The set is Lucide 0.469.0 (ISC), and every symbol in the
+   `<defs>` below is its real path data, copied from the package at that version
+   so the lab stays offline. The drawing rules are Lucide's: a 24px grid, a
+   uniform 2px stroke, round caps and joins, and `currentColor` — which is why a
    glyph inherits its colour and can never introduce one.
 
    The stroke width and the grid are NOT tokens, and they should not become
@@ -948,6 +949,17 @@ body.no-annot .tok { display: none; }
 .ic-md { width: var(--icon-md); height: var(--icon-md); }
 .ic-lg { width: var(--icon-lg); height: var(--icon-lg); }
 .ic-xl { width: var(--icon-xl); height: var(--icon-xl); }
+
+/* One rail item lifted out of the rail, for the inventory. Same box and colour as
+   the real thing (`app-shell.md`: touch-min, the accent when current). The leading
+   indicator bar is omitted because it sits outside the item and would be clipped. */
+.rail-mini {
+  width: var(--touch-min); height: var(--touch-min);
+  display: grid; place-items: center;
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+}
+.rail-mini.accent { color: var(--accent-default); }
 
 .icon-sizes { display: flex; flex-direction: column; gap: var(--space-5); }
 .icon-size-row { display: flex; align-items: center; gap: var(--space-5); }
@@ -1467,6 +1479,24 @@ body.no-annot .tok { display: none; }
       <symbol id="i-metric" viewBox="0 0 24 24"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></symbol>
       <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol>
       <symbol id="i-timer" viewBox="0 0 24 24"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></symbol>
+
+      <!-- Control affordances. `components.md` names these rather than enumerating
+           them by shape, because each is simply Lucide's glyph for what the control
+           does. They were Unicode stand-ins until the set was pinned. -->
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+      <symbol id="i-settings" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+      <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></symbol>
+      <symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></symbol>
+
+      <!-- The two mode glyphs that were undecided, and the alternatives they beat.
+           Calendar reuses the data glyph and Habits reuses `repeat`, which is the
+           point: the rail is not a second set. -->
+      <symbol id="i-mode-tasks" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></symbol>
+      <symbol id="i-mode-notes" viewBox="0 0 24 24"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></symbol>
+      <symbol id="i-alt-tasks" viewBox="0 0 24 24"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></symbol>
+      <symbol id="i-alt-notes" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
     </defs>
   </svg>
 
@@ -1489,11 +1519,11 @@ body.no-annot .tok { display: none; }
     installs <code>lucide-react</code>; the shapes and the rules are the same.
   </p>
   <p class="sec-note">
-    One exception: the <em>control</em> glyphs in the screen mocks below — search,
-    add, settings, back, overflow — are still Unicode stand-ins. They are named in
-    <code>components.md</code> and an implementation draws the real ones; they stay
-    stand-ins here rather than wrong assets, because a gear path I cannot reproduce
-    exactly would be a fabricated Lucide glyph claiming to be one.
+    Every glyph here is the real thing, controls included. Search, add, settings,
+    back, overflow, the microphone and the attachment clip were Unicode stand-ins
+    until the set was pinned; they came from the package at the version above rather
+    than from memory, because a lookalike that claims to be Lucide is worse than an
+    honest stand-in.
   </p>
 
   <div class="variant">
@@ -1760,6 +1790,40 @@ body.no-annot .tok { display: none; }
           <div class="labelled"><svg class="ic ic-sm"><use href="#i-metric"/></svg><span class="name" style="min-width: 96px;">activity</span><span class="value">the Metric slot on a protocol card</span></div>
         </div>
       </div>
+      <div class="panel">
+        <div class="panel-head"><span class="t-title-2">Controls</span><span class="tok">icon-md 20 · named, not designed</span></div>
+        <div style="padding: var(--space-5) var(--space-7); display: flex; flex-direction: column; gap: var(--space-4);">
+          <div class="labelled"><svg class="ic ic-md"><use href="#i-search"/></svg><span class="name" style="min-width: 96px;">search</span><span class="value">the field's magnifier</span></div>
+          <div class="labelled"><svg class="ic ic-md"><use href="#i-plus"/></svg><span class="name" style="min-width: 96px;">plus</span><span class="value">new event, habit, person</span></div>
+          <div class="labelled"><svg class="ic ic-md"><use href="#i-settings"/></svg><span class="name" style="min-width: 96px;">settings</span><span class="value">the gear, in every header</span></div>
+          <div class="labelled"><svg class="ic ic-md"><use href="#i-back"/></svg><span class="name" style="min-width: 96px;">chevron-left</span><span class="value">back out of a detail or a report</span></div>
+          <div class="labelled"><svg class="ic ic-md"><use href="#i-more"/></svg><span class="name" style="min-width: 96px;">ellipsis</span><span class="value">overflow, where a long-press is not available</span></div>
+          <div class="labelled"><svg class="ic ic-md"><use href="#i-mic"/></svg><span class="name" style="min-width: 96px;">mic</span><span class="value">push-to-talk, inside the capture field</span></div>
+          <div class="labelled"><svg class="ic ic-md"><use href="#i-clip"/></svg><span class="name" style="min-width: 96px;">paperclip</span><span class="value">attach, inside the capture field</span></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="t-title-2">The rail</span><span class="tok">icon-lg 24 · two reused, two chosen now</span></div>
+        <p class="sec-note" style="margin: 0 var(--space-7) var(--space-4);">
+          `app-shell.md` leaves the rail's items unlabelled and relies on a tooltip, so
+          each mode needs a glyph and two were never chosen. Calendar and Habits reuse
+          the data glyphs — the rail is not a second icon set — and Tasks and Notes are
+          picked from the alternatives below.
+        </p>
+        <div style="padding: 0 var(--space-7) var(--space-5); display: flex; align-items: center; gap: var(--space-3);">
+          <span class="rail-mini accent"><svg class="ic ic-lg"><use href="#i-calendar"/></svg></span>
+          <span class="rail-mini accent"><svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg></span>
+          <span class="rail-mini"><svg class="ic ic-lg"><use href="#i-repeat"/></svg></span>
+          <span class="rail-mini"><svg class="ic ic-lg"><use href="#i-mode-notes"/></svg></span>
+          <span class="tok" style="margin-left: var(--space-3);">Calendar · Tasks · Habits · Notes</span>
+        </div>
+        <div style="padding: 0 var(--space-7) var(--space-5); display: flex; gap: var(--space-7);">
+          <div class="labelled"><svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-alt-tasks"/></svg><span class="value">rejected — legible, but five strokes against two, and the rail is read peripherally</span></div>
+        </div>
+        <div style="padding: 0 var(--space-7) var(--space-5); display: flex; gap: var(--space-7);">
+          <div class="labelled"><svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-alt-notes"/></svg><span class="value">rejected — a document, and notes attach to things rather than sit in a file</span></div>
+        </div>
+      </div>
     </div>
     <div class="annot-row">
       <span class="tok">an unused symbol is the same defect as an unused token — the flag glyph was defined for deferral and lost to the clock, so it is gone</span>
@@ -1768,7 +1832,7 @@ body.no-annot .tok { display: none; }
 
   <div class="variant">
     <div class="vlabel">
-      <span class="vnum">05</span>
+      <span class="vnum">06</span>
       <span class="t-title-3">The deferred tag, resolved</span>
       <span class="tok">the same fact twice · tasks.md owns this</span>
     </div>
@@ -1882,9 +1946,9 @@ body.no-annot .tok { display: none; }
     <div style="margin-top: var(--space-6);">
       <div class="capture">
         <span>Capture something…</span>
-        <span style="margin-left: auto; display: flex; gap: var(--space-3);">
-          <span class="chip">attachment</span>
-          <span class="chip">mic</span>
+        <span style="margin-left: auto; display: flex; gap: var(--space-2); align-items: center;">
+          <button class="icon-btn" title="Attach"><svg class="ic ic-md"><use href="#i-clip"/></svg></button>
+          <button class="icon-btn" title="Voice"><svg class="ic ic-md"><use href="#i-mic"/></svg></button>
         </span>
       </div>
       <div class="annot-row">
@@ -2203,10 +2267,10 @@ body.no-annot .tok { display: none; }
   <div class="frame f-desktop" style="margin-top: var(--space-7);">
     <div class="shell">
       <div class="rail">
-        <button class="rail-item" title="Calendar">◷</button>
-        <button class="rail-item" aria-current="page" title="Tasks">◻</button>
-        <button class="rail-item" title="Habits">◍</button>
-        <button class="rail-item" title="Notes">◫</button>
+        <button class="rail-item" title="Calendar"><svg class="ic ic-lg"><use href="#i-calendar"/></svg></button>
+        <button class="rail-item" aria-current="page" title="Tasks"><svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg></button>
+        <button class="rail-item" title="Habits"><svg class="ic ic-lg"><use href="#i-repeat"/></svg></button>
+        <button class="rail-item" title="Notes"><svg class="ic ic-lg"><use href="#i-mode-notes"/></svg></button>
       </div>
       <div style="flex: 1; min-width: 0;">
         <div class="header">
@@ -2220,9 +2284,9 @@ body.no-annot .tok { display: none; }
           </div>
           <div class="slot-trail">
             <button class="btn btn-sm btn-secondary">Filter</button>
-            <button class="icon-btn" title="Search">⌕</button>
-            <button class="icon-btn" title="New">＋</button>
-            <button class="icon-btn" title="Settings">⚙</button>
+            <button class="icon-btn" title="Search"><svg class="ic ic-md"><use href="#i-search"/></svg></button>
+            <button class="icon-btn" title="New"><svg class="ic ic-md"><use href="#i-plus"/></svg></button>
+            <button class="icon-btn" title="Settings"><svg class="ic ic-md"><use href="#i-settings"/></svg></button>
           </div>
         </div>
         <div class="content">
@@ -2596,10 +2660,10 @@ body.no-annot .tok { display: none; }
     </p>
     <div class="frame f-tablet">
       <div class="header">
-        <button class="icon-btn" style="width: var(--control-sm);">‹</button>
+        <button class="icon-btn" style="width: var(--control-sm);"><svg class="ic ic-md"><use href="#i-back"/></svg></button>
         <span class="t-title-2">Draft the Q3 retro</span>
         <div class="slot-trail">
-          <button class="icon-btn" title="More">⋯</button>
+          <button class="icon-btn" title="More"><svg class="ic ic-md"><use href="#i-more"/></svg></button>
         </div>
       </div>
       <div class="content">
@@ -2659,7 +2723,7 @@ body.no-annot .tok { display: none; }
     <div class="panel">
       <div class="list">
         <div class="sw">
-          <div class="behind lead tint"><span style="font-size: var(--icon-md);">✓</span><span class="t-subhead">Complete</span></div>
+          <div class="behind lead tint"><svg class="ic ic-md"><use href="#i-check"/></svg><span class="t-subhead">Complete</span></div>
           <div class="front move-lead">
             <span class="check"></span>
             <div class="r-main"><span class="t-body r-title">Swipe right</span><span class="r-meta-mono">accent-subtle · the row holds 200ms, then leaves</span></div>
@@ -2705,11 +2769,11 @@ body.no-annot .tok { display: none; }
 
   <div class="frame f-mobile" style="margin-top: var(--space-7);">
     <div class="header">
-      <button class="icon-btn" style="width: var(--control-sm);">‹</button>
+      <button class="icon-btn" style="width: var(--control-sm);"><svg class="ic ic-md"><use href="#i-back"/></svg></button>
       <span class="t-title-2">Tue 22 Sep</span>
       <div class="slot-trail">
         <button class="btn btn-sm btn-secondary">Today</button>
-        <button class="icon-btn" title="Settings">⚙</button>
+        <button class="icon-btn" title="Settings"><svg class="ic ic-md"><use href="#i-settings"/></svg></button>
       </div>
     </div>
 
@@ -2756,10 +2820,10 @@ body.no-annot .tok { display: none; }
     </div>
 
     <div class="dock">
-      <button class="rail-item" aria-current="page">◷</button>
-      <button class="rail-item">◻</button>
-      <button class="rail-item">◍</button>
-      <button class="rail-item">◫</button>
+      <button class="rail-item" aria-current="page"><svg class="ic ic-lg"><use href="#i-calendar"/></svg></button>
+      <button class="rail-item"><svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg></button>
+      <button class="rail-item"><svg class="ic ic-lg"><use href="#i-repeat"/></svg></button>
+      <button class="rail-item"><svg class="ic ic-lg"><use href="#i-mode-notes"/></svg></button>
     </div>
   </div>
 </section>
@@ -2778,11 +2842,11 @@ body.no-annot .tok { display: none; }
 
   <div class="frame f-tablet" style="margin-top: var(--space-7);">
     <div class="header">
-      <button class="icon-btn" style="width: var(--control-sm);">‹</button>
+      <button class="icon-btn" style="width: var(--control-sm);"><svg class="ic ic-md"><use href="#i-back"/></svg></button>
       <span class="t-title-2">Sleep protocol · report</span>
       <div class="slot-trail">
         <span class="stale-anno">as of yesterday</span>
-        <button class="icon-btn">⋯</button>
+        <button class="icon-btn"><svg class="ic ic-md"><use href="#i-more"/></svg></button>
       </div>
     </div>
     <div class="content">
@@ -2914,7 +2978,7 @@ body.no-annot .tok { display: none; }
     <div class="motion-card">
       <div class="mstage" id="s-reveal">
         <div class="mdemo m-reveal">
-          <div class="m-behind">✓</div>
+          <div class="m-behind"><svg class="ic ic-md"><use href="#i-check"/></svg></div>
           <div class="m-front">Buy standing desk</div>
         </div>
       </div>

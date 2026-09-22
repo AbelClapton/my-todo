@@ -403,8 +403,9 @@ licence) rather than stand-ins, so it stays offline. Lucide's drawing rules are 
 is why a glyph inherits its colour and can never introduce one. The app would
 install `lucide-react`; the shapes and the rules are the same either way.
 
-Blocks: the size reference, the task row **six ways**, and the empty state with and
-without a glyph, plus a block for icons on labelled values.
+Blocks: the size reference, the task row **six ways**, the empty state with and
+without a glyph, a block for icons on labelled values, and the inventory itself —
+thirteen data glyphs, seven control glyphs, and the rail.
 
 **Finding 22 · Two documented icon usages don't exist.** `design-tokens.md` lists
 `icon-md 20` as the default in a **list row** and `icon-xl 32` for an **empty
@@ -486,13 +487,22 @@ the time glyph moved into the chip.
   `03-experience/components.md` as **assets**, with `design-tokens.md` untouched
   except for the one usage line — no new token, so no ADR. Control affordances are
   named there rather than enumerated by shape.
+- **The mode glyphs.** Calendar `calendar`, Habits `repeat`, Tasks `square-check`,
+Notes `notebook`. The two new ones were picked from alternatives drawn at 24px
+rather than asserted.
+- **The stand-ins.** None left. Every glyph in the lab is Lucide 0.469.0 path data,
+  fetched from the package rather than recalled — search, add, settings, back,
+  overflow, mic, clip, and the rail were Unicode characters until then, and the
+  thirteen that were already inlined were verified byte-for-byte against the source
+  in the same pass.
 
 ### Still open
 
-- **Two mode glyphs.** `app-shell.md` leaves the rail's items unlabelled, so each mode
-  needs a glyph. Calendar reuses `calendar` and Habits reuses `repeat`; Tasks and
-  Notes are still undecided. It is the only open item in the icon pass, and it is
-  recorded in `components.md` rather than left to whoever builds the rail.
+Nothing. The icon pass is closed. It ran: two false documented usages → the glyph
+vocabulary → six row variants → the empty-state glyph → finding 24 → the inventory →
+the rail. What it produced is one section of `components.md`, one usage line in
+`design-tokens.md`, one dependency row in `stack.md`, and a lab with no orphan symbols
+in either direction — no defined-and-unused, no referenced-and-undefined.
 
 ### The deferred tag — the redundancy is mine, not the design's
 
