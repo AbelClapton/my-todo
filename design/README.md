@@ -444,6 +444,27 @@ The set and its drawing rules belong in `03-experience/components.md` as **asset
 the size table stays as it is, so no new tokens and no ADR — unless finding 24 is
 closed by adding one.
 
+### The deferred tag — the redundancy is mine, not the design's
+
+Panel F, as first drawn, said "deferred 2d" in the metadata line **and** on the
+chip. That is a mistake in the markup rather than in the design: `tasks.md`
+composes the metadata line from **Area, due date, note count, person links, and
+parent task indicator**. Defer is not in that list. The chip *is* the defer channel.
+
+Following the composition list removes the redundancy by construction. The real
+question is narrower — where the glyph goes — and four options are in the lab, each
+showing the same three rows: a task that is only deferred, one with a due date *and*
+a defer, and one with only a duration.
+
+| Option | Verdict |
+|---|---|
+| **V1 · Two channels** | **Recommended.** The line carries due, duration, and repeat; the chip carries defer. They cannot overlap, so the redundancy cannot come back. **No change to the spec — this is the spec followed exactly.** |
+| **V2 · The glyph replaces the chip's word** | Rejected. Buys one word and spends clarity: "2d" alone could mean deferred 2 days or due in 2 days. The word was doing work. |
+| **V3 · Defer in the line, chip dropped** | Rejected, but the closest runner-up. One channel for both time facts, differentiated by glyph — and it removes a component. It costs the chip, which is the only element in the row that is scannable *without reading*, and deferral is a signal about your behaviour, which is what the app exists to show. |
+| **V4 · All time as chips** | Coherent in principle — chips are time and state, the line is identity — but two chips start to read as tags on a card, and the metadata line loses its purpose. |
+
+V2 and V3 need the deferred-chip bullet in `tasks.md` changed. V1 and V4 do not.
+
 ## What this deliberately does not do
 
 - **No icon set.** The rail and header use text glyphs. `design-tokens.md` says
