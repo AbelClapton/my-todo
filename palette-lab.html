@@ -1509,7 +1509,7 @@ body.no-annot .tok { display: none; }
           <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Call the landlord</span><span class="r-meta-mono meta-line"><span>Home</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-calendar"/></svg><span>due today</span></span></div></div>
           <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Plan next week's meals</span><span class="r-meta-mono meta-line"><span>Home</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-repeat"/></svg><span>weekly</span></span></div></div>
           <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Read the two papers</span><span class="r-meta-mono meta-line"><span>Learning</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-timer"/></svg><span>40m</span></span></div></div>
-          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span><span class="r-meta-mono meta-line"><span>Health</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-clock"/></svg><span>deferred 2d</span></span></div><span class="chip">deferred 2d</span></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span><span class="r-meta-mono meta-line"><span>Health</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-calendar"/></svg><span>due Thu</span></span></div><span class="chip">deferred 2d</span></div>
         </div>
       </div>
 
@@ -1523,7 +1523,7 @@ body.no-annot .tok { display: none; }
           <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Draft the Q3 retro</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-work"/></svg><span>Work</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-calendar"/></svg><span>due today</span></span></div><span class="pdot"></span></div>
           <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Read the two papers</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-learn"/></svg><span>Learning</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-timer"/></svg><span>40m</span></span></div></div>
           <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Plan next week's meals</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-home"/></svg><span>Home</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-repeat"/></svg><span>weekly</span><span class="sep">·</span><span>@Priya</span></span></div></div>
-          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-health"/></svg><span>Health</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-clock"/></svg><span>deferred 2d</span></span></div><span class="chip">deferred 2d</span></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-health"/></svg><span>Health</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-calendar"/></svg><span>due Thu</span></span></div><span class="chip">deferred 2d</span></div>
         </div>
       </div>
     </div>
@@ -1606,6 +1606,85 @@ body.no-annot .tok { display: none; }
     </div>
     <div class="annot-row">
       <span class="tok">both labels inherit text-muted · neither introduces a hue</span>
+    </div>
+  </div>
+
+  <div class="variant">
+    <div class="vlabel">
+      <span class="vnum">05</span>
+      <span class="t-title-3">The deferred tag, resolved</span>
+      <span class="tok">the same fact twice · tasks.md owns this</span>
+    </div>
+    <p class="sec-note" style="margin-top: 0;">
+      Panel F, as first drawn, said "deferred 2d" in the metadata line <em>and</em> on
+      the chip. That is not something the icon caused — it is a mistake in the markup,
+      because <code>tasks.md</code> composes the metadata line from <strong>Area, due
+      date, note count, person links, and parent task indicator</strong>. Defer is not
+      in that list. The chip <em>is</em> the defer channel, so following the
+      composition list removes the redundancy by construction.
+    </p>
+    <p class="sec-note">
+      The real question is narrower, and each option below shows the same three rows: a
+      task that is only deferred, one that carries a due date <em>and</em> a defer, and
+      one that carries only a duration.
+    </p>
+    <div class="panels" style="margin-top: var(--space-5);">
+
+      <div class="panel">
+        <div class="panel-head">
+          <span class="t-title-2">V1 · Two channels</span>
+          <span class="tok chip chip-accent">recommended</span>
+          <span class="rule">The line carries due, duration, and repeat; the chip carries defer. They never overlap, so the redundancy cannot come back.</span>
+        </div>
+        <div class="list">
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Call the landlord</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-home"/></svg><span>Home</span></span></div><span class="chip">deferred 2d</span></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-health"/></svg><span>Health</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-calendar"/></svg><span>due Thu</span></span></div><span class="chip">deferred 2d</span></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Read the two papers</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-learn"/></svg><span>Learning</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-timer"/></svg><span>40m</span></span></div></div>
+        </div>
+        <div class="annot-row">
+          <span class="tok">no change to the spec — this is the spec followed exactly</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <span class="t-title-2">V2 · The glyph replaces the chip's word</span>
+          <span class="rule">The chip becomes a clock glyph and a duration. Tidier, but it buys one word and spends clarity: "2d" alone could mean deferred 2 days or due in 2 days.</span>
+        </div>
+        <div class="list">
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Call the landlord</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-home"/></svg><span>Home</span></span></div><span class="chip"><svg class="ic ic-xs"><use href="#i-clock"/></svg>2d</span></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-health"/></svg><span>Health</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-calendar"/></svg><span>due Thu</span></span></div><span class="chip"><svg class="ic ic-xs"><use href="#i-clock"/></svg>2d</span></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Read the two papers</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-learn"/></svg><span>Learning</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-timer"/></svg><span>40m</span></span></div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <span class="t-title-2">V3 · Defer in the line, chip dropped</span>
+          <span class="rule">One channel for both time facts, told apart by glyph. Costs the chip — the only element in the row that is scannable without reading, and deferral is a signal about your behaviour.</span>
+        </div>
+        <div class="list">
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Call the landlord</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-home"/></svg><span>Home</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-clock"/></svg><span>deferred 2d</span></span></div></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-health"/></svg><span>Health</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-calendar"/></svg><span>due Thu</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-clock"/></svg><span>deferred 2d</span></span></div></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Read the two papers</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-learn"/></svg><span>Learning</span><span class="sep">·</span><svg class="ic ic-xs"><use href="#i-timer"/></svg><span>40m</span></span></div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <span class="t-title-2">V4 · All time as chips</span>
+          <span class="rule">Coherent in principle — chips are time and state, the line is identity — but two chips start to read as tags on a card, and the metadata line loses its purpose.</span>
+        </div>
+        <div class="list">
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Call the landlord</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-home"/></svg><span>Home</span></span></div><span class="chip"><svg class="ic ic-xs"><use href="#i-clock"/></svg>deferred 2d</span></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-health"/></svg><span>Health</span></span></div><span class="chip"><svg class="ic ic-xs"><use href="#i-calendar"/></svg>due Thu</span><span class="chip"><svg class="ic ic-xs"><use href="#i-clock"/></svg>deferred 2d</span></div>
+          <div class="row r-rich"><span class="check"></span><div class="r-main"><span class="t-body r-title">Read the two papers</span><span class="r-meta-mono meta-line"><svg class="ic ic-xs"><use href="#i-learn"/></svg><span>Learning</span></span></div><span class="chip"><svg class="ic ic-xs"><use href="#i-timer"/></svg>40m</span></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="annot-row">
+      <span class="tok">V2 and V3 need a change to the deferred-chip bullet in tasks.md · V1 and V4 do not</span>
     </div>
   </div>
 
