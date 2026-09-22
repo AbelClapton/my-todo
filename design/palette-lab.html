@@ -580,6 +580,23 @@ body.no-annot .tok { display: none; }
   letter-spacing: var(--type-caption-track);
   color: var(--text-secondary);
 }
+.hue-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-5);
+  margin-top: var(--space-6);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--border-default);
+}
+.hue-cell { display: flex; flex-direction: column; gap: var(--space-2); }
+.hue-cell b {
+  font-family: var(--font-mono);
+  font-size: var(--type-footnote-size);
+  font-weight: 400;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.hue-cell span { font-size: var(--type-caption-size); color: var(--text-secondary); }
 
 /* ============================== CONTRAST TABLE ========================== */
 .ct { width: 100%; border-collapse: collapse; }
@@ -626,6 +643,13 @@ body.no-annot .tok { display: none; }
     <button class="lab-btn" id="a-indigo">Indigo</button>
     <button class="lab-btn" id="a-teal">Teal</button>
     <button class="lab-btn" id="a-violet">Violet</button>
+  </div>
+
+  <div class="lab-group">
+    <span class="lab-label">Semantics</span>
+    <button class="lab-btn" id="s-standard" aria-pressed="true">Standard</button>
+    <button class="lab-btn" id="s-muted">Muted</button>
+    <button class="lab-btn" id="s-vivid">Vivid</button>
   </div>
 
   <div class="lab-group">
@@ -887,6 +911,10 @@ body.no-annot .tok { display: none; }
     <div class="annot-row">
       <span class="tok">switch Accent above and watch this row</span>
       <span class="tok">warning is the hue the accent must not approach</span>
+    </div>
+    <div class="hue-grid" id="hue"></div>
+    <div class="annot-row">
+      <span class="tok">hue distance from the accent — the nearest neighbour is the pair to watch</span>
     </div>
   </div>
 </section>
@@ -1404,6 +1432,7 @@ const $ = (id) => document.getElementById(id);
 let lightPal = "warm";
 let darkPal = "cool";
 let accent = "blue";
+let semantics = "standard";
 let modePref = "light";
 
 function resolveMode() {
@@ -1419,6 +1448,7 @@ function apply() {
   root.dataset.mode = mode;
   root.dataset.palette = mode === "dark" ? darkPal : lightPal;
   root.dataset.accent = accent;
+  root.dataset.semantics = semantics;
 
   press("l-cool", lightPal === "cool");
   press("l-warm", lightPal === "warm");
@@ -1428,11 +1458,15 @@ function apply() {
   press("a-indigo", accent === "indigo");
   press("a-teal", accent === "teal");
   press("a-violet", accent === "violet");
+  press("s-standard", semantics === "standard");
+  press("s-muted", semantics === "muted");
+  press("s-vivid", semantics === "vivid");
   press("m-light", modePref === "light");
   press("m-dark", modePref === "dark");
   press("m-system", modePref === "system");
 
   renderContrast();
+  renderHue();
 }
 
 $("l-cool").onclick = () => { lightPal = "cool"; apply(); };
@@ -1443,6 +1477,9 @@ $("a-blue").onclick = () => { accent = "blue"; apply(); };
 $("a-indigo").onclick = () => { accent = "indigo"; apply(); };
 $("a-teal").onclick = () => { accent = "teal"; apply(); };
 $("a-violet").onclick = () => { accent = "violet"; apply(); };
+$("s-standard").onclick = () => { semantics = "standard"; apply(); };
+$("s-muted").onclick = () => { semantics = "muted"; apply(); };
+$("s-vivid").onclick = () => { semantics = "vivid"; apply(); };
 $("m-light").onclick = () => { modePref = "light"; apply(); };
 $("m-dark").onclick = () => { modePref = "dark"; apply(); };
 $("m-system").onclick = () => { modePref = "system"; apply(); };
@@ -1532,6 +1569,54 @@ function renderContrast() {
       <td class="num">${r.toFixed(2)}:1 <span style="color:var(--text-muted)">(min ${min})</span></td>
       <td class="verdict ${cls}">${verdict}</td>
     </tr>`;
+  }).join("");
+}
+
+/* Hue distance. A contrast ratio says nothing about whether two hues read as
+   related; hue angle does. The accent's nearest semantic neighbour is the pair
+   that needs the most separation — and measured, teal's nearest is SUCCESS,
+   not warning. */
+function hueOf(colour) {
+  const [r, g, b] = toRGB(colour).map((v) => v / 255);
+  const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+  if (d === 0) return 0;
+  let h;
+  if (max === r) h = ((g - b) / d) % 6;
+  else if (max === g) h = (b - r) / d + 2;
+  else h = (r - g) / d + 4;
+  return Math.round((h * 60 + 360) % 360);
+}
+function hueDelta(a, b) {
+  const d = Math.abs(a - b) % 360;
+  return Math.round(d > 180 ? 360 - d : d);
+}
+
+function renderHue() {
+  const el = $("hue");
+  if (!el) return;
+  const accentHue = hueOf(token("--accent-default"));
+  const rows = [
+    ["Accent", "--accent-default"],
+    ["Danger", "--danger-default"],
+    ["Success", "--success-default"],
+    ["Warning", "--warning-default"],
+  ];
+  el.innerHTML = rows.map(([name, tok]) => {
+    const h = hueOf(token(tok));
+    const d = hueDelta(h, accentHue);
+    const verdict = name === "Accent"
+      ? "the choice"
+      : d < 45 ? "same family — watch this pair"
+      : d < 90 ? "adjacent"
+      : "distinct";
+    return `<div class="hue-cell">
+      <b>${name}</b>
+      <span style="display:flex;align-items:center;gap:var(--space-3)">
+        <span class="swatch" style="background:${token(tok)}"></span>
+        <span class="t-footnote">hue ${h}° · Δ ${name === "Accent" ? 0 : d}°</span>
+      </span>
+      <span>${verdict}</span>
+    </div>`;
   }).join("");
 }
 

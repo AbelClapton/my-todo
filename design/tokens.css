@@ -163,10 +163,7 @@
   --text-disabled: #D4D4D8;
 
   /* Accent omitted here on purpose — it is its own axis. See THE ACCENT. */
-
-  --danger-default: #DC2626;  --danger-subtle: #FEF2F2;  --danger-text: #991B1B;
-  --success-default: #16A34A; --success-subtle: #F0FDF4; --success-text: #166534;
-  --warning-default: #D97706; --warning-subtle: #FFFBEB; --warning-text: #92400E;
+  /* Semantics omitted here on purpose — see THE SEMANTICS. */
 
   --stale-bg: #F4F4F5;
   --stale-text: #71717A;
@@ -195,10 +192,7 @@
   --text-disabled: #52525B;
 
   /* Accent omitted here on purpose — see THE ACCENT. */
-
-  --danger-default: #EF4444;  --danger-subtle: #450A0A;  --danger-text: #FCA5A5;
-  --success-default: #22C55E; --success-subtle: #052E16; --success-text: #86EFAC;
-  --warning-default: #F59E0B; --warning-subtle: #451A03; --warning-text: #FCD34D;
+  /* Semantics omitted here on purpose — see THE SEMANTICS. */
 
   --stale-bg: #27272A;
   --stale-text: #A1A1AA;
@@ -230,10 +224,7 @@
   --text-disabled: #D8D1C4;
 
   /* Accent omitted here on purpose — see THE ACCENT. */
-
-  --danger-default: #DC2626;  --danger-subtle: #FEF2F2;  --danger-text: #991B1B;
-  --success-default: #16A34A; --success-subtle: #F0FDF4; --success-text: #166534;
-  --warning-default: #D97706; --warning-subtle: #FFFBEB; --warning-text: #92400E;
+  /* Semantics omitted here on purpose — see THE SEMANTICS. */
 
   --stale-bg: #F4F1EA;
   --stale-text: #6E675E;
@@ -262,10 +253,7 @@
   --text-disabled: #4A4034;
 
   /* Accent omitted here on purpose — see THE ACCENT. */
-
-  --danger-default: #EF4444;  --danger-subtle: #2A1411;  --danger-text: #FCA5A5;
-  --success-default: #22C55E; --success-subtle: #10201A; --success-text: #86EFAC;
-  --warning-default: #F59E0B; --warning-subtle: #2A1C08; --warning-text: #FCD34D;
+  /* Semantics omitted here on purpose — see THE SEMANTICS. */
 
   --stale-bg: #262119;
   --stale-text: #B3AA9C;
@@ -337,6 +325,61 @@
   --accent-subtle: var(--a-subtle-d);
   --accent-text: var(--a-text-d);
   --accent-on: #FFFFFF;
+}
+
+/* ============================= THE SEMANTICS ==============================
+   A fourth axis. Red, green, and amber mean danger, success, and warning, and
+   those meanings do not move — but their *character* is a palette decision.
+
+   Why this axis exists: measured in the lab, teal's nearest semantic neighbour
+   is **success**, only ~33° of hue away, while every other accent sits 98°+ from
+   all three. So teal and green are the same family — and what made teal read as
+   mismatched was not the hue distance but the CHROMA. Teal-700 (#0F766E) is
+   deep and low-chroma; the standard success green (#16A34A) is vivid and
+   lighter. Close in hue, different in character reads as neither harmony nor
+   contrast, which is exactly the "pastel" complaint.
+
+   So the rule this axis encodes: **when the accent is muted, mute the
+   semantics with it; when it is vivid, let them be vivid.** Hue identity stays
+   recognisable in every case — red still reads as red.
+
+   LIGHT MODE ONLY. Chroma harmonisation is a light-mode problem: the dark
+   ground is near-neutral and low-chroma, so a vivid hue there reads fine and the
+   accent's character stops competing with it. Dark uses the standard set in
+   every case, which is also why these blocks are mode-scoped rather than
+   palette-scoped.
+
+   Note the family is tied to the GROUND as well as the accent: on paper, the
+   muted set usually wins whatever the accent, because the vivid set's cool
+   cast fights a warm ground.
+   ======================================================================== */
+
+[data-semantics="standard"][data-mode="light"] {
+  --danger-default: #DC2626;  --danger-subtle: #FEF2F2;  --danger-text: #991B1B;
+  --success-default: #16A34A; --success-subtle: #F0FDF4; --success-text: #166534;
+  --warning-default: #D97706; --warning-subtle: #FFFBEB; --warning-text: #92400E;
+}
+
+/* Deep and low-chroma. Sits with teal and with a paper ground. */
+[data-semantics="muted"][data-mode="light"] {
+  --danger-default: #B91C1C;  --danger-subtle: #FEF2F2;  --danger-text: #7F1D1D;
+  --success-default: #15803D; --success-subtle: #F0FDF4; --success-text: #14532D;
+  --warning-default: #B45309; --warning-subtle: #FFFBEB; --warning-text: #78350F;
+}
+
+/* Bright and high-chroma. Sits with indigo and violet. */
+[data-semantics="vivid"][data-mode="light"] {
+  --danger-default: #EF4444;  --danger-subtle: #FEF2F2;  --danger-text: #991B1B;
+  --success-default: #22C55E; --success-subtle: #F0FDF4; --success-text: #166534;
+  --warning-default: #F59E0B; --warning-subtle: #FFFBEB; --warning-text: #92400E;
+}
+
+/* Dark always uses the standard set. Higher specificity than any [data-mode]
+   accent rule and mutually exclusive with the light blocks above. */
+[data-mode="dark"] {
+  --danger-default: #EF4444;  --danger-subtle: #450A0A;  --danger-text: #FCA5A5;
+  --success-default: #22C55E; --success-subtle: #052E16; --success-text: #86EFAC;
+  --warning-default: #F59E0B; --warning-subtle: #451A03; --warning-text: #FCD34D;
 }
 
 /* ============================ TYPE UTILITIES ==============================
