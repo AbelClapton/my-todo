@@ -351,6 +351,34 @@ the spec; only the metadata family is genuinely open.
 | 03 · No metadata, and completed | The height rule, and the success green on screen. |
 | 04 · The pair to watch | The accent dot and the success checkmark in one row. Switch the accent and read them as a pair. |
 
+## Tasks mode, in the lab
+
+The first *mode* designed rather than a component or a palette. Everything in it
+comes from two documents — the four scopes and the row anatomy from
+`05-modules/tasks.md`, the swipe treatments from
+`03-experience/gesture-vocabulary.md` — so the section is a reading of the spec
+rather than a proposal.
+
+| Block | What it settles |
+|---|---|
+| A · The four scopes | Today (deferred-past first, with a chip), Next (sorted by priority, one dot), Someday (flat, `row-default`, **no metadata line**), All (due ascending, the sort key visible). |
+| B · Empty states, twice | Two scopes can be empty for opposite reasons — nothing scheduled is a good day, nothing parked is fine — so they must not share copy. |
+| C · The completed log | Newest first, reached through the filter, and the metadata line carries *when* rather than *when due*. |
+| D · The filter sheet | Four groups, exactly as listed: Area, Person, due within, and the completed switch. A sheet, not a popover. |
+| E · The detail view | The metadata block is a definition list rather than chips — these are facts about the task, not state belonging to it. |
+| F · The four swipe reveals | Held past the 40% threshold. Complete is the only tinted one; defer, remove, and attach share `surface-3`. |
+
+**Finding 21 · `tasks.md` specifies no empty-state copy for the four scopes.**
+`states.md` requires an empty state to carry one action and forbids "No results
+found", but the strings themselves exist nowhere. The lab's are provisional and
+marked as such. It matters more than it sounds: **Today-empty and Someday-empty
+mean opposite things**, and the second one should not read as a prompt to fill it.
+
+The mode also confirmed two things the earlier passes only predicted: the height
+rule is load-bearing (Someday's suppression of the metadata line is a visible
+difference, not a technicality), and the accent reads correctly as a priority dot
+at 8px — its smallest use in the app.
+
 ## What this deliberately does not do
 
 - **No icon set.** The rail and header use text glyphs. `design-tokens.md` says
