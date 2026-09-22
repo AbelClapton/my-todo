@@ -20,15 +20,23 @@
      cool = Tailwind Zinc   (the current default, #FFFFFF ground)
      warm = Tailwind Stone  (paper ground, "Print-Tech Paper" direction)
 
+   Light and dark are INDEPENDENT choices, so warm light + cool dark is a
+   legitimate pairing and not a contradiction — the palette is one identity
+   that specifies both of its values, not a matched pair.
+
    Each has light and dark. Dark values are DERIVED — the token doc declares
    that dark mode overrides these tokens but lists no dark values (see
    `design/README.md`, finding 2). Treatment here: the same ramp steps, moved
    to the dark end, with the accent and semantic hues lightened one step to
    keep contrast on a dark ground.
 
+   THE ACCENT IS A THIRD AXIS, defined further down. It is not a property of
+   the neutral ramp, and it is identical in both palettes so the neutral
+   comparison stays honest.
+
    METHOD
-   Semantic colours and the accent are IDENTICAL across cool and warm. One axis
-   changes at a time, so the lab measures the neutrals and nothing else.
+   Semantic colours are IDENTICAL across cool and warm, so one axis changes at
+   a time and the lab measures the neutrals and nothing else.
    --------------------------------------------------------------------------- */
 
 /* =============================== ATOMS ==================================== */
@@ -154,12 +162,7 @@
   --text-inverse: #FAFAFA;
   --text-disabled: #D4D4D8;
 
-  --accent-default: #2563EB;
-  --accent-hover: #1D4ED8;
-  --accent-active: #1E40AF;
-  --accent-subtle: #EFF6FF;
-  --accent-text: #1E3A8A;
-  --accent-on: #FFFFFF;
+  /* Accent omitted here on purpose — it is its own axis. See THE ACCENT. */
 
   --danger-default: #DC2626;  --danger-subtle: #FEF2F2;  --danger-text: #991B1B;
   --success-default: #16A34A; --success-subtle: #F0FDF4; --success-text: #166534;
@@ -191,18 +194,7 @@
   --text-inverse: #18181B;
   --text-disabled: #52525B;
 
-  /* Measured in the lab: blue-500 (#3B82F6) with white text is 3.68:1 and
-     fails AA for a button label. The accent serves two jobs — a filled
-     background under white text, and an indicator on the ground — and it
-     cannot be lightened for the second without breaking the first. Blue-600
-     passes both: 5.17:1 under white, 3.80:1 on the dark ground (UI threshold
-     is 3.0). The accent does not lighten in dark mode. */
-  --accent-default: #2563EB;
-  --accent-hover: #3B82F6;
-  --accent-active: #1D4ED8;
-  --accent-subtle: #172554;
-  --accent-text: #BFDBFE;
-  --accent-on: #FFFFFF;
+  /* Accent omitted here on purpose — see THE ACCENT. */
 
   --danger-default: #EF4444;  --danger-subtle: #450A0A;  --danger-text: #FCA5A5;
   --success-default: #22C55E; --success-subtle: #052E16; --success-text: #86EFAC;
@@ -237,14 +229,7 @@
   --text-inverse: #FDFBF7;
   --text-disabled: #D8D1C4;
 
-  /* Unchanged on purpose: the accent is the same blue so the comparison is
-     honest. If warm wins, the accent is the first thing to re-tune. */
-  --accent-default: #2563EB;
-  --accent-hover: #1D4ED8;
-  --accent-active: #1E40AF;
-  --accent-subtle: #EFF6FF;
-  --accent-text: #1E3A8A;
-  --accent-on: #FFFFFF;
+  /* Accent omitted here on purpose — see THE ACCENT. */
 
   --danger-default: #DC2626;  --danger-subtle: #FEF2F2;  --danger-text: #991B1B;
   --success-default: #16A34A; --success-subtle: #F0FDF4; --success-text: #166534;
@@ -276,13 +261,7 @@
   --text-inverse: #1F1B16;
   --text-disabled: #4A4034;
 
-  /* Same reasoning as cool dark: blue-500 under white text fails AA. */
-  --accent-default: #2563EB;
-  --accent-hover: #3B82F6;
-  --accent-active: #1D4ED8;
-  --accent-subtle: #1B2536;
-  --accent-text: #BFDBFE;
-  --accent-on: #FFFFFF;
+  /* Accent omitted here on purpose — see THE ACCENT. */
 
   --danger-default: #EF4444;  --danger-subtle: #2A1411;  --danger-text: #FCA5A5;
   --success-default: #22C55E; --success-subtle: #10201A; --success-text: #86EFAC;
@@ -290,6 +269,74 @@
 
   --stale-bg: #262119;
   --stale-text: #B3AA9C;
+}
+
+/* =============================== THE ACCENT ===============================
+   A third axis, independent of the neutral ramp and of the mode. The app has
+   EXACTLY ONE accent and everything else is neutral (`design-tokens.md`), so
+   this is a one-off choice, not a palette feature.
+
+   Two roles, and both must hold in both modes:
+     --a-strong   a filled control under white text  → needs 4.5:1 with #FFF
+     --a-mid      an indicator on the ground         → needs 3.0:1 (UI, not text)
+
+   THE CONSTRAINT THAT SHAPES THIS LIST: the accent must stay distinct from
+   the three semantic hues, which already own red (danger), green (success),
+   and amber (warning). That rules out warm hues outright and makes teal the
+   tightest case, because teal's usable step is darker than blue's — white on
+   teal-600 (#0D9488) is 3.35:1 and fails, so teal's ramp is shifted one step
+   down. A different accent is not a different hex; it is a different ramp.
+
+   Lesson from the first dark derivation, now applied to every accent: the
+   accent does NOT lighten in dark mode. Blue-500 under white text is 3.68:1
+   (fails AA), and the token cannot be optimised for the indicator without
+   breaking the button. `--a-lit` exists to keep the hover state visible on a
+   dark ground without moving the default.
+   ======================================================================== */
+
+[data-accent="blue"] {
+  --a-strong: #2563EB;  --a-strong-hover: #1D4ED8;  --a-strong-active: #1E40AF;
+  --a-mid: #2563EB;     --a-lit: #3B82F6;
+  --a-subtle-l: #EFF6FF; --a-subtle-d: #172554;
+  --a-text-l: #1E3A8A;   --a-text-d: #BFDBFE;
+}
+[data-accent="indigo"] {
+  --a-strong: #4F46E5;  --a-strong-hover: #4338CA;  --a-strong-active: #3730A3;
+  --a-mid: #4F46E5;     --a-lit: #6366F1;
+  --a-subtle-l: #EEF2FF; --a-subtle-d: #1E1B4B;
+  --a-text-l: #3730A3;   --a-text-d: #C7D2FE;
+}
+[data-accent="teal"] {
+  /* Shifted one step darker than its siblings: white on teal-600 fails AA. */
+  --a-strong: #0F766E;  --a-strong-hover: #115E59;  --a-strong-active: #134E4A;
+  --a-mid: #14B8A6;     --a-lit: #14B8A6;
+  --a-subtle-l: #F0FDFA; --a-subtle-d: #042F2E;
+  --a-text-l: #115E59;   --a-text-d: #99F6E4;
+}
+[data-accent="violet"] {
+  --a-strong: #7C3AED;  --a-strong-hover: #6D28D9;  --a-strong-active: #5B21B6;
+  --a-mid: #7C3AED;     --a-lit: #8B5CF6;
+  --a-subtle-l: #F5F3FF; --a-subtle-d: #2E1065;
+  --a-text-l: #5B21B6;   --a-text-d: #DDD6FE;
+}
+
+/* Composition. Lower specificity than the palette blocks, so it cannot be
+   overridden by them — the accent rules sit outside that cascade on purpose. */
+[data-mode="light"] {
+  --accent-default: var(--a-strong);
+  --accent-hover: var(--a-strong-hover);
+  --accent-active: var(--a-strong-active);
+  --accent-subtle: var(--a-subtle-l);
+  --accent-text: var(--a-text-l);
+  --accent-on: #FFFFFF;
+}
+[data-mode="dark"] {
+  --accent-default: var(--a-strong);
+  --accent-hover: var(--a-lit);
+  --accent-active: var(--a-strong-hover);
+  --accent-subtle: var(--a-subtle-d);
+  --accent-text: var(--a-text-d);
+  --accent-on: #FFFFFF;
 }
 
 /* ============================ TYPE UTILITIES ==============================

@@ -29,10 +29,10 @@
    Deliberately marked as instrument, never mistaken for product chrome.
    ========================================================================= */
 .lab {
-  position: fixed; inset: 0 0 auto 0; z-index: 100;
+  position: sticky; top: 0; z-index: 100;
   display: flex; align-items: center; gap: var(--space-5);
   flex-wrap: wrap;
-  height: auto; min-height: var(--row-default);
+  min-height: var(--row-default);
   padding: var(--space-3) var(--space-5);
   background: var(--surface-2);
   border-bottom: 1px dashed var(--border-strong);
@@ -81,7 +81,9 @@
 .lab-jump a:hover { color: var(--accent-default); }
 
 /* ============================== PAGE SHELL =============================== */
-body { margin: 0; padding: calc(var(--row-default) + var(--space-7)) 0 var(--space-10); }
+body { margin: 0; padding: 0 0 var(--space-10); }
+/* Anchor jumps must clear the sticky lab bar. Lab furniture value. */
+html { scroll-padding-top: 96px; }
 .wrap { max-width: 1200px; margin: 0 auto; padding: 0 var(--space-5); }
 section { margin-top: var(--space-10); }
 .sec-head {
@@ -561,6 +563,24 @@ body.no-annot .tok { display: none; }
 }
 .palette-row[aria-selected="true"] { background: var(--accent-subtle); }
 
+/* ============================== ACCENT COMPARISON ======================== */
+.accent-compare {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-6);
+}
+.accent-cell { display: flex; flex-direction: column; gap: var(--space-3); }
+.sw-lg {
+  width: 100%; height: var(--space-9);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-default);
+}
+.accent-cell .cap {
+  font-size: var(--type-caption-size);
+  letter-spacing: var(--type-caption-track);
+  color: var(--text-secondary);
+}
+
 /* ============================== CONTRAST TABLE ========================== */
 .ct { width: 100%; border-collapse: collapse; }
 .ct th, .ct td {
@@ -589,9 +609,23 @@ body.no-annot .tok { display: none; }
   <span class="lab-brand">Lab · palette</span>
 
   <div class="lab-group">
-    <span class="lab-label">Palette</span>
-    <button class="lab-btn" id="p-cool" aria-pressed="true">Cool</button>
-    <button class="lab-btn" id="p-warm" aria-pressed="false">Warm</button>
+    <span class="lab-label">Light</span>
+    <button class="lab-btn" id="l-cool">Cool</button>
+    <button class="lab-btn" id="l-warm" aria-pressed="true">Warm</button>
+  </div>
+
+  <div class="lab-group">
+    <span class="lab-label">Dark</span>
+    <button class="lab-btn" id="d-cool" aria-pressed="true">Cool</button>
+    <button class="lab-btn" id="d-warm">Warm</button>
+  </div>
+
+  <div class="lab-group">
+    <span class="lab-label">Accent</span>
+    <button class="lab-btn" id="a-blue" aria-pressed="true">Blue</button>
+    <button class="lab-btn" id="a-indigo">Indigo</button>
+    <button class="lab-btn" id="a-teal">Teal</button>
+    <button class="lab-btn" id="a-violet">Violet</button>
   </div>
 
   <div class="lab-group">
@@ -609,6 +643,8 @@ body.no-annot .tok { display: none; }
   <nav class="lab-jump">
     <a href="#rows">Rows</a>
     <a href="#controls">Controls</a>
+    <a href="#chips">Chips</a>
+    <a href="#accent">Accent</a>
     <a href="#containers">Containers</a>
     <a href="#states">States</a>
     <a href="#tasks">Tasks</a>
@@ -799,6 +835,58 @@ body.no-annot .tok { display: none; }
     <div class="annot-row">
       <span class="tok">overdue is text-secondary — never red</span>
       <span class="tok">stale is labelled, not alarmed</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== ACCENT ============================== -->
+<section id="accent">
+  <div class="sec-head">
+    <h2 class="t-title-2">Accent against the semantics</h2>
+    <span class="tok">a hue-distinctness question, not a contrast one</span>
+  </div>
+  <p class="sec-note">
+    The accent has to read as <em>interactive</em> while danger, success, and
+    warning read as <em>state</em>. They rarely appear as the same kind of
+    object, but they share a screen, and the accent is the only one of the four
+    that is a choice. Red, green, and amber are taken, which is why every accent
+    below is cool — and why teal is the tightest case.
+  </p>
+  <div class="card" style="margin-top: var(--space-7);">
+    <div class="accent-compare">
+      <div class="accent-cell">
+        <span class="sw-lg" style="background: var(--accent-default)"></span>
+        <span class="cap">accent-default — indicator + filled control</span>
+        <button class="btn btn-primary btn-sm">Capture</button>
+        <span class="chip chip-accent">active</span>
+      </div>
+      <div class="accent-cell">
+        <span class="sw-lg" style="background: var(--danger-default)"></span>
+        <span class="cap">danger-default — destructive only</span>
+        <button class="btn btn-danger btn-sm">Delete</button>
+        <span class="chip chip-danger">sync failed</span>
+      </div>
+      <div class="accent-cell">
+        <span class="sw-lg" style="background: var(--success-default)"></span>
+        <span class="cap">success-default — completion</span>
+        <span class="check done" style="margin: var(--space-2) 0;"></span>
+        <span class="chip chip-success">confirmed</span>
+      </div>
+      <div class="accent-cell">
+        <span class="sw-lg" style="background: var(--warning-default)"></span>
+        <span class="cap">warning-default — the closest hue</span>
+        <span class="chip chip-warning">stale calendar</span>
+        <span class="chip chip-warning">overdue</span>
+      </div>
+      <div class="accent-cell">
+        <span class="sw-lg" style="background: var(--stale-bg)"></span>
+        <span class="cap">stale-bg — a neutral, never a hue</span>
+        <span class="stale-anno">as of 2 hours ago</span>
+      </div>
+    </div>
+    <div class="annot-row">
+      <span class="tok">switch Accent above and watch this row</span>
+      <span class="tok">warning is the hue the accent must not approach</span>
     </div>
   </div>
 </section>
@@ -1311,36 +1399,57 @@ body.no-annot .tok { display: none; }
 const root = document.documentElement;
 const $ = (id) => document.getElementById(id);
 
-function setPalette(p) {
-  root.dataset.palette = p;
-  $("p-cool").setAttribute("aria-pressed", String(p === "cool"));
-  $("p-warm").setAttribute("aria-pressed", String(p === "warm"));
+/* Two independent palette axes plus an accent. The CSS has four fixed
+   palette blocks, so this resolves which one applies for the current mode. */
+let lightPal = "warm";
+let darkPal = "cool";
+let accent = "blue";
+let modePref = "light";
+
+function resolveMode() {
+  return modePref === "system"
+    ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+    : modePref;
+}
+
+function press(id, on) { const el = $(id); if (el) el.setAttribute("aria-pressed", String(on)); }
+
+function apply() {
+  const mode = resolveMode();
+  root.dataset.mode = mode;
+  root.dataset.palette = mode === "dark" ? darkPal : lightPal;
+  root.dataset.accent = accent;
+
+  press("l-cool", lightPal === "cool");
+  press("l-warm", lightPal === "warm");
+  press("d-cool", darkPal === "cool");
+  press("d-warm", darkPal === "warm");
+  press("a-blue", accent === "blue");
+  press("a-indigo", accent === "indigo");
+  press("a-teal", accent === "teal");
+  press("a-violet", accent === "violet");
+  press("m-light", modePref === "light");
+  press("m-dark", modePref === "dark");
+  press("m-system", modePref === "system");
+
   renderContrast();
 }
 
-let modePref = "light";
-function applyMode() {
-  const resolved =
-    modePref === "system"
-      ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
-      : modePref;
-  root.dataset.mode = resolved;
-  $("m-light").setAttribute("aria-pressed", String(modePref === "light"));
-  $("m-dark").setAttribute("aria-pressed", String(modePref === "dark"));
-  $("m-system").setAttribute("aria-pressed", String(modePref === "system"));
-  renderContrast();
-}
-function setMode(m) { modePref = m; applyMode(); }
+$("l-cool").onclick = () => { lightPal = "cool"; apply(); };
+$("l-warm").onclick = () => { lightPal = "warm"; apply(); };
+$("d-cool").onclick = () => { darkPal = "cool"; apply(); };
+$("d-warm").onclick = () => { darkPal = "warm"; apply(); };
+$("a-blue").onclick = () => { accent = "blue"; apply(); };
+$("a-indigo").onclick = () => { accent = "indigo"; apply(); };
+$("a-teal").onclick = () => { accent = "teal"; apply(); };
+$("a-violet").onclick = () => { accent = "violet"; apply(); };
+$("m-light").onclick = () => { modePref = "light"; apply(); };
+$("m-dark").onclick = () => { modePref = "dark"; apply(); };
+$("m-system").onclick = () => { modePref = "system"; apply(); };
 
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-  if (modePref === "system") applyMode();
+  if (modePref === "system") apply();
 });
-
-$("p-cool").onclick = () => setPalette("cool");
-$("p-warm").onclick = () => setPalette("warm");
-$("m-light").onclick = () => setMode("light");
-$("m-dark").onclick = () => setMode("dark");
-$("m-system").onclick = () => setMode("system");
 
 $("t-annot").onclick = (e) => {
   const off = document.body.classList.toggle("no-annot");
@@ -1426,8 +1535,7 @@ function renderContrast() {
   }).join("");
 }
 
-setPalette("cool");
-applyMode();
+apply();
 </script>
 </body>
 </html>
