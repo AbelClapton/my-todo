@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="warm" data-mode="light" data-accent="teal"
+      data-semantics="vivid" data-type="system">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Small Wins — design labs</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="lab.css">
+<style>
+  .labs { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: var(--space-6); margin-top: var(--space-8); }
+  .lab {
+    display: flex; flex-direction: column; gap: var(--space-4);
+    border: 1px solid var(--border-default); border-radius: var(--radius-lg);
+    background: var(--bg-raised); padding: var(--space-7);
+    text-decoration: none; color: inherit;
+  }
+  .lab:hover { border-color: var(--accent-default); }
+  .lab h3 { margin: 0; }
+  .lab p { margin: 0; font-size: var(--type-callout-size); line-height: var(--type-callout-line); color: var(--text-secondary); }
+  .lab .go { margin-top: auto; padding-top: var(--space-5); font-size: var(--type-subhead-size); color: var(--accent-text); }
+  .state { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-5); }
+  .s-done, .s-todo { display: inline-flex; align-items: center; height: var(--control-xs); padding: 0 var(--space-3); border-radius: var(--radius-xs); font-size: var(--type-caption-size); letter-spacing: var(--type-caption-track); }
+  .s-done { background: var(--success-subtle); color: var(--success-text); }
+  .s-todo { background: var(--surface-2); color: var(--text-secondary); }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <header class="masthead">
+    <h1 class="t-title-1">Small Wins — design labs</h1>
+    <p class="t-callout" style="color: var(--text-secondary);">
+      Throwaway evaluation artifacts. <b>Not the app, not the implementation pattern,
+      not the component library.</b> They exist so design decisions get made by looking
+      at something measured rather than by arguing from prose — and they have earned
+      their keep: every lab so far has found a defect in the spec it was drawing.
+    </p>
+    <p class="t-callout" style="color: var(--text-secondary);">
+      The labs are static files with no build step and no network. Open them from a
+      checkout, or from the published URL, and they behave identically.
+    </p>
+    <p class="tok">
+      tokens.css is the token set · lab.css is the shared chrome · nav.js is the nav
+    </p>
+  </header>
+
+  <div class="labs">
+
+    <a class="lab" href="palette-lab.html">
+      <h3 class="t-title-3">Palette lab</h3>
+      <p>
+        Every token at real size, three real screens, and a contrast table computed from
+        the live values. Six switchable axes over one token set: light palette, dark
+        palette, accent, semantics, type family, metadata style.
+      </p>
+      <p>
+        <b>Settled:</b> warm light with cool dark, teal accent, vivid semantics, the
+        system type stack, footnote-sized metadata.
+      </p>
+      <span class="go">Open the palette lab →</span>
+    </a>
+
+    <a class="lab" href="onboarding-lab.html">
+      <h3 class="t-title-3">Onboarding lab</h3>
+      <p>
+        The seven first-run screens, each rendered four ways — a baseline read literally
+        from the spec, then once through each of three design lenses — plus a recommended
+        row that synthesises them.
+      </p>
+      <p>
+        <b>Settled:</b> all seven screens, including where "Skip" belongs, the habit
+        minimums, the keyboard as an action, and the toast collision.
+      </p>
+      <span class="go">Open the onboarding lab →</span>
+    </a>
+
+    <a class="lab" href="calendar-lab.html">
+      <h3 class="t-title-3">Calendar lab</h3>
+      <p>
+        The Calendar's views, one at a time, starting with the Day view — which is where
+        the app lives and where eight sections had never been seen stacked.
+      </p>
+      <p>
+        <b>Settled:</b> the Day view is an order rather than a height. It does not fit a
+        phone, and the section added most recently was what tipped it.
+      </p>
+      <span class="go">Open the calendar lab →</span>
+    </a>
+
+  </div>
+
+  <section class="lede">
+    <h2 class="t-title-2">Where the design work stands</h2>
+    <p>
+      The labs follow the build order: tokens before screens, and modules before flows.
+      Phase 0's whole UI surface is designed; Phase 1 has started.
+    </p>
+    <div class="state">
+      <span class="s-done">tokens · both modes</span>
+      <span class="s-done">app shell · rail and dock</span>
+      <span class="s-done">task row</span>
+      <span class="s-done">Tasks mode</span>
+      <span class="s-done">onboarding · all 7 screens</span>
+      <span class="s-done">icons · Lucide, inventoried</span>
+      <span class="s-done">empty states · every list</span>
+      <span class="s-done">Day view · measured</span>
+      <span class="s-todo">Week · Month · Year</span>
+      <span class="s-todo">Event detail · New event</span>
+      <span class="s-todo">Date picker · Time machine</span>
+      <span class="s-todo">Habits mode</span>
+      <span class="s-todo">Notes mode</span>
+      <span class="s-todo">People · Protocols · Review</span>
+      <span class="s-todo">Settings</span>
+      <span class="s-todo">capture · retrieval</span>
+      <span class="s-todo">morning plan · shutdown</span>
+      <span class="s-todo">Tier 2 · Tier 3 surfaces</span>
+    </div>
+  </section>
+
+  <section class="lede">
+    <h2 class="t-title-2">How to read a lab</h2>
+    <p>
+      Each screen is a <b>table of rows</b>: one per variation, markup on the left and
+      everything that explains it on the right. Every row carries the same three lines —
+      what it <b>changed</b>, what it <b>cost</b>, and which of the app's own <b>rules it
+      breaks</b>. "None" is a finding too, so no row leaves that cell empty.
+    </p>
+    <p>
+      The last row is the <b>recommended</b> one. It is not another option: it takes what
+      the others agreed on, keeps the moves that survived their costs, and states what it
+      still needs.
+    </p>
+    <p>
+      One constraint runs through all of it. The token set is closed, so no lens can move
+      type or colour, and a distinctive visual identity is unavailable by construction.
+      That is the token set working as intended — and it is why every difference worth
+      arguing about is composition rather than style.
+    </p>
+  </section>
+
+</div>
+
+<script src="nav.js"></script>
+</body>
+</html>

@@ -76,8 +76,6 @@
       <button class="tab" data-go="picker" disabled><span class="n">7</span> Date picker</button>
       <button class="tab" data-go="machine" disabled><span class="n">8</span> Time machine</button>
     </div>
-    <span class="grow"></span>
-    <button class="toggle" id="mode">Dark</button>
   </div>
 
   <!-- ==================== THE DAY VIEW ==================== -->
@@ -412,12 +410,8 @@
   }
   tabs.forEach(t => t.addEventListener('click', () => go(t.dataset.go)));
 
-  document.getElementById('mode').onclick = (e) => {
-    const dark = document.documentElement.dataset.mode === 'dark';
-    document.documentElement.dataset.mode = dark ? 'light' : 'dark';
-    document.documentElement.dataset.palette = dark ? 'warm' : 'cool';
-    e.target.textContent = dark ? 'Dark' : 'Light';
-  };
+  // The light/dark toggle lives in the shared nav (`nav.js`), so it is not
+  // repeated here. One toggle, one owner.
 
   // The fit test. A screen that overflows and says nothing is the defect these
   // labs exist to catch, so the numbers are put on the page rather than left in
@@ -477,5 +471,6 @@
   }
   measure();
 </script>
+<script src="nav.js"></script>
 </body>
 </html>

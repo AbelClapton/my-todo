@@ -27,6 +27,12 @@ body {
 
 .shell { max-width: 1400px; margin: 0 auto; }
 
+/* The nav between labs is injected by `nav.js`, and it brings its own CSS with
+   it — so a lab gets a working nav from one `<script>` tag whether or not it
+   links this file. Its rules used to live here; they moved because the nav is
+   the one piece that has to work in every lab, including ones that predate
+   `lab.css` and duplicate it. */
+
 /* ---- document chrome ---- */
 
 .masthead { border-bottom: 1px solid var(--border-default); padding-bottom: var(--space-7); }
@@ -41,7 +47,7 @@ body {
 }
 
 .bar {
-  position: sticky; top: 0; z-index: 20;
+  position: sticky; top: var(--labnav-h, 0px); z-index: 20;
   display: flex; align-items: center; gap: var(--space-5);
   flex-wrap: wrap;
   padding: var(--space-4) 0;
@@ -63,6 +69,7 @@ body {
   background: var(--accent-default); border-color: var(--accent-default);
   color: var(--on-fill); font-weight: 500;
 }
+.tab[disabled] { color: var(--text-disabled); cursor: default; }
 .tab .n { font-family: var(--font-mono); font-size: var(--type-caption-size); opacity: .75; }
 
 .toggle {

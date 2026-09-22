@@ -33,7 +33,7 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 .lab {
-  position: sticky; top: 0; z-index: 100;
+  position: sticky; top: var(--labnav-h, 0px); z-index: 100;
   display: flex; align-items: center; gap: var(--space-5);
   flex-wrap: wrap;
   min-height: var(--row-default);
@@ -1039,7 +1039,7 @@ body.no-annot .tok { display: none; }
 .pair { display: flex; align-items: center; gap: var(--space-2); }
 </style>
 </head>
-<body>
+<body data-lab-toggle="off">
 
 <!-- ============================== LAB BAR ============================== -->
 <div class="lab">
@@ -3402,5 +3402,6 @@ $("motion-all").onclick = () => {
 
 apply();
 </script>
+<script src="nav.js"></script>
 </body>
 </html>
