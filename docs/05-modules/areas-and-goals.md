@@ -73,6 +73,28 @@ linked tasks and habits.
 **Goal creation.** From the Protocol proposal flow or from the
 Goal list.
 
+### Empty states
+
+The form is `03-experience/states.md`; the action repairs the cause
+(`05-modules/tasks.md`).
+
+| List, empty | Headline | Detail line | Action |
+|---|---|---|---|
+| **Goal list** | Nothing to aim at. | A Goal is an outcome under an Area — the thing a protocol is run against. | New goal |
+| **Area list** | Nothing beyond Inbox. | Four Areas are seeded on first launch; you can rename, archive, or add. | New area |
+
+**The Goal list can be empty on day one; the Area list cannot.** Nothing creates
+a Goal automatically — one arrives from a protocol proposal or from the user —
+so a new user's Goal list is genuinely bare. It is also the emptiest surface in
+the app for a while: a protocol needs two weeks of data before it can be proposed
+at all (`06-flows/onboarding.md`), so this list stays short for a fortnight.
+
+The Area list is seeded with four defaults on first launch and Inbox cannot be
+removed, so its empty form is only reached by archiving everything. It is listed
+anyway because `03-experience/states.md` requires every surface to answer for
+every state — and because the answer differs: here the list is empty because the
+user emptied it, and the detail line says what was there rather than what will be.
+
 ### Filters
 
 Where Areas appear as filters:

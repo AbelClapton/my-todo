@@ -149,10 +149,18 @@ The user can accept the preset or decline the screen entirely.
     Tier 1 parses it, and the parse appears as a chip as the user types.
     Action: the keyboard's own return key, labelled "Add it."
 
-**The action is the keyboard.** There is no separate button. The field is focused
-when the screen appears, so the keyboard — and its return key — are on screen
-before the user does anything. A button below the field would be the first thing
-the keyboard covers, which is the mistake every other layout of this screen makes.
+**The action is the keyboard.** There is no separate button. A button below the
+field would be the first thing the keyboard covers, which is the mistake every
+other layout of this screen makes.
+
+**The field is not focused on arrival.** Programmatic focus does not reliably
+open the keyboard — on iOS it requires a user gesture, so both `focus()` and
+`autofocus` are unreliable inside a WebView, and the flow should not depend on
+behaviour it cannot verify. The field is therefore the screen's affordance: it is
+the only control on a page that asks one question, and tapping it is the gesture
+that raises the keyboard whose return key reads "Add it". The cost is real and
+accepted: a user looking for a button finds none. The field is one tap away, and
+"Skip" is the way out.
 
 **The question stays a heading.** It remains above the field while the user
 types, so the screen keeps answering what it is for.

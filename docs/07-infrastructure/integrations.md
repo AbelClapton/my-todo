@@ -58,6 +58,25 @@ Revoking is one of the four actions that require a confirmation
 deletion, abandoning an active protocol, and signing out all
 devices. The revoke control lives in `05-modules/settings.md`.
 
+**Revoking stops the feed. It does not delete what the feed brought in.**
+
+- No further fetches. The mirror stops updating.
+- **Mirrored events stay, and are labelled permanently.** With no next sync
+there is no fresher data, so each mirrored event keeps its "as of <last
+sync>" annotation rather than showing it transiently
+  (`02-architecture/data-lifecycle.md`, Invariant 4). The app never hides data
+  it cannot refresh, and it never shows it without saying how old it is.
+- **They then age out on the normal rule.** Mirrored events prune at 90 days
+  (`02-architecture/data-lifecycle.md`), so the mirror empties on its own —
+  without one visible deletion, and without the user losing today's plan.
+- **In-app events are untouched.** The app owns those.
+- **Reconnecting resumes.** The mirror re-fetches and the annotations clear.
+
+Deleting the mirror on revoke was rejected: it would change what past Days show,
+and a Day is fixed at the moment it opens
+(`02-architecture/day-as-unit.md`). A user revoking access is ending a
+subscription, not editing their history.
+
 ### Contacts
 
 **Optional.** Used to populate People.

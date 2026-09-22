@@ -127,6 +127,10 @@ events do not require the annotation (they are local).
 If the app is offline, the mirror shows "Offline — last sync
 <time>."
 
+If calendar access has been revoked, the annotation is **permanent**: there is no
+next sync to clear it, and the mirrored events age out on the normal 90-day rule
+instead (`07-infrastructure/integrations.md`).
+
 ### Empty, waiting, error
 
 - **Empty timeline.** One muted line in place: "Nothing scheduled." No
