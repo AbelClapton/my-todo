@@ -166,6 +166,16 @@ body.no-annot .tok { display: none; }
   background: var(--bg-base);
 }
 .dock .rail-item { margin: 0; }
+/* The rail's indicator is a leading edge bar, which does not transfer to a
+   horizontal dock. `app-shell.md` says one indicator marks the active mode in
+   both forms but never says what the dock's indicator is — this is the obvious
+   reading, and it is a gap worth closing in the doc. */
+.dock .rail-item[aria-current="page"]::before {
+  inset: auto auto calc(var(--space-2) * -1) 50%;
+  transform: translateX(-50%);
+  width: var(--space-6);
+  height: 2px;
+}
 
 .header {
   height: var(--row-default);

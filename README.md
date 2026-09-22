@@ -87,6 +87,14 @@ role. The lab uses `.r-meta-mono` as a proposal, marked in the CSS.
 `05-modules/habits.md` names them — full, minimum, skip, missed, repair — and no
 doc gives them values. The lab's are an approximation and are labelled as one.
 
+**8. The dock's active-mode indicator has no specified form.**
+`03-experience/app-shell.md` says "one indicator marks the active mode in
+`accent-default`" and then describes the rail's version — a bar on the leading
+edge. A leading-edge bar does not transfer to a horizontal dock; drawn
+literally it detaches and floats at the far left of the bar. The lab uses a
+centred underline under the active icon, which is the obvious reading and is
+still a guess.
+
 **Checked and holding:** `row-rich` (72px) does carry the title, the metadata
 line, and a chip without crowding, and twenty rows at `row-default` / `row-rich`
 read cleanly at desktop width.
