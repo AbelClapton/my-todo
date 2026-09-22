@@ -168,39 +168,50 @@ indicator on the ground, and the priority dot — and it cannot be optimised for
 one without breaking the others. `#0F766E` is 5.47:1 under white and 3.64:1 on
 the dark ground.
 
-**Semantic states — the teal-tuned family** (each has a subtle background and
+**Semantic states — the vivid family** (each has a subtle background and
 a text color)
 
 | Token | Light | Dark | Used for |
 |---|---|---|---|
-| `danger-default` | #B91C1C | #DC2626 | Destructive action |
+| `danger-default` | #DC2626 | #DC2626 | Destructive action |
 | `danger-subtle` | #FECACA | #450A0A | Error surface |
-| `danger-text` | #7F1D1D | #FCA5A5 | Error text |
-| `success-default` | #4D7C0F | #4D7C0F | Completion, compliance, confirmation |
-| `success-subtle` | #D9F99D | #1A2E05 | Success surface |
-| `success-text` | #365314 | #BEF264 | Success text |
-| `warning-default` | #B45309 | #FBBF24 | Warning action |
+| `danger-text` | #991B1B | #FCA5A5 | Error text |
+| `success-default` | #16A34A | #22C55E | Compliance, completion, confirmation |
+| `success-subtle` | #BBF7D0 | #052E16 | Success surface |
+| `success-text` | #166534 | #86EFAC | Success text |
+| `warning-default` | #D97706 | #F59E0B | Warning action |
 | `warning-subtle` | #FDE68A | #451A03 | Warning surface |
-| `warning-text` | #78350F | #FCD34D | Warning text |
+| `warning-text` | #92400E | #FCD34D | Warning text |
 
-**Red, green, and amber keep their meanings. Their character is tuned, and one
-hue actually moved — deliberately.**
+One family is chosen for the whole app. It is not a user-facing setting and not
+a theme: the semantics are tuned together, once, and then they are fixed.
 
-`success` is **olive-green (hue 86°) rather than green (hue 142°)**, because the
-task row puts the accent and success in the same place: the priority dot is
-`accent-default` and a completed row carries a filled checkbox. Teal is 175°, so
-green sat 33° away and the two small marks read as one family. Olive is 89° away.
+**Red, green, and amber keep their meanings. What changes between modes is how
+bright they can be, and that is physics rather than taste.**
 
-**The cost, stated plainly:** "done" is olive now, not green. That is a real loss
-of convention, taken because keeping both teal and a conventional green means one
-of them is wrong in every row.
+On paper a light ground caps a hue's luminance. The brighter steps measure
+**2.24:1** (green) and **2.11:1** (amber) against it, both under the 3:1 floor, so
+light mode uses the 600 steps. Dark mode, on a near-black ground, can use the
+brighter ones — 8.73:1 and 9.26:1. The same family, expressed as bright as each
+ground permits.
 
-The subtle backgrounds are one step deeper than the usual values (`#FDE68A`
-rather than `#FFFBEB` for warning, `#FECACA` rather than `#FEF2F2` for danger).
-On paper that is not decoration — it is required. The ground is already light and
-already tinted, so a tint has to go a step deeper to clear the 1.15:1 floor and
-be visible at all. Against the old value the warning chip measured 1.02:1, which
-is to say it had no background.
+**`danger-default` is `#DC2626` in both modes**, and not by preference: it is a
+filled button, and white on `#EF4444` is 3.76:1. Any token used as a saturated
+fill is capped by its white label.
+
+**Green sits 33° from the teal accent, and that is now acceptable — but it was
+not, before.** The priority dot and a completed checkbox were both small marks in
+the same row, one accent and one green, and at 33° they read as one family. The
+checkbox fill is now the accent, so green no longer appears in the row at all.
+The residual risk is the capture flow, where a "parsed" chip (accent) and a
+"confirmed" chip (success) can sit side by side.
+
+**The subtle backgrounds are one step deeper than the values they replace**
+(`#FDE68A` rather than `#FFFBEB` for warning, `#FECACA` rather than `#FEF2F2` for
+danger). On paper that is required rather than decorative: the ground is already
+light and already tinted, so a tint has to go a step deeper to clear the 1.15:1
+floor and be visible at all. Against the old value the warning chip measured
+**1.02:1** — which is to say it had no background on the page.
 
 **Stale data annotation** (Invariant 4)
 

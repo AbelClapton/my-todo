@@ -382,11 +382,19 @@
    semantics with it; when it is vivid, let them be vivid.** Hue identity stays
    recognisable in every case — red still reads as red.
 
-   LIGHT MODE ONLY. Chroma harmonisation is a light-mode problem: the dark
-   ground is near-neutral and low-chroma, so a vivid hue there reads fine and the
-   accent's character stops competing with it. Dark uses the standard set in
-   every case, which is also why these blocks are mode-scoped rather than
-   palette-scoped.
+   EVERY FAMILY IS NOW SPECIFIED FOR BOTH MODES. The earlier version of this
+   file scoped them to light mode on the theory that chroma harmonisation is a
+   light-mode problem. That was right about the *reason* and wrong about the
+   consequence: picking a family for both modes is a legitimate choice, so each
+   one needs dark values.
+
+   AND IN LIGHT MODE THEY CONVERGE. Measured on paper, the vivid 500 steps fail
+   as marks: #22C55E is 2.24:1 and #F59E0B is 2.11:1, against a 3:1 floor. A
+   light ground caps how bright a hue can be and still be seen, so "vivid light"
+   can only mean the 600 steps — which is what the standard family already uses.
+   The only real light-mode variable is how deep the subtle grounds go.
+   In dark mode the families genuinely diverge, because a near-black ground lets
+   a bright hue be bright.
 
    Note the family is tied to the GROUND as well as the accent: on paper, the
    muted set usually wins whatever the accent, because the vivid set's cool
@@ -406,14 +414,41 @@
   --warning-default: #B45309; --warning-subtle: #FFFBEB; --warning-text: #78350F;
 }
 
-/* Bright and high-chroma. Sits with indigo and violet. */
+/* VIVID. CHOSEN.
+
+   In light mode this is the 600 steps plus compliant subtle grounds — which is
+the standard family with its subtles fixed. That is not a coincidence, it is the
+finding: standard's problem was never its hues, it was that its subtle grounds
+measured 1.02–1.03:1 against paper, i.e. no background at all. Fix the subtles
+and "standard" and "vivid" are the same thing in light mode.
+
+   #DC2626 is the only one that must also carry a white label (it is the danger
+button fill): white on it is 4.83:1. Success and warning are marks, not fills —
+the checkbox fill is the accent — so they only need 3:1 against paper, which
+#16A34A (3.24) and #D97706 (3.14) clear. */
 [data-semantics="vivid"][data-mode="light"] {
-  --danger-default: #EF4444;  --danger-subtle: #FEF2F2;  --danger-text: #991B1B;
-  --success-default: #22C55E; --success-subtle: #F0FDF4; --success-text: #166534;
-  --warning-default: #F59E0B; --warning-subtle: #FFFBEB; --warning-text: #92400E;
+  --danger-default: #DC2626;  --danger-subtle: #FECACA;  --danger-text: #991B1B;
+  --success-default: #16A34A; --success-subtle: #BBF7D0; --success-text: #166534;
+  --warning-default: #D97706; --warning-subtle: #FDE68A; --warning-text: #92400E;
 }
 
-/* TEAL-TUNED. CHOSEN. Built for a teal accent on a paper ground.
+/* Vivid, dark — and this is where the family earns its name. On a near-black
+ground a bright hue can be bright: success 8.73:1, warning 9.26:1. Danger stays
+at #DC2626 rather than #EF4444 because it is a filled button and white on #EF4444
+is 3.76:1, which fails. The fill constraint binds in dark mode too. */
+[data-semantics="vivid"][data-mode="dark"] {
+  --danger-default: #DC2626;  --danger-subtle: #450A0A;  --danger-text: #FCA5A5;
+  --success-default: #22C55E; --success-subtle: #052E16; --success-text: #86EFAC;
+  --warning-default: #F59E0B; --warning-subtle: #451A03; --warning-text: #FCD34D;
+}
+
+/* TEAL-TUNED. Superseded — the chosen family is vivid.
+
+   Kept because it was the first real answer to the collision, and because it is
+the option to reach for if the green convention ever matters more than the
+accent's hue. It solves the row by moving `success` off green entirely (hue 86°
+vs teal's 175°), which works, at the cost of "done" being olive rather than
+green.
 
    Its reason to exist is the task row, where the accent and `success` used to
    collide: the priority dot is `accent-default` and the completed checkbox was

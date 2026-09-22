@@ -661,6 +661,201 @@ body.no-annot .tok { display: none; }
 }
 .hue-cell span { font-size: var(--type-caption-size); color: var(--text-secondary); }
 
+/* ============================== MOTION REPLAY =============================
+   Re-enactments, not the real interactions. Each stage replays one transition
+   from the catalog in `03-experience/motion-vocabulary.md` so its timing and
+   easing can be judged. Every duration and curve below is a token; if a value
+   here is not a token, it is a bug. Reduced-motion collapses all of them, which
+   is correct behaviour and not a limitation.
+   ======================================================================== */
+.motion-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-7);
+}
+.motion-card { display: flex; flex-direction: column; gap: var(--space-3); }
+.mstage {
+  position: relative; height: 128px; overflow: hidden;
+  background: var(--surface-2);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  display: grid; place-items: center;
+}
+.mhead { display: flex; align-items: baseline; gap: var(--space-3); flex-wrap: wrap; }
+.mhead .lab-btn { margin-left: auto; }
+.mdemo { position: relative; }
+/* The token labels in this section are sentences, not tags. */
+.motion-card .tok { white-space: normal; }
+
+/* 01 · list row reveal — the row slides, the action sits behind it */
+.m-reveal { width: 180px; height: var(--row-compact); }
+.m-behind {
+  position: absolute; inset: 0; border-radius: var(--radius-md);
+  background: var(--accent-subtle); display: grid; place-items: center;
+  color: var(--accent-text); font-size: var(--icon-md);
+}
+.m-front {
+  position: absolute; inset: 0; border-radius: var(--radius-md);
+  background: var(--surface-1); border: 1px solid var(--border-default);
+  display: flex; align-items: center; padding: 0 var(--space-4);
+  color: var(--text-primary); font-size: var(--type-body-size);
+}
+.mstage.run .m-front { animation: swipe-reveal var(--duration-default) var(--ease-standard) both; }
+@keyframes swipe-reveal {
+  0% { transform: translateX(0); }
+  55% { transform: translateX(42%); }
+  100% { transform: translateX(0); }
+}
+
+/* 02 · completion confirmation — the only scale in the app, 400ms */
+.m-done {
+  width: 150px; height: var(--control-md); border-radius: var(--radius-md);
+  background: var(--accent-default); color: var(--on-fill);
+  display: grid; place-items: center; font-size: var(--type-subhead-size);
+}
+.mstage.run .m-done { animation: completion var(--duration-deliberate) var(--ease-standard) both; }
+@keyframes completion {
+  0% { transform: scale(1); opacity: 1; }
+  40% { transform: scale(1.02); }
+  70% { transform: scale(0.98); opacity: 0.6; }
+  100% { transform: scale(0); opacity: 0; }
+}
+
+/* 03 · mode switch — indicator slides, content cross-fades, no sideways slide */
+.m-modes { display: flex; gap: var(--space-2); position: relative; padding-bottom: var(--space-4); }
+.m-modes i {
+  width: var(--space-8); height: var(--space-3); border-radius: var(--radius-full);
+  background: var(--border-strong); display: block;
+}
+.m-indicator {
+  position: absolute; bottom: 0; left: 0;
+  width: var(--space-7); height: 2px; border-radius: var(--radius-full);
+  background: var(--accent-default);
+}
+.mstage.run .m-indicator { animation: mode-slide var(--duration-default) var(--ease-standard) both; }
+@keyframes mode-slide {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(var(--space-7)); }
+}
+.m-content {
+  margin-top: var(--space-4); width: 180px; height: var(--row-compact);
+  border-radius: var(--radius-md); background: var(--surface-1);
+  border: 1px solid var(--border-default);
+}
+.mstage.run .m-content { animation: cross-fade var(--duration-default) var(--ease-standard) both; }
+@keyframes cross-fade { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+/* 04 · screen push — in from the right, old out to the left at 30% */
+.m-push { width: 180px; height: 100px; position: relative; }
+.m-push .m-old {
+  position: absolute; inset: 0; border-radius: var(--radius-md);
+  background: var(--surface-3);
+}
+.m-push .m-new {
+  position: absolute; inset: 0; border-radius: var(--radius-md);
+  background: var(--surface-1); border: 1px solid var(--border-default);
+}
+.mstage.run .m-old { animation: push-out var(--duration-slow) var(--ease-exit) both; }
+.mstage.run .m-new { animation: push-in var(--duration-slow) var(--ease-standard) both; }
+@keyframes push-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes push-out { from { transform: translateX(0); } to { transform: translateX(-30%); } }
+
+/* 05 · sheet — slides up from the bottom edge */
+.m-sheet {
+  position: absolute; inset-inline: var(--space-5); bottom: 0;
+  height: var(--row-hero); border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: var(--surface-1); border-top: 1px solid var(--border-default);
+  box-shadow: var(--elevation-3);
+}
+.mstage.run .m-sheet { animation: sheet-up var(--duration-default) var(--ease-standard) both; }
+@keyframes sheet-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+/* 06 · popover — scales from 0.96 and fades */
+.m-popover {
+  width: 150px; height: var(--row-hero); border-radius: var(--radius-md);
+  background: var(--surface-1); border: 1px solid var(--border-default);
+  box-shadow: var(--elevation-2);
+}
+.mstage.run .m-popover { animation: popover-in var(--duration-fast) var(--ease-standard) both; }
+@keyframes popover-in { from { transform: scale(0.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* 07 · modal — backdrop fades, box scales, different durations */
+.m-modal-stage { width: 100%; height: 100%; position: relative; }
+.m-backdrop {
+  position: absolute; inset: 0; background: var(--bg-overlay);
+  display: grid; place-items: center;
+}
+.m-modal {
+  width: 170px; height: var(--row-hero); border-radius: var(--radius-xl);
+  background: var(--surface-1); box-shadow: var(--elevation-3);
+}
+.mstage.run .m-backdrop { animation: cross-fade var(--duration-default) var(--ease-standard) both; }
+.mstage.run .m-modal { animation: modal-in var(--duration-slow) var(--ease-standard) both; }
+@keyframes modal-in { from { transform: scale(0.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* 08 · toast (undo) — slides up, then holds for five seconds */
+.m-toast {
+  position: absolute; inset-inline: var(--space-5); bottom: var(--space-5);
+  height: var(--touch-comfortable); border-radius: var(--radius-md);
+  background: var(--text-primary); color: var(--text-inverse);
+  box-shadow: var(--elevation-4);
+  display: flex; align-items: center; padding: 0 var(--space-5);
+  font-size: var(--type-subhead-size);
+}
+.mstage.run .m-toast { animation: toast-up var(--duration-fast) var(--ease-standard) both; }
+@keyframes toast-up { from { transform: translateY(150%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* 09 · calendar zoom — cross-scale between day, week, month */
+.m-zoom {
+  width: 170px; height: 100px; border-radius: var(--radius-md);
+  background: var(--surface-1); border: 1px solid var(--border-default);
+  display: flex; flex-direction: column; justify-content: center; gap: var(--space-2);
+  padding: var(--space-4);
+}
+.m-zoom span { height: var(--space-3); border-radius: var(--radius-xs); background: var(--surface-3); display: block; }
+.m-zoom span:nth-child(2) { width: 70%; }
+.m-zoom span:nth-child(3) { width: 45%; }
+.mstage.run .m-zoom { animation: cal-zoom var(--duration-slow) var(--ease-standard) both; }
+@keyframes cal-zoom {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.92); opacity: 0.35; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* 10 · shared element — the row becomes the detail; the title is the anchor */
+.m-shared {
+  width: 170px; height: var(--row-compact);
+  border-radius: var(--radius-lg);
+  background: var(--surface-1); border: 1px solid var(--border-default);
+  display: flex; align-items: center; padding: 0 var(--space-4);
+  color: var(--text-primary); font-size: var(--type-body-size);
+}
+.mstage.run .m-shared { animation: shared-expand var(--duration-slow) var(--ease-standard) both; }
+@keyframes shared-expand {
+  0% { height: var(--row-compact); border-radius: var(--radius-lg); padding-top: 0; }
+  100% { height: 100px; border-radius: var(--radius-md); padding-top: var(--space-3); align-items: flex-start; }
+}
+
+/* 11 · sheet to screen (capture) — the field morphs into the detail */
+.m-capture {
+  width: 170px; height: var(--control-lg);
+  border-radius: var(--radius-md);
+  background: var(--bg-sunken); border: 1px solid var(--border-default);
+  display: flex; align-items: center; padding: 0 var(--space-4);
+  color: var(--text-muted); font-size: var(--type-callout-size);
+}
+.mstage.run .m-capture { animation: capture-morph var(--duration-default) var(--ease-standard) both; }
+@keyframes capture-morph {
+  0% { height: var(--control-lg); border-radius: var(--radius-md); }
+  100% { height: 104px; border-radius: var(--radius-lg); }
+}
+
+/* 12 · waiting — the absence, on purpose. ADR 0019. */
+.m-wait { display: flex; flex-direction: column; gap: var(--space-3); width: 170px; }
+.m-wait .m-block { height: var(--control-lg); border-radius: var(--radius-md); background: var(--surface-2); border: 1px solid var(--border-default); }
+.m-wait .m-count { font-family: var(--font-mono); font-size: var(--type-footnote-size); color: var(--text-secondary); }
+.mstage.no-motion { background: var(--bg-sunken); }
+
 /* ============================== CONTRAST TABLE ========================== */
 .ct { width: 100%; border-collapse: collapse; }
 .ct th, .ct td {
@@ -712,8 +907,8 @@ body.no-annot .tok { display: none; }
     <span class="lab-label">Semantics</span>
     <button class="lab-btn" id="s-standard">Standard</button>
     <button class="lab-btn" id="s-muted">Muted</button>
-    <button class="lab-btn" id="s-vivid">Vivid</button>
-    <button class="lab-btn" id="s-teal" aria-pressed="true">Teal-tuned</button>
+    <button class="lab-btn" id="s-vivid" aria-pressed="true">Vivid</button>
+    <button class="lab-btn" id="s-teal">Teal-tuned</button>
   </div>
 
   <div class="lab-group">
@@ -755,6 +950,7 @@ body.no-annot .tok { display: none; }
     <a href="#report">Report</a>
     <a href="#palette">Palette</a>
     <a href="#onboarding">Onboarding</a>
+    <a href="#motion">Motion</a>
     <a href="#contrast">Contrast</a>
   </nav>
 </div>
@@ -1617,6 +1813,192 @@ body.no-annot .tok { display: none; }
   </div>
 </section>
 
+<!-- ============================== MOTION ============================== -->
+<section id="motion">
+  <div class="sec-head">
+    <h2 class="t-title-1">Motion</h2>
+    <span class="tok">six durations · two easings · motion-vocabulary.md</span>
+  </div>
+  <p class="sec-note">
+    Re-enactments, not the real interactions. Each stage replays one transition
+    from the catalog so timing and easing can be judged before the screens exist.
+    Every stage uses one of the six durations and one of the two curves —
+    nothing here invents a timing.
+  </p>
+  <p class="sec-note">
+    With reduced motion enabled, all of these collapse to instant. That is
+    correct behaviour, and it is why the app never depends on motion to explain
+    anything that matters.
+  </p>
+
+  <div style="display: flex; gap: var(--space-4); align-items: center; margin: var(--space-7) 0;">
+    <button class="lab-btn" id="motion-all">Replay all</button>
+    <span class="tok">each stage resets after it runs</span>
+  </div>
+
+  <div class="motion-grid">
+
+    <div class="motion-card">
+      <div class="mstage" id="s-reveal">
+        <div class="mdemo m-reveal">
+          <div class="m-behind">✓</div>
+          <div class="m-front">Buy standing desk</div>
+        </div>
+      </div>
+      <div class="mhead">
+        <span class="vnum">01</span>
+        <span class="t-title-3">List row reveal</span>
+        <button class="lab-btn mrun" data-target="s-reveal">Replay</button>
+      </div>
+      <span class="tok">duration-default 200ms · ease-standard · holds 200ms, then exits ease-exit</span>
+    </div>
+
+    <div class="motion-card">
+      <div class="mstage" id="s-completion">
+        <div class="mdemo m-done">Task completed</div>
+      </div>
+      <div class="mhead">
+        <span class="vnum">02</span>
+        <span class="t-title-3">Completion confirmation</span>
+        <button class="lab-btn mrun" data-target="s-completion">Replay</button>
+      </div>
+      <span class="tok">duration-deliberate 400ms · ease-standard · the only scale in the app</span>
+    </div>
+
+    <div class="motion-card">
+      <div class="mstage" id="s-modes">
+        <div class="mdemo">
+          <div class="m-modes"><i></i><i></i><i></i><div class="m-indicator"></div></div>
+          <div class="m-content"></div>
+        </div>
+      </div>
+      <div class="mhead">
+        <span class="vnum">03</span>
+        <span class="t-title-3">Mode switch</span>
+        <button class="lab-btn mrun" data-target="s-modes">Replay</button>
+      </div>
+      <span class="tok">duration-default 200ms · indicator slides, content cross-fades · never a sideways slide</span>
+    </div>
+
+    <div class="motion-card">
+      <div class="mstage" id="s-push">
+        <div class="mdemo m-push">
+          <div class="m-old"></div>
+          <div class="m-new"></div>
+        </div>
+      </div>
+      <div class="mhead">
+        <span class="vnum">04</span>
+        <span class="t-title-3">Screen push</span>
+        <button class="lab-btn mrun" data-target="s-push">Replay</button>
+      </div>
+      <span class="tok">duration-slow 250ms · in from the right, old out to the left at 30%</span>
+    </div>
+
+    <div class="motion-card">
+      <div class="mstage" id="s-sheet">
+        <div class="mdemo m-sheet"></div>
+      </div>
+      <div class="mhead">
+        <span class="vnum">05</span>
+        <span class="t-title-3">Sheet</span>
+        <button class="lab-btn mrun" data-target="s-sheet">Replay</button>
+      </div>
+      <span class="tok">duration-default 200ms · ease-standard in, ease-exit out</span>
+    </div>
+
+    <div class="motion-card">
+      <div class="mstage" id="s-popover">
+        <div class="mdemo m-popover"></div>
+      </div>
+      <div class="mhead">
+        <span class="vnum">06</span>
+        <span class="t-title-3">Popover</span>
+        <button class="lab-btn mrun" data-target="s-popover">Replay</button>
+      </div>
+      <span class="tok">duration-fast 150ms · scales from 0.96 and fades</span>
+    </div>
+
+    <div class="motion-card">
+      <div class="mstage" id="s-modal" style="padding: 0;">
+        <div class="m-modal-stage">
+          <div class="m-backdrop"><div class="m-modal"></div></div>
+        </div>
+      </div>
+      <div class="mhead">
+        <span class="vnum">07</span>
+        <span class="t-title-3">Modal</span>
+        <button class="lab-btn mrun" data-target="s-modal">Replay</button>
+      </div>
+      <span class="tok">backdrop duration-default 200ms · box duration-slow 250ms</span>
+    </div>
+
+    <div class="motion-card">
+      <div class="mstage" id="s-toast">
+        <div class="mdemo m-toast">Task completed · Undo</div>
+      </div>
+      <div class="mhead">
+        <span class="vnum">08</span>
+        <span class="t-title-3">Toast (undo)</span>
+        <button class="lab-btn mrun" data-target="s-toast">Replay</button>
+      </div>
+      <span class="tok">duration-fast 150ms in · five-second hold · duration-default out</span>
+    </div>
+
+    <div class="motion-card">
+      <div class="mstage" id="s-zoom">
+        <div class="mdemo m-zoom"><span></span><span></span><span></span></div>
+      </div>
+      <div class="mhead">
+        <span class="vnum">09</span>
+        <span class="t-title-3">Calendar zoom</span>
+        <button class="lab-btn mrun" data-target="s-zoom">Replay</button>
+      </div>
+      <span class="tok">duration-slow 250ms · cross-scale between day, week, month</span>
+    </div>
+
+    <div class="motion-card">
+      <div class="mstage" id="s-shared">
+        <div class="mdemo m-shared">Draft the Q3 retro</div>
+      </div>
+      <div class="mhead">
+        <span class="vnum">10</span>
+        <span class="t-title-3">Shared element</span>
+        <button class="lab-btn mrun" data-target="s-shared">Replay</button>
+      </div>
+      <span class="tok">duration-slow 250ms · the row becomes the detail · the title is the anchor</span>
+    </div>
+
+    <div class="motion-card">
+      <div class="mstage" id="s-capture">
+        <div class="mdemo m-capture">Capture something…</div>
+      </div>
+      <div class="mhead">
+        <span class="vnum">11</span>
+        <span class="t-title-3">Sheet → screen</span>
+        <button class="lab-btn mrun" data-target="s-capture">Replay</button>
+      </div>
+      <span class="tok">duration-default 200ms · the field morphs into the detail</span>
+    </div>
+
+    <div class="motion-card">
+      <div class="mstage no-motion">
+        <div class="mdemo m-wait">
+          <span class="m-block"></span>
+          <span class="m-count">Syncing 412 entries…</span>
+        </div>
+      </div>
+      <div class="mhead">
+        <span class="vnum">12</span>
+        <span class="t-title-3">Waiting</span>
+        <span class="tok">no motion, on purpose — ADR 0019</span>
+      </div>
+      <span class="tok">nothing for the first 400ms, then a static placeholder · no spinner, no shimmer</span>
+    </div>
+
+  </div>
+</section>
+
 <!-- ============================== CONTRAST ============================== -->
 <section id="contrast">
   <div class="sec-head">
@@ -1655,7 +2037,7 @@ const $ = (id) => document.getElementById(id);
 let lightPal = "warm";
 let darkPal = "cool";
 let accent = "teal";
-let semantics = "teal";
+let semantics = "vivid";
 let typePref = "system";
 let metaPref = "footnote";
 let modePref = "light";
@@ -1860,6 +2242,26 @@ function renderHue() {
     </div>`;
   }).join("");
 }
+
+/* ============================== MOTION REPLAY ========================= */
+function replay(stage) {
+  stage.classList.remove("run");
+  void stage.offsetWidth;            // force a reflow so the animation restarts
+  stage.classList.add("run");
+  /* 400ms is the longest duration in the catalog; the slack lets a stage with
+     two animations of different lengths finish before the demo resets. */
+  clearTimeout(stage._reset);
+  stage._reset = setTimeout(() => stage.classList.remove("run"), 600);
+}
+document.querySelectorAll(".mrun").forEach((btn) => {
+  btn.onclick = () => {
+    const stage = document.getElementById(btn.dataset.target);
+    if (stage) replay(stage);
+  };
+});
+$("motion-all").onclick = () => {
+  document.querySelectorAll(".mstage[id]").forEach(replay);
+};
 
 apply();
 </script>

@@ -254,7 +254,7 @@ Every finding above was acted on, and the docs changed rather than the lab.
 | 6 · `type-mono` 14 vs metadata 13 | **Moot.** Metadata is `type-footnote` — 13px, sans. Mono is not used in the row at all. |
 | 7 · compliance colours unspecified | Specified by token — and a contradiction fixed: missed days were **"light red"**, which `states.md` forbids ("no state is red except an error") and the product explicitly rejects ("skipping is not failing"). Missed is a neutral now. |
 | 8 · dock indicator undefined | Specified: the rail uses a 3px leading bar, the dock a 2px centred underline. |
-| 14 · accent | **Teal, kept** — and the collision fixed two ways. The checkbox fill is now the accent, so the dot and the check differ by *form* rather than by a near-identical hue; and `success` moved from green (142°) to olive (86°), which is 89° from teal instead of 33°. **Cost: "done" is olive, not green.** |
+| 14 · accent | **Teal, kept** — and the collision fixed at its root: the checkbox fill is now the accent, so the dot and the check differ by *form* rather than by a near-identical hue. An earlier revision also moved `success` off green; that was **reverted** when vivid was chosen, so green keeps its convention and the row no longer contains green at all. |
 | 15 · metadata family | **`type-footnote`** — sans at 13px. Not `type-callout` (it competed with the title it belongs to), not mono. |
 | 17 · row heights | Hold. |
 
@@ -270,6 +270,33 @@ Lab changes in the same pass: live `:hover` and `:active` on rows (they had only
 
 - **16 · The type family.** Needs a decision and then an ADR, because `--font-display` and `--font-prose` are **new tokens** and the token set is closed.
 - **Motion is still not demonstrated.** The lab shows hover, pressed, and focus; it does not show the transition catalog — the completion animation, the sheet, the toast, or the screen push. A pattern sheet has nothing to animate without a prototype, so those need either a small replay section or the real screens.
+
+### Final choices, 2026-09-22
+
+| Axis | Chosen |
+|---|---|
+| Light palette | **Warm** (paper) |
+| Dark palette | **Cool** (ink) |
+| Accent | **Teal** |
+| Semantics | **Vivid** |
+| Type | **System** — so finding 16 stays open only if the type face is revisited |
+| Metadata | **Footnote 13** |
+
+The lab opens on this combination, and it is what is written into
+`03-experience/design-tokens.md`.
+
+**One consequence worth recording, because it inverts an earlier finding.** When
+vivid was chosen, the vivid light values failed as marks on paper: `#22C55E`
+measured **2.24:1** and `#F59E0B` **2.11:1**, both under the 3:1 floor. A light
+ground caps how bright a hue can be, so **vivid light can only mean the 600
+steps** — which is what the standard family used. The only real light-mode
+difference is that the subtle grounds are now deep enough to be visible.
+
+That reframes finding 4: "standard" never looked wrong because of its hues, it
+looked wrong because **its subtle grounds had no background at all** (1.02:1).
+Vivid and standard are the same thing in light mode once the subtles are fixed.
+In dark mode they genuinely differ, because a near-black ground lets a bright hue
+be bright.
 
 ## The briefs in play
 
