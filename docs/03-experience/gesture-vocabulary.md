@@ -171,9 +171,11 @@ not be allowed to fall through to capture.
 - Beyond the trigger point, the action "locks in" and releasing
   commits it.
 - Before the trigger point, releasing snaps back with a spring.
-- Actions are color-coded on reveal: complete is `success-subtle`;
-  defer, remove, and attach are `surface-3`. No swipe is ever
-  `danger-subtle`, because no swipe is destructive (ADR 0011).
+- Actions are color-coded on reveal: complete is `accent-subtle`, the
+  same background the accent uses everywhere else, because the check
+  itself is `accent-default`; defer, remove, and attach are `surface-3`.
+  No swipe is ever `danger-subtle`, because no swipe is destructive
+  (ADR 0011).
 - The row holds its reveal for 200ms after commit, then animates
   away. This gives the eye time to register what happened.
 

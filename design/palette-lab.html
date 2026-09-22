@@ -856,6 +856,75 @@ body.no-annot .tok { display: none; }
 .m-wait .m-count { font-family: var(--font-mono); font-size: var(--type-footnote-size); color: var(--text-secondary); }
 .mstage.no-motion { background: var(--bg-sunken); }
 
+/* ============================== TASKS MODE ============================== */
+.panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: var(--space-7);
+}
+.panel {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--bg-base);
+  overflow: hidden;
+}
+.panel-head {
+  display: flex; align-items: baseline; gap: var(--space-4);
+  flex-wrap: wrap;
+  padding: var(--space-4) var(--space-5);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border-default);
+}
+.panel-head .rule {
+  font-size: var(--type-caption-size);
+  letter-spacing: var(--type-caption-track);
+  color: var(--text-secondary);
+  flex: 1 1 100%;
+}
+.panel .list { border: 0; border-radius: 0; }
+
+/* Swipe reveals, held mid-gesture so the treatment can be judged. The reveal
+   sits behind the row; the row has slid past the 40% threshold. */
+.sw { position: relative; height: var(--row-rich); overflow: hidden; border-bottom: 1px solid var(--border-subtle); }
+.sw .behind {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; gap: var(--space-4);
+  padding: 0 var(--space-5);
+  color: var(--text-secondary);
+}
+.sw .behind.lead { justify-content: flex-start; }
+.sw .behind.trail { justify-content: flex-end; }
+.sw .behind.tint { background: var(--accent-subtle); color: var(--accent-text); }
+.sw .behind.grey { background: var(--surface-3); }
+.sw .front {
+  position: absolute; inset: 0;
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex; align-items: center; gap: var(--space-5);
+  padding: 0 var(--space-6);
+}
+.sw .move-lead { transform: translateX(42%); }
+.sw .move-trail { transform: translateX(-42%); }
+.sw .move-up { transform: translateY(-38%); }
+.sw .move-down { transform: translateY(38%); }
+
+/* Detail view metadata */
+.dd { display: grid; grid-template-columns: 96px 1fr; gap: var(--space-3) var(--space-5); }
+.dd dt {
+  font-size: var(--type-subhead-size);
+  font-weight: var(--type-subhead-weight);
+  color: var(--text-secondary);
+}
+.dd dd { margin: 0; font-size: var(--type-body-size); color: var(--text-primary); }
+.subtask { display: flex; align-items: center; gap: var(--space-4); height: var(--row-compact); }
+.action-row {
+  display: flex; align-items: center; gap: var(--space-4);
+  height: var(--row-compact);
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  font-size: var(--type-body-size);
+}
+
 /* ============================== CONTRAST TABLE ========================== */
 .ct { width: 100%; border-collapse: collapse; }
 .ct th, .ct td {
@@ -940,6 +1009,7 @@ body.no-annot .tok { display: none; }
   <nav class="lab-jump">
     <a href="#rows">Rows</a>
     <a href="#taskrow">Task row</a>
+    <a href="#tasksmode">Tasks mode</a>
     <a href="#controls">Controls</a>
     <a href="#chips">Chips</a>
     <a href="#accent">Accent</a>
@@ -1617,6 +1687,397 @@ body.no-annot .tok { display: none; }
       </div>
     </div>
   </div>
+</section>
+
+<!-- ============================== TASKS MODE ============================== -->
+<section id="tasksmode">
+  <div class="sec-head">
+    <h2 class="t-title-1">Tasks mode</h2>
+    <span class="tok">05-modules/tasks.md · four scopes, one list</span>
+  </div>
+  <p class="sec-note">
+    The mode the app is mostly used through. Everything here follows from two
+    documents: the four scopes and the row anatomy are `05-modules/tasks.md`, and
+    the swipe treatments are `03-experience/gesture-vocabulary.md`. The row itself
+    was settled above.
+  </p>
+  <p class="sec-note">
+    What the docs did <em>not</em> carry is empty-state copy for the four scopes,
+    so the strings below are provisional and marked as such. `tasks.md` owns them.
+  </p>
+
+  <div class="panels" style="margin-top: var(--space-8);">
+
+    <div class="panel">
+      <div class="panel-head">
+        <span class="t-title-2">Today</span>
+        <span class="tok">scheduled today, plus defer ≤ today</span>
+        <span class="rule">Deferred-past tasks sort to the top and carry a chip. Everything else keeps due order.</span>
+      </div>
+      <div class="list">
+        <div class="row r-rich">
+          <span class="check"></span>
+          <div class="r-main">
+            <span class="t-body r-title">Book the dentist</span>
+            <span class="r-meta-mono">Health · deferred 2d</span>
+          </div>
+          <span class="chip">deferred 2d</span>
+        </div>
+        <div class="row r-rich">
+          <span class="check"></span>
+          <div class="r-main">
+            <span class="t-body r-title">Draft the Q3 retro</span>
+            <span class="r-meta-mono">Work · due today</span>
+          </div>
+          <span class="pdot"></span>
+        </div>
+        <div class="row r-rich">
+          <span class="check"></span>
+          <div class="r-main">
+            <span class="t-body r-title">Reply to Priya about the offsite</span>
+            <span class="r-meta-mono">Work · due today · @Priya</span>
+          </div>
+          <span class="pdot"></span>
+        </div>
+        <div class="row r-rich">
+          <span class="check"></span>
+          <div class="r-main">
+            <span class="t-body r-title">Call the landlord about the radiator</span>
+            <span class="r-meta-mono">Home · due today</span>
+          </div>
+        </div>
+        <div class="row r-default">
+          <span class="check"></span>
+          <div class="r-main">
+            <span class="t-body r-title">Think about the offsite agenda</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <span class="t-title-2">Next</span>
+        <span class="tok">priority now or next, not scheduled today</span>
+        <span class="rule">Sorted by priority. `now` carries a dot; the absence of one is the signal for everything else.</span>
+      </div>
+      <div class="list">
+        <div class="row r-rich">
+          <span class="check"></span>
+          <div class="r-main">
+            <span class="t-body r-title">Summarise the retro for the team</span>
+            <span class="r-meta-mono">Work · due Fri</span>
+          </div>
+          <span class="pdot"></span>
+        </div>
+        <div class="row r-rich">
+          <span class="check"></span>
+          <div class="r-main">
+            <span class="t-body r-title">Plan next week's meals</span>
+            <span class="r-meta-mono">Home · repeats weekly</span>
+          </div>
+        </div>
+        <div class="row r-rich">
+          <span class="check"></span>
+          <div class="r-main">
+            <span class="t-body r-title">Read the two papers on sleep debt</span>
+            <span class="r-meta-mono">Learning · est 40m</span>
+          </div>
+        </div>
+        <div class="row r-rich">
+          <span class="check"></span>
+          <div class="r-main">
+            <span class="t-body r-title">Order a new keyboard</span>
+            <span class="r-meta-mono">Home</span>
+          </div>
+        </div>
+        <div class="row r-default">
+          <span class="check"></span>
+          <div class="r-main">
+            <span class="t-body r-title">Back up the photo library</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <span class="t-title-2">Someday</span>
+        <span class="tok">flat, no dates, no metadata line</span>
+        <span class="rule">Every row is `row-default`. The metadata line is suppressed here on purpose — this is a parking lot, not a backlog.</span>
+      </div>
+      <div class="list">
+        <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Learn to sail</span></div></div>
+        <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Visit the coast in spring</span></div></div>
+        <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Read Ulysses</span></div></div>
+        <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Rebuild the photos site</span></div></div>
+        <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Take a pottery class</span></div></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <span class="t-title-2">All</span>
+        <span class="tok">everything open, due ascending, then priority</span>
+        <span class="rule">The only scope where the sort key is visible on nearly every row. Tasks with no due date fall to the end.</span>
+      </div>
+      <div class="list">
+        <div class="row r-rich">
+          <span class="check"></span>
+          <div class="r-main">
+            <span class="t-body r-title">Draft the Q3 retro</span>
+            <span class="r-meta-mono">Work · due today</span>
+          </div>
+          <span class="pdot"></span>
+        </div>
+        <div class="row r-rich">
+          <span class="check"></span>
+          <div class="r-main">
+            <span class="t-body r-title">Reply to Priya about the offsite</span>
+            <span class="r-meta-mono">Work · due today · @Priya</span>
+          </div>
+          <span class="pdot"></span>
+        </div>
+        <div class="row r-rich">
+          <span class="check"></span>
+          <div class="r-main">
+            <span class="t-body r-title">Call the landlord about the radiator</span>
+            <span class="r-meta-mono">Home · due today</span>
+          </div>
+        </div>
+        <div class="row r-rich">
+          <span class="check"></span>
+          <div class="r-main">
+            <span class="t-body r-title">Book the dentist</span>
+            <span class="r-meta-mono">Health · due Thu</span>
+          </div>
+        </div>
+        <div class="row r-rich">
+          <span class="check"></span>
+          <div class="r-main">
+            <span class="t-body r-title">Summarise the retro for the team</span>
+            <span class="r-meta-mono">Work · due Fri</span>
+          </div>
+          <span class="pdot"></span>
+        </div>
+        <div class="row r-default">
+          <span class="check"></span>
+          <div class="r-main"><span class="t-body r-title">Back up the photo library</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="variant">
+    <div class="vlabel">
+      <span class="vnum">A</span>
+      <span class="t-title-3">The empty state, twice</span>
+      <span class="tok">states.md · one action, no illustration, never "No results found"</span>
+    </div>
+    <p class="sec-note" style="margin-top: 0;">
+      Two scopes can be empty for completely different reasons, and they should not
+      say the same thing. Today empty means nothing is scheduled — a good day. Someday
+      empty means nothing has been parked — which is fine, and not a prompt to fill it.
+      All copy here is provisional: `tasks.md` does not specify it.
+    </p>
+    <div class="panels">
+      <div class="panel">
+        <div class="panel-head"><span class="t-title-2">Today, empty</span><span class="tok">provisional copy</span></div>
+        <div class="empty">
+          <h3 class="t-display">Nothing for today.</h3>
+          <p class="t-body" style="color: var(--text-secondary); max-width: 30ch;">Anything you capture lands in the inbox, and you can schedule it from there.</p>
+          <button class="btn btn-primary btn-lg">Capture something</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><span class="t-title-2">Someday, empty</span><span class="tok">provisional copy</span></div>
+        <div class="empty">
+          <h3 class="t-display">Nothing parked here.</h3>
+          <p class="t-body" style="color: var(--text-secondary); max-width: 30ch;">Swipe down on a task to move it out of the way without losing it.</p>
+          <button class="btn btn-secondary btn-lg">Capture something</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="variant">
+    <div class="vlabel">
+      <span class="vnum">B</span>
+      <span class="t-title-3">The completed log</span>
+      <span class="tok">reached through the filter, not a scope</span>
+    </div>
+    <p class="sec-note" style="margin-top: 0;">
+      Completion is a filter rather than a fifth scope, so the completed list is the
+      same list with a different relationship to time: it reads downward through the
+      past, and the metadata line carries when rather than when-due.
+    </p>
+    <div class="panel">
+      <div class="panel-head">
+        <span class="t-title-2">Completed</span>
+        <span class="tok">newest first</span>
+        <span class="chip">filter: completed</span>
+      </div>
+      <div class="list">
+        <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Send the invoice</span></div><span class="r-meta-mono">Work · completed yesterday</span></div>
+        <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Water the plants</span></div><span class="r-meta-mono">Home · completed yesterday</span></div>
+        <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Sign the lease</span></div><span class="r-meta-mono">Home · completed 2d ago</span></div>
+        <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Book the design review</span></div><span class="r-meta-mono">Work · completed 4d ago</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="variant">
+    <div class="vlabel">
+      <span class="vnum">C</span>
+      <span class="t-title-3">The filter sheet</span>
+      <span class="tok">sheet · row-compact · four groups</span>
+    </div>
+    <p class="sec-note" style="margin-top: 0;">
+      Four groups, exactly as `tasks.md` lists them: Area, Person, due within N days,
+      and the completed switch that turns the list into the log above. A sheet rather
+      than a popover, because it is a short set of options.
+    </p>
+    <div class="frame f-tablet" style="min-height: 420px; background: var(--bg-sunken); display: grid; place-items: end center;">
+      <div class="sheet" style="width: 100%;">
+        <div class="grabber"></div>
+        <div style="padding: 0 var(--space-6);">
+          <span class="t-title-2">Filter</span>
+        </div>
+        <div style="padding: var(--space-5) var(--space-6) 0;">
+          <span class="t-footnote" style="color: var(--text-muted); letter-spacing: var(--type-caption-track);">AREA</span>
+        </div>
+        <div class="list">
+          <div class="row r-compact"><div class="r-main"><span class="t-body">Work</span></div><span class="chip chip-accent">on</span></div>
+          <div class="row r-compact"><div class="r-main"><span class="t-body">Home</span></div><span class="chip">off</span></div>
+          <div class="row r-compact"><div class="r-main"><span class="t-body">Health</span></div><span class="chip">off</span></div>
+        </div>
+        <div style="padding: var(--space-5) var(--space-6) 0;">
+          <span class="t-footnote" style="color: var(--text-muted); letter-spacing: var(--type-caption-track);">PERSON</span>
+        </div>
+        <div class="list">
+          <div class="row r-compact"><div class="r-main"><span class="t-body">@Priya</span></div><span class="chip">off</span></div>
+          <div class="row r-compact"><div class="r-main"><span class="t-body">@Sam</span></div><span class="chip">off</span></div>
+        </div>
+        <div style="padding: var(--space-5) var(--space-6) 0;">
+          <span class="t-footnote" style="color: var(--text-muted); letter-spacing: var(--type-caption-track);">DUE WITHIN · COMPLETED</span>
+        </div>
+        <div class="list">
+          <div class="row r-compact"><div class="r-main"><span class="t-body">Due within 7 days</span></div><span class="chip chip-accent">on</span></div>
+          <div class="row r-compact"><div class="r-main"><span class="t-body">Show completed instead</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="variant">
+    <div class="vlabel">
+      <span class="vnum">D</span>
+      <span class="t-title-3">The detail view</span>
+      <span class="tok">the fullest surface in the mode</span>
+    </div>
+    <p class="sec-note" style="margin-top: 0;">
+      `tasks.md` fixes the contents — title, notes, subtasks, people, due, defer,
+      priority, area — and the actions. The layout decision is the metadata block:
+      a definition list rather than chips, because these are facts about the task
+      and not state belonging to it.
+    </p>
+    <div class="frame f-tablet">
+      <div class="header">
+        <button class="icon-btn" style="width: var(--control-sm);">‹</button>
+        <span class="t-title-2">Draft the Q3 retro</span>
+        <div class="slot-trail">
+          <button class="icon-btn" title="More">⋯</button>
+        </div>
+      </div>
+      <div class="content">
+        <dl class="dd">
+          <dt>Area</dt><dd>Work</dd>
+          <dt>Due</dt><dd>Tue 22 Sep</dd>
+          <dt>Defer</dt><dd>—</dd>
+          <dt>Priority</dt><dd>now</dd>
+          <dt>People</dt><dd>@Sarah · @Priya</dd>
+        </dl>
+
+        <div style="margin-top: var(--space-7);">
+          <span class="t-subhead" style="color: var(--text-secondary);">Notes</span>
+          <p class="t-body" style="margin-top: var(--space-3); max-width: var(--measure);">
+            Cover handoffs, and the two things we shipped late. Ask Sarah for the
+            numbers before writing anything.
+          </p>
+        </div>
+
+        <div style="margin-top: var(--space-7);">
+          <span class="t-subhead" style="color: var(--text-secondary);">Subtasks</span>
+          <div style="margin-top: var(--space-3);">
+            <div class="subtask"><span class="check done"></span><span class="t-body" style="color: var(--text-secondary);">Ask Sarah for the numbers</span></div>
+            <div class="subtask"><span class="check"></span><span class="t-body">Write the handoff section</span></div>
+            <div class="subtask"><span class="check"></span><span class="t-body">Pick the two late items</span></div>
+          </div>
+          <span class="tok">children render as the same checkbox, one row down</span>
+        </div>
+
+        <div style="margin-top: var(--space-8);">
+          <span class="t-subhead" style="color: var(--text-secondary);">Actions</span>
+          <div style="margin-top: var(--space-3);">
+            <div class="action-row">Reschedule</div>
+            <div class="action-row">Link person</div>
+            <div class="action-row">Link note</div>
+            <div class="action-row">Break this down <span class="chip chip-accent" style="margin-left: auto;">Tier 2</span></div>
+            <div class="action-row">Research this <span class="chip chip-accent" style="margin-left: auto;">Tier 2</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="variant">
+    <div class="vlabel">
+      <span class="vnum">E</span>
+      <span class="t-title-3">The four swipe reveals</span>
+      <span class="tok">gesture-vocabulary.md · held mid-gesture</span>
+    </div>
+    <p class="sec-note" style="margin-top: 0;">
+      Held past the 40% threshold, so the reveal is legible. Complete is the only
+      tinted one, because it is the only one that is the accent's job; defer, remove,
+      and attach share `surface-3`. No swipe uses a danger colour, because no swipe is
+      destructive (ADR 0011) — the only irreversible-feeling action in the mode is
+      flagged in words, not in red.
+    </p>
+    <div class="panel">
+      <div class="list">
+        <div class="sw">
+          <div class="behind lead tint"><span style="font-size: var(--icon-md);">✓</span><span class="t-subhead">Complete</span></div>
+          <div class="front move-lead">
+            <span class="check"></span>
+            <div class="r-main"><span class="t-body r-title">Swipe right</span><span class="r-meta-mono">accent-subtle · the row holds 200ms, then leaves</span></div>
+          </div>
+        </div>
+        <div class="sw">
+          <div class="behind trail grey"><span class="t-subhead">Defer</span></div>
+          <div class="front move-trail">
+            <span class="check"></span>
+            <div class="r-main"><span class="t-body r-title">Swipe left</span><span class="r-meta-mono">surface-3 · opens the defer sheet, changes nothing yet</span></div>
+          </div>
+        </div>
+        <div class="sw">
+          <div class="behind lead grey"><span class="t-subhead">Attach</span></div>
+          <div class="front move-down">
+            <span class="check"></span>
+            <div class="r-main"><span class="t-body r-title">Swipe up</span><span class="r-meta-mono">surface-3 · opens the attachment picker</span></div>
+          </div>
+        </div>
+        <div class="sw">
+          <div class="behind trail grey"><span class="t-subhead">Someday</span></div>
+          <div class="front move-down">
+            <span class="check"></span>
+            <div class="r-main"><span class="t-body r-title">Swipe down</span><span class="r-meta-mono">surface-3 · moves it out of the list, reversibly</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </section>
 
 <!-- ============================== SCREEN · DAY ============================== -->
