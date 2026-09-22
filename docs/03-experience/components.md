@@ -187,21 +187,26 @@ protocol" — one chip naming four different destinations. No single glyph
 can mark four things, so that chip says where the note lives in words. A
 glyph is only unambiguous while it has exactly one meaning.
 
-**Control affordances are named, not enumerated by shape.** The buttons that
-open search, add, filter, settings, and the microphone, the header's back and
-forward arrows, and the overflow menu each use **Lucide's standard glyph for
-what the control does** — `search`, `plus`, `filter`, `settings`, `mic`,
-`chevron-left`, `chevron-right`, `ellipsis`. They carry no design decision of
-their own: one glyph, one control name, `currentColor`, at the size the
-control's height token already implies. They are listed by name because a
-name is all an implementation needs; the thirteen above are listed by
-*meaning* because the meaning is the decision.
+**Control affordances are named, not enumerated by shape.** Search, add,
+settings, the microphone and the attachment clip, the header's back arrow, and
+the overflow menu each use **Lucide's standard glyph for what the control
+does** — `search`, `plus`, `settings`, `mic`, `paperclip`, `chevron-left`,
+`chevron-right`, `ellipsis`. They carry no design decision of their own: one
+glyph, one control name, `currentColor`, at the size the control's height token
+already implies. They are listed by name because a name is all an
+implementation needs; the thirteen above are listed by *meaning* because the
+meaning is the decision. The filter control is a text button and carries no
+glyph at all.
 
-**The rail and dock need four mode glyphs and two are undecided.**
-`03-experience/app-shell.md` leaves the rail's items unlabelled and relies on
-a tooltip, so each mode needs a glyph. Calendar reuses `calendar` and Habits
-reuses `repeat` from the table above; Tasks and Notes need two that have not
-been chosen. This is the only open item in this section.
+**The rail and dock reuse the set rather than starting a second one.**
+`03-experience/app-shell.md` leaves the rail's items unlabelled and relies on a
+tooltip, so each mode needs a glyph: Calendar takes `calendar` and Habits takes
+`repeat` from the table above, Tasks takes `square-check`, and Notes takes
+`notebook`. The two new ones were chosen by looking at the alternatives at
+24px, not by assertion — `list-checks` is legible but carries five strokes
+where `square-check` carries two, and `file-text` reads as a document where a
+note is something attached to another thing. Both rejected glyphs are drawn in
+`design/palette-lab.html`.
 
 The time glyphs split four ways — a date, a moment, a span, a recurrence —
 and the chip's word says which fact it is. The glyph's job is scannability,
