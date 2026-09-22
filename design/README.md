@@ -1,17 +1,51 @@
 # Design lab
 
-A throwaway evaluation artifact. **Not the app, not the implementation
-pattern, not the component library.** Delete the folder when the palette
-call is made.
+Throwaway evaluation artifacts. **Not the app, not the implementation pattern,
+not the component library.** Delete the folder when the design work stops being
+the bottleneck.
 
-## What this is
+## The four files
 
 - `tokens.css` — the design tokens from `docs/03-experience/design-tokens.md`,
   name for name, as CSS custom properties. The doc says tokens are "defined
   once and consumed everywhere", and that the source of truth will be
   `src/ui/tokens.ts` + `tailwind.config.ts`. Neither exists yet, so this is the
   single definition until it does. **The doc wins any disagreement.**
-- `palette-lab.html` — the lab. Every primitive at real size, three real
+- `lab.css` — the chrome the labs share: the row table, the phone frame, buttons,
+  rows, chips, icons, the keyboard, the toast. Extracted when a third lab was
+  about to copy it, and the trigger was concrete rather than theoretical: a
+  spacing bug in the row table had to be fixed once, and with three copies it
+  would have had to be fixed three times.
+- `palette-lab.html` — the palette and primitives lab. **Self-contained:** it
+  carries its own copy of the chrome and does not link `lab.css`.
+- `onboarding-lab.html` — the seven first-run screens, four ways each.
+  **Self-contained**, same reason.
+- `calendar-lab.html` — the Calendar's views, one at a time. Links `lab.css`.
+
+`palette-lab.html` and `onboarding-lab.html` work and were not rewritten to
+prove a point — churning a working artifact is the kind of change this repo's
+own rules reject. If either is touched again it should link `lab.css` and delete
+its block, so the harness ends up in one place.
+
+## How to read a lab
+
+Each screen is a **table of rows**: one per variation, markup on the left,
+everything that explains it on the right. Every row carries the same three
+lines — what it **changed**, what it **cost**, and which of the app's own
+**rules it breaks**. "None" is a finding too, so no row leaves that cell empty.
+
+The last row is the **recommended** one. It is not another option: it takes what
+the others agreed on, keeps the moves that survived their costs, and states what
+it still needs before it can ship.
+
+Because the token set is closed, no lens can move type or colour. That is not a
+limitation of the exercise — it is the token set working as intended, and it is
+why every difference worth arguing about in these labs is composition rather
+than style.
+
+## What this first was
+
+- `palette-lab.html` — every primitive at real size, three real
   screens at real row heights, and a contrast table computed from the live
   values. Open it directly in a browser; there is no build step and no network.
 

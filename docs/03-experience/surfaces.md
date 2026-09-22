@@ -52,9 +52,11 @@ of these, or floats over them.
 | Time machine | Screen (read-only) | Tap a date → "As of" |
 | Freshness annotation | Ambient | Any mirrored event |
 
-The Day view is a fixed vertical composition of eight parts, specified as
-a numbered list in the module doc: day header, now line, timeline, habits
-due, metric log row, day-note preview cards, top three, completed.
+The Day view is a fixed vertical **order** of eight parts, specified as a
+numbered list in the module doc: day header, now line, timeline, habits
+due, metric log row, day-note preview cards, top three, completed. The order
+is fixed and the height is not — the view scrolls, with the header and the now
+line held in place (`05-modules/calendar.md`, "The fold").
 
 ### Tasks — `05-modules/tasks.md`
 

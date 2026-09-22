@@ -58,6 +58,11 @@ event detail, or task detail.
 The now line is not a nudge. It does not consume attention budget.
 It is a persistent instrument.
 
+**It does not scroll.** The Day view scrolls under it
+(`05-modules/calendar.md`, "The fold"), because an instrument that leaves the
+screen when you read is not always present. In every other mode the now line is
+in a header that does not scroll either.
+
 ### Focus mode
 
 Started from a task detail ("Start focus") or from the now line.

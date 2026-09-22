@@ -42,7 +42,8 @@ Pinch zooms between views (`03-experience/gesture-vocabulary.md`).
 
 ### The Day view layout
 
-Top to bottom:
+Top to bottom. This is a fixed **order**, not a fixed height — see "The
+fold" below, which is the measurement that settled it:
 
 1. **Day header.** Date, day of week, week number. Previous/next
    day arrows. Tap the date to open the date picker.
@@ -86,6 +87,33 @@ entry, not a toggle here.
 The layout uses tokens from `03-experience/design-tokens.md`:
 `space-5` horizontal inset, `space-7` between sections, `row-default`
 (56px) for timeline items, `type-title-1` for the header.
+
+### The fold
+
+The eight parts do not fit a phone. Measured at 390 × 844 with nothing
+bending, they need **856px** of a **728px** frame — 128px below the fold, with
+only six of the seven scrolling parts fully visible. The section added most
+recently is what tipped it: **Completed costs 138px on its own, more than the
+entire overflow.**
+
+Three rules follow, and they are what make the composition work:
+
+1. **The order is fixed; the height is not.** The view scrolls. The Day view is
+the one screen in the app that is a document rather than a page — you read down
+it — and `03-experience/app-shell.md`'s container rules do not apply to it.
+2. **The day header and the now line do not scroll.** They are chrome and an
+instrument respectively, and the now line is specified as always present
+(`06-flows/doing-the-day.md`), which a scrolling view cannot honour otherwise.
+   Everything below them scrolls.
+3. **A section with nothing to show does not render.** An empty timeline draws
+   its one line (below); every other section collapses, taking its heading and
+   its gap with it. A day with no active protocol has no metric row, and a day
+   with nothing finished has no Completed section.
+
+With those rules the fold falls inside the **Completed** list: timeline, due
+row, metric, Daily Note and top three are all above it. That is the right part
+to lose. Completed is a record — read at the end of the day, not scanned during
+it — which is also why it is the last section rather than the first.
 
 ### Surfaces
 
