@@ -11,7 +11,9 @@ that list, a design decision made in a design tool has to be either
 honoured in code or fought there.
 
 **This doc names components and their sizes. It does not style them.**
-Visual language lives in `03-experience/design-tokens.md`.
+Visual language lives in `03-experience/design-tokens.md`. Icons are the one
+thing that doc explicitly leaves out — they are **assets**, not tokens — so
+their inventory and their usage rules live here.
 
 ## Invariants
 
@@ -122,6 +124,89 @@ meaning, so neither has to be learned alone.
 | Compliance chart | `05-modules/habits.md` | 28-day strip: full, minimum, skip, missed, repair |
 | Protocol report body | `04-ai/research-and-protocols.md` | Tables with evidence labels |
 | Usage and quota rows | `05-modules/settings.md` | Informational, not actions |
+
+### Icons
+
+Icons are **assets**, not components and not tokens
+(`03-experience/design-tokens.md`). The set is **Lucide**
+(`lucide-react`, recorded in `07-infrastructure/stack.md`), and this section
+is the inventory: which glyphs the app draws, and where a glyph is allowed
+at all.
+
+**A glyph never introduces a colour.** Lucide draws with `currentColor`, so
+an icon inherits the colour of the text it sits in and cannot be the reason
+a surface gains a hue. That is what allows an icon to be added without a
+colour decision, and it is why there is no per-Area category colour system:
+four category hues would collide with the accent and the three semantics on
+first contact (the evidence is in `design/README.md`, panels C and the
+accent sweep).
+
+**Where a glyph is allowed.**
+
+| Placement | Allowed | Why |
+|---|---|---|
+| Inline in a row's metadata line, beside the word it belongs to | Yes, `icon-xs`, `text-muted` | The checkbox column stays aligned, and the glyph sits with the word it describes |
+| Leading a list row | **No** | It pushes the checkbox inward and breaks that column's alignment down the list — the one thing a list relies on for scanning — and a neutral glyph beside a word that already reads "Work" is the same information twice |
+| Inside a chip | Yes, `icon-xs` | Glyph and word each carry the meaning, so neither has to be learned alone |
+| On a labelled slot in a protocol card (Goal, Metric) | Yes, `icon-sm`, `text-muted` | The label is a fixed word repeating on every card of its kind, so the glyph marks a *slot* rather than duplicating a value |
+| Rail and dock items, icon-only buttons | Yes, `icon-md` | There is no word to sit beside — the glyph is the label, and the rail carries a tooltip (only the unlabelled mode icons qualify) |
+| Above an empty state's headline | **No** | The headline already orients, so a neutral glyph is decoration and a meaningful one duplicates the action below it (`03-experience/states.md`) |
+| As ornament on a card, banner, or screen | **No** | A glyph that marks nothing would be the only ornament in the app |
+
+**Two rules.** An icon belongs where a **word** belongs, not where the
+**row** begins. And a glyph either **replaces** a word or **marks a slot** —
+it never repeats a word already on the line.
+
+**The inventory.** Thirteen glyphs. Nothing outside this table is drawn,
+and no surface adds one locally.
+
+| Glyph | Size | Marks |
+|---|---|---|
+| `briefcase` | `icon-xs` | The Work area |
+| `house` | `icon-xs` | The Home area |
+| `heart-pulse` | `icon-xs` | The Health area |
+| `book-open` | `icon-xs` | The Learning area |
+| `calendar` | `icon-xs` | A date you owe something by: due, overdue, a scheduled day |
+| `clock` | `icon-xs` | A moment: when something was deferred to, when it was completed |
+| `timer` | `icon-xs` | A span: an estimated or logged duration |
+| `repeat` | `icon-xs` | A recurrence: a cadence |
+| `user` | `icon-xs` | A linked person |
+| `paperclip` | `icon-xs` | The note count in a task row's metadata line |
+| `check` | `icon-xs` | Completion — the tick inside a checked checkbox, drawn in `on-fill` on the accent |
+| `target` | `icon-sm` | The Goal slot in a protocol card |
+| `activity` | `icon-sm` | The Metric slot in a protocol card |
+
+**Areas beyond the four seeded defaults have no glyph.** The set does not
+scale to user-created categories — four hues already collide, and a fifth
+through the tenth would not — so an Area without a glyph shows its name only.
+`05-modules/areas-and-goals.md` seeds Health, Work, Home, and Learning.
+
+**The attachment chip carries an arrow, not a glyph.** `05-modules/notes.md`
+writes it as "→ Buy standing desk", "→ Sarah", "→ Today", "→ Sleep
+protocol" — one chip naming four different destinations. No single glyph
+can mark four things, so that chip says where the note lives in words. A
+glyph is only unambiguous while it has exactly one meaning.
+
+**Control affordances are named, not enumerated by shape.** The buttons that
+open search, add, filter, settings, and the microphone, the header's back and
+forward arrows, and the overflow menu each use **Lucide's standard glyph for
+what the control does** — `search`, `plus`, `filter`, `settings`, `mic`,
+`chevron-left`, `chevron-right`, `ellipsis`. They carry no design decision of
+their own: one glyph, one control name, `currentColor`, at the size the
+control's height token already implies. They are listed by name because a
+name is all an implementation needs; the thirteen above are listed by
+*meaning* because the meaning is the decision.
+
+**The rail and dock need four mode glyphs and two are undecided.**
+`03-experience/app-shell.md` leaves the rail's items unlabelled and relies on
+a tooltip, so each mode needs a glyph. Calendar reuses `calendar` and Habits
+reuses `repeat` from the table above; Tasks and Notes need two that have not
+been chosen. This is the only open item in this section.
+
+The time glyphs split four ways — a date, a moment, a span, a recurrence —
+and the chip's word says which fact it is. The glyph's job is scannability,
+not identification, which is why two facts that are both "a moment" share
+`clock`.
 
 ### Containers
 
@@ -237,6 +322,8 @@ or to this doc — never a local exception.
 - This doc does not define visual style, colour, type, spacing values, or
   motion. Those are `03-experience/design-tokens.md` and the three
   vocabularies.
+- This doc does not define icon sizes. It records which glyph marks which
+  slot; a size is a token and belongs to `03-experience/design-tokens.md`.
 - This doc does not define behavior or copy. Each component names the doc
   that does.
 - This doc does not add a token. If a component needs a size that does

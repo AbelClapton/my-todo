@@ -63,6 +63,7 @@ complete and nobody re-opens one by accident.
 | `01-foundation/principles.md` (Invariant 2) | **Silence is not consent.** Tier 1's unanswered confirmation does not apply itself; the raw capture is kept and the parse stays on offer in the inbox. |
 | ADR 0011 + ADR 0016, host docs | **People list:** archive is swipe down, swipe left disabled there, ratified 2026-09-22 with the muscle-memory break accepted. A person "not now" state is the way to give swipe left a job there, but it introduces a state People do not have and needs its own ADR. |
 | `09-roadmap/build-order.md` | **Three roadmap calls:** voice capture stays in Phase 8 (native-only, one implementation, no throwaway browser-STT path); the attention budget stays in Phase 1 with the "modules before flows" exception written into the invariant; "test one variable" moves to Phase 5 with the protocol report that carries it. |
+| `03-experience/components.md` (Icons) + `07-infrastructure/stack.md` | **Lucide is the icon set, and a glyph never introduces a colour.** The dependency is recorded in stack.md; the rule that an icon is always `currentColor` is what lets one be added without a colour decision. Rejected alongside it, on evidence in `design/README.md`: a leading row icon (breaks the checkbox column), a per-Area category colour system (four hues collide with the accent and the three semantics), a glyph above an empty state's headline (repeats the headline or the action), and an `icon-xl` empty-state glyph the token table had already promised. |
 
 ## The one open decision
 

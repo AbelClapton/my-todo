@@ -34,6 +34,7 @@ If the architecture changes, this doc changes via an ADR.
 | Client DB | SQLite (WASM) via Drizzle ORM | Event sourcing needs a real queryable store. Drizzle gives type-safe schemas that run in the browser via WASM. Same schema on client and server. |
 | Server DB | SQLite → Turso (libSQL) | Start with SQLite. The event sourcing pattern is unchanged when migrating to Turso for multi-device sync. Only the outbound adapter changes. |
 | UI | React + Tailwind + shadcn/ui | shadcn/ui is the component baseline (`03-experience/design-tokens.md`). Tailwind enforces tokens. |
+| Icons | Lucide (`lucide-react`) | Drawn on a 24px grid with a 2px stroke and `currentColor`, so a glyph inherits its colour and can never introduce one. The inventory and the usage rules are `03-experience/components.md`. |
 | State | TanStack Query + TanStack DB | Query handles server-state cache (calendar mirror, auth, integration responses). DB handles reactive local queries over the event log — every projection is read through DB and re-renders on new log entries. They are used for different concerns and do not overlap. |
 | Shell apps | Capacitor | Wraps existing web code in a native WebView. Reuses ~95% of the codebase. |
 | On-device AI | WebGPU + small model (Tier 1, embeddings) | Tier 1 parsing and semantic search run locally (`04-ai/retrieval-layer.md`). |

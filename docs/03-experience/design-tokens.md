@@ -292,7 +292,7 @@ only to signal layering, not decoration.
 
 | Token | px | Used for |
 |---|---|---|
-| `icon-xs` | 12 | Inline with caption text, and inline in a task row's metadata line |
+| `icon-xs` | 12 | Inline with caption and footnote text — including a task row's metadata line |
 | `icon-sm` | 16 | Inline with body text, chips |
 | `icon-md` | 20 | Rail and dock items, icon-only buttons |
 | `icon-lg` | 24 | Mode switcher, prominent actions |
@@ -302,6 +302,15 @@ A task row carries no leading icon. Where a glyph appears in a row it is
 inline in the metadata line, at `icon-xs`, beside the word it describes
 (`05-modules/tasks.md`). In a button, `icon-sm` (16px) for text buttons and
 `icon-md` (20px) for icon-only buttons.
+
+The icon scale has five steps and the type scale has eleven, and the
+mismatch is deliberate. A glyph is sized by **optical fit against the line
+it sits in**, not by matching that line's font-size, so one icon size covers
+a range of adjacent type roles: `icon-xs` (12) serves `type-caption` (12)
+and `type-footnote` (13), and `icon-sm` (16) serves `type-subhead` (14) and
+`type-body` (16). Reading the two scales as a 1:1 pairing would demand an
+icon size per type role — nine more tokens whose renders nobody could tell
+apart.
 
 ### Touch targets
 
