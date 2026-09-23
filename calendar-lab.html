@@ -3489,30 +3489,10 @@
   // EVENT DETAIL
   // ==========================================================================
 
-  // Colour helpers, for the one thing here that is not geometry: what the scrim
-  // does to the event behind it. The palette lab computes contrast from live token
-  // values; this is the same arithmetic, on two colours rather than a table.
-  function toRgb(css) {
-    css = (css || '').trim();
-    if (css[0] === '#') {
-      const h = css.slice(1);
-      const f = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
-      return [parseInt(f.slice(0, 2), 16), parseInt(f.slice(2, 4), 16), parseInt(f.slice(4, 6), 16)];
-    }
-    const n = (css.match(/[\d.]+/g) || [0, 0, 0]).map(Number);
-    return [n[0] || 0, n[1] || 0, n[2] || 0];
-  }
-  const lin = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
-  const lum = c => 0.2126 * lin(c[0]) + 0.7152 * lin(c[1]) + 0.0722 * lin(c[2]);
-  function contrast(a, b) {
-    const x = lum(a), y = lum(b);
-    return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
-  }
-  // The scrim is painted OVER the content, so the text and its ground are both
-  // dimmed by the same fraction. Comparing the two dimmed colours is the honest
-  // question: can the event still be read through the sheet that covers it?
-  const dim = (c, ov, a) => c.map((v, i) => ov[i] * a + v * (1 - a));
-  const d1 = n => n.toFixed(1);
+  // toRgb / lum / contrast / dim / d1 now live in the shared `lab.js` — three labs
+  // had independent copies of the same arithmetic. `dim` is what matters here: the
+  // scrim is painted OVER the content, so the text and its ground are both dimmed by
+  // the same fraction, and comparing the two dimmed colours is the honest question.
 
   function measureEvent() {
     const host = document.getElementById('measure-event');
@@ -3884,6 +3864,7 @@
       'current, rather than in a banner plus a commit button</span></div>';
   }
 </script>
+<script src="lab.js"></script>
 <script src="nav.js"></script>
 </body>
 </html>
