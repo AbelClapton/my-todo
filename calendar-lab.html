@@ -356,6 +356,33 @@
   }
   .ev-chain span.on { background: var(--accent-subtle); color: var(--accent-text); }
 
+  /* ---- new event -------
+     A four-field form whose attendees and time fields each open another overlay.
+     `surfaces.md` lists the person picker and the date picker as Overlays, and
+     `app-shell.md` allows at most one sheet — so each field REPLACES the form
+     rather than covering it. */
+  .nv-body {
+    flex: 1; min-height: 0; display: flex; flex-direction: column;
+    gap: var(--space-5); padding: var(--space-5) var(--space-7);
+  }
+  .nv-body > * { flex: none; }
+  .nv-f { display: flex; flex-direction: column; gap: var(--space-2); }
+  .nv-f .lab {
+    font-size: var(--type-caption-size); letter-spacing: var(--type-caption-track);
+    text-transform: uppercase; color: var(--text-muted);
+  }
+  /* A field that opens an overlay, marked as such: it is the thing that takes the
+     form's place rather than sitting over it. */
+  .nv-door { margin-left: auto; font-size: var(--type-caption-size); color: var(--accent-text); }
+  .nv-times { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+  /* The form drawn where the event will be, instead of over the list. */
+  .nv-ghost {
+    display: flex; flex-direction: column; gap: var(--space-2);
+    padding: var(--space-3) var(--space-4); margin: 0 0 var(--space-3) var(--space-6);
+    border: 1px dashed var(--accent-default); border-radius: var(--radius-md);
+    background: var(--accent-subtle);
+  }
+
   /* The fit overlay: what a clipped phone is hiding, stated rather than implied.
      A screen that overflows silently is the defect these labs exist to catch, so
      the mock draws the boundary. */
@@ -407,7 +434,7 @@
       <button class="tab" data-go="month"><span class="n">3</span> Month</button>
       <button class="tab" data-go="year"><span class="n">4</span> Year</button>
       <button class="tab" data-go="event"><span class="n">5</span> Event detail</button>
-      <button class="tab" data-go="new" disabled><span class="n">6</span> New event</button>
+      <button class="tab" data-go="new"><span class="n">6</span> New event</button>
       <button class="tab" data-go="picker" disabled><span class="n">7</span> Date picker</button>
       <button class="tab" data-go="machine" disabled><span class="n">8</span> Time machine</button>
     </div>
@@ -1961,6 +1988,270 @@
     </section>
   </section>
 
+  <!-- ==================== NEW EVENT ==================== -->
+  <section class="screen" id="new" hidden>
+    <section class="lede">
+      <h2 class="t-title-2">New event — the same rule, applied to a form</h2>
+      <p>
+        Event detail turned on a container question. New event turns on the <b>same</b> question,
+        and the answer it already has is the one that breaks it. `calendar.md`:
+      </p>
+      <blockquote class="t-callout" style="margin: 0 0 var(--space-5); padding-left: var(--space-5); border-left: 2px solid var(--accent-default); color: var(--text-secondary);">
+        “<b>New event.</b> Created via capture (`pull down`) or the `+` button in the header.
+        Opens a form with title, time, attendees, and notes.”
+      </blockquote>
+      <p>
+        It is a <b>sheet</b> — `surfaces.md` lists “New event sheet | <b>Overlay</b>”, the same
+        table that lists the Event detail as a Screen. And two of its four fields open overlays
+        of their own: the time field opens the <b>date picker</b> and the attendees field opens
+        the <b>person picker</b>, both of which that same table calls Overlays.
+      </p>
+      <p>
+        With `app-shell.md`'s <b>at most one sheet at a time</b>, opening either one <i>replaces</i>
+        the form rather than covering it. You fill in a form you cannot see — and unlike the Event
+        detail, where the same rule forced the container away from a sheet, here the sheet is what
+        the spec already chose.
+      </p>
+      <p>
+        A second thing the sentence leaves open: `motion-vocabulary.md` says that when capture
+        becomes a scheduled item, the capture field <b>morphs into the item's detail view</b> —
+        which is a different destination from the form `surfaces.md` gives capture as an entry to.
+      </p>
+    </section>
+
+    <div class="grid">
+
+      <!-- ================= V1 · baseline ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Baseline</span>
+          <p class="vc-stance">The sentence, literally: a sheet with four fields, keyboard up, because the title field is the one you type in.</p>
+          <span class="vc-read">no lens · the control arm</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day" style="position: relative;">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Tue 22 Sep</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 39</span>
+              </div>
+              <div class="tl" style="flex: 1; min-height: 0; padding: var(--space-5) var(--space-7);">
+                <div class="slot"><span class="at">09:00</span><span class="ev"><span class="t-body">Standup</span></span></div>
+                <div class="slot"><span class="at">11:42</span><span class="ev acc"><span class="t-body">Design review</span></span></div>
+              </div>
+              <div class="ev-scrim"></div>
+              <div class="ev-sheet" id="nv-sheet">
+                <span class="ev-grab"></span>
+                <div class="nv-body" id="nv-body-1">
+                  <div class="nv-f"><span class="lab">Title</span><span class="field">Design review<span class="caret"></span></span></div>
+                  <div class="nv-f"><span class="lab">Time</span><span class="field">Tue 22 Sep · 11:42 – 12:12<span class="nv-door">picker</span></span></div>
+                  <div class="nv-f"><span class="lab">Attendees</span><span class="field">Sarah Chen, Mark Reid<span class="nv-door">picker</span></span></div>
+                  <div class="nv-f"><span class="lab">Notes</span><span class="field" style="color: var(--text-muted);">Add a note</span></div>
+                  <div class="btn btn-primary btn-block">Add event</div>
+                </div>
+              </div>
+              <div class="keys" style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;" id="nv-keys">
+                <div class="krow"><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span></div>
+                <div class="krow"><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span></div>
+                <div class="krow"><span class="k go">add</span><span class="k"></span><span class="k"></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>Nothing. Four fields and a commit button in an overlay, with the two overlay-opening fields marked, and the keyboard where a typed title puts it.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd id="nv-cost">…</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>Two, and both are the sentence's own doing. <b>One:</b> the time and attendees fields open the date picker and the person picker, which `surfaces.md` calls Overlays, and `app-shell.md` allows one sheet at a time — so each field replaces the form it belongs to. <b>Two:</b> the notes field has no defined behaviour at creation, because `05-modules/notes.md` attaches notes from a detail and there is no detail yet.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= V2 · impeccable ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Impeccable</span>
+          <p class="vc-stance">Make it a screen, and make the common answer a tap instead of a picker.</p>
+          <span class="vc-read">impeccable · operate<br>the frequent case must not open a modal</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">New event</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--accent-text);">Add</span>
+              </div>
+              <div class="nv-body">
+                <div class="nv-f"><span class="lab">Title</span><span class="field">Design review<span class="caret"></span></span></div>
+                <div class="nv-f">
+                  <span class="lab">Time</span>
+                  <span class="nv-times">
+                    <span class="chip chip-on">Today 17:00</span>
+                    <span class="chip">Tomorrow 09:00</span>
+                    <span class="chip">Tomorrow 14:00</span>
+                    <span class="chip">Pick a time…</span>
+                  </span>
+                </div>
+                <div class="nv-f"><span class="lab">Attendees</span><span class="field">Sarah Chen, Mark Reid<span class="nv-door">picker</span></span></div>
+                <div class="nv-f"><span class="lab">Notes</span><span class="field" style="color: var(--text-muted);">Add a note</span></div>
+              </div>
+              <div class="keys" id="nv-keys-2">
+                <div class="krow"><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span></div>
+                <div class="krow"><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span></div>
+                <div class="krow"><span class="k go">add</span><span class="k"></span><span class="k"></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>A <b>screen</b>, so an overlay opened from a field covers the form instead of replacing it. And <b>time becomes a choice</b>: three canned answers cover the case people actually have, and only the fourth — an exact time — opens the picker. The frequent path touches no modal at all.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>Canned times are a guess about when people schedule, and when the guess is wrong the picker is a tap further away than it was. A full screen for four fields is also heavy: the form now takes a push and a pop to enter and leave, where a sheet took a swipe.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>One, and it is soft: `calendar.md` describes a form with a <b>time</b> field, and three of these four are not a field but a chip. The value is still set; the control is not the one the sentence implies.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= V3 · frontend design ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Frontend design</span>
+          <p class="vc-stance">Stop hiding the form. The event has a place, so put the form in it.</p>
+          <span class="vc-read">frontend-design<br>the object is its position</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Tue 22 Sep</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 39</span>
+              </div>
+              <div class="tl" style="flex: 1; min-height: 0; padding: var(--space-5) var(--space-7);">
+                <div class="slot"><span class="at">09:00</span><span class="ev"><span class="t-body">Standup</span></span></div>
+                <div class="nv-ghost">
+                  <span class="t-caption" style="color: var(--accent-text);">NEW · 11:42 – 12:12</span>
+                  <span class="t-body">Design review<span class="caret" style="display: inline-block; width: 1.5px; height: 16px; background: var(--accent-default); vertical-align: -2px; margin-left: 2px;"></span></span>
+                  <span class="nv-times">
+                    <span class="chip chip-on">30 min</span>
+                    <span class="chip">1 hr</span>
+                    <span class="chip">+ Sarah</span>
+                  </span>
+                </div>
+                <div class="slot"><span class="at">13:00</span><span class="ev"><span class="t-body">Lunch with Sarah</span></span></div>
+              </div>
+              <div class="keys" id="nv-keys-3">
+                <div class="krow"><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span></div>
+                <div class="krow"><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span></div>
+                <div class="krow"><span class="k go">add</span><span class="k"></span><span class="k"></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>There is <b>no form</b>. The `+` opens a draft <b>in the timeline, in the afternoon slot it would land in</b>, and you fill it there: the keyboard is up, the day is around it, and nothing has a container to lose. Time is adjusted by dragging the draft's own edges rather than by opening a picker.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>The draft has to commit to a position before it exists, and <b>the keyboard covers the very part of the list you are working in</b> — the timeline scrolls under it, so the context this row exists to preserve is partly hidden anyway. An event that needs no time, or an unusual one, has no natural place to start.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>Two. `surfaces.md` lists a New event <b>sheet</b>, and this draws none; and `calendar.md`'s Day layout fixes the timeline as events and scheduled tasks positioned by time — a draft that is neither now has a slot in it.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= V4 · design taste ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Design taste</span>
+          <p class="vc-stance">Delete the form. Capture already creates events; a second path is the duplication.</p>
+          <span class="vc-read">design-taste-frontend<br>remove the accessory the others defend</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Tue 22 Sep</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 39</span>
+              </div>
+              <div class="nv-body" style="gap: var(--space-4);">
+                <div class="field lg" style="border-color: var(--accent-default);">
+                  <span style="flex: 1;">design review with sarah tomorrow at 11<u>4</u>2<span class="caret"></span></span>
+                </div>
+                <div class="nv-times">
+                  <span class="chip chip-accent">Event · tomorrow 11:42</span>
+                  <span class="chip">Sarah Chen</span>
+                </div>
+                <span class="t-footnote" style="color: var(--text-muted);">One field. It reads the time, the person and the title, and the chips are what it found — tap one to correct it.</span>
+              </div>
+              <div class="list" style="margin: 0 var(--space-5) var(--space-3);">
+                <div class="row r-default"><span class="at" style="width: 44px; color: var(--text-muted);">09:00</span><div class="r-main"><span class="t-body r-title">Standup</span></div></div>
+                <div class="row r-default"><span class="at" style="width: 44px; color: var(--accent-text);">11:42</span><div class="r-main"><span class="t-body r-title">Design review with Sarah</span></div></div>
+              </div>
+              <div class="keys" id="nv-keys-4">
+                <div class="krow"><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span></div>
+                <div class="krow"><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span></div>
+                <div class="krow"><span class="k go">add</span><span class="k"></span><span class="k"></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>The form, its four fields, its commit button and its two nested overlays all go. Capture already creates events — `06-flows/capture.md` has an Event outcome — so `+` opens <b>the capture field it already has</b>, armed for an event, with Tier 1 parsing the sentence and the result shown as a row you can correct.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>Precision gets harder. An exact 13:45–14:30 with three attendees is a sentence you have to compose rather than four fields you fill, and when the parse is wrong the correction is a chip rather than a cursor. It also deletes a surface rather than fixing it, which is a real answer and a testy one.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>One: `surfaces.md` lists a <b>New event sheet</b> as a surface, and this removes it. It removes its own justification too — capture is a listed entry to that sheet, so the sheet is a second door to a room that already has one.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= recommended ================= -->
+      <article class="vc rec">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Recommended</span>
+          <p class="vc-stance">A screen, canned times so the frequent case opens nothing, and the one remaining picker covering the form instead of replacing it.</p>
+          <span class="vc-read">impeccable's screen + taste's one-field idea, kept as a form<br>minus one of its two doors</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">New event</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--accent-text);">Add</span>
+              </div>
+              <div class="nv-body" id="nv-body-5">
+                <div class="nv-f"><span class="lab">Title</span><span class="field">Design review<span class="caret"></span></span></div>
+                <div class="nv-f">
+                  <span class="lab">When</span>
+                  <span class="nv-times">
+                    <span class="chip chip-on">Today 17:00</span>
+                    <span class="chip">Tomorrow 09:00</span>
+                    <span class="chip">Tomorrow 14:00</span>
+                    <span class="chip">Other…</span>
+                  </span>
+                </div>
+                <div class="nv-f"><span class="lab">With</span><span class="field"><span class="chip">Sarah Chen</span><span class="chip">Mark Reid</span><span class="nv-door">picker</span></span></div>
+                <div class="nv-f"><span class="lab">Note</span><span class="field" style="color: var(--text-muted);">Attached after you add the event<span style="margin-left: auto; font-size: var(--type-caption-size);">why</span></span></div>
+                <span class="btn btn-primary btn-block">Add event</span>
+              </div>
+              <div class="keys" id="nv-keys-5">
+                <div class="krow"><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span></div>
+                <div class="krow"><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span></div>
+                <div class="krow"><span class="k go">add</span><span class="k"></span><span class="k"></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Takes</dt><dd><b>Impeccable</b> for both halves of its move: the screen, and the realisation that the frequent answer should be a tap. <b>Frontend design</b> for proving that inlining the form costs the context it was meant to preserve, because the keyboard covers the timeline. <b>Design taste</b> for the observation that capture is already a creation path — kept as the fallback rather than the whole answer, because a sentence is a poor way to name an exact quarter hour.</dd></div>
+          <div class="vc-line cost"><dt>Fixes</dt><dd id="nv-fixes">…</dd></div>
+          <div class="vc-line open"><dt>Still needs</dt><dd>Three corrections. <b>One:</b> <code>surfaces.md</code> and <code>calendar.md</code> disagree about what capture produces — the New event sheet, or the Event detail the capture field “morphs into” per <code>motion-vocabulary.md</code>. Both cannot be the destination of the same gesture. <b>Two:</b> the notes field has no defined behaviour at creation. <code>05-modules/notes.md</code> attaches notes <i>from a detail</i>, and at this point there is no detail — so either the form creates a note and the event in one step, or the field is not there. This row defers it and says so, which is a fix to the copy rather than to the flow. <b>Three:</b> the sentence lists a <b>time</b> field, and a chip row is not a field. If precision matters more than speed, the sentence is right and this row is wrong.</dd></div>
+        </dl>
+      </article>
+
+    </div>
+
+    <section class="lede">
+      <h2 class="t-title-2">The measurement</h2>
+      <div class="panel" style="margin-top: var(--space-5);">
+        <div class="measure" id="measure-new"></div>
+      </div>
+    </section>
+  </section>
+
 </div>
 
 <script>
@@ -1973,6 +2264,7 @@
   let monthMeasured = false;
   let yearMeasured = false;
   let eventMeasured = false;
+  let newMeasured = false;
   // The Week cannot measure the Day once the Day is hidden — a hidden element
   // reports zero for everything — so the Day's timeline height is captured while
   // it is still on screen.
@@ -1984,6 +2276,7 @@
     if (id === 'month' && !monthMeasured) { measureMonth(); monthMeasured = true; }
     if (id === 'year' && !yearMeasured) { measureYear(); yearMeasured = true; }
     if (id === 'event' && !eventMeasured) { measureEvent(); eventMeasured = true; }
+    if (id === 'new' && !newMeasured) { measureNew(); newMeasured = true; }
     window.scrollTo({ top: 0 });
   }
   tabs.forEach(t => t.addEventListener('click', () => go(t.dataset.go)));
@@ -2691,6 +2984,92 @@
       '<span class="l">Frontend design — equal regions, one of them the record</span></div>' +
       '<div><span class="n">' + edits + '</span>' +
       '<span class="l">Edit buttons drawn in the whole section, for an event the sentence gives none</span></div>';
+  }
+
+  // ==========================================================================
+  // NEW EVENT
+  // ==========================================================================
+
+  function measureNew() {
+    const host = document.getElementById('measure-new');
+    const rows = [...document.querySelectorAll('#new .vc')];
+    if (!host || rows.length < 5) return;
+
+    // Everything is compared WITHIN a row: getBoundingClientRect is viewport-relative,
+    // so a keyboard in row 1 and a field in row 5 are not on the same scale at all.
+    const analyse = (row) => {
+      const body = row.querySelector('.nv-body');
+      const kb = row.querySelector('.keys');
+      if (!body || !kb) return null;
+      const kbTop = kb.getBoundingClientRect().top;
+      const fields = [...body.querySelectorAll('.field')];
+      return {
+        fields: fields.length,
+        above: fields.filter(f => f.getBoundingClientRect().bottom <= kbTop).length,
+        doors: body.querySelectorAll('.field .nv-door').length,
+        kbH: Math.round(kb.getBoundingClientRect().height),
+      };
+    };
+    const base = analyse(rows[0]);
+    const rec = analyse(rows[4]);
+    if (!base || !rec) return;
+
+    const sheet = document.getElementById('nv-sheet');
+    const sheetH = Math.round(sheet.getBoundingClientRect().height);
+    const phoneH = Math.round(sheet.parentElement.getBoundingClientRect().height);
+    const sheetCap = Math.round(phoneH * 0.86);
+    const chips = rows[4].querySelectorAll('.nv-times .chip').length;
+    const other = [...rows[4].querySelectorAll('.nv-times .chip')]
+      .filter(c => c.textContent.trim() === 'Other…').length;
+    // The commit button is the one control the form cannot do without, and the keyboard
+    // is the thing most likely to be sitting on it.
+    const commit = rows[0].querySelector('.nv-body .btn');
+    const kbTop1 = rows[0].querySelector('.keys').getBoundingClientRect().top;
+    const commitUnder = commit ? commit.getBoundingClientRect().bottom > kbTop1 : false;
+
+    document.getElementById('nv-cost').innerHTML =
+      'The form has <b>' + base.fields + ' fields</b> and <b>' + base.doors +
+      ' of them open an overlay</b>, so each one replaces the form rather than covering it. The sheet ' +
+      'also has to hold a keyboard: it takes <b>' + base.kbH + 'px</b> of a ' + phoneH +
+      'px phone, leaving the form <b>' + base.above + ' of ' + base.fields +
+      ' fields</b> fully above it. The sheet’s cap is ' + sheetCap + 'px and it draws ' + sheetH +
+      'px, so the room was never short — it is that two of the four fields leave the sheet behind when ' +
+      'used, and the keyboard has already spent ' + base.kbH + 'px of the frame before either is opened.';
+
+    document.getElementById('nv-fixes').innerHTML =
+      'A <b>screen</b>, so an overlay opened from a field covers the form rather than replacing it, and ' +
+      'the form stays readable behind the picker. <b>Time becomes a chip row</b>: ' + chips +
+      ' chips, of which ' + (chips - other) + ' set a time without opening anything and only “Other…” ' +
+      'opens the date picker. The doors go from <b>' + base.doors + ' to ' + rec.doors +
+      '</b>, and the one that remains is the person picker, which `05-modules/people.md` owns and which ' +
+      'is now harmless, because a sheet over a screen costs nothing. The note is <b>deferred and says ' +
+      'so</b>: attaching a note to an event that does not exist yet is an ordering problem, not a form. ' +
+      'With the keyboard up the form still keeps <b>' + rec.above + ' of ' + rec.fields +
+      ' fields</b> clear.';
+
+    host.innerHTML =
+      '<div><span class="n">' + base.kbH + 'px</span>' +
+      '<span class="l">the keyboard, in a ' + phoneH +
+      'px phone — the first thing a form with a title field spends</span></div>' +
+      '<div><span class="n">' + base.doors + ' / ' + base.fields + '</span>' +
+      '<span class="l">Baseline — fields that open an overlay of their own; each one replaces the form</span></div>' +
+      '<div><span class="n">' + base.above + ' / ' + base.fields + '</span>' +
+      '<span class="l">Baseline — fields still fully visible once the keyboard is up</span></div>' +
+      '<div><span class="n">' + (commitUnder ? 'yes' : 'no') + '</span>' +
+      '<span class="l">Baseline — is the commit button under the keyboard? The form’s one control ' +
+      'that cannot be skipped is behind the thing that opened it</span></div>' +
+      '<div><span class="n">' + sheetH + ' / ' + sheetCap + 'px</span>' +
+      '<span class="l">Baseline — the sheet against its 86% cap, so room was never the problem</span></div>' +
+      '<div><span class="n">' + rec.doors + ' / ' + rec.fields + '</span>' +
+      '<span class="l">Recommended — the same count, with time answered by chips instead</span></div>' +
+      '<div><span class="n">' + rec.above + ' / ' + rec.fields + '</span>' +
+      '<span class="l">Recommended — fields still visible with the keyboard up, which a screen buys</span></div>' +
+      '<div><span class="n">' + chips + '</span>' +
+      '<span class="l">times offered as chips; ' + (chips - other) +
+      ' of them are one tap, and only “Other…” opens the date picker</span></div>' +
+      '<div><span class="n">' + (rec.doors + other) + '</span>' +
+      '<span class="l">overlays the recommended form can still open — both of them now over a screen ' +
+      'rather than replacing one</span></div>';
   }
 </script>
 <script src="nav.js"></script>
