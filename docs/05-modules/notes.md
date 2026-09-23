@@ -43,6 +43,17 @@ can have).
   by other flows (reviews, retrospectives) appear under Recent and
   All.
 
+**"One per day" needs its filter stated.** `note.created` and
+`day.note_created` both produce a Note whose attachment is a Day, so
+the Daily scope is only "one per day" if it filters on **which event
+created the note**. If it filters on the attachment it is not one per
+day at all: `06-flows/capture.md` attaches every unparsed capture to
+**today's Day**, so a single morning's captures put a dozen notes on
+today and the scope that promises one shows them all. That filter is
+also the distinction between "the Daily Note" and "a note attached to
+a Day", which the prose uses interchangeably and the UI would have to
+teach with no name for it.
+
 ### Empty states
 
 The form is `03-experience/states.md`; the action repairs the cause
@@ -64,6 +75,18 @@ The **New note** action opens the attachment target picker rather than
 a bare editor, because a note without a parent is not a thing this app
 has (`05-modules/notes.md`, Attaching and reattaching).
 
+**This contradicts the app's other way of writing a note.**
+`06-flows/capture.md` creates a note with `note.created` "attached to
+today's Day by default" and closes with "**Does not require the user
+to pick anything.**" So the app already has a default parent for a
+note — **today's Day** — and this action is the one place that refuses
+to use it. The two docs disagree about whether writing a note requires
+a decision, and the justification above ("a note without a parent is
+not a thing this app has") is what capture disproves. Either the
+picker stays and capture gains one, or the picker offers **Today** as
+a pre-selected default and keeps "Pick something else…" for the
+minority case.
+
 ### The note row
 
     Title (or first line)                   [attachment chip]
@@ -79,6 +102,25 @@ has (`05-modules/notes.md`, Attaching and reattaching).
 
 Row height is `row-rich` (72px).
 
+**The row does not fit its own height.** At the token sizes in
+`03-experience/design-tokens.md` the three text parts are 24px
+(title, `type-title-3`) + 40px (preview, `type-callout` ×2) + 18px
+(stamp, `type-footnote`) = **82px**, before any row padding. Drawn at
+its natural height the row is **111px**, so a 700px phone shows 6
+notes rather than 9.
+
+There are three ways out and the doc must pick one: `row-rich`
+becomes a **minimum** rather than a height (which re-sizes every rich
+row in the app), the preview is **one line**, or the **stamp** goes.
+This is arithmetic, not taste — the height and the parts cannot both
+be honoured.
+
+**The header line can spend its width twice.** For a note attached to
+a task, the chip is the task's title: the doc's own example is a row
+titled "Plan Sarah's birthday" whose chip reads "→ Plan Sarah's
+birthday". The chip names the **entity** it is attached to, not the
+entity's title — "→ Sarah", not "→ Plan Sarah's birthday".
+
 ### Surfaces
 
 **List.** Recent / All / Daily.
@@ -87,9 +129,33 @@ Row height is `row-rich` (72px).
 Autosaves on blur and every 5 seconds while typing
 (`note.edited`). No save button.
 
+**The autosave rate is a log decision nobody has made.**
+`02-architecture/event-log.md` defines `note.edited` as
+`{ note_id, body, title? }` — the **whole body**, not a diff — and
+states no coalescing rule, and the log is append-only. So ten minutes
+of writing produces **120** entries carrying the whole document, an
+hour produces **720**, and the note editor becomes the app's only
+surface whose write rate is set by a timer. `04-ai/retrieval-layer.md`
+never says when embeddings are recomputed either, so nothing states
+whether typing re-embeds the note. **Both need a decision** — the
+natural one being that consecutive saves in one editing session are
+superseded rather than appended, and that the index rebuilds on blur.
+
+**The body has no reversal and the attachment does.** Reversibility is
+one of the four invariants, and the body is the only content in the
+app a user writes by hand — yet §Reattaching gives the *attachment* an
+undo toast and the body has nothing, while saving itself unattended.
+The 5-second ticks are the undo stack if anyone wants them to be.
+
 **Note detail (read-only mode).** For notes attached to other
 entities, the attachment's detail shows the note preview. Tapping
 opens the editor.
+
+**This heading contradicts its own sentence** — a "read-only mode"
+whose first behaviour is "tapping opens the editor" is a preview, not
+a mode. The surface also makes the Note the app's most-rendered atom:
+the doc's own count of the Daily Note's homes is wrong for the same
+reason (see §The Daily Note).
 
 **Search.** Semantic search across notes, accessible via the
 command palette or a search field in the Notes mode.
@@ -111,6 +177,12 @@ The Daily Note appears in three places:
 1. The Notes mode (Recent and Daily scopes).
 2. The Calendar's Day view (as a preview card).
 3. The shutdown flow (`06-flows/shutdown.md`).
+
+**That is three surfaces across two homes, and the list has four
+items.** Item 1 names two scopes, which are both the Notes mode — so
+the cut is either "three surfaces" or "four places", and the count has
+to pick one. The same shape of error appeared in the Calendar, where
+three docs described three different features under one name.
 
 ### Attaching and reattaching
 
@@ -164,6 +236,25 @@ conditions:
    note) within the last 90 days.
 
 If either condition fails, the name renders as plain text.
+
+**These two conditions fix two different errors, and only one of them
+is a property of the text.** Condition 1 prevents the *generic-word*
+error ("Mark the checkbox as done") and depends on the body and the
+People list, both of which are in the log. Condition 2 prevents the
+*stale-person* error and depends on **today's date** — so a note is not
+a stable document. Identical bytes link a name on day 20 since last
+contact and do not on day 111, with no signal to the reader that a link
+was suppressed. That is the **freshness** invariant ("never shown a
+value that silently changed") applied to the module whose entire
+content is the value.
+
+**Recency belongs in disambiguation, not in rendering.** Its real use
+is choosing *which* Person when two share a name — a case this section
+does not mention. As a render gate it makes every note's appearance a
+function of the wall clock, and no projection can reproduce it from
+the log alone. Condition 1 should decide candidacy, position ("Mark
+the…", sentence-initial) should decide not-a-name, and recency should
+tiebreak.
 
 Auto-linking is a display feature. The user can disable it in
 settings (`auto_linking.enabled`).

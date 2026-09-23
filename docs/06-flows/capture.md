@@ -170,6 +170,22 @@ a capture:
 - Does not block on network. Everything is local-first.
 - Does not accept photos or file attachments.
 
+**Two of these contradict `05-modules/notes.md`, and both are
+resolvable in this doc's favour.**
+
+*"Does not require the user to pick anything"* — that doc's New note
+action opens an attachment target picker "because a note without a
+parent is not a thing this app has". This flow creates exactly that
+kind of note: attached to today's Day, no decision. **The default
+parent already exists**, and the Notes mode is the one place not using
+it. The reconciliation options are in that doc's §Empty states.
+
+*"Does not use a full-screen editor"* — but a captured note is a note,
+and that doc specifies the only way to edit one: a full-screen markdown
+editor. So capture creates notes that must be edited in the surface
+this list rules out. Either a captured note is editable in place, or
+this line is about the *capture* moment only and should say so.
+
 ## Examples
 
 **A quick task capture.**
