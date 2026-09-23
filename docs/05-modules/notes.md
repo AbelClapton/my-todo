@@ -157,6 +157,23 @@ a mode. The surface also makes the Note the app's most-rendered atom:
 the doc's own count of the Daily Note's homes is wrong for the same
 reason (see §The Daily Note).
 
+**Generated notes need one rule, and there are two of them.**
+`05-modules/review.md`'s weekly review and `05-modules/protocols.md`'s
+protocol report are both Notes written by the app, and both are required
+to cite their sources — the review by Invariant 4, the report by
+`04-ai/research-and-protocols.md`'s report structure. Both citations live
+in the note body, and the note body is editable, so the requirement is
+currently enforced by nothing.
+
+The rule, stated once here and applied by both:
+
+> A **generated** note's Sources block is part of the artefact, not the
+> body. The user may edit it — the note is theirs — and `note.edited`
+> records the change. What the block may not contain is a **relative**
+> freshness claim ("calendar as of 2 hours ago"), because a relative
+> claim inside a stored document is wrong by exactly the time since it
+> was written. Record the snapshot moment, and say what was true then.
+
 **Search.** Semantic search across notes, accessible via the
 command palette or a search field in the Notes mode.
 

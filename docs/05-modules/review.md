@@ -28,6 +28,22 @@ Notes mode as a note.
   conversation, not a dashboard.
 - The review cites its data sources and their freshness
   (Invariant 4).
+
+**"Freshness" has to mean fresh at generation, not at reading.**
+The block that satisfies this invariant reads "Calendar as of 2
+hours ago" — a **relative** claim inside a **static** document. It is
+correct once and wrong forever after by exactly the time since
+generation: 7 days out after a week, 365 days out after a year. §Review
+delivery then says the note "remains in the Notes mode; the user can
+read it at any time", so the doc guarantees a stale freshness claim in
+the document whose invariant is that it makes one.
+
+Anchoring the clause to **generation** makes it permanently true and
+costs one word: "Snapshots taken 20 Sep 18:00 — calendar 2h old, health
+8h old." That also separates two facts §Invariants currently conflates
+by giving the note one date — **which week this is about** and **when it
+was produced** — which the late-generation case needs and the doc does
+not provide.
 - The review's tone is calm and neutral
   (`01-foundation/identity.md`). No gamification.
 
@@ -87,17 +103,60 @@ Day. It lives in the Notes mode and is searchable.
 **A calendar card.** The Day view for the review date shows the
 review as a preview card.
 
+**What "a Note" means for the surface it opens on.**
+`05-modules/notes.md` defines four note surfaces — List, Editor, Note
+detail (read-only) and Search — and a Note's Screen *is* the **Editor**:
+"A markdown editor. Title field at top, body below. Autosaves on blur and
+every 5 seconds while typing. No save button." So reading the app's
+highest-value output means opening a markdown editor.
+
+That has a second consequence the invariant above depends on. Invariant 4
+requires the review to cite its sources and their freshness, and **both
+live in the note body, which is editable**. `05-modules/protocols.md`
+states the rule for the other generated note plainly: "The user may edit
+a report; the edit is a `note.edited` entry… There is no separate
+'original preserved' UI." Two generated notes, one rule — and it means
+the citation is enforced by nothing.
+
+The review is also a Note in **Recent**, which `notes.md` defines as
+notes edited in the last 14 days, so the user's own list always holds
+two weekly AI documents beside their writing. The doc puts it there
+deliberately (it should sit beside the writing it is about); the cost is
+worth naming rather than discovering.
+
 ### Review structure (as a Note)
 
-    ## Weekly review — Sep 16–22
+    ## Weekly review — Sep 14–20
 
     <Paragraph 1>
 
     <Paragraph 2>
 
     ---
-    Sources: 18 tasks, 4 habits, 7 events, 1 protocol.
-    Calendar as of 2 hours ago. Health as of 8 hours ago.
+    Sources: 14 tasks, 24/28 checks, 6 events, 2 protocols.
+    Snapshots taken 20 Sep 18:00 — calendar 2h old, health 8h old.
+
+**Two corrections to the block above, both load-bearing.**
+
+**The window is the seven days ending at the trigger.** The default
+trigger is Sunday 18:00, so a review generated on Sunday 20 Sep covers
+**Sep 14–20**. This doc previously said "Sep 16–22" in three places —
+a Wednesday to a Tuesday, which no Sunday trigger can produce — and
+`06-flows/retrieval.md` had copied it. Derive the range from the
+trigger rather than writing it out.
+
+**The Sources numbers are the same numbers as paragraph 1.** In this
+doc's own example the Sources line read "18 tasks, 4 habits, 7 events,
+1 protocol" under a paragraph saying "14 tasks", "24 of 28 habit
+checks", "6 events" and "Two protocols were active" — **all four
+figures disagreeing with the sentence above them**, in the one part of
+the review that exists to be a citation. Compute both from one query so
+a disagreement is impossible rather than unlikely.
+
+One consequence of the weekly trigger is worth stating because it is
+arbitrary either way: Sunday 18:00 means the window's last day is
+incomplete — Sunday's later events and its habit check fall into the
+next review.
 
 ### The review's tone
 
@@ -122,12 +181,34 @@ Examples of disallowed language:
 
 Same structure, longer windows:
 
-- **Monthly review.** 4 weeks aggregated. Generated on the first
-  of the month.
-- **Annual review.** 12 months aggregated. Generated on January 1.
+- **Monthly review.** The calendar month the trigger closes.
+  Generated on the first of the month.
+- **Annual review.** The calendar year the trigger closes.
+  Generated on January 1.
 
 These are optional and off by default. When enabled, they surface
 via the attention budget at lower priority than the weekly review.
+
+**One rule governs all three windows: a review covers the period its
+trigger closes.** The weekly keeps its seven days; the monthly becomes a
+calendar month; the annual is a calendar year. The three then nest
+exactly — 52 weeks, 12 months, 1 year — and the annual review can be
+computed from the monthly windows the app already produced.
+
+This doc previously said "**4 weeks aggregated**" fired "on the first of
+the month". Those are two different definitions of a month: only
+**February** is 28 days, so eleven of twelve monthly windows covered
+neither the month they were named for. Twelve four-week windows come to
+**336 days** against a **365-day** year, leaving **29 days a year**
+outside every monthly review — and the annual review's "12 months" was a
+third window that matched neither, so the two longer reviews were
+independent rather than nested.
+
+**The trade is real and belongs stated.** A four-week window is
+**comparable** month to month — "you completed 62 tasks" means the same
+thing every time — and a calendar month is **complete**. The doc now
+chooses coverage; if comparability matters more, say so and derive the
+trigger from the window instead of the other way round.
 
 ### Review delivery
 
@@ -200,21 +281,33 @@ fire.
 
 **A weekly review.**
 
-    ## Weekly review — Sep 16–22
+    ## Weekly review — Sep 14–20
 
     You completed 14 tasks, hit 24 of 28 habit checks, and
     attended 6 events. Sleep quality averaged 3.6, up from 3.1
     the week before. Two protocols were active: Sleep (day 18)
     and Focus (day 4).
 
-    Tuesday was dense — 4 events plus 3 tasks due. Wednesday
-    slipped: 2 tasks deferred twice. Your meditation habit
-    correlated with days you walked first (6 of 7). Consider
-    putting the walk before meditation on the calendar.
+    Wednesday slipped: 2 tasks deferred twice. Your meditation
+    habit correlated with days you walked first (6 of 7). A
+    consistent order would make that correlation testable.
 
     ---
-    Sources: 18 tasks, 4 habits, 7 events, 1 protocol.
-    Calendar as of 2 hours ago. Health as of 8 hours ago.
+    Sources: 14 tasks, 24/28 checks, 6 events, 2 protocols.
+    Snapshots taken 20 Sep 18:00 — calendar 2h old, health 8h old.
+
+**Note what changed in paragraph 2 and why.** It previously ended
+"Consider putting the walk before meditation on the calendar" — a
+direction to change the user's day, which §The review content forbids in
+as many words ("The review does not: Prescribe actions"). The line to
+hold is between **changing the user's day** and **describing what the
+data suggests**: naming the correlation and its strength is allowed and
+is the useful half, and "a consistent order would make that correlation
+testable" says the same thing from the describing side.
+
+The original example was doing the thing the doc wanted while the rule
+was stated too broadly. The rule is now about directing, not about
+observing.
 
 **A standalone weekly review nudge.**
 
@@ -266,7 +359,7 @@ fire.
     User opens the app Wednesday.
     Review generates, timestamped for the previous Sunday.
     Nudge fires on Wednesday (subject to the attention budget).
-    Note title: "Weekly review — Sep 16–22."
+    Note title: "Weekly review — Sep 14–20."
 
 ## What this doc must NOT do
 

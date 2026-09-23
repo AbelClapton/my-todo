@@ -66,7 +66,7 @@ render as a screen:
     Notes
       Sleep protocol — "Reading before bed, 12 of 14 nights…"
         matched: reading before bed
-      Weekly review — Sep 16–22
+      Weekly review — Sep 14–20
     Tasks
       Read before bed                    Sleep · nightly
     Events
