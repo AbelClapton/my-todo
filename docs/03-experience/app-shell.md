@@ -3,7 +3,7 @@
 ## Purpose
 
 This doc defines the chrome that wraps every screen: the mode
-navigation, the header's slots, the four floating layers and their
+navigation, the header's slots, the five layers and their
 order, and the rules for stacking overlays. It exists because the shell
 was implied across half a dozen docs — a "mode switcher" here, a
 "rail/dock" there, a gear icon somewhere else — and specified in none,
@@ -17,8 +17,22 @@ It is called the app shell to keep it distinct from *shell apps*
 - **The shell is identical in all four modes.** A mode may fill the
   header's slots; it may not add chrome, a second bar, or a floating
   control.
-- Every floating surface belongs to exactly one of the four layers
-  below. A fifth layer requires a change to this doc.
+- Every floating surface belongs to exactly one of the five layers
+  below. A sixth layer requires a change to this doc.
+
+**The count was wrong, and it was wrong in the section that guards it.**
+This doc said "the four floating layers" in its Purpose, "the four
+layers below" and "a fifth layer requires a change to this doc" in these
+invariants, and "### The four layers" over the heading — while the table
+beneath listed **five**, and the worked example in §Examples says "Undo
+toast appears over it (**layer 5**)". So the numbering was in use, the
+guard clause had already been passed, and the phrase "four floating
+layers" was true on no reading: the table has five rows and only three
+of them float, because Content and Sticky chrome are the shell itself.
+
+Found by asking where one surface (Settings) sits, which is the useful
+part of the story — the defect is in the doc the whole UI is built on,
+and nothing in the surface asked about it directly.
 - Sticky chrome is at most two rows tall (header, then the now line or a
   banner). The shell never reduces the content area by more than that.
 - The shell animates only through the transitions in
@@ -68,7 +82,7 @@ One row, mode-specific content in three slots:
 The gear is present in every mode, in the trailing slot, in the same
 position. `+` appears only where a mode creates something.
 
-### The four layers
+### The five layers
 
 Ordered from back to front. Order is the contract; the elevation token is
 how it is signalled.
@@ -156,6 +170,26 @@ surface and **a new ADR**, not a banner bolted on here.
     Taps "Pick a date…" → the sheet is replaced by the date picker.
     Picks Thursday → both dismiss, the row reanimates to its new position.
     Esc at the picker → the defer sheet returns, still open.
+
+Note what this example is: **a sheet opening a second sheet, and
+returning.** It is the one-sheet rule working as designed, so "a sheet
+whose action opens an overlay" is not a defect in itself.
+
+**A surface that spans layers.**
+
+    Settings is reached two ways (`05-modules/settings.md` §Behavior):
+    a full-screen sheet from the palette, a pushed panel from the gear.
+
+    Its contents include a Screen — `03-experience/surfaces.md` files the
+    Area list as "Screen (in Settings)" — and an unbounded list that
+    appears under AI audit mode.
+
+    A Screen belongs to layer 1. A sheet belongs to layer 4. On the gear
+    path the same surface is layer 4 while containing a layer-1 thing,
+    and this doc gives no rule for that. The rule it needs:
+
+    **A container takes the layer of its contents, not of its chrome.**
+    A surface that hosts a Screen is a screen, whichever door opened it.
 
 **A banner under a toast.**
 

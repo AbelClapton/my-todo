@@ -50,7 +50,8 @@
     { file: 'notes-lab.html',       name: 'Notes' },
     { file: 'protocols-lab.html',   name: 'Protocols' },
     { file: 'people-lab.html',      name: 'People' },
-    { file: 'review-lab.html',      name: 'Review' }
+    { file: 'review-lab.html',      name: 'Review' },
+    { file: 'settings-lab.html',    name: 'Settings' }
   ];
 
   var here = (location.pathname.split('/').pop() || 'index.html').toLowerCase();

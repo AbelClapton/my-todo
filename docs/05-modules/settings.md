@@ -17,6 +17,22 @@ gear icon in the header of any mode.
 
 - Every setting that stores a value has a `SettingsKey` in
   `02-architecture/event-log.md`. Adding a key is a doc change.
+
+**The rule runs one way, and that is how a key got orphaned.**
+`event-log.md`'s union holds **28** entries; **27** have a row among these
+twelve groups. The odd one is **`integration.weather.enabled`** — the
+Integrations group gives weather a single row ("set home location") while
+its three sibling integrations each have an enable key, so the log can
+hold a value this surface never writes and the user never sees.
+
+The invariant as written ("every setting that *stores a value* has a
+key") is deliberately one-directional, which is why this survived and why
+it is not strictly a violation. The honest repair distinguishes the two
+kinds of key: **settable** keys have a row; **observed** keys are written
+by a flow on the user's behalf and have none. That classification is also
+what §Notes' *Reset all settings* needs, and what the confirmation rule
+needs — three readers, none of which can currently derive it from a flat
+list of 28 strings.
 - Changing a setting logs `system.settings_changed`.
 - Settings are grouped, not flat. Groups are stable.
 - No setting is hidden behind a premium tier in v1: Pro is
@@ -193,6 +209,26 @@ every entry it created; no shared grouping ID is stored in the
 log (`02-architecture/event-log.md`). Does not touch user data.
 No confirmation dialog; undo is the safety net.
 
+**The batch is 41 entries, and the reversal is scoped to the toast.**
+The union's 28 entries include two templates — `nudge.surface.<SurfaceId>`
+(12 surfaces) and `notification.channel.<Channel>` (3) — so one tap writes
+**41** settings changes. Every other undoable action in the app changes
+*one* thing; the toast has never had to carry a batch, and this paragraph
+records that nothing in the log connects these 41 (`"no shared grouping
+ID"`). After five seconds they are indistinguishable from 41 deliberate
+edits — **including to Rebuild projections**, which replays the log and
+would make an expired reset permanent. The undoing is real; its *durability*
+is what is unstated, and it should be stated rather than implied.
+
+**Four of the 41 keys are not preferences.**
+`integration.calendar.enabled`, `.contacts`, `.health`, and
+`weather.home_location` are authorisations and connections, not settings.
+Resetting calendar to its default has the same visible effect as **Revoke
+calendar access** — which is one of exactly three confirmed actions in
+this surface — while the unconfirmed path reaches the same place. Either
+the reset excludes the `integration.*` keys (so "all" means all
+preferences), or it confirms when they are among the keys it changes.
+
 **Delete account.** One of the four confirmed actions (see
 Invariant 1, `01-foundation/principles.md`). See
 `07-infrastructure/auth.md` for the full flow.
@@ -218,6 +254,29 @@ Areas; does not delete anything.
   as a panel pushed from the gear icon.
 - The list uses `row-compact` (44px) rows, grouped by section with
   a `type-title-3` header and `space-8` separation between groups.
+
+**The list is the app's longest, and its size is derivable.** 49 rows at
+`row-compact` 44px, 12 `type-title-3` headers at 24px, and 11 × 32px of
+`space-8` separation come to **2,796px** — **four screens** on the 700px
+phone the other specs are drawn against. Two groups are not even fixed:
+`Sync` gains a row when a network error is pending, and Notifications
+carries one toggle per attention-catalog surface (12 today).
+
+**It has no search, and its documented entry point is a search field.**
+Every other long list in the app has a scope or a filter; this one is
+reached from the command palette and then searched by scrolling. A group
+index at the head of the list is navigation rather than search — twelve
+lines, one tap — and it needs no new results model.
+
+**Two containers, and they place the same contents in different
+layers.** `03-experience/app-shell.md` orders the layers and says "Order
+is the contract": layer 1 holds "Screens, lists, the timeline"; layer 4
+holds "Sheets, popovers, the palette, the date picker". The **Area list**
+is filed by `03-experience/surfaces.md` as "Screen (in Settings)", so on
+the gear path this surface **is** layer 4 while containing a layer-1
+Screen. The rule it needs is stated in `app-shell.md` §Stacking rules —
+**a container takes the layer of its contents** — which makes Settings a
+screen on both doors.
 - Toggles fire the Mode switch haptic on change
   (`03-experience/haptic-vocabulary.md`).
 - Every settings change shows the standard five-second undo toast
