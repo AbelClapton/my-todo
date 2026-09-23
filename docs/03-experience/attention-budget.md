@@ -255,6 +255,16 @@ This card:
 If the user has no habits due and no active protocol, the card
 does not surface.
 
+**The card is the second of three homes for the same habits.**
+`05-modules/habits.md` gives the Habits mode's Today scope the same
+checkboxes, and `05-modules/calendar.md` gives the Calendar Day view's
+part 4 the same rows. This card's affordance list is **full/minimum
+toggles** — two of the three the habit row offers, since Skip lives in
+the row's long-press menu. So the same habit can be skipped through one
+door and not another, and no doc says which of the three owns the
+interaction. "The only thing the app requires" is also drawn
+permanently in the Day view, which makes it not the only thing at all.
+
 ### User control
 
 Settings exposes:

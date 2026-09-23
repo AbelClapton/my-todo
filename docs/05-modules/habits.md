@@ -74,13 +74,45 @@ Cadence determines `scheduled_days_for(habit, window)`
   "Minimum" and "Skip."
 - **Title.** Tap opens detail.
 - **Compliance.** Shown as "18/28" or "64%". The default is
-  counts, not percent, because counts are honest.
+  counts, not percent, because counts are honest. The denominator
+  is `scheduled_days_for(habit, window)` — the days the cadence
+  actually scheduled, capped at the window and beginning on the
+  habit's creation date. It is not calendar days: a habit created
+  ten days ago cannot read "18/28", and a habit that runs on
+  Mondays has **four** due days in twenty-eight, not twenty-eight.
+  The chart's axis, the streak's count, and this denominator are
+  the same quantity, and `18/28` is only ever drawn for a daily
+  habit older than 28 days.
 - **Minimum indicator.** If a habit has a minimum and the user
   checked minimum today, the checkbox shows a subtle underline.
 
 Row height is `row-default` (56px).
 
+**The row and the chart disagree about the minimum.** The row draws
+it as the same filled checkbox with a 1px underline; the chart draws
+it as a different colour with its own ring. §Minimum-viable says the
+two versions are equal ("both are 'done'"), which the row's 1px mark
+does not say and the chart's separate colour contradicts. Both
+surfaces cannot be right, and the row is the one the invariant's
+language describes.
+
 ### Surfaces
+
+Habits due today have **three** presentations across the app, and
+this doc only owns the first:
+
+| Surface | Owned by | Affordances |
+|---|---|---|
+| Habits mode · Today scope | this doc | full · minimum · skip |
+| The daily obligations card | `03-experience/attention-budget.md` | full · minimum |
+| Calendar · Day view, part 4 | `05-modules/calendar.md` | full · minimum |
+
+The card and the Day view are both specified as a compact row of
+habit checkboxes, both omit Skip, and the card is called *"the only
+thing the app requires the user to interact with daily"* while the
+Day view draws the same rows permanently. Whether these are one
+component rendered three times or three implementations is not
+stated anywhere, and the affordance sets already differ.
 
 **Today view.** Checkboxes for habits due today.
 
@@ -95,6 +127,31 @@ and missed (`border-strong`). Repairs
 are visually distinct from full checks because they are not full
 compliance — they are logged to keep a streak alive, and the chart
 records this honestly.
+
+**Two of those five states cannot be told apart by colour.**
+Measured against the live tokens in warm light:
+
+| Pair | Contrast | Floor that applies |
+|---|---|---|
+| skip (`surface-3`) vs missed (`border-strong`) | 1.19:1 | 3:1, non-text UI |
+| minimum ring (`success-default`) vs repair ring (`accent-default`) | 1.7:1 (33° of hue) | 3:1, non-text UI |
+| the check glyph inside a skipped box | 2.6:1 | 3:1, non-text UI |
+| the check glyph inside a full box | 3.3:1 | 3:1, non-text UI |
+
+Skip and missed are 1.19:1 apart — a four-hundredths margin over the
+1.15:1 floor for a `*-subtle` ground, and 1.8 short of the floor for
+a non-text UI state. The module's load-bearing invariant is
+***"Skipping is not failing"***, so this is the one distinction the
+chart cannot leave to colour. **At least one of skip/missed must be
+carried by shape, not by token.** The same is true of the two rings:
+minimum and repair are the closest pair in the palette, which is the
+distance the palette lab measured when it was choosing the accent.
+
+The strip is also the wrong axis for anything but a daily habit. A
+habit that runs on Mondays is due on 4 of 28 days and one on a
+fortnightly interval on 2, so 24 and 26 of their cells respectively
+record days the habit **could not** have been done. Colour the due
+days only, or the chart is mostly noise that reads as failure.
 
 **Check interaction.** Tapping the checkbox:
 
@@ -140,6 +197,16 @@ Skips are intentional. The user is saying "not today, on purpose."
 - Reversed by long-pressing again → [Full] [Minimum].
   `habit.skipped` is in the closed set, so no toast is needed
   (`08-decisions/0010-undo-exemptions.md`).
+
+**Skip has two entrances and they are not the same act.** This
+doc gives the long-press mini-menu, twice. `03-experience/gesture-
+vocabulary.md` gives the Habit list `swipe left` as its skip gesture.
+A swipe is an accelerator — a threshold crossing with no
+confirmation — while the menu is a deliberate choice on an
+intentionally-logged event. Both are listed as ways to skip and
+neither doc names the other. Whichever is kept, "gray, not red"
+needs replacing: gray is the app's disabled vocabulary, so the state
+this section defends is currently drawn as *you cannot click this*.
 
 A skip is different from a missed day. Missed days are derived (no
 entry on a scheduled day); skips are logged.

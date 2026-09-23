@@ -124,6 +124,23 @@ not a general gesture.
 | Protocol report | — | — | — | — | — | — | back | zoom |
 | Inbox | today | someday | attach | remove | AI menu | capture | back | — |
 | Nudge | action | dismiss | — | — | — | — | — | — |
+
+**The Habit list row does not match this matrix.** Two disagreements,
+both unresolved:
+
+- **Swipe ← skip.** `05-modules/habits.md` gives skip a home in the
+  checkbox's long-press mini-menu, with no swipe path. This table
+  offers a second home and names neither the confirmation nor the
+  threshold that would make a swipe safe for an intentionally-logged
+  event. It is listed twice in that doc and once here.
+- **Long-press.** This table gives the whole surface one long-press:
+  the AI menu. `habits.md` gives the *checkbox* a long-press that
+  opens a menu of "Minimum" and "Skip" — a different menu, on the
+  same gesture, inside the same row. The matrix is specified
+  per-surface and never says which element the long-press lands on,
+  so it cannot distinguish the two. Either the checkbox is carved
+  out here, or the habit row has two long-press menus competing for
+  one gesture.
 | Search results | — | — | attach | — | AI menu | capture | back | — |
 
 A dash means the gesture is disabled on that surface.
