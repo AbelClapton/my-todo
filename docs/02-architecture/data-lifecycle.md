@@ -174,9 +174,14 @@ Because the log is append-only, the app can reconstruct state at
 any past date. Time machine reads the log up to a given `timestamp`
 and computes projections as they would have been.
 
-- Accessible from search: "show me this as of [date]."
+- **Two scopes.** Applied to a date, it reconstructs a whole mode, entered
+  from the command palette (`06-flows/retrieval.md`). Applied to one atom,
+  it reconstructs that atom — "show me **this** as of [date]" — entered
+  from search and shown as a state of that atom's own detail.
 - Not a module. A mode within existing views.
-- Does not write. Read-only.
+- Does not write. **Read-only is about writes, not taps**: detail views stay
+  openable and only the actions that would write are disabled
+  (`05-modules/calendar.md`).
 
 ## Examples
 

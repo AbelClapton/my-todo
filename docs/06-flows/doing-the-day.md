@@ -73,6 +73,12 @@ This is the only place in the app where one fact is stated twice on one screen,
 and it is allowed because the two statements answer different questions: what is
 next, and where am I in the day.
 
+**In the time machine it carries the date.** The now line means "what is current in
+this view", so when the app is read as of a past date the line states that date
+instead of a time and its action becomes the state's single exit. That is why the
+time machine needs no banner of its own: the slot for "what is current" already
+exists, and this is the one part whose meaning was never about the present.
+
 ### Focus mode
 
 Started from a task detail ("Start focus") or from the now line.

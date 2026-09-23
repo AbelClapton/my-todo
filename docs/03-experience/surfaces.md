@@ -49,7 +49,7 @@ of these, or floats over them.
 | Event detail | Screen | Tap an event, or capture a scheduled item |
 | New event | Screen | `+` in the header |
 | Date picker | Overlay | Tap the date in the day header |
-| Time machine | Screen (read-only) | Tap a date → "As of" |
+| Time machine | State (read-only) | Command palette; "As of…" in the date picker |
 | Freshness annotation | Ambient | Any mirrored event |
 
 The Day view is a fixed vertical **order** of eight parts, specified as a

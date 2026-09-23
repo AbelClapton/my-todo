@@ -337,9 +337,21 @@ events older than 90 days and re-fetches only when a past date is opened, so a d
 that boundary carries a dashed underline. Choosing a date the app cannot answer for is
 then a visible choice rather than a surprise.
 
-**Time machine.** A mode within the Day view: pick a past date and
-see the day as it was. Read-only. See
-`02-architecture/data-lifecycle.md`.
+**Time machine.** A **state, not a surface**: a date, applied to whatever view you are in.
+`06-flows/retrieval.md` owns its definition and its scope — one date across **all four
+modes** — and this doc owns what it does to the Day view.
+
+In the Calendar it changes what the **now line** refers to rather than adding chrome above
+it. The line already means "what is current in this view", so in the time state it carries
+the date instead of a time, and its action becomes the state's single exit, "Return to
+now" (`06-flows/doing-the-day.md`).
+
+**Read-only means writes off, reads on.** All three docs that describe this state say
+"read-only" and none says what it disables — and disabling taps would remove *reading*,
+which is the one thing a retrieval feature exists to do. So the timeline, the notes and
+the completed rows stay openable, and the three parts that write — the habit check, the
+metric row, the top-three completion — are disabled. See
+`02-architecture/data-lifecycle.md` for the log replay and its horizon.
 
 ### Actions
 

@@ -125,7 +125,18 @@ Opens any mode as it was on that date:
 - Habits: the compliance state.
 - Notes: the Daily Note.
 
-Read-only. A "Return to now" button.
+Read-only, which means **writes off, reads on**: every detail view stays openable and
+every action that would write is disabled. A "Return to now" button, which is the state's
+one exit.
+
+**This doc owns the state's scope; the views own its appearance.** The date applies to
+whichever of the four modes you are in and follows you when you switch. The Calendar's Day
+view states it in the now line rather than in a banner (`05-modules/calendar.md`).
+
+**One name covers two scopes.** Applied to a date it reconstructs a whole mode, which is
+what this entry does. Applied to a single atom it reconstructs that atom — "show me *this*
+as of [date]" — which `02-architecture/data-lifecycle.md` gives as the search entry; that
+scope is a state of the atom's own detail rather than of a mode.
 
 Time machine reads the log up to the given timestamp and computes
 projections (`02-architecture/projections.md`). It is the app's
