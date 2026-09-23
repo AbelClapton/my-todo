@@ -127,7 +127,10 @@ not a general gesture.
 | People list | — | — | attach | archive | AI menu | capture | back | — |
 | Protocol report | — | — | — | — | — | — | back | zoom |
 | Inbox | today | someday | attach | remove | AI menu | capture | back | — |
+| Search results | — | — | attach | — | AI menu | capture | back | — |
 | Nudge | action | dismiss | — | — | — | — | — | — |
+
+A dash means the gesture is disabled on that surface.
 
 **The Habit list row does not match this matrix.** Two disagreements,
 both unresolved:
@@ -145,9 +148,6 @@ both unresolved:
   so it cannot distinguish the two. Either the checkbox is carved
   out here, or the habit row has two long-press menus competing for
   one gesture.
-| Search results | — | — | attach | — | AI menu | capture | back | — |
-
-A dash means the gesture is disabled on that surface.
 
 Three rows are worth reading twice:
 
@@ -216,18 +216,32 @@ not be allowed to fall through to capture.
 
 ### Keyboard equivalents
 
-Every gesture has a keyboard equivalent:
+Every gesture has a keyboard equivalent. **This table is the app's
+only key map** — a binding that is asserted in another doc and absent
+here is a collision waiting to happen, so the table is per binding
+rather than per gesture, and it holds the surfaces that no gesture
+reaches:
 
-| Gesture | Keyboard |
+| Binding | Keyboard |
 |---|---|
+| Open the command palette, from anywhere | `Cmd+K` |
+| Open the command palette, mobile | long-press the mode switcher |
 | Swipe right (complete) | `E` or `Space` |
 | Swipe left (defer) | `D` |
 | Swipe up (attach) | `A` |
 | Swipe down (remove) | `X` |
-| Long-press (AI menu) | `Cmd+Enter` on a focused item |
+| Focused item's contextual menu (Tier 2) | `Cmd+Enter` |
+| Filter sheet | `Cmd+F` |
 | Pull down (capture) | `C` |
 | Back | `Esc` |
 | Zoom | `Cmd +` / `Cmd -` |
+
+**One chord, one target.** `Cmd+K` opens the palette and nothing else;
+the assistant is what the palette does when no command and no direct
+match applies (`04-ai/tier-3-assistant.md`), so it has no chord of its
+own. The focused item's contextual menu is `Cmd+Enter`, which is the
+keyboard form of long-press and stays available inside the palette
+because the palette preselects its first result.
 
 Removal is `X`, never `Delete` or `Backspace`. The key follows the
 verb: removal is not deletion (ADR 0011).

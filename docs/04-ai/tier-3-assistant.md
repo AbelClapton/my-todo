@@ -32,22 +32,29 @@ appears when invoked and disappears when done.
 
 Tier 3 is invoked via the command palette:
 
-- **Keyboard:** `Cmd+K` (desktop, tablet with keyboard).
+- **Keyboard:** `Cmd+K` — but only because that is the palette's own
+  chord, per `03-experience/gesture-vocabulary.md`. Tier 3 does not
+  own a shortcut; the palette does, and the assistant is one of the
+  things it can do.
 - **Mobile:** long-press the mode switcher. (The mode switcher is
   not an atom, so this does not collide with long-press = contextual
   AI on a Task, Event, Note, or Habit.)
 - **Voice:** the microphone button inside the palette.
 
 The palette is a single input field with a results area below it.
-As the user types, results update. Results include both:
+As the user types, results update. Results include all three:
 
 1. **Commands** — direct app actions ("Open calendar," "Capture,"
    "Switch to habits," "Search notes for X").
-2. **Assistant queries** — "Ask: <the user's text>."
+2. **Direct matches** — tasks, events, notes and people that match
+   the query by name (`06-flows/retrieval.md`).
+3. **Assistant queries** — "Ask: <the user's text>."
 
-The assistant is the fallback when no command matches. The user
-does not choose "ask the assistant"; it is what happens when they
-type something that is not a command.
+The assistant is the fallback when **neither** a command nor a direct
+match applies. It is the third class, not the second: a name the user
+typed is a better answer than a question about it. The user does not
+choose "ask the assistant"; it is what happens when they type
+something that is neither a command nor a name.
 
 ### The output shape
 

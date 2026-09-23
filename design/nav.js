@@ -52,7 +52,8 @@
     { file: 'people-lab.html',      name: 'People' },
     { file: 'review-lab.html',      name: 'Review' },
     { file: 'settings-lab.html',    name: 'Settings' },
-    { file: 'capture-lab.html',     name: 'Capture' }
+    { file: 'capture-lab.html',     name: 'Capture' },
+    { file: 'retrieval-lab.html',   name: 'Retrieval' }
   ];
 
   var here = (location.pathname.split('/').pop() || 'index.html').toLowerCase();

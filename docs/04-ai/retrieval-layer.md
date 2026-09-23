@@ -26,6 +26,17 @@ log and returns results.
 - The retrieval layer never modifies state. It is read-only.
 - Tool results are bounded. No tool returns an unbounded list.
 
+**One open question, deliberately not an invariant until it is
+settled: semantic search's offline behaviour.** If the index is
+local, being offline does not stop it, and `06-flows/retrieval.md`'s
+keyword fallback is unreachable. If the embedding model needs a
+first-run download, the trigger is *"the index is not built yet"*
+rather than *"the user is offline"*, and the note shown to the user
+should say that instead. **The fallback cannot key on network state
+while the invariant above says the query never leaves the device** —
+the two sentences are both true only if one of them is reworded. This
+doc owns the answer and `06-flows/retrieval.md` reports the note.
+
 ## Specification
 
 ### The tools
@@ -145,7 +156,12 @@ query.
 
 **`semantic_search(params)`**
 
-Vector search over notes, tasks, and events.
+Vector search over notes, tasks, and events. This is the **only** tool
+that returns a reason string (`why`), which is why
+`06-flows/retrieval.md`'s "why this matched" invariant is scoped to
+semantic results rather than to all results. `score` is returned for
+diagnostics and is not displayed: nothing on screen branches on it
+(`06-flows/retrieval.md` fixes the line's shape at `matched: <what>`).
 
     params: {
       query: string,
@@ -158,6 +174,7 @@ Vector search over notes, tasks, and events.
       snippet: string,
       score: number,
       why: string           // one-line explanation of the match
+      score: number         // diagnostic; not shown in the UI
     }>
 
 **`research(params)`**

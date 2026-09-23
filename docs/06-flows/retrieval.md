@@ -17,10 +17,16 @@ route through the same underlying tools.
   and never a source of truth (`02-architecture/event-log.md`).
 - Semantic search runs on-device where possible
   (`04-ai/retrieval-layer.md`).
-- Every result includes a "why this matched" line
-  (`04-ai/retrieval-layer.md`).
-- Search works offline. Only semantic search may degrade to
-  keyword-only when offline.
+- Every **semantic** result includes a "why this matched" line
+  (`04-ai/retrieval-layer.md`). Command, direct-match and
+  filter results do not: a command matched nothing, a name is its own
+  explanation, and a filter's count is the line. The line's shape is
+  fixed at one: `matched: <what>` in `text-secondary`, with no score —
+  the score is diagnostic, and nothing on screen branches on it.
+- Search works offline. **Two** of the five surfaces below degrade and
+  three do not; §Degraded search is the authoritative list of which,
+  and it must stay total — a feature that stops working offline is
+  exactly what this invariant exists to prevent being silent.
 - Time machine is read-only.
 
 ## Specification
@@ -65,20 +71,30 @@ render as a screen:
 
     Notes
       Sleep protocol — "Reading before bed, 12 of 14 nights…"
-        matched: reading before bed
+        matched: reading before bed, in the body
       Weekly review — Sep 14–20
+        matched: reading before bed, in the summary
     Tasks
       Read before bed                    Sleep · nightly
+        matched: the title
     Events
       Sleep study follow-up              Oct 3, 14:00
+        matched: reading and sleep, by meaning
 
 - Grouped by atom type, in the order notes, tasks, events, people.
-- Every row carries its "why this matched" line in `text-secondary`,
-  per the invariant above.
+- **Every row carries its "why this matched" line** in `text-secondary`,
+  per the invariant above. One field, two contents: a keyword hit names
+  the term, and a semantic hit names what the match was, because the
+  words are not in the item. The last row above is the second kind —
+  which is why this screen is not a keyword screen.
 - Rows are the standard row components. A result is not a new row type.
 - An empty result set uses the empty state
   (`03-experience/states.md`) and says the query matched nothing — not
   "No results found," which reads like an error.
+
+The screen has one owner: this doc. `gesture-vocabulary.md` supplies
+its gesture row and `04-ai/retrieval-layer.md` supplies its tools;
+neither defines the screen.
 
 ### Semantic search
 
@@ -90,14 +106,28 @@ by meaning.
 Result row:
 
     Note: "Sarah mentioned pottery"               Mar 14
-    Matches "kitchen renovation" (0.87)
+    matched: kitchen renovation, in the body
 
 The "why this matched" line is required
-(`04-ai/retrieval-layer.md`).
+(`04-ai/retrieval-layer.md`) and takes the same shape as everywhere
+else: `matched: <what>`, no score. `semantic_search` returns a
+`score` in its result because the tool is diagnostic-friendly; the
+screen does not print it, because nothing branches on it and no doc
+gives the user a scale for 0.87.
 
 Semantic search runs on-device. If the user is offline, results may
 fall back to keyword matching, with a note: "Offline: keyword-only
 results."
+
+**That fallback has no stated trigger, and one is needed.**
+`04-ai/retrieval-layer.md` gives exactly one condition for a query
+leaving the device — *"only if a query requires cloud models"* — and
+an offline query is not one. So either the index is local and the
+fallback is dead code, or the embedding model needs a first-run
+download and the trigger is *"the index is not built yet"*, which is
+a different instruction to the user ("connect once" rather than "you
+are offline"). The layer owns this and must say which; this flow
+reports the note either way.
 
 ### Natural-language filters
 
@@ -111,8 +141,14 @@ Some queries are filters, not searches:
 These are parsed by Tier 3 into structured queries against the
 retrieval tools (`04-ai/retrieval-layer.md`) and returned as lists.
 
-The user does not construct these queries via a filter UI. They
-type them, and Tier 3 translates.
+**A filter is a result class of the palette, not a surface of its
+owner.** The user types it into the same field as everything else —
+"The user does not construct these queries via a filter UI. They type
+them, and Tier 3 translates" — so the query has the palette's
+container and the results have the palette's list. There is no
+separate overlay. (`03-experience/surfaces.md` previously listed a
+"Natural-language filter" Overlay; that row is a duplicate of the
+palette and has been removed.)
 
 ### The time machine
 
@@ -162,22 +198,43 @@ screen.
 
 Search is accessible from every mode:
 
-- The palette (`Cmd+K`) from anywhere.
-- A search field in the header of list surfaces (Tasks, Notes,
-  People).
+- The palette (`Cmd+K`) from anywhere. This is the universal door and
+  the only one that covers all four modes.
+- A search field in the header of the two list surfaces that have one:
+  **Notes** and **People**. **Tasks has a filter button and `Cmd+F`
+  instead** (`05-modules/tasks.md`), which filters by Area, Person and
+  due window rather than by text — a filter, not a search.
 
 Results are consistent across entry points.
 
 ### Degraded search
 
-When offline:
+This table is authoritative for what happens with no network. It is
+**total**: all five surfaces appear, so a surface missing from it is
+an omission rather than a decision.
 
-- Semantic search falls back to keyword.
-- Time machine works (local log).
-- Direct navigation works.
-- Command palette works (commands and direct matches).
-- Only "Ask: ..." is unavailable, with a note: "The assistant
-  needs a connection."
+| Surface | Offline |
+|---|---|
+| Command palette | Works. Commands and direct matches; no "Ask" row. |
+| List search | Works. Substring over the local projection. |
+| Semantic search | Falls back to keyword. Note: "Offline: keyword-only results." |
+| Natural-language filters | **Unavailable.** Parsed by Tier 3, which needs a connection. Same note as the assistant. |
+| Time machine | Works. It reads the local log. |
+
+The assistant is "Ask: <text>" inside the palette, so it is a row
+state rather than a row of its own: offline, the palette still opens
+and simply never offers the third result class.
+
+**Two of the five are affected offline, and only one of them
+*degrades*.** Semantic search degrades: it still answers, less well.
+Natural-language filters fail: there is no keyword form of "tasks I've
+deferred more than 3 times", so the query stops existing. Both need a
+model, which is why both are the two, and both get a note. The other
+three are reads over the log, which is local by definition.
+
+§Direct navigation is absent from the table because it is not a
+surface: it is the edge between two detail views, and it is a read
+over a local projection, so it behaves identically offline.
 
 ## Examples
 
@@ -221,7 +278,14 @@ When offline:
 
     User types: "as of March 14."
     App opens the calendar in time-machine mode for that date.
-    A banner: "Viewing March 14, 2026. [Return to now]"
+    The day view's now line reads: "Now · Mar 14, 2026 · 3:20 PM"
+    with "Return to now" beside it.
+
+Note the state is stated **in the now line**, not in a banner — the
+now line is the slot that already means "what is current in this
+view", so a timer state and a date state share it
+(`05-modules/calendar.md`). A banner would be a second chrome element
+competing with it.
 
 **A search for a person's activity.**
 

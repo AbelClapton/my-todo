@@ -32,7 +32,11 @@ Habit). The contextual menu appears (see
 `03-experience/gesture-vocabulary.md`). The menu's contents are
 item-type-specific.
 
-Keyboard: `Cmd+K` on a focused item.
+Keyboard: `Cmd+Enter` on a focused item — the keyboard form of
+long-press, per that doc's key map. **Not `Cmd+K`:** that chord opens
+the command palette, and since the palette preselects its first
+result, an item is focused whenever it is open. Claiming `Cmd+K` here
+would make one keystroke mean two things in the same state.
 
 ### The action catalog
 

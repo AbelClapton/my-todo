@@ -131,15 +131,21 @@ position ("The Month view layout").
 
 ### Cross-cutting: capture and retrieval
 
+**The `Defined in` column names the doc that specifies the surface** —
+its layout, its behaviour and its state. A doc that merely uses the
+surface (a flow that lists it as a door), or that supplies one
+ingredient of it (a gesture row, a tool), is a *contributor* and does
+not appear here. Where a surface has both, the definer owns the row
+and the contributors are named in the defining doc's specification.
+
 | Surface | Kind | Defined in |
 |---|---|---|
 | Capture field | Overlay | `06-flows/capture.md` |
 | Share-sheet confirm | Screen | `06-flows/capture.md` |
 | Inbox list | Screen | `06-flows/capture.md` |
 | Sort ritual | Screen | `06-flows/capture.md` |
-| Command palette | Overlay | `06-flows/retrieval.md` |
-| Search results | Screen | `03-experience/gesture-vocabulary.md`, `04-ai/retrieval-layer.md` |
-| Natural-language filter | Overlay | `06-flows/retrieval.md` |
+| Command palette | Overlay | `06-flows/retrieval.md` (chrome: `03-experience/app-shell.md`) |
+| Search results | Screen | `06-flows/retrieval.md` |
 | Time machine | Screen | `06-flows/retrieval.md` |
 
 ### Cross-cutting: the day's rituals

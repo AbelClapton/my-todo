@@ -15,12 +15,12 @@ happen later, either by AI or by the sort ritual.
 
 - Capture is available from every list surface via the pull-down
   gesture. The surface list is `03-experience/gesture-vocabulary.md`'s
-  gesture matrix, which is authoritative: it grants **Pull ↓** to the
-  Task, Habit, Note and People lists and to the Inbox. **The Calendar
-  has no capture gesture** — its two rows are assigned other gestures
-  — so capture from the Calendar runs through the command palette.
-  Availability means *every surface the matrix grants the gesture to*,
-  not *every screen*.
+  gesture matrix, which is authoritative: it grants **Pull ↓** to
+  **six** surfaces — the Task, Habit, Note, People and Search-results
+  lists, and the Inbox. **The Calendar has no capture gesture** — its
+  two rows are assigned other gestures — so capture from the Calendar
+  runs through the command palette. Availability means *every surface
+  the matrix grants the gesture to*, not *every screen*.
 - Capture never requires the user to pick a type. Tier 1 parses; the
   user confirms or corrects.
 - Capture is under two seconds from gesture to input field, **on the
@@ -43,7 +43,7 @@ happen later, either by AI or by the sort ritual.
 ### The four entry points
 
 1. **Pull-down.** On a list surface, pull down to reveal the capture
-   field at the top. The surface is one of the five the gesture matrix
+   field at the top. The surface is one of the six the gesture matrix
    grants the gesture to — see §Invariants.
 2. **Command palette.** `Cmd+K` → type → the first result is
    "Capture: <text>."
