@@ -53,6 +53,18 @@ which is the most common case.
 - **Proposed.** Protocols in `proposed` status, awaiting adoption.
 - **Past.** Completed and abandoned protocols.
 
+`abandoned` is reachable from `proposed` (the status diagram says so),
+so Past contains protocols that never ran alongside those that
+finished. The scope holds **experiments that ended**, whether or not
+they produced data — which is worth stating because a Past list is
+read as a history, and a never-adopted proposal is not one.
+
+**The Proposed empty state names one of its two sources.** Its detail
+line says protocols "arrive from a Goal, **or from what the app
+notices in your log**", and its action is "Open a Goal" — so the
+second source has no door. Either the action offers both, or the
+detail line drops the second source.
+
 ### Empty states
 
 The form is `03-experience/states.md`; the action repairs the cause
@@ -92,6 +104,25 @@ a Goal detail, or from Settings), each protocol shows as a card:
 
 Card height is `row-hero` (96px).
 
+**The card does not fit, and the reason is not the text.** The four lines are 24 + 18 × 3 =
+**78px**, which leaves 18px to spare in a 96px token. The chrome is what spends the rest:
+2 × 12px of padding + 3 × 2px of gaps + 2 × 1px of border = **32px**, so the card draws at
+**110px** — **14px over**. `03-experience/design-tokens.md` records that `row-hero`'s only
+real user is this card, so unlike `row-rich` the token was sized for its one consumer and is
+still short. Either the padding shrinks for this card, or the fourth line moves onto the third.
+
+**M is undefined.** The card shows `day N of M`, and with the documented defaults
+(baseline 14, duration 28) that reads **"day 18 of 42"** — so M is
+`baseline_days + duration_days`. No doc defines the field, and
+`04-ai/research-and-protocols.md` renders the same two numbers separately
+(`14 baseline + 28 active`) without ever summing them, so nothing in the doc set produces the
+number the card displays. The doc also gives M **two renderings** — `day N of M` here and
+`baseline: day N of M` under Baseline — with no stated difference between them.
+
+M is also the **review date** (§Review fires on it, §Detail displays it, and neither doc
+computes it). All three should be one definition:
+`adoption_date + baseline_days + duration_days`.
+
 ### Surfaces
 
 **List.** Active / Proposed / Past.
@@ -104,6 +135,22 @@ completed).
 hypothesis, habits, metric, durations, and explanation. Actions:
 "Adopt" and "Edit." Editing opens a form where the user can
 change anything before adoption.
+
+**This is a screen, not a sheet** — the same rule that decided the
+Event detail and then New event, and the third surface to reach it. A
+sheet whose own action opens a form collides with `03-experience/
+app-shell.md`'s one-sheet limit, so "Edit" dismisses the proposal it
+was meant to edit. It is also the sharpest case of the three: §Immutability
+closes the editing window when `baseline` begins, so this surface's own
+lifetime **is** the entire editable window, and a sheet is the one
+container that cannot hold a form. `03-experience/surfaces.md` files
+this as an Overlay and should file it as a Screen.
+
+**The rule itself should be written down.** The same collision corrected
+`surfaces.md`'s Event detail row and its New event row, one at a time,
+with the reasoning rediscovered each time: **a surface whose own action
+opens another overlay must be a screen.** It belongs in `app-shell.md`'s
+stacking section, where the one-sheet limit already lives.
 
 **Report.** A Note attached to the protocol. Read-only display
 with a link to the note editor.
@@ -130,7 +177,28 @@ The baseline period is the control condition. During baseline:
 - The protocol card shows "baseline: day N of M."
 
 Default baseline: 14 days. Configurable at proposal time.
+**"Not scored" is a state no surface can draw.** `05-modules/habits.md`
+owns every surface that shows a score — the row's compliance count and
+the detail's 28-day chart — and it **never mentions baseline**. So a
+protocol habit renders `6/6` on the row and five coloured states in the
+chart, all of which count the control period, while this doc says the
+number does not count. The user's checkmarks are recorded and unread.
 
+Neither doc is wrong; the pair has a hole in it. Three ways to close it,
+and the third is the only one that adds no state:
+
+1. **The row shows no count** and the chart hatches unscored days. This
+   adds a sixth chart state to a strip whose cells are **8.6–9.9px**
+   wide and whose skip-vs-missed pair measures **1.19:1** — a hatch at
+   that size is texture, not meaning.
+2. **The protocol card explains it** and the habit surfaces keep their
+   numbers. Cheap, but the explanation is one surface away from the
+   number, so a user in the Habits mode sees `6/6` with nothing saying
+   it does not count.
+3. **The row's metadata line names the phase.** It already reads
+   `Cadence · area` and already carries "a small protocol indicator",
+   so the indicator names `baseline` and every count, chart state and
+   legend stays exactly as specified.
 ### Active
 
 When baseline ends:
@@ -142,7 +210,9 @@ When baseline ends:
 
 ### Review
 
-At the review date:
+At the review date — defined in §The protocol card as
+`adoption_date + baseline_days + duration_days`, and the same value the
+card counts up to:
 
 1. `protocol.completed` is logged (or the user extends, which
    creates a new protocol version).
@@ -196,9 +266,27 @@ From the protocol detail, "Abandon" action:
 - Confirms once (this is one of the few allowed confirmations;
   abandonment is rare and consequential).
 - Logs `protocol.abandoned`.
-- Generates a report if the active period was ≥ 7 days.
+- Generates a report if **≥ 7 days were logged**, counting
+  `baseline` and `active` alike.
 - Frames the report neutrally: "You stopped after N days.
   Here's what the data showed."
+
+**This threshold used to count only the active period, and that
+threw the data away.** `baseline` is not a warm-up: §Baseline has
+the metric surfacing daily in the obligations card, so those are
+readings. A protocol abandoned on day 13 of a 14-day baseline has
+thirteen metric entries and zero active days, and an
+`active ≥ 7 days` rule produces **no report at all** from a fortnight
+of collected data. Counting logged days fixes it.
+
+**This is the only statement of the threshold.**
+`04-ai/research-and-protocols.md` §Abandonment says a report is
+generated "if there is enough data" — a number and a feeling for
+one rule. That doc now points here.
+
+A baseline-only report contains no comparison, so it says so
+rather than being withheld. Reports are Notes (§Invariants), and a
+note can carry the sentence a report template cannot.
 
 ### The protocol report
 

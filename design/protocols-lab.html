@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="warm" data-mode="light" data-accent="teal"
+      data-semantics="vivid" data-type="system">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Protocols lab · Small Wins</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="lab.css">
+<style>
+/* ============================================================================
+   THE PROTOCOL CARD — `row-hero`, 96px, and four lines.
+   Drawn without a height first so the natural height is readable.
+   ============================================================================ */
+.pt-card{background:var(--surface-1);border:1px solid var(--border-subtle);
+  border-radius:14px;padding:12px 16px;display:flex;flex-direction:column;gap:2px}
+.pt-card.fixed{height:96px;overflow:hidden}
+.pt-top{display:flex;align-items:center;gap:8px}
+.pt-title{font-size:17px;line-height:24px;font-weight:600;color:var(--text-primary);
+  flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pt-chip{font-size:12px;line-height:16px;padding:2px 8px;border-radius:6px;white-space:nowrap;flex:none}
+.pt-chip.active{background:var(--accent-subtle);color:var(--accent-text);font-weight:600}
+.pt-chip.baseline{background:var(--surface-2);color:var(--text-secondary)}
+.pt-chip.proposed{background:var(--surface-2);color:var(--text-tertiary)}
+.pt-chip.completed{background:var(--success-subtle);color:var(--success-text)}
+.pt-chip.abandoned{background:var(--surface-3);color:var(--text-secondary)}
+.pt-l{font-size:13px;line-height:18px;color:var(--text-secondary)}
+.pt-l.dim{color:var(--text-tertiary)}
+.pt-h{font-size:12px;line-height:16px;color:var(--text-muted);margin:2px 0 0}
+
+/* the lifecycle */
+.pt-flow{display:flex;flex-direction:column;gap:6px}
+.pt-st{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:10px;align-items:baseline}
+.pt-nm{font-size:14px;line-height:20px;font-weight:600;color:var(--text-primary)}
+.pt-d{font-size:13px;line-height:18px;color:var(--text-secondary)}
+.pt-v{font-size:13px;line-height:18px;font-variant-numeric:tabular-nums;color:var(--text-tertiary)}
+.pt-arrow{font-size:13px;color:var(--text-muted);padding-left:96px}
+
+/* baseline: what the habit surfaces would have to show */
+.pt-note{border:1px solid var(--border-subtle);border-radius:12px;padding:14px}
+.pt-alert{font-size:13px;line-height:18px;color:var(--warning-text);margin-top:6px}
+.pt-row{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:12px;
+  align-items:center;padding:9px 14px;min-height:56px;border-bottom:1px solid var(--border-subtle)}
+.pt-row:last-child{border-bottom:0}
+.pt-box{width:24px;height:24px;border-radius:7px;border:1.5px solid var(--border-strong);
+  background:var(--surface-1);display:grid;place-items:center;box-sizing:border-box}
+.pt-box.on{background:var(--success-default);border-color:var(--success-default);color:#fff}
+.pt-box svg{width:14px;height:14px;stroke-width:3.2;fill:none;stroke:currentColor;
+  stroke-linecap:round;stroke-linejoin:round}
+.pt-nm2{font-size:15px;line-height:20px;font-weight:600;color:var(--text-primary)}
+.pt-md{font-size:13px;line-height:18px;color:var(--text-tertiary)}
+.pt-cnt{font-size:13px;line-height:18px;font-weight:600;font-variant-numeric:tabular-nums;
+  color:var(--text-secondary)}
+.pt-strip{display:grid;gap:3px}
+.pt-c{height:14px;border-radius:3px;background:var(--surface-2);box-sizing:border-box}
+.pt-c.f{background:var(--success-default)}
+.pt-c.u{background:var(--surface-2);border:1px dashed var(--border-strong);color:var(--text-muted)}
+
+/* the sheet */
+.pt-sheet{background:var(--surface-1);border-radius:16px 16px 0 0;
+  box-shadow:0 -8px 32px rgb(0 0 0 / .18);padding:16px}
+.pt-sheet-t{font-size:20px;line-height:28px;font-weight:600;color:var(--text-primary)}
+.pt-q{font-size:13px;line-height:18px;color:var(--text-tertiary);margin-top:10px}
+.pt-act{display:flex;gap:8px;margin-top:14px}
+.pt-btn{font-size:15px;line-height:20px;font-weight:600;padding:9px 16px;border-radius:10px}
+.pt-btn.p{background:var(--accent-default);color:var(--on-fill)}
+.pt-btn.s{background:var(--surface-2);color:var(--text-secondary)}
+.pt-scrim{position:absolute;inset:0;background:rgb(24 24 27 / .32)}
+.pt-rel{position:relative;overflow:hidden;border-radius:14px}
+.pt-form{background:var(--surface-1);border-radius:14px;border:1px solid var(--border-strong);padding:14px}
+.pt-f{font-size:14px;line-height:20px;color:var(--text-primary);
+  border-bottom:1px solid var(--border-subtle);padding:7px 0}
+.pt-f span{color:var(--text-muted);font-size:13px}
+</style>
+</head>
+<body data-lab="protocols">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol>
+  <symbol id="i-mode-tasks" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol>
+  <symbol id="i-mode-notes" viewBox="0 0 24 24"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+</svg>
+
+<header class="masthead">
+  <p class="eyebrow">Lab 07 · the module the app is built around</p>
+  <h1 class="t-title-1">Protocols</h1>
+  <p class="lede-p">
+    <code>protocols.md</code> calls protocols <i>"the app's defining feature"</i> and <i>"what make
+    the app different"</i>. It is also the only module with a <b>lifecycle</b> — five statuses and a
+    time box — and the only one whose central noun is a <b>measurement</b>.
+  </p>
+  <p class="lede-p">
+    Three things came out of reading it, and two are cross-module. The card is <b>four lines in
+    96px</b>, by the same arithmetic that broke the note row. <b>"Not scored" is a state no surface
+    can draw.</b> And the proposal sheet offers an action that opens a second sheet — which is the
+    same one-sheet rule that already decided the <b>Event detail</b> and <b>New event</b>. This is
+    its <b>third</b> surface.
+  </p>
+</header>
+
+<div class="bar">
+  <nav class="tabs" id="tabs">
+    <button class="tab" data-go="card">The protocol card</button>
+    <button class="tab" data-go="life">The lifecycle</button>
+    <button class="tab" data-go="baseline">Baseline</button>
+    <button class="tab" data-go="sheet">The proposal sheet</button>
+  </nav>
+</div>
+
+<main id="main">
+
+<!-- =================================================================== CARD -->
+<section class="screen" id="card">
+  <div class="lede">
+    <h2 class="t-title-2">The protocol card</h2>
+    <p class="lede-p">
+      <code>protocols.md</code> §The protocol card gives the card's exact contents, and its exact
+      height: <b><code>row-hero</code> (96px)</b>.
+    </p>
+    <p class="lede-p">
+      Four lines — title, Goal with the day counter, metric with its baseline, habits with
+      compliance. The day counter is the one to watch: with the documented defaults (baseline 14,
+      duration 28) the card reads <b>"day 18 of 42"</b>, and <b>42 appears nowhere else in the doc
+      set</b>. The report writes those same two numbers as <code>14 baseline + 28 active</code> — so
+      the card's M is a derived sum that no doc names, while the doc gives two different renderings
+      for it: <code>day N of M</code> and <code>baseline: day N of M</code>.
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">Four lines, five statuses, one 96px card.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="pt-top" style="align-items:center">
+              <span class="t-title-2" style="flex:1">Protocols</span>
+              <svg class="ic ic-lg" style="color:var(--text-secondary)"><use href="#i-plus"/></svg>
+            </div>
+            <div class="nt-seg" style="display:flex;gap:6px">
+              <span style="font-size:13px;padding:5px 11px;border-radius:8px;
+                background:var(--accent-subtle);color:var(--accent-text);font-weight:600">Active</span>
+              <span style="font-size:13px;padding:5px 11px;border-radius:8px;
+                background:var(--surface-2);color:var(--text-secondary)">Proposed</span>
+              <span style="font-size:13px;padding:5px 11px;border-radius:8px;
+                background:var(--surface-2);color:var(--text-secondary)">Past</span>
+            </div>
+            <div class="pt-card" id="pc-1">
+              <div class="pt-top">
+                <span class="pt-title">Sleep protocol</span>
+                <span class="pt-chip active">active</span>
+              </div>
+              <div class="pt-l">Improve sleep · day 18 of 42</div>
+              <div class="pt-l dim">Metric: Sleep quality · 3.9 avg (baseline 2.8)</div>
+              <div class="pt-l dim">2 habits · 78% compliance</div>
+            </div>
+            <div class="pt-card">
+              <div class="pt-top">
+                <span class="pt-title">Reading protocol</span>
+                <span class="pt-chip baseline">baseline</span>
+              </div>
+              <div class="pt-l">Read more fiction · baseline: day 6 of 14</div>
+              <div class="pt-l dim">Metric: Pages read · 24 avg (baseline —)</div>
+              <div class="pt-l dim">2 habits · not scored</div>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. Four lines at the documented type sizes, no fixed height — so the card is as
+            tall as its content.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="card-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One, and it is the note row's defect again: <code>row-hero</code> is 96px, the card
+            names four lines, and <code>design-tokens.md</code> notes that the protocol card is
+            <b><code>row-hero</code>'s only real user</b> — so the token was sized for this card and
+            still does not hold it.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">The card shows <b>one number per question</b>: when, how much, how
+            well.</p>
+        <span class="vc-read">one line, one job · the card is read, not studied</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="pt-card fixed">
+              <div class="pt-top">
+                <span class="pt-title">Sleep protocol</span>
+                <span class="pt-chip active">active</span>
+              </div>
+              <div class="pt-l">Improve sleep · day 18 of 42</div>
+              <div class="pt-l dim"><b style="color:var(--text-secondary)">3.9</b> sleep quality,
+                baseline 2.8 · 78%</div>
+            </div>
+            <div class="pt-card fixed">
+              <div class="pt-top">
+                <span class="pt-title">Reading protocol</span>
+                <span class="pt-chip baseline">baseline</span>
+              </div>
+              <div class="pt-l">Read more fiction · baseline day 6 of 14</div>
+              <div class="pt-l dim">24 pages · <b style="color:var(--text-tertiary)">not
+                scored</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Three content lines become two by folding the habit count into the metric line and
+            dropping the repeated labels ("Metric:", "2 habits ·"). The card fits 96px.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Folding compliance onto the metric line puts two unrelated measures side by side —
+            "3.9 sleep quality, baseline 2.8 · 78%" reads as though 78% qualifies the metric. The
+            whole point of the card is the <b>delta from baseline</b>, and this shares its line with
+            the thing that competes with it.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: §The protocol card lists Metric and Habits as separate items. But it also calls
+            the card's own lines "Goal", "Day", "Metric", "Habits" — four names for what this draws
+            as three.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">The card carries the <b>question it is answering</b>, not four fields.</p>
+        <span class="vc-read">lead with the finding · the delta is the reward</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="pt-card fixed">
+              <div class="pt-top">
+                <span class="pt-title">Sleep protocol</span>
+                <span class="pt-chip active">active</span>
+              </div>
+              <div class="pt-l dim">Improve sleep · day 18 of 42</div>
+              <div style="font-size:15px;line-height:20px;color:var(--text-primary);margin-top:2px">
+                Sleep quality <b>3.9</b> <span style="color:var(--success-text)">+1.1 on
+                baseline</span>
+              </div>
+            </div>
+            <div class="pt-note">
+              <p class="pt-h" style="margin:0">Compliance becomes a chip, because it is a
+                <i>diagnostic</i>: if the numbers did not move, 78% is the answer to why.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The delta becomes the card's headline figure and is stated as a signed change rather
+            than two means the reader has to subtract. Compliance moves to a chip that appears only
+            when it is the explanation.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A delta needs a baseline, and three of the five statuses do not have one yet — so the
+            card's most prominent element is blank for `proposed`, `baseline`, and any protocol whose
+            report is still pending. The doc's uniform card spec gives no per-status variant, and
+            this row creates one.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: §The protocol card specifies "Current mean vs. baseline mean" — two numbers. A
+            signed delta is a third quantity, and `04-ai/research-and-protocols.md` owns the report's
+            framing of the comparison. Two surfaces would state the same result differently.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">The <b>day counter</b> is the line to cut. It restates the clock, and
+            the window is on the detail.</p>
+        <span class="vc-read">cut the tell · "of 42" is a number nobody uses</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="pt-card fixed">
+              <div class="pt-top">
+                <span class="pt-title">Sleep protocol</span>
+                <span class="pt-chip active">active</span>
+              </div>
+              <div class="pt-l dim">Improve sleep</div>
+              <div class="pt-l dim">Metric: Sleep quality · 3.9 avg (baseline 2.8)</div>
+              <div class="pt-l dim">2 habits · 78% compliance</div>
+            </div>
+            <div class="pt-note">
+              <p class="pt-h" style="margin:0">96px, three content lines, and M is gone — so the
+                undefined sum stops being displayed.</p>
+            <p class="pt-alert">But "day 18 of 42" is the only thing on the card that changes
+                daily. Without it the list is static for 42 days.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Deletes the day counter, and with it the undefined M. The Goal line keeps the Goal's
+            name, which is the only part of that line with content.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A protocol list whose rows never change is a list you stop opening — and "day 18 of
+            42" is the only progress signal the card has. It also removes the reason the card needs
+            a time box at all, which is the module's defining property against habits.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two: §The protocol card lists Day as an item, and §Baseline says the card shows
+            "baseline: day N of M" — a second mention that would have to be deleted too.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Keep four lines; <b>name M</b>, and let the counter be the card's one
+            changing element.</p>
+        <span class="vc-read">fix the undefined, don't delete it</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="pt-card">
+              <div class="pt-top">
+                <span class="pt-title">Sleep protocol</span>
+                <span class="pt-chip active">active</span>
+              </div>
+              <div class="pt-l">Improve sleep · day 18 of 42<span style="color:var(--text-muted)">
+                (14 baseline + 28)</span></div>
+              <div class="pt-l dim">Metric: Sleep quality · 3.9 avg (baseline 2.8)</div>
+              <div class="pt-l dim">2 habits · 78% compliance</div>
+            </div>
+            <div class="pt-note">
+              <p class="pt-h" style="margin:0">At the documented type sizes the four lines need
+                <b>78px</b>; <code>row-hero</code> is <b>96px</b>, and the padding and gaps come to
+                <b>32px</b>, so the card draws at <b>110px</b>. The text was never the problem —
+                <b>the chrome is</b>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>No structural change. The doc gains the thing it omitted: <b>what M is</b> —
+            <code>baseline_days + duration_days</code>, computed once and used by the card, the
+            baseline rendering, and the review date, so all three agree. The counter stays four lines
+            and the card fits.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>"day 18 of 42 (14 baseline + 28)" is the longest string on the card at 13px — it will
+            truncate on a 390px phone unless the parenthesis drops. And naming M admits that the app
+            shows a number that is the sum of two others, which the report never shows.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether M should exist. A user asking "how far in am I" during baseline is asking about
+            the <i>control period</i>, not the experiment — so "day 6 of 14" and "day 18 of 42" may
+            be the honest pair rather than two renderings of one field. That is a question about what
+            the counter is <i>for</i>, and the doc never says.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the card measures</h2>
+    <div class="measure" id="measure-card">…</div>
+  </div>
+</section>
+
+<!-- =================================================================== LIFE -->
+<section class="screen" id="life" hidden>
+  <div class="lede">
+    <h2 class="t-title-2">The lifecycle</h2>
+    <p class="lede-p">
+      Five statuses, three scopes, and one action whose threshold two docs state differently.
+      <code>protocols.md</code> §Abandonment: <i>"Generates a report <b>if the active period was
+      ≥ 7 days</b>."</i> <code>research-and-protocols.md</code> §Abandonment: <i>"A report is
+      generated <b>if there is enough data</b>."</i>
+    </p>
+    <p class="lede-p">
+      The threshold matters because of what the baseline period <b>does</b>: the metric is logged
+      daily throughout it. So a protocol abandoned on day 13 of a 14-day baseline has thirteen days
+      of real measurements, and the rule — which counts only the <b>active</b> period — produces
+      <b>no report at all</b>. The data existed and nothing reads it.
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The statuses, their scopes, and the abandonment rule as written.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pt-flow">
+              <div class="pt-st"><span class="pt-nm">proposed</span>
+                <span class="pt-d">editable, not a commitment</span>
+                <span class="pt-v">Proposed</span></div>
+              <div class="pt-st"><span class="pt-nm">baseline</span>
+                <span class="pt-d">metric logged, habits not scored</span>
+                <span class="pt-v">Active</span></div>
+              <div class="pt-st"><span class="pt-nm">active</span>
+                <span class="pt-d">habits and metric scored</span>
+                <span class="pt-v">Active</span></div>
+              <div class="pt-st"><span class="pt-nm">completed</span>
+                <span class="pt-d">duration reached, report generated</span>
+                <span class="pt-v">Past</span></div>
+              <div class="pt-st"><span class="pt-nm">abandoned</span>
+                <span class="pt-d">stopped early, report may be generated</span>
+                <span class="pt-v">Past</span></div>
+            </div>
+            <hr class="nt-rule">
+            <p class="pt-h" style="margin:0">Abandoning from <b>proposed</b> lands a protocol that
+              never ran in <b>Past</b> ("Completed and abandoned").</p>
+            <p class="pt-h" style="margin:0">The card's <b>review date</b> is displayed in
+              §Detail, acted on in §Review, and <b>computed in no doc</b>.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. Statuses, scopes, and the abandon threshold as written.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="life-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two. §Abandonment's ≥7-day rule contradicts <code>research-and-protocols.md</code>'s
+            "enough data"; and the status diagram allows <code>proposed → abandoned</code> while
+            §Scopes files <code>abandoned</code> under Past — a scope whose definition includes
+            protocols that were never adopted.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">The threshold counts <b>logged days</b>, not active days.</p>
+        <span class="vc-read">measure the data, not the phase</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pt-flow">
+              <div class="pt-st"><span class="pt-nm">Abandon at</span>
+                <span class="pt-d">baseline day 13 of 14</span>
+                <span class="pt-v">13 days logged</span></div>
+              <div class="pt-st"><span class="pt-nm">As written</span>
+                <span class="pt-d">active period was 0 days</span>
+                <span class="pt-v">no report</span></div>
+              <div class="pt-st"><span class="pt-nm">As changed</span>
+                <span class="pt-d">≥ 7 days with metric entries</span>
+                <span class="pt-v">report generated</span></div>
+            </div>
+            <div class="pt-note">
+              <p class="pt-h" style="margin:0">The baseline is a <b>measurement</b>, not a warm-up —
+                §Baseline says the metric "surfaces daily in the daily obligations card", so those
+                thirteen days are readings. A rule that counts only <code>active</code> days throws
+                them away.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The report threshold becomes "≥ 7 days with metric entries", counting baseline and
+            active alike — so the rule reads the data the app actually collected.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A baseline-only report compares nothing: there is one mean and no second condition, so
+            the report's whole structure (delta, one-variable test) has no referent. Generating it
+            means writing a report shaped for a result into a case with no result.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: <code>research-and-protocols.md</code> §Review and report specifies the report's
+            structure as a <b>comparison</b>. The change makes the threshold honest and the artefact
+            undefined — which is a reason to change the artefact, not the threshold.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">The abandonment <b>report is a note</b> — so write the note it can
+            honestly write.</p>
+        <span class="vc-read">reuse the container · it already holds prose</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pt-note">
+              <p style="font-size:15px;line-height:20px;color:var(--text-primary);margin:0">
+                ## Reading protocol — closed during baseline</p>
+              <p class="pt-d" style="margin-top:8px">**Duration:** 13 baseline days, no active
+                phase.</p>
+              <p class="pt-d">**What the data showed:** pages read averaged 24. No comparison is
+                possible — the experiment did not start.</p>
+              <p class="pt-d">**One thing worth keeping:** the 13 baseline readings are on record,
+                so a future proposal starts from a measured baseline instead of a guess.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>A baseline-only abandonment still writes a note, and the note says plainly that there
+            is no comparison — because "Reports are Notes" (<code>protocols.md</code> §Invariants),
+            and a note can hold a sentence that a report-shaped template cannot.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It makes "abandoned" produce an artefact in almost every case, which weakens the
+            signal §Abandonment is protecting: a report should mean something happened. And the
+            "one thing worth keeping" line is invented — no doc asks the app to be encouraging about
+            a stopped experiment.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: <code>research-and-protocols.md</code> says the report <b>"must state explicitly
+            that"</b> certain things, in a fixed structure. This note is a different shape, so it is
+            a second report format rather than the same one applied to less data.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">"Past" should not contain protocols that never ran. <b>Delete</b>
+            <code>proposed → abandoned</code>.</p>
+        <span class="vc-read">cut the tell · a commitment you can abandon is not one</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pt-flow">
+              <div class="pt-st"><span class="pt-nm">proposed</span>
+                <span class="pt-d">the only exit is Adopt, or let it expire</span>
+                <span class="pt-v">Proposed</span></div>
+              <div class="pt-st"><span class="pt-nm">baseline</span>
+                <span class="pt-d">abandonable — the metric is running</span>
+                <span class="pt-v">Active</span></div>
+              <div class="pt-st"><span class="pt-nm">active</span>
+                <span class="pt-d">abandonable</span>
+                <span class="pt-v">Active</span></div>
+            </div>
+            <div class="pt-note">
+              <p class="pt-h" style="margin:0">"Past" then means <i>experiments that ran</i>, which
+                is what a history is for.</p>
+            <p class="pt-alert">But §Invariants says "abandoning is a valid result" and the diagram
+                is explicit about three source statuses. Deleting an arrow contradicts the
+                invariant's spirit, and a proposal the user does not want still needs a way to
+                disappear.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Removes the <code>proposed → abandoned</code> edge, so Past contains only protocols
+            that produced data. Declining a proposal becomes a dismissal, not an abandonment.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A proposed protocol can then only leave <code>proposed</code> by being adopted. The
+            doc gives no expiry, no dismiss, and no other exit — so the Proposed scope becomes a list
+            that only grows, which is the state the Scope exists to prevent.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: the status diagram is a specification, and this deletes an edge from it. It also
+            removes the only path by which "abandoning is a valid result" applies to a protocol that
+            has not started — i.e. the least consequential case the invariant names.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Keep the edge, name the threshold once, and <b>compute the review
+            date</b>.</p>
+        <span class="vc-read">fix the two silences, keep the model</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pt-flow">
+              <div class="pt-st"><span class="pt-nm">Report threshold</span>
+                <span class="pt-d">one number, one owner</span>
+                <span class="pt-v">≥ 7 logged</span></div>
+              <div class="pt-st"><span class="pt-nm">Review date</span>
+                <span class="pt-d">adopted + baseline + duration</span>
+                <span class="pt-v">day 42</span></div>
+              <div class="pt-st"><span class="pt-nm">Day counter M</span>
+                <span class="pt-d">the same sum</span>
+                <span class="pt-v">42</span></div>
+              <div class="pt-st"><span class="pt-nm">Past on abandon</span>
+                <span class="pt-d">from proposed: no data, no report</span>
+                <span class="pt-v">allowed</span></div>
+            </div>
+            <div class="pt-note">
+              <p class="pt-h" style="margin:0">Three fields, one computation. The review date is
+                <b>42</b>, the card shows <b>"of 42"</b>, and the report writes <b>"14 baseline +
+                28"</b> — the same sum stated three ways, which is exactly why no doc noticed that
+                only two of the three were defined.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Three fixes, all definitional. <b>(1)</b> The report threshold is stated once, in
+            <code>protocols.md</code>, and <code>research-and-protocols.md</code> points at it —
+            counting <b>logged</b> days so baseline data is not discarded. <b>(2)</b> The review date
+            is defined as <code>adoption_date + baseline_days + duration_days</code>.
+            <b>(3)</b> <code>day N of M</code>'s M is the same sum. Past keeps
+            <code>proposed → abandoned</code> but the scope's definition says it holds protocols that
+            <i>ended</i>, whether or not they ran.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Two docs change for one number, and the review date now becomes a <i>value the app
+            must store or derive consistently</i> — if duration is edited before adoption (which
+            §Adoption's "Edit" allows), the review date moves, and nothing says whether it is
+            recomputed or frozen at adoption.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether extending a protocol moves the review date. §Review says a user can "extend,
+            which creates a new protocol version" — a new version with a new adoption date and a new
+            review date, or the same window extended? The doc says "new protocol version" and never
+            says whether the old one's data carries over, which decides whether an extension is a
+            <i>continuation</i> or a <i>second experiment</i>.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the lifecycle measures</h2>
+    <div class="measure" id="measure-life">…</div>
+  </div>
+</section>
+
+<!-- =============================================================== BASELINE -->
+<section class="screen" id="baseline" hidden>
+  <div class="lede">
+    <h2 class="t-title-2">Baseline</h2>
+    <p class="lede-p">
+      <code>protocols.md</code> §Baseline: <i>"Habits are visible in Today but <b>not scored</b>."</i>
+      And §Adoption puts the metric in the daily obligations card from the moment of adoption.
+    </p>
+    <p class="lede-p">
+      So during baseline the app is collecting habits <b>and</b> metric readings, and calling the
+      habits unscored. But <code>habits.md</code> gives the habit row a compliance figure
+      (<code>18/28</code>) and the habit detail a 28-day compliance chart — and <b>neither doc
+      mentions baseline</b>. The habit row has no way to know its parent is in a control period, and
+      no way to draw "not scored" if it did.
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The same habit row, in a protocol in baseline, drawn by the rules in
+            <code>habits.md</code>.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="nt" style="background:var(--surface-1);border:1px solid var(--border-subtle);
+              border-radius:14px;overflow:hidden">
+              <div class="pt-row">
+                <div class="pt-box on"><svg><use href="#i-check"/></svg></div>
+                <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                  <span class="pt-nm2">Read 10 pages</span>
+                  <span class="pt-md">Every day · Reading protocol</span>
+                </div>
+                <span class="pt-cnt">6/6</span>
+              </div>
+              <div class="pt-row">
+                <div class="pt-box"></div>
+                <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                  <span class="pt-nm2">No screens after 10pm</span>
+                  <span class="pt-md">Every day · Reading protocol</span>
+                </div>
+                <span class="pt-cnt">5/6</span>
+              </div>
+            </div>
+            <div class="pt-note">
+              <p class="pt-h" style="margin:0">Compliance chart over the same six days:</p>
+              <div class="pt-strip" id="strip-six" style="margin-top:8px"></div>
+              <p class="pt-alert">Both rows show a compliance figure and the chart draws every day
+                as scored. Baseline is invisible.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The habit row and chart exactly as <code>habits.md</code> specifies them, for
+            a habit whose protocol is in <code>baseline</code>.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="baseline-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One, and it is a gap rather than a contradiction: §Baseline says the habits are not
+            scored, and <code>habits.md</code> — which owns every surface that shows a score — has
+            no representation of that state. Neither doc is wrong; the pair is incomplete.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">The row shows <b>no number</b> during baseline, and the chart hatches
+            the days.</p>
+        <span class="vc-read">an unscored day is a different kind of day</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div style="background:var(--surface-1);border:1px solid var(--border-subtle);
+              border-radius:14px;overflow:hidden">
+              <div class="pt-row">
+                <div class="pt-box on"><svg><use href="#i-check"/></svg></div>
+                <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                  <span class="pt-nm2">Read 10 pages</span>
+                  <span class="pt-md">Every day · Reading protocol · baseline</span>
+                </div>
+                <span class="pt-cnt" style="color:var(--text-tertiary)">—</span>
+              </div>
+              <div class="pt-row">
+                <div class="pt-box"></div>
+                <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                  <span class="pt-nm2">No screens after 10pm</span>
+                  <span class="pt-md">Every day · Reading protocol · baseline</span>
+                </div>
+                <span class="pt-cnt" style="color:var(--text-tertiary)">—</span>
+              </div>
+            </div>
+            <div class="pt-note">
+              <p class="pt-h" style="margin:0">The chart hatches baseline days instead of colouring
+                them: the ticks are still recorded, and they are still <i>not evidence</i>.</p>
+              <div class="pt-strip" id="strip-hatch" style="margin-top:8px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The trailing slot shows an em-dash rather than a count, and the metadata line states
+            the phase. The chart gains a sixth cell state — hatched — for days the protocol was
+            running but not scoring.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A sixth state in a chart that is already <b>8.6px per cell</b> (measured in the Habits
+            lab) and whose skip-vs-missed pair is <b>1.19:1</b> apart. A hatch at that size is
+            texture, not a meaning — and it is a fourth pattern in a legend the user has to
+            learn.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two. <code>habits.md</code> fixes the compliance chart's five states and the row's
+            trailing slot as a count; adding a hatched state and an em-dash changes both surfaces
+            from a doc that does not know protocols exist.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">Baseline is a <b>label, not a state</b>. The numbers are real; say where
+            they came from.</p>
+        <span class="vc-read">don't hide data · qualify it</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div style="background:var(--surface-1);border:1px solid var(--border-subtle);
+              border-radius:14px;overflow:hidden">
+              <div class="pt-row">
+                <div class="pt-box on"><svg><use href="#i-check"/></svg></div>
+                <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                  <span class="pt-nm2">Read 10 pages</span>
+                  <span class="pt-md">Every day · Reading protocol</span>
+                </div>
+                <span class="pt-cnt">6/6</span>
+              </div>
+            </div>
+            <div class="pt-note">
+              <p class="pt-h" style="margin:0">The count stays. What changes is the <b>protocol
+                card</b>, which says what the number is not yet part of:</p>
+              <p class="pt-d" style="margin-top:8px">2 habits · 6/6 logged · <b>baseline, not yet
+                scored</b></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Only the protocol card changes. The habit row and chart keep their specified
+            behaviour; the card — which is the surface that knows it is in baseline — states that
+            the habit numbers are not yet part of the score.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Puts the explanation one surface away from the number. A user who opens Habits and
+            sees 5/6 has no way to learn it does not count, and the fact that they <i>did</i> check
+            the box is now recorded but uncounted — which reads as the app losing their work.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: it makes the habit row's own number mean two different things depending on a
+            parent the row never names, which is the "one number, two meanings" failure the Calendar
+            lab found in "density" and the Month.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">Delete "not scored". A habit checked is a habit checked — <b>baseline
+            data is data</b>.</p>
+        <span class="vc-read">cut the state · one rule for one checkbox</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pt-note">
+              <p class="pt-h" style="margin:0">Baseline habits score exactly like every other habit.
+                What baseline changes is the <b>comparison</b>: the metric's baseline mean is the
+                control, and the habits have no baseline of their own to be compared against —
+                which is why they were never scored to begin with.</p>
+            </div>
+            <div class="pt-note">
+              <p class="pt-h" style="margin:0">The cost is real: §Baseline's sentence is the only
+                thing separating <code>baseline</code> from <code>active</code> for habits, so
+                deleting it makes two statuses behave identically for 2–4 habits.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Deletes the not-scored rule. Habits score from adoption, and the baseline status
+            affects only the metric and the report.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It empties the baseline status of its habit behaviour, so a protocol in
+            <code>baseline</code> and one in <code>active</code> differ only in a flag on the metric
+            — and the status's five-way split loses a boundary. It also discards the reason the
+            control period exists: the habits participating in the experiment would be scored before
+            the experiment starts.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two: §Baseline states it, and §Statuses defines <code>baseline</code> as "habits
+            visible but not scored" — the clause is the status's definition, not a detail of
+            it.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">"Not scored" belongs to the <b>protocol</b>, and the habit row says
+            <b>which protocol</b> it belongs to.</p>
+        <span class="vc-read">one owner per fact · the row names its parent</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div style="background:var(--surface-1);border:1px solid var(--border-subtle);
+              border-radius:14px;overflow:hidden">
+              <div class="pt-row">
+                <div class="pt-box on"><svg><use href="#i-check"/></svg></div>
+                <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                  <span class="pt-nm2">Read 10 pages</span>
+                  <span class="pt-md">Every day · <span style="color:var(--accent-text)">⟳ Reading
+                    protocol · baseline</span></span>
+                </div>
+                <span class="pt-cnt">6/6</span>
+              </div>
+            </div>
+            <div class="pt-note">
+              <p class="pt-h" style="margin:0">The row keeps its count, because the count is true.
+                The metadata line — which already exists to name the parent — names the phase, so
+                the number's meaning is one glance away and no surface gains a state.</p>
+              <p class="pt-d" style="margin-top:8px">The chart is unchanged: the five states in
+                <code>habits.md</code> are about <i>days</i>, and a baseline day is a day the habit
+                happened. Whether it counts toward the experiment is a fact about the protocol,
+                which is where it stays.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The habit row's metadata line already reads <code>Cadence · area</code>, and
+            <code>habits.md</code> already says protocol habits carry "a small protocol indicator".
+            This makes the indicator <b>name the phase</b>, and leaves every number, every chart
+            state, and every count exactly as specified. The protocol card keeps its own "not yet
+            scored".</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Adds "· baseline" to a metadata line that is already the longest string in the row and
+            already truncates — the Habits lab measured <b>272px</b> of title room against a
+            13-character cadence and its area. And a phase name in a list row is a word the user has
+            to learn before the number means the right thing.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>What a baseline day <b>is</b> to the user. The doc says the habit is not scored, which
+            is a statement about arithmetic — but a person checking a box during a control period is
+            doing the habit, and calling that "not scored" is a claim about their effort rather than
+            about the data. Whether the app says this at all is a decision about tone, and the module
+            that owns the app's tone (<code>02-architecture/constitution.md</code>) has a rule about
+            explaining, not about valuing.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What baseline measures</h2>
+    <div class="measure" id="measure-baseline">…</div>
+  </div>
+</section>
+
+<!-- ================================================================== SHEET -->
+<section class="screen" id="sheet" hidden>
+  <div class="lede">
+    <h2 class="t-title-2">The proposal sheet</h2>
+    <p class="lede-p">
+      <code>surfaces.md</code> files the protocol proposal sheet as an <b>Overlay</b>.
+      <code>protocols.md</code> §Proposal sheet: <i>"Actions: 'Adopt' and 'Edit.' Editing opens a
+      <b>form</b> where the user can change anything before adoption."</i>
+    </p>
+    <p class="lede-p">
+      That is the same collision that decided the <b>Event detail</b> and then <b>New event</b>: a
+      sheet whose own action opens a second overlay, against <code>app-shell.md</code>'s rule that
+      <b>at most one sheet exists at a time</b> — so the first sheet is dismissed by the tap that was
+      meant to edit inside it. This is the rule's <b>third</b> user, and by the same reasoning the
+      proposal is a screen.
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">A sheet with two actions, one of which opens a form.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:0;position:relative">
+            <div class="pt-scrim"></div>
+            <div style="position:absolute;left:0;right:0;bottom:0">
+              <div class="pt-sheet">
+                <span class="pt-sheet-t">Sleep protocol</span>
+                <p class="pt-d" style="margin-top:8px">Improving sleep quality raises my afternoon
+                  focus.</p>
+                <p class="pt-q">Metric: Sleep quality · 14 baseline days · 28 active days · 2
+                  habits</p>
+                <div class="pt-act">
+                  <span class="pt-btn p">Adopt</span>
+                  <span class="pt-btn s">Edit</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The sheet, its contents, and its two actions as specified.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="sheet-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two. <code>app-shell.md</code> allows one sheet at a time, so "Edit" cannot open a form
+            over the proposal — it replaces it. And §Proposal sheet says the user can "change
+            <b>anything</b> before adoption", while §Immutability disables hypothesis, metric, and
+            habit edits once <code>baseline</code> begins. The window for editing is exactly the
+            sheet's lifetime, so the editable surface is <b>the only one</b> and it is the one
+            hosted on the surface that cannot hold it.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">Make the proposal a <b>screen</b>, and the fields editable in place.</p>
+        <span class="vc-read">the same rule that decided Event detail</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pt-top" style="align-items:center">
+              <svg class="ic ic-md" style="color:var(--text-secondary)"><use href="#i-back"/></svg>
+              <span class="t-title-2" style="flex:1">Proposal</span>
+            </div>
+            <div class="pt-form">
+              <p class="pt-nm" style="margin:0 0 4px">Hypothesis</p>
+              <p class="pt-f">Improving sleep quality raises my afternoon focus.</p>
+              <p class="pt-nm" style="margin:12px 0 4px">Metric</p>
+              <p class="pt-f">Sleep quality <span>· 1–5, logged daily</span></p>
+              <p class="pt-nm" style="margin:12px 0 4px">Window</p>
+              <p class="pt-f">14 baseline + 28 active <span>· 42 days</span></p>
+              <p class="pt-nm" style="margin:12px 0 4px">Habits</p>
+              <p class="pt-f">Read 10 pages · No screens after 10pm</p>
+            </div>
+            <div style="display:flex;gap:8px">
+              <span class="pt-btn p">Adopt</span>
+              <span class="pt-btn s">Edit</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The proposal is a screen with its fields rendered in place. "Edit" toggles the fields
+            into inputs rather than opening anything — so no second overlay exists and the
+            one-sheet rule is never tested.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A full screen to read one hypothesis and five values, for a flow that happens a handful
+            of times a year. The sheet was the right <i>weight</i>; the problem is only that its
+            Edit action needs somewhere to put a form — which means the fix is the action, not the
+            container.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None, and it agrees with <code>surfaces.md</code>'s treatment of Event detail —
+            correcting one row while leaving the reasoning unstated. If the rule is "an overlay whose
+            action opens an overlay is a screen", it should be written down once, where the rule
+            lives.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">Keep the sheet; make the fields <b>always editable</b>. No Edit action.</p>
+        <span class="vc-read">delete the mode · one fewer door</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:0;position:relative">
+            <div class="pt-scrim"></div>
+            <div style="position:absolute;left:0;right:0;bottom:0">
+              <div class="pt-sheet">
+                <span class="pt-sheet-t">Sleep protocol</span>
+                <div class="pt-form" style="margin-top:10px;border-radius:10px">
+                  <p class="pt-f">Improving sleep quality raises my afternoon focus.</p>
+                  <p class="pt-f">Sleep quality · 14 + 28 days</p>
+                  <p class="pt-f">Read 10 pages · No screens after 10pm</p>
+                </div>
+                <div class="pt-act">
+                  <span class="pt-btn p">Adopt</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Deletes the Edit action. The proposal's fields are inputs on arrival, so there is no
+            mode and no second overlay. Actions drop from two to one.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The sheet becomes a form, and a form on arrival is a demand: the user must consider
+            five editable fields before they can accept. The prose is the AI's argument, and making
+            it an input invites rewriting the experiment before understanding it — which is the thing
+            Rule 3 (<code>04-ai/constitution.md</code>) exists to protect.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: §Proposal sheet says the sheet <b>shows</b> the hypothesis, habits, metric,
+            durations and explanation, with adopting as the likely path. Always-editable removes the
+            reading state the sheet was designed as.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">Proposals shouldn't be adopted from a sheet at all — send it to
+            <b>Proposed</b> and let the list be the door.</p>
+        <span class="vc-read">cut the interruption · the scope already exists</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pt-card">
+              <div class="pt-top">
+                <span class="pt-title">Sleep protocol</span>
+                <span class="pt-chip proposed">proposed</span>
+              </div>
+              <div class="pt-l dim">Improve sleep · 42 days · 2 habits</div>
+              <div style="display:flex;gap:8px;margin-top:10px">
+                <span class="pt-btn p" style="font-size:14px;padding:7px 14px">Adopt</span>
+                <span class="pt-btn s" style="font-size:14px;padding:7px 14px">Edit</span>
+              </div>
+            </div>
+            <div class="pt-note">
+              <p class="pt-h" style="margin:0">The proposal lands in the <b>Proposed</b> scope, where
+                it already belongs, and the card carries the two actions. Nothing is interrupted.</p>
+              <p class="pt-alert">But §Protocol proposal from a Goal ends "The proposal sheet opens",
+                and a Tier 3 request that ends in a silent list insert gives no feedback that
+                anything happened.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Deletes the proposal sheet. A proposal is written into the Proposed scope and read
+            there; adoption happens from the card. No overlay, no second sheet, no interruption.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The card cannot hold the proposal's contents — hypothesis, metric, habits, durations,
+            explanation, and the clarifying questions — so the reading surface is gone and the
+            proposal is only ever seen as a three-line summary. That trades a sheet for a
+            <i>detail</i> screen, which is what the fourth row's cost is really about.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two: §Protocol proposal from a Goal says the sheet opens, and <code>surfaces.md</code>
+            lists the proposal sheet as a surface. Deleting it removes a row from the index.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">A <b>screen</b>, because the rule says so — and write the rule down.</p>
+        <span class="vc-read">apply the one-sheet rule, then name it</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pt-top" style="align-items:center">
+              <svg class="ic ic-md" style="color:var(--text-secondary)"><use href="#i-back"/></svg>
+              <span class="t-title-2" style="flex:1">Proposal</span>
+              <span class="pt-chip proposed">proposed</span>
+            </div>
+            <p class="pt-d">Improving sleep quality raises my afternoon focus.</p>
+            <div class="pt-form">
+              <p class="pt-f">Sleep quality <span>· 1–5, logged daily</span></p>
+              <p class="pt-f">14 baseline + 28 active days</p>
+              <p class="pt-f">Read 10 pages · No screens after 10pm</p>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="pt-btn p">Adopt</span>
+              <span class="pt-btn s">Edit</span>
+              <span class="pt-h" style="margin:0">Edit toggles the fields; it opens nothing.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The proposal is a screen; its fields toggle editable in place; and
+            <code>app-shell.md</code> gains the rule that has now decided three surfaces, stated
+            once: <b>a surface whose own action opens another overlay is not an overlay.</b> The
+            other two (<code>surfaces.md</code>'s Event detail and New event rows) already comply —
+            they were corrected one at a time, with the reasoning rediscovered each time.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A screen for a flow used a few times a year, and a rule that now constrains surfaces
+            nobody has drawn yet — it will forbid a sheet-plus-sheet design that might be the right
+            call somewhere. Rules written after three instances tend to be slightly too
+            broad.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether the ruling generalises. All three cases share a shape — <i>an overlay whose
+            action needs a surface</i> — but they differ in cause: Event detail needed a sheet for
+            Tier 2, New event needed a picker per field, and the proposal needs a form. If the rule is
+            really "an overlay may not open an overlay, so the outer one must be a screen", then the
+            right home for it is <code>app-shell.md</code>'s stacking section, and the three
+            corrections become instances rather than three separate findings.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the sheet measures</h2>
+    <div class="measure" id="measure-sheet">…</div>
+  </div>
+</section>
+
+</main>
+
+<script src="lab.js"></script>
+<script src="nav.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var screens = ['card', 'life', 'baseline', 'sheet'];
+  var seen = {};
+  var tabs = document.getElementById('tabs');
+
+  tabs.addEventListener('click', function (e) {
+    var b = e.target.closest('.tab');
+    if (b && b.dataset.go) go(b.dataset.go);
+  });
+
+  function go(id) {
+    screens.forEach(function (s) {
+      var el = document.getElementById(s);
+      if (el) el.hidden = (s !== id);
+    });
+    Array.prototype.forEach.call(tabs.children, function (b) {
+      b.classList.toggle('on', b.dataset.go === id);
+    });
+    if (!seen[id]) {
+      seen[id] = true;
+      requestAnimationFrame(function () { MEASURE[id](); });
+    }
+  }
+
+  function px(name) {
+    return parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name));
+  }
+
+  function cells(spec) {
+    var map = { f: 'f', u: 'u' };
+    return spec.split('').map(function (c) {
+      return '<div class="pt-c ' + (map[c] || '') + '"></div>';
+    }).join('');
+  }
+
+  var MEASURE = {};
+
+  // -- the card
+  MEASURE.card = function () {
+    var title = px('--type-title-3-line');       // 24
+    var line = px('--type-footnote-line');       // 18
+    var hero = px('--row-hero');                 // 96
+    var drawn = Math.round(document.getElementById('pc-1').getBoundingClientRect().height);
+
+    var needed = title + line * 3;                 // 78px of text
+    var pad = px('--space-4');                     // 12px row padding
+    var gaps = 3 * 2;                              // three 2px gaps between four children
+    var chrome = pad * 2 + gaps + 2;               // padding both sides + gaps + 1px borders
+    var drawn = Math.round(document.getElementById('pc-1').getBoundingClientRect().height);
+
+    // The documented defaults, and the sum the card displays.
+    var baselineDays = 14, durationDays = 28;
+    var M = baselineDays + durationDays;
+
+    var rows = [
+      ['Title', 'type-title-3 line-height', title + 'px'],
+      ['Three content lines', 'type-footnote line-height × 3', line * 3 + 'px'],
+      ['Text, total', 'the four lines added up', '<b>' + needed + 'px</b>'],
+      ['Chrome', '12px padding ×2 + 3 gaps ×2 + 2px border', chrome + 'px'],
+      ['Card, total', 'text + chrome', '<b>' + (needed + chrome) + 'px</b>'],
+      ['row-hero', 'the specified height', hero + 'px'],
+      ['Over', 'what the card needs vs what the token has',
+        '<b>' + (needed + chrome - hero) + 'px</b>'],
+      ['Text alone in 96px', 'text + gaps, no padding', (needed + gaps) + 'px'],
+      ['As drawn', 'the card with no height applied', '<b>' + drawn + 'px</b>'],
+      ['Baseline default', 'protocols.md · research-and-protocols.md', baselineDays + ' days'],
+      ['Duration default', 'research-and-protocols.md', durationDays + ' days'],
+      ['M in "day N of "', 'the sum the card displays', '<b>' + M + '</b>'],
+      ['Where M is defined', 'any doc in the set', 'nowhere'],
+      ['Report renders it as', 'research-and-protocols.md',
+        baselineDays + ' baseline + ' + durationDays + ' active']
+    ];
+
+    document.getElementById('measure-card').innerHTML =
+      '<div class="rows">' + rows.map(function (r) {
+        return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+          '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+      }).join('') + '</div>' +
+      '<p class="mf">The card does not fit either — and the reason is not the text. Its four lines ' +
+      'are <b>' + needed + 'px</b> and <code>row-hero</code> has <b>' + hero + 'px</b>, so the words ' +
+      'alone leave <b>' + (hero - needed) + 'px</b> to spare. What does not fit is the chrome: 12px ' +
+      'of padding on each side, three 2px gaps, and two 1px borders come to <b>' + chrome +
+      'px</b>, and ' + needed + ' + ' + chrome + ' = <b>' + (needed + chrome) + 'px</b> against a ' +
+      hero + 'px token. <b>row-hero has room for the text or the chrome, not both.</b></p>' +
+      '<p class="mf">That is worth stating next to the note row, which failed the same ' +
+      'arithmetic by 34px. <code>design-tokens.md</code> notes that <code>row-hero</code>\u2019s ' +
+      '<b>only real user is this card</b> — so unlike <code>row-rich</code>, the token was sized for ' +
+      'its one consumer and still misses. The difference is padding: ' + needed + 'px of text in a ' +
+      hero + 'px token is comfortable, and the standard row padding is what spends the rest.</p>' +
+      '<p class="mf">The second defect is <b>M = ' + M + '</b>. It is <code>' + baselineDays + ' + ' +
+      durationDays + '</code>, it is displayed on every card in baseline and active, and it is ' +
+      'defined in no doc. The report writes the same two numbers separately (' + baselineDays +
+      ' baseline + ' + durationDays + ' active) and never sums them, so nothing in the doc set ' +
+      'produces the number the card shows.</p>';
+
+    document.getElementById('card-cost').innerHTML =
+      'The card is <b>' + drawn + 'px</b> against a <b>' + hero + 'px</b> token — <b>' +
+      (needed + chrome - hero) + 'px</b> over, which is the note row\u2019s arithmetic failing by ' +
+      'the same mechanism: the text is comfortable (' + needed + 'px) and the <b>chrome</b> (' +
+      chrome + 'px) is what does not fit. <code>row-hero</code>\u2019s only user is this card, so ' +
+      'the token was sized for it and is still ' + (needed + chrome - hero) + 'px short. The other ' +
+      'defect is <b>M = ' + M + '</b>: the sum of the baseline and the duration, on every card, ' +
+      '<b>named nowhere</b>. The doc gives M two renderings (<code>day N of M</code> and ' +
+      '<code>baseline: day N of M</code>) and defines neither.';
+  };
+
+  // -- the lifecycle
+  MEASURE.life = function () {
+    var baselineDays = 14;
+    var threshold = 7;
+
+    var rows = [
+      ['Statuses', 'protocols.md §Statuses', '5'],
+      ['Scopes', '§Scopes', '3'],
+      ['Abandonable from', 'the status diagram', 'proposed · baseline · active'],
+      ['Report threshold', 'protocols.md §Abandonment', 'active ≥ ' + threshold + ' days'],
+      ['Report threshold', 'research-and-protocols.md', '"enough data"'],
+      ['Active days at', 'abandoning on baseline day 13', '0'],
+      ['Metric entries at', 'the same moment', '13'],
+      ['Report generated', 'by the protocols.md rule', 'no'],
+      ['Review date', 'displayed in §Detail, fired on in §Review', 'undefined'],
+      ['Review date', 'derivable as adoption + baseline + duration',
+        baselineDays + ' + 28 = 42'],
+      ['Past contains', '§Scopes', 'completed + abandoned']
+    ];
+
+    document.getElementById('measure-life').innerHTML =
+      '<div class="rows">' + rows.map(function (r) {
+        return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+          '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+      }).join('') + '</div>' +
+      '<p class="mf">Abandoning on <b>baseline day 13</b> means <b>13 metric entries</b> exist and ' +
+      '<b>0 active days</b> have passed. §Abandonment\u2019s rule reads the second number, so it ' +
+      'generates <b>no report</b> — and the baseline is not a warm-up: §Baseline says the metric ' +
+      'surfaces daily in the obligations card, so those entries are the experiment\u2019s control ' +
+      'condition. The one rule that decides whether the app explains itself to the user throws away ' +
+      'the data it just spent two weeks collecting.</p>';
+
+    document.getElementById('life-cost').innerHTML =
+      'Two silences and one contradiction. The threshold is <b>active ≥ ' + threshold +
+      ' days</b> in <code>protocols.md</code> and "<b>enough data</b>" in ' +
+      '<code>research-and-protocols.md</code> — a number and a feeling for the same rule. The ' +
+      'number counts the wrong period, so <b>13 baseline entries</b> produce no report. And the ' +
+      '<b>review date</b> is shown on the detail, fired on by two docs, and computed in none.';
+  };
+
+  // -- baseline
+  MEASURE.baseline = function () {
+    var cs = getComputedStyle(document.documentElement);
+    var sucS = toRgb(cs.getPropertyValue('--success-subtle'));
+    var sucD = toRgb(cs.getPropertyValue('--success-default'));
+    var s3 = toRgb(cs.getPropertyValue('--surface-3'));
+    var bs = toRgb(cs.getPropertyValue('--border-strong'));
+
+    document.getElementById('strip-six').innerHTML = cells('fffffu');
+    document.getElementById('strip-hatch').innerHTML = cells('uuuuuu');
+
+    // The chart's cell width, measured in the Habits lab at 28 cells; re-derive it
+    // here for 28 so the two labs agree on the number rather than quoting each other.
+    var panel = 358;                      // 390 phone − 16px padding each side
+    var cellW = (panel - 27 * 3) / 28;
+
+    var rows = [
+      ['Habits in a protocol', 'protocols.md §Invariants', '2–4'],
+      ['Baseline default', 'the control period', '14 days'],
+      ['Scored during baseline', '§Baseline', 'no'],
+      ['Metric logged during baseline', '§Baseline', 'yes, daily'],
+      ['Compliance on the row', 'habits.md §The habit row', 'always a count'],
+      ['Chart states', 'habits.md §Compliance chart', '5'],
+      ['States that mean "not scored"', 'the same doc', '0'],
+      ['Baseline mentioned in habits.md', 'the doc that owns every score', 'no'],
+      ['Chart cell width', '28 cells in a 358px panel', d2(cellW) + 'px'],
+      ['A hatched cell at that size', 'texture or meaning',
+        'under ' + Math.ceil(cellW) + 'px'],
+      ['Same cell, narrower panel', 'the Habits lab measure', '8.6px'],
+      ['Full vs minimum fill', 'measured in the Habits lab', d1(contrast(sucD, sucS)) + ':1'],
+      ['Skip vs missed', 'the same lab, re-derived here', d2(contrast(s3, bs)) + ':1']
+    ];
+
+    document.getElementById('baseline-cost').innerHTML =
+      'During baseline the app collects <b>2–4 habits</b> and a daily metric, and calls the habits ' +
+      'unscored. But <code>habits.md</code> gives the row a count and the chart <b>5 states</b>, ' +
+      'none of which means "not scored", and that doc <b>never mentions baseline</b>. So the row ' +
+      'shows <code>6/6</code> for a number the protocol says does not count, and the user\u2019s ' +
+      'checkmarks are recorded but unread. A sixth chart state is the obvious fix and the worst one: ' +
+      'a cell is <b>' + d2(cellW) + 'px</b> wide, so a hatch there is texture.';
+
+    document.getElementById('measure-baseline').innerHTML =
+      '<div class="rows">' + rows.map(function (r) {
+        return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+          '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+      }).join('') + '</div>' +
+      '<p class="mf">The gap is <b>ownership</b>, not disagreement. <code>protocols.md</code> knows ' +
+      'a phase exists and does not own the surfaces that would show it; <code>habits.md</code> owns ' +
+      'those surfaces and gives them no phase to show. Each is complete alone, and the pair has a ' +
+      'hole in it the size of the word "unscored".</p>' +
+      '<p class="mf">The Habits lab measured the chart\u2019s cell at <b>8.6px</b>, a 1px ring as ' +
+      '<b>12%</b> of it, and skip vs missed at <b>1.19:1</b>. A sixth state at that size is a fourth ' +
+      'pattern the user must learn in a legend that is already at its limit — which is why the ' +
+      'recommended row adds the phase to the <i>metadata line</i>, where the row already names the ' +
+      'parent, and adds no state at all.</p>';
+  };
+
+  // -- the sheet
+  MEASURE.sheet = function () {
+    var rows = [
+      ['Filed as', 'surfaces.md', 'Overlay'],
+      ['Its actions', 'protocols.md §Proposal sheet', 'Adopt · Edit'],
+      ['What Edit opens', 'the same sentence', 'a form'],
+      ['Sheets allowed at once', 'app-shell.md', '1'],
+      ['So Edit', 'if Edit opens a form', 'dismisses the proposal'],
+      ['Dismissals to adopt', 'sheet → form → adopt', '2'],
+      ['Dismissals to adopt', 'screen → edit in place', '0'],
+      ['The editable window', '§Immutability', 'before baseline begins'],
+      ['Where that window lives', 'the only surface that cannot hold it', 'this one'],
+      ['Prior instances of this rule', 'surfaces.md', 'Event detail · New event'],
+      ['This is instance', 'the one-sheet rule', '3']
+    ];
+
+    document.getElementById('measure-sheet').innerHTML =
+      '<div class="rows">' + rows.map(function (r) {
+        return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+          '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+      }).join('') + '</div>' +
+      '<p class="mf">The rule has now decided <b>three</b> surfaces, and each time it was ' +
+      'rediscovered: the <b>Event detail</b> needed a sheet of its own, <b>New event</b> had two ' +
+      'fields that open overlays, and the <b>proposal</b> has an Edit action that opens a form. ' +
+      'All three are <code>surfaces.md</code> rows filed as a sheet or an overlay that must be ' +
+      'screens.</p>' +
+      '<p class="mf">The proposal is also the sharpest of the three, because §Immutability closes ' +
+      'the editing window when baseline begins — so the editable form exists for exactly the ' +
+      'lifetime of the sheet, and the sheet is the one container that cannot show it. Correcting ' +
+      'the container is not a preference here; it is the only way the Edit action works at all.</p>';
+
+    document.getElementById('sheet-cost').innerHTML =
+      'Edit cannot open a form over the proposal — <code>app-shell.md</code> allows <b>1</b> sheet ' +
+      'at a time — so it replaces it. And §Proposal sheet says the user can change <b>anything</b> ' +
+      'before adoption while §Immutability closes that window when <code>baseline</code> begins, so ' +
+      'the sheet\u2019s own lifetime is the entire editable window and the sheet is the one ' +
+      'container that cannot hold a form. This is the <b>third</b> surface the one-sheet rule has ' +
+      'decided, after the Event detail and New event.';
+  };
+
+  go('card');
+})();
+</script>
+</body>
+</html>

@@ -250,6 +250,21 @@ A habit may be standalone or part of a protocol.
 Protocol habits appear in the Today view alongside standalone
 habits, with a small protocol indicator.
 
+**The indicator must name the phase.** `05-modules/protocols.md`
+§Baseline says a protocol's habits are "visible in Today but not
+scored" during the control period — and this doc owns every surface
+that shows a score: the row's `18/28` and the detail's 28-day chart.
+Neither has a state for an unscored day, so a habit in a protocol in
+`baseline` renders a count and a chart that count the control period,
+while the protocol says the number does not count.
+
+The row's metadata line already reads `Cadence · area` and already
+carries the protocol indicator, so the fix belongs there: the
+indicator names `baseline`. That keeps the count (it is true), keeps
+the chart's five states (they are about days, and a baseline day is a
+day the habit happened), and adds no state to a strip whose cells are
+**8.6–9.9px** wide.
+
 ### Archival
 
 Habits can be archived. Archived habits:

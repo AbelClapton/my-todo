@@ -115,7 +115,7 @@ position ("The Month view layout").
 |---|---|---|
 | Protocol list (Active / Proposed / Past) | Screen | `05-modules/protocols.md` |
 | Protocol detail | Screen | `05-modules/protocols.md` |
-| Protocol proposal sheet | Overlay | `05-modules/protocols.md` |
+| Protocol proposal sheet | Screen | `05-modules/protocols.md` |
 | Protocol report (read-only note) | Screen | `05-modules/protocols.md`, `04-ai/research-and-protocols.md` |
 | People list (All / Recent / Quiet) | Screen | `05-modules/people.md` |
 | Person detail | Screen | `05-modules/people.md` |

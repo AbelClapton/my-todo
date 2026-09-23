@@ -305,7 +305,13 @@ The user picks. The next protocol (if any) is a new proposal.
 At any point, the user can abandon:
 
 - `protocol.abandoned` is logged.
-- A report is generated if there is enough data.
+- A report is generated if **≥ 7 days were logged** — the threshold
+  and its period are defined once in `05-modules/protocols.md`
+  §Abandonment. This doc previously said "if there is enough data",
+  which is a feeling rather than a rule and read as a second,
+  different condition.
+- A baseline-only report has no comparison to make, so it says so
+  rather than being withheld.
 - The report is framed neutrally: "You stopped after 14 days.
   Here's what the data showed before that."
 - Abandonment is not failure. Rule 4 (explainable) and the
