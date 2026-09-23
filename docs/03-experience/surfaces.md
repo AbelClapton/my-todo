@@ -46,8 +46,8 @@ of these, or floats over them.
 | Week view | Screen | Pinch from Day |
 | Month view | Screen | Pinch from Week |
 | Year view | Screen | Pinch from Month |
-| Event detail | Screen | Tap an event |
-| New event sheet | Overlay | `+` in the header, or capture |
+| Event detail | Screen | Tap an event, or capture a scheduled item |
+| New event | Screen | `+` in the header |
 | Date picker | Overlay | Tap the date in the day header |
 | Time machine | Screen (read-only) | Tap a date → "As of" |
 | Freshness annotation | Ambient | Any mirrored event |

@@ -294,8 +294,25 @@ That is what the view's spare room is for. It draws **393px of a 728px body** be
 card and about **590px** after, so the card the sentence promises is the thing that space
 was always going to hold.
 
-**New event.** Created via capture (`pull down`) or the `+` button
-in the header. Opens a form with title, time, attendees, and notes.
+**New event.** Reached from the `+` in the header, which is present in every Calendar
+view because the Calendar creates something. A **screen, not a sheet**, for the same
+reason Event detail is: two of its four fields open an overlay of their own — the time
+field opens the date picker and the attendees field opens the person picker, both listed
+as Overlays in `03-experience/surfaces.md` — and `03-experience/app-shell.md` allows at
+most one sheet at a time. A sheet-hosted form would have each field replace the form it
+belongs to, and a keyboard is on screen for most of the time it is open.
+
+**Capture does not reach this surface.** `06-flows/capture.md` creates the event and
+`03-experience/motion-vocabulary.md` has the capture field *morph into the item's detail
+view* — a different destination, and one the Event detail above already covers. Capture
+is an entry to the detail, not to a form.
+
+The form holds title, when, with and note, in that order. **When is not a picker**: three
+canned answers cover the common case in one tap and only "Other…" opens the date picker,
+so the frequent path touches no modal at all. **The note is attached after the event
+exists**, because `05-modules/notes.md` attaches notes from a detail and there is no detail
+yet — the field says so rather than implying otherwise.
+
 In-app events sync to the source calendar.
 
 **Date picker.** A month grid overlay. Tap to jump to a day.
@@ -317,7 +334,7 @@ see the day as it was. Read-only. See
 | Open event | Tap event | Event detail |
 | Long-press event | Long-press | Tier 2 contextual menu (Prep me, Find related, Reschedule) |
 | Capture | Pull down | Opens capture field |
-| New event | `+` button | New event sheet |
+| New event | `+` button | New event screen |
 | Time machine | Tap date → "As of" | Opens read-only past date |
 
 ### Freshness
