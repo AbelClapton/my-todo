@@ -69,6 +69,28 @@ Fires weekly, at most once.
     "You haven't talked to Sarah in 6 weeks."
     [Add a task]  [Snooze 30 days]  [Not important]
 
+**The population rule is missing.** The captures surface above states
+"**Shows the top 5 by age**" and this one states no cap and no ordering,
+while defaulting *everyone* into the qualifying set. So the nudge's body
+is undefined: it either names an unbounded list or silently picks one, and
+the example above — singular, one person, three actions — is the second
+of those without saying so.
+
+**The example is right and the rule should be made to match it.** One
+subject per firing, chosen as the person longest without an **action**
+(not longest since contact), with the existing 60-day suppression below
+as the queue's pacing. Two consequences worth stating:
+
+- The interval per person is set by the size of the quiet set, not by the
+  flow: with 50 qualifying people the same person recurs every 50 weeks.
+  A weekly surface that reaches 1 of 50 people a week is delivering on
+  its frequency and not on its purpose.
+- **Quiet is also a scope** in `05-modules/people.md` ("People with no
+  activity in > 30 days (opt-in view)"), which shows all of them at once.
+  A scope that lists everyone and a nudge that names one are two answers
+  to "who have I lost touch with", and this doc does not say whether they
+  are the same list.
+
 "Add a task" opens capture prefilled: "Reach out to Sarah."
 "Snooze" suppresses for 30 days. "Not important" marks the person
 as "not worth maintaining" and suppresses permanently.

@@ -16,6 +16,23 @@ other modules.
 - A Person is a layer, not an atom
   (`02-architecture/object-model.md`). It does not exist on its
   own; it classifies links.
+
+**That second sentence forbids an affordance this doc specifies.**
+§Person creation's path 1 is a `+` on the People list that creates a
+Person from a name field with **no links**, and §Empty states explains
+arrival the opposite way: "People appear here when you link them to a
+task, an event, or a note." A Person can therefore exist without links
+but cannot arrive without them, and archival removes a Person from a list
+of People — three places reading the entity as an atom.
+
+**The enforceable half of the claim is about content.** A Person carries
+a name, a `source`, and a lifecycle; it has no field that a link cannot
+produce. That is checkable against `02-architecture/object-model.md`, it
+is what §The prep card's "adds no data" depends on, and it is the
+sentence that actually stops this module becoming a CRM. "Does not exist
+on its own" is not testable, which is why the rest of the doc reads past
+it — and why the unlinked Person has no designed row (the `[last]` slot
+and the counts line are both derived from links).
 - A Person links to Tasks, Events, and Notes via canonical edges
   2, 5, and 11. No other edges.
 - Person data is local-first
@@ -62,6 +79,32 @@ both exceptions and holds the count at two.
 - **Links summary.** Counts.
 
 Row height is `row-default` (56px).
+
+**The row is 3px over its height**, and the two lines are not the
+reason: name 20 + meta 18 = 38px of text, plus 9px of padding twice, a
+2px gap and a 1px border = **59px** in a **56px** row. No doc subtracts
+the chrome. This is the smallest of three such overruns found by the
+labs — `row-rich` by 34px for the note row, `row-hero` by 14px for the
+protocol card — and the overrun tracks the rows' complexity, which is
+the tell that the arithmetic was never done rather than that these
+three tokens are individually wrong.
+
+**"Involving them" is undefined, and it is the field's whole meaning.**
+Tasks and events **link** to a Person (edges 2 and 5); notes are
+**attached** (edge 11), and `05-modules/notes.md` says a note attaches to
+exactly one entity. So for a task or an event, one hop. For a note, it
+depends whether the walk is direct (the note's own attachment is this
+Person) or transitive (the note is attached to a task that is linked to
+this Person). **This doc uses both readings**: §The prep card reports
+"She mentioned wanting to try pottery" as Sarah's **last note**, and that
+exact sentence is `notes.md`'s example of a note attached to a **task**.
+One reading must be chosen, and the choice decides how useful the prep
+card is — a card that cannot see the pottery note forgets the one thing
+the user wanted to remember.
+
+**The field has three names.** The row says `[last: 3w ago]`, §Surfaces'
+detail example says "Last talked", and this bullet says "Last activity".
+One of them should survive.
 
 ### Surfaces
 
@@ -119,6 +162,17 @@ Only "worth maintaining" People resurface.
 Resurfacing fires as a nudge, subject to the attention budget
 (`03-experience/attention-budget.md`).
 
+**Quiet and the nudge are two different answers to one question.**
+This doc makes **Quiet** a scope — "People with no activity in > 30 days
+(opt-in view)" — which shows **all** of them. `06-flows/resurfacing.md`
+fires a **weekly** nudge over the same threshold, and states no cap: the
+forgotten-captures surface two sections earlier caps at "top 5 by age",
+while people resurfacing has neither a cap nor an ordering. With 50 quiet
+people and one subject per firing, the same person comes round every 50
+weeks. Either the scope and the nudge are the same list (and the nudge is
+a notification about it) or they are two surfaces, and the doc should say
+which.
+
 ### Contacts sync
 
 Settings toggle: "Sync contacts" (`integration.contacts.enabled`,
@@ -129,6 +183,29 @@ Settings toggle: "Sync contacts" (`integration.contacts.enabled`,
 - No contact data is sent to the server
   (`02-architecture/local-first.md`).
 - The user can select which contacts to import.
+
+**Matching states what to match on and not what a match does.** There is
+no resolution rule, so nothing says whether a contact matching an existing
+Person links to them or creates a second record — and `person.renamed`
+exists, so a Person the user renamed in the app can fail to match on the
+next sync. The rule should be ordered and one-sided: **match on phone,
+then email, then exact name; a match links, never creates.**
+
+**This is the app's only bulk creation and it has no bulk reversal.**
+§Invariants: "Person deletion is not supported; only archival." A single
+import writes hundreds of Person records — the largest write the app can
+perform, into a local-first store — and undoing it needs one archive per
+Person, from a detail screen. **Reversibility** is one of the app's four
+invariants and every other operation honours it. The import should either
+carry its own identity so the set can be archived as a set (a batch field
+on `person.created`, which is an ADR) or be presented with the count it
+will write *before* the write.
+
+One consequence of the default belongs on this screen rather than a
+Settings doc: "worth maintaining" defaults to **on** for every Person
+(`06-flows/resurfacing.md`), so importing 300 contacts opts 300 people into
+weekly resurfacing. Import is how the People graph is seeded, and it is
+also what makes its nudge unbounded.
 
 Sync is manual (a button) or periodic (weekly). The app does not
 poll.

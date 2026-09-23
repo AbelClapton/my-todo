@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="warm" data-mode="light" data-accent="teal"
+      data-semantics="vivid" data-type="system">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>People lab · Small Wins</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="lab.css">
+<style>
+/* the person row */
+.pp-row{display:flex;flex-direction:column;gap:2px;padding:9px 14px;
+  min-height:56px;border-bottom:1px solid var(--border-subtle)}
+.pp-row:last-child{border-bottom:0}
+.pp-top{display:flex;align-items:baseline;gap:8px}
+.pp-nm{font-size:15px;line-height:20px;font-weight:600;color:var(--text-primary);
+  flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pp-chip{font-size:13px;line-height:18px;color:var(--text-tertiary);white-space:nowrap;flex:none}
+.pp-meta{font-size:13px;line-height:18px;color:var(--text-tertiary)}
+.pp-wrap{background:var(--surface-1);border:1px solid var(--border-subtle);
+  border-radius:14px;overflow:hidden}
+.pp-h{font-size:12px;line-height:16px;color:var(--text-muted);margin:2px 0 0}
+.pp-panel{background:var(--surface-1);border:1px solid var(--border-subtle);
+  border-radius:12px;padding:14px}
+.pp-t{font-size:17px;line-height:24px;font-weight:600;color:var(--text-primary)}
+.pp-sub{font-size:13px;line-height:18px;color:var(--text-tertiary);margin-top:2px}
+.pp-tl{display:flex;gap:10px;font-size:13px;line-height:20px;color:var(--text-secondary)}
+.pp-tl .d{color:var(--text-tertiary);width:44px;flex:none}
+.pp-empty{border:1px dashed var(--border-subtle);border-radius:14px;padding:20px;text-align:center}
+.pp-empty .h{font-size:17px;line-height:24px;font-weight:600;color:var(--text-primary)}
+.pp-empty .d{font-size:15px;line-height:20px;color:var(--text-secondary);margin-top:4px}
+.pp-empty .a{font-size:15px;line-height:20px;font-weight:600;color:var(--accent-text);margin-top:12px}
+.pp-empty .n{font-size:15px;line-height:20px;color:var(--text-muted);margin-top:12px}
+.pp-note{border:1px solid var(--border-subtle);border-radius:12px;padding:14px}
+.pp-alert{font-size:13px;line-height:18px;color:var(--warning-text);margin-top:6px}
+.pp-seg{display:flex;gap:6px}
+.pp-seg span{font-size:13px;padding:5px 11px;border-radius:8px;background:var(--surface-2);
+  color:var(--text-secondary)}
+.pp-seg span.on{background:var(--accent-subtle);color:var(--accent-text);font-weight:600}
+.pp-graph{display:flex;align-items:center;gap:8px;font-size:13px;line-height:18px;
+  color:var(--text-secondary);flex-wrap:wrap}
+.pp-node{font-size:12px;line-height:16px;padding:3px 8px;border-radius:6px;
+  background:var(--surface-2);color:var(--text-secondary);white-space:nowrap}
+.pp-node.p{background:var(--accent-subtle);color:var(--accent-text);font-weight:600}
+.pp-hop{font-size:12px;color:var(--text-muted)}
+.pp-bar{height:10px;border-radius:5px;background:var(--surface-2);overflow:hidden;display:flex}
+.pp-bar i{display:block;height:100%}
+</style>
+</head>
+<body data-lab="people">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol>
+  <symbol id="i-mode-tasks" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol>
+  <symbol id="i-mode-notes" viewBox="0 0 24 24"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+</svg>
+
+<header class="masthead">
+  <p class="eyebrow">Lab 08 · the connective layer</p>
+  <h1 class="t-title-1">People</h1>
+  <p class="lede-p">
+    <code>people.md</code> opens by refusing a category: <i>"People is not a CRM. It is a
+    lightweight entity that connects the other modules."</i> And its first invariant is stronger
+    than that — <b>"A Person is a layer, not an atom. It does not exist on its own; it classifies
+    links."</b>
+  </p>
+  <p class="lede-p">
+    Everything that follows is measured against that sentence, and one thing in the module
+    contradicts it. The strongest thing in the module — the <b>prep card</b>, which the doc calls
+    <i>"the highest-value feature"</i> — depends on it completely.
+  </p>
+</header>
+
+<div class="bar">
+  <nav class="tabs" id="tabs">
+    <button class="tab" data-go="row">The person row</button>
+    <button class="tab" data-go="layer">A layer, not an atom</button>
+    <button class="tab" data-go="import">Contacts import</button>
+    <button class="tab" data-go="quiet">Resurfacing</button>
+  </nav>
+</div>
+
+<main id="main">
+
+<!-- ==================================================================== ROW -->
+<section class="screen" id="row">
+  <div class="lede">
+    <h2 class="t-title-2">The person row</h2>
+    <p class="lede-p">
+      <code>people.md</code> §The person row:
+    </p>
+    <p class="lede-p" style="padding-left:16px">
+      <code>Sarah Chen &nbsp;[last: 3w ago]</code><br>
+      <code>2 open tasks · 1 upcoming event</code>
+    </p>
+    <p class="lede-p">
+      <b>Last activity</b> is defined as <i>"Most recent task, event, or note <b>involving
+      them</b>."</i> But §Linking distinguishes the three: tasks and events <b>link</b>
+      (<code>task.linked_person</code>, <code>calendar.linked_person</code>), while notes are
+      <b>attached</b> — and <code>notes.md</code> says a note attaches to <b>exactly one</b>
+      entity. So "involving them" means one hop for a task and one for an event, and for a note it
+      means whatever the doc's own examples do.
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The row as specified, at <code>row-default</code>.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="pp-top" style="align-items:center">
+              <span class="t-title-2" style="flex:1">People</span>
+              <svg class="ic ic-lg" style="color:var(--text-secondary)"><use href="#i-search"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-plus"/></svg>
+            </div>
+            <div class="pp-seg">
+              <span class="on">All</span><span>Recent</span><span>Quiet</span>
+            </div>
+            <div class="pp-wrap" id="pw-1">
+              <div class="pp-row">
+                <div class="pp-top"><span class="pp-nm">Sarah Chen</span>
+                  <span class="pp-chip">last: 3w ago</span></div>
+                <div class="pp-meta">2 open tasks · 1 upcoming event</div>
+              </div>
+              <div class="pp-row">
+                <div class="pp-top"><span class="pp-nm">Mark Oduya</span>
+                  <span class="pp-chip">last: 2d ago</span></div>
+                <div class="pp-meta">1 open task</div>
+              </div>
+              <div class="pp-row">
+                <div class="pp-top"><span class="pp-nm">Priya Raman</span>
+                  <span class="pp-chip">last: —</span></div>
+                <div class="pp-meta">No links</div>
+              </div>
+            </div>
+            <p class="pp-h">The third row is a Person created with <code>+</code> and not yet linked
+              to anything — which §Person creation permits and §Empty states says cannot arrive.</p>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The row's three parts at the specified height, including the unlinked case
+            the doc permits.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="row-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: the third row is a Person with no links, and §Invariants says a Person "does not
+            exist on its own; it classifies links". Its <code>[last]</code> slot has nothing to
+            hold, and the doc gives no empty form for the field.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">Say what "involving" means: <b>one hop, direct links only</b>.</p>
+        <span class="vc-read">define the traversal · "involving" is doing hidden work</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pp-note">
+              <p class="pp-sub" style="margin:0">The two readings, on the doc's own example note:</p>
+              <div class="pp-graph" style="margin-top:10px">
+                <span class="pp-node p">Sarah</span><span class="pp-hop">← linked to</span>
+                <span class="pp-node">Task: Plan Sarah's birthday</span>
+                <span class="pp-hop">← attached to</span>
+                <span class="pp-node">Note: "…try pottery…"</span>
+              </div>
+              <p class="pp-h" style="margin-top:10px">Direct only: the note is <b>not</b> Sarah's
+                activity — it belongs to the task. Transitive: it is, and it is also the note
+                <code>people.md</code>'s prep card example attributes to her.</p>
+            </div>
+            <div class="pp-panel">
+              <p class="pp-t" style="font-size:15px">Sarah Chen</p>
+              <div class="pp-top" style="margin-top:2px"><span class="pp-chip">last: 3w ago</span></div>
+              <div class="pp-tl" style="margin-top:8px"><span class="d">Sep 1</span>
+                <span>Coffee (event)</span></div>
+              <div class="pp-tl"><span class="d">Sep 8</span>
+                <span>Sent mockups (task, done)</span></div>
+            </div>
+            <p class="pp-h">The detail lists events and tasks directly linked to her, and no note —
+              because her note is attached to a task.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing about the row. What changes is the doc: <b>last activity is a one-hop walk</b>
+            over the Person's own edges (2, 5, 11), so a note attached to a linked task is the
+            <i>task's</i> activity and never the Person's.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Sarah's most recent writing about her then sits under a task nobody opens, and the
+            detail's timeline looks sparse for someone you have thought about recently. The
+            transitive reading is the one that makes the module feel connected — which is why the
+            doc's example quietly used it.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: <code>people.md</code>'s prep-card example takes "She mentioned wanting to try
+            pottery" as Sarah's <b>last note</b>, and that exact sentence is
+            <code>notes.md</code>'s example of a note attached to a <b>task</b>. The two cannot both
+            be right.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">The chip names the <b>kind</b> of last contact, not just the age.</p>
+        <span class="vc-read">the count and the recency disagree · say which one moved</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pp-wrap">
+              <div class="pp-row">
+                <div class="pp-top"><span class="pp-nm">Sarah Chen</span>
+                  <span class="pp-chip">met 3w ago</span></div>
+                <div class="pp-meta">2 open tasks · 1 upcoming event</div>
+              </div>
+              <div class="pp-row">
+                <div class="pp-top"><span class="pp-nm">Mark Oduya</span>
+                  <span class="pp-chip">wrote 2d ago</span></div>
+                <div class="pp-meta">1 open task</div>
+              </div>
+            </div>
+            <p class="pp-h">"3w ago" and "6 weeks" are the same fact at two precisions; the chip's
+              verb says whether a task or a meeting moved the number.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The chip's label becomes the activity's kind — <code>met</code> for events,
+            <code>wrote</code> for notes, <code>worked</code> for tasks — so the number's meaning is
+            on the row rather than in the detail's timeline.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It makes the row's widest slot variable-length again: "3w ago" is fixed, "met 3w ago"
+            is not, and the name loses the room. It also exposes that the detail example's
+            <b>"Last talked"</b> and the row's <b>"last"</b> are already two labels for one
+            fact.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: §The person row specifies the chip as <code>[last: 3w ago]</code>. It also names
+            the field "Last activity" while the detail example calls it "Last talked" — a third
+            label, in the same doc.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">The <b>counts line</b> is the one to cut — the detail has them.</p>
+        <span class="vc-read">cut the tell · a summary nobody scans</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pp-wrap">
+              <div class="pp-row" style="min-height:44px;justify-content:center">
+                <div class="pp-top"><span class="pp-nm">Sarah Chen</span>
+                  <span class="pp-chip">last: 3w ago</span></div>
+              </div>
+              <div class="pp-row" style="min-height:44px;justify-content:center">
+                <div class="pp-top"><span class="pp-nm">Mark Oduya</span>
+                  <span class="pp-chip">last: 2d ago</span></div>
+              </div>
+            </div>
+            <p class="pp-h">A 44px person row scans as a list of names. The counts are one tap
+              away.</p>
+            <p class="pp-h">The cost is that the row stops answering <i>why</i> this person is
+              worth a look — "2 open tasks" is the only forwarding-looking thing on it.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Deletes the links summary. The row becomes one line, and the list gets denser by
+            about a quarter.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The counts are the module's whole argument — a Person "connects the other modules" —
+            and the only part of the row that shows the connection. Without them the list is a
+            contact list, which is the thing the doc's first line says it is not.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two: §The person row lists Links summary as a part, and it sets
+            <code>row-default</code> — a 56px token that exists precisely to hold two lines. Using
+            it for one line makes the token the wrong size for its only row.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Keep the row, fix the two undefineds: <b>the traversal</b> and <b>the
+            unlinked person</b>.</p>
+        <span class="vc-read">no visual change · the doc has two holes</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="pp-wrap">
+              <div class="pp-row">
+                <div class="pp-top"><span class="pp-nm">Sarah Chen</span>
+                  <span class="pp-chip">last: 3w ago</span></div>
+                <div class="pp-meta">2 open tasks · 1 upcoming event</div>
+              </div>
+              <div class="pp-row">
+                <div class="pp-top"><span class="pp-nm">Priya Raman</span>
+                  <span class="pp-chip">not linked yet</span></div>
+                <div class="pp-meta">Link a task, event, or note</div>
+              </div>
+            </div>
+            <p class="pp-h">The unlinked person gets a state instead of a blank — which is also the
+              affordance that makes them a layer again.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Two definitions and one empty form. <b>(1)</b> Last activity is a <b>one-hop</b> walk
+            over edges 2, 5, 11, so a note on a linked task is the task's activity. <b>(2)</b> A
+            Person with no links shows <code>not linked yet</code> and a prompt rather than
+            <code>—</code>. <b>(3)</b> The field gets one name — the row says "last", the detail
+            says "Last talked", and the definition says "Last activity".</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The one-hop rule makes the detail's timeline shorter and the prep card's "Last note"
+            blank for anyone whose notes live on tasks — which is most people, since
+            <code>notes.md</code> creates notes from a task's own detail. The honest version of the
+            module is emptier than the example that was written for it.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether a note attached to a <b>linked</b> task should be a Person's activity. It is
+            the difference between "what have I written about Sarah" and "what have I written near
+            Sarah", and the prep card's usefulness depends on the answer — a card that cannot see
+            the pottery note is a card that forgets the one thing you wanted to remember. This may
+            be a case where the <i>invariant</i> is too strict rather than the traversal too
+            narrow.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the row measures</h2>
+    <div class="measure" id="measure-row">…</div>
+  </div>
+</section>
+
+<!-- ================================================================== LAYER -->
+<section class="screen" id="layer" hidden>
+  <div class="lede">
+    <h2 class="t-title-2">A layer, not an atom</h2>
+    <p class="lede-p">
+      <i>"A Person is a layer, not an atom. It does not exist on its own; it classifies links."</i>
+      That is the module's first invariant, and it is what makes the <b>prep card</b> possible:
+      <i>"every field of it comes out of the People graph… The card needs no store of its own and
+      adds no data."</i>
+    </p>
+    <p class="lede-p">
+      Three other parts of the same doc treat a Person as an atom: a <b><code>+</code> that creates
+      one</b> with no links, an <b>empty state</b> that explains arrival by linking, and
+      <b>archival</b> that removes one from every list. The claim is the module's foundation and the
+      doc's own affordances contradict it.
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The invariant, and the three affordances that assume otherwise.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pp-note">
+              <p class="pp-sub" style="margin:0">"It does not exist on its own"</p>
+              <div class="pp-graph" style="margin-top:8px">
+                <span class="pp-node p">A Person</span>
+                <span class="pp-hop">— needs —</span>
+                <span class="pp-node">a task</span>
+                <span class="pp-hop">or</span>
+                <span class="pp-node">an event</span>
+                <span class="pp-hop">or</span>
+                <span class="pp-node">a note</span>
+              </div>
+            </div>
+            <div class="pp-note">
+              <p class="pp-sub" style="margin:0">But the module also offers</p>
+              <p class="pp-h" style="margin-top:8px"><code>+</code> — creates a Person from a name
+                field, with no links. §Person creation, path 1.</p>
+              <p class="pp-h">"People appear here when you link them to a task, an event, or a note."
+                — the <b>All</b> empty state, explaining the opposite arrival.</p>
+              <p class="pp-h"><code>person.archived</code> — removes a Person from All and Recent.
+                Removing a layer from a list of layers.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The invariant beside the three affordances that read past it.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="layer-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One, and it is the module's own first invariant. The <code>+</code> creates a Person
+            that "does not exist on its own" and that cannot be reached by the rule the empty state
+            gives for arrival — so the two halves of §Specification disagree about what a Person
+            is.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">The <code>+</code> creates a <b>link</b>, not a Person. It belongs in
+          the flow that needs it.</p>
+        <span class="vc-read">make the affordance match the model</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pp-panel">
+              <p class="pp-sub" style="margin:0">From a task, event, or note: "Link person"</p>
+              <div class="pp-seg" style="margin-top:10px;flex-wrap:wrap">
+                <span>Sarah Chen</span><span>Mark Oduya</span>
+                <span style="background:var(--accent-subtle);color:var(--accent-text);
+                  font-weight:600">+ New person</span>
+              </div>
+              <p class="pp-h" style="margin-top:10px">The only way to create a Person is inside a
+                link, so a Person is never born without one — which is what the invariant
+                says.</p>
+            </div>
+            <p class="pp-h">The People list keeps a "New person" affordance that opens this picker
+              first, so the flow exists where the list is.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Person creation moves inside the link flow. A new Person is created as part of linking
+            them to something, so the model's rule holds by construction.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>You cannot add someone before you have something to link them to, which is the
+            opposite of how people arrive — you meet someone, then later a task involves them.
+            Forcing the link first means inventing a task to have a person, which is worse than
+            having a person.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: §Person creation lists the manual path as "From the People list, tap
+            <code>+</code>. Form: name." This deletes it. And it makes the list's empty state's
+            action ("Add a person") impossible to satisfy from the list.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">A Person with no links is <b>pending</b>, and the list says so.</p>
+        <span class="vc-read">allow the state, name the state</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pp-wrap">
+              <div class="pp-row">
+                <div class="pp-top"><span class="pp-nm">Sarah Chen</span>
+                  <span class="pp-chip">last: 3w ago</span></div>
+                <div class="pp-meta">2 open tasks · 1 upcoming event</div>
+              </div>
+              <div class="pp-row">
+                <div class="pp-top"><span class="pp-nm">Priya Raman</span>
+                  <span class="pp-chip">added 2d ago</span></div>
+                <div class="pp-meta" style="color:var(--accent-text)">Not linked to anything yet</div>
+              </div>
+            </div>
+            <div class="pp-note">
+              <p class="pp-sub" style="margin:0">The All scope gains a group, not a rule: people with
+                no links sort last under <b>"Not linked yet"</b>, and the group has no empty state
+                because the list's own empty state already covers it.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The unlinked state becomes explicit and named. The invariant survives as a
+            <i>description of what a Person does</i> rather than a constraint on when one may
+            exist — which is how §Linking already reads.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>"Not linked yet" is a permanent-looking shelf for people the user added and never used,
+            and the doc gives no rule for when an unlinked Person should be forgettable. It also
+            invites a purge affordance the model cannot support — <b>deletion is not
+            supported</b>, only archival.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One, softly: the invariant is stated as a fact about the entity ("is a layer, not an
+            atom"), and this reads it as guidance. If it is a fact then no such state should exist;
+            if it is guidance, the sentence should say what it forbids.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">The invariant is <b>aspirational</b>. Say what it means and drop the
+          claim.</p>
+        <span class="vc-read">cut the tell · a rule the model doesn't enforce isn't one</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pp-note">
+              <p class="pp-sub" style="margin:0">Rewritten:</p>
+              <p class="pp-h" style="margin-top:8px">
+                <b>"A Person has no content of its own.</b> It carries a name, a source, and a
+                lifecycle — no tasks, no events, no notes. Everything the People module shows about
+                a person is read from the links that point at them."</p>
+              <p class="pp-h">That is checkable against <code>object-model.md</code>, and it is what
+                the module actually relies on.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Replaces the "layer, not an atom / does not exist on its own" claim with a statement
+            about <b>data</b> rather than <b>existence</b> — which is testable, and which the
+            prep card's design already depends on.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It loses the sentence that makes the module's idea memorable, and it weakens the
+            strongest argument against building CRM features into People. "Does not exist on its
+            own" is doing rhetorical work that a data statement does not.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: rewriting an invariant is an ADR-shaped change in this repo, and the invariant
+            is cited from <code>object-model.md</code>. The honest version keeps the sentence and
+            lets the affordances be its exceptions, listed.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Keep the invariant, and let it say <b>what a Person may not have</b>.</p>
+        <span class="vc-read">the claim is about content, and it is already true</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pp-note">
+              <p class="pp-sub" style="margin:0">The invariant, with its boundary stated:</p>
+              <p class="pp-h" style="margin-top:8px">"A Person is a layer, not an atom — it
+                classifies links and holds no content of its own. It may exist <b>before</b> it has
+                links (<code>+</code>), because a name is not content, and it may be
+                <b>archived</b> like any other entity. What it may never have is a field no link
+                can produce."</p>
+            </div>
+            <div class="pp-panel">
+              <p class="pp-sub" style="margin:0">Which is exactly what the prep card proves. Its
+                fields:</p>
+              <div class="pp-graph" style="margin-top:8px">
+                <span class="pp-node">attendees</span>
+                <span class="pp-node">last met</span>
+                <span class="pp-node">last note</span>
+                <span class="pp-node">last completed task</span>
+                <span class="pp-node">open tasks</span>
+              </div>
+              <p class="pp-h" style="margin-top:8px">Five fields from <b>three edges</b>, and the
+                card stores nothing.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The invariant keeps its first half and gains its boundary. The <code>+</code>, the
+            empty state's explanation, and archival stop contradicting it — and the prep card's
+            claim becomes the test: <b>a Person has no field that a link cannot produce.</b> That is
+            the sentence that stops People becoming a CRM, and unlike "does not exist on its own" it
+            can be enforced.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It makes the invariant longer and less quotable, and it formally permits the unlinked
+            Person — so the module gains a state with no designed surface, which the row screen
+            shows a Person's <code>[last]</code> slot cannot express.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>What an unlinked Person's row shows. The row has three parts and two of them are
+            derived from links, so a Person with no links has nothing to fill them — which is a
+            <i>drawing</i> problem the doc created by asserting an invariant the rest of the doc
+            ignores. Either the invariant is firmed up (no unlinked People, and the <code>+</code>
+            goes) or the row gains a state. The lab can show both; the choice is about whether
+            People is a place you add people to.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the claim measures</h2>
+    <div class="measure" id="measure-layer">…</div>
+  </div>
+</section>
+
+<!-- ================================================================= IMPORT -->
+<section class="screen" id="import" hidden>
+  <div class="lede">
+    <h2 class="t-title-2">Contacts import</h2>
+    <p class="lede-p">
+      <code>people.md</code> §Person creation, path 2: <i>"Contacts import. Settings offers a
+      one-time import. Users select which contacts to include; the app does not import silently."</i>
+      And §Invariants: <i>"<b>Person deletion is not supported; only archival.</b>"</i>
+    </p>
+    <p class="lede-p">
+      So the app has exactly one operation that creates entities in <b>bulk</b> — a contact list is
+      hundreds of People — and the model has no way to remove them in bulk, or at all. Selecting 300
+      contacts and changing your mind means 300 archives, one at a time.
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">A one-time import, and no reversal of any size.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pp-top" style="align-items:center">
+              <svg class="ic ic-md" style="color:var(--text-secondary)"><use href="#i-back"/></svg>
+              <span class="t-title-2" style="flex:1">Import contacts</span>
+            </div>
+            <div class="pp-panel">
+              <p class="pp-sub" style="margin:0">312 contacts found. Select who to include.</p>
+              <div class="pp-wrap" style="margin-top:10px">
+                <div class="pp-row" style="min-height:44px">
+                  <div class="pp-top"><span class="pp-nm">Ada Whitmore</span>
+                    <svg class="ic ic-sm" style="color:var(--success-default)"><use href="#i-check"/></svg></div>
+                </div>
+                <div class="pp-row" style="min-height:44px">
+                  <div class="pp-top"><span class="pp-nm">Ben Osei</span>
+                    <svg class="ic ic-sm" style="color:var(--success-default)"><use href="#i-check"/></svg></div>
+                </div>
+                <div class="pp-row" style="min-height:44px">
+                  <div class="pp-top"><span class="pp-nm">Cara Lindqvist</span>
+                    <span class="pp-chip">—</span></div>
+                </div>
+              </div>
+              <p class="pp-h" style="margin-top:10px">Import 2 selected</p>
+            </div>
+            <p class="pp-h">Once imported, the only removal in the model is
+              <code>person.archived</code> — one at a time, from a detail screen.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. A selection screen and a one-at-a-time archival, both as specified.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="import-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two. <b>Reversibility</b> is one of the four invariants, and the app's only bulk
+            creation has no bulk reversal. And <code>02-architecture/local-first.md</code> makes
+            Person data local by default, so the import writes hundreds of real names and phone
+            numbers into the local store on one tap — the largest single write the app can
+            perform.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">The import is <b>one event</b>, so it can be <b>one undoing</b>.</p>
+        <span class="vc-read">keep the receipt · bulk in, bulk out</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pp-panel">
+              <p class="pp-sub" style="margin:0">Imported 312 contacts on 22 Sep</p>
+              <div class="pp-graph" style="margin-top:8px">
+                <span class="pp-node">1 import</span><span class="pp-hop">→</span>
+                <span class="pp-node">312 <code>person.created</code></span>
+                <span class="pp-hop">→</span>
+                <span class="pp-node p">1 undo</span>
+              </div>
+              <p class="pp-h" style="margin-top:10px">Undo archives all 312 together. Nothing is
+                deleted — the log keeps every <code>person.created</code> — so the reversal is the
+                one the model already has.</p>
+            </div>
+            <p class="pp-h">312 archives become 1 action. What the user can still do one at a time is
+              <i>re-activate</i>, which is the direction that needs granularity.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The import records its own identity, so the set it created can be archived as a set.
+            No new event type for deletion, and the log keeps every creation.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It needs a field the model does not have — either a batch id on
+            <code>person.created</code> or an import record — which is a change to an existing
+            event, hence an ADR. And a bulk archive can swallow people the user has since linked
+            tasks to, which is exactly the case archival is meant to leave alone.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: <code>event-log.md</code> states that adding a type needs an ADR, and this
+            changes an existing type's shape. §Archival also says "their linked tasks, events, and
+            notes remain" — which a bulk archive would honour, but silently, for 312 people at
+            once.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">Import into a <b>review step</b>, so nothing is created unread.</p>
+        <span class="vc-read">move the decision before the write</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pp-panel">
+              <p class="pp-sub" style="margin:0">312 found · 8 already in People</p>
+              <div class="pp-tl" style="margin-top:8px"><span class="d">8</span>
+                <span>matched to people you already have — <b>no new records</b></span></div>
+              <div class="pp-tl"><span class="d">304</span>
+                <span>would be created</span></div>
+              <div class="pp-tl"><span class="d">3</span>
+                <span>have no phone or email, so matching is name-only</span></div>
+              <p class="pp-h" style="margin-top:10px">The count that would be written is on the
+                button.</p>
+            </div>
+            <div style="display:flex;gap:8px">
+              <span style="font-size:15px;font-weight:600;padding:9px 16px;border-radius:10px;
+                background:var(--accent-default);color:var(--on-fill)">Import 304</span>
+              <span style="font-size:15px;font-weight:600;padding:9px 16px;border-radius:10px;
+                background:var(--surface-2);color:var(--text-secondary)">Pick individually</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The import shows what it will actually write — how many match existing People and how
+            many are name-only matches — before the write, so the number on the button is the
+            number of new records.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The matching rule ("name + phone/email where available") is what produces those
+            counts, and the doc defines neither what counts as a match nor what happens on a
+            collision. So this screen makes an undefined rule into a visible number — which is
+            better, and which turns a hidden ambiguity into a required decision.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: §Contacts sync says "Matching is by name + phone/email where available" with no
+            resolution rule, and <code>person.renamed</code> exists — so a person the user has
+            renamed in the app may fail to match on the next import and be created a
+            second time.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">Delete the import. People should arrive <b>one at a time, on
+            purpose</b>.</p>
+        <span class="vc-read">cut the tell · a contact list is not a relationship</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pp-note">
+              <p class="pp-sub" style="margin:0">The People list starts empty and fills as you link
+                people you actually involve. The picker's "New person" is the only creation path.</p>
+              <p class="pp-h" style="margin-top:8px">The All empty state already says it: <i>"People
+                appear here when you link them to a task, an event, or a note."</i></p>
+            </div>
+            <p class="pp-h">The cost is real: the prep card's value scales with the graph, and an
+              empty People list makes the app's best feature useless for months — which is why the
+              import exists.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Removes contacts import entirely. People exist only where the user put them, which
+            makes the module's first invariant literally true and the empty state's explanation
+            correct.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The prep card is called "the highest-value feature of the People module" and it is
+            <b>empty until the graph is populated</b>. Without import, a new user gets no prep card
+            for months, and `06-flows/onboarding.md` has nothing to seed it with. The import is
+            what makes the module's best feature reachable.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two: §Person creation lists it as path 2, §Contacts sync specifies it in detail
+            including the settings toggle <code>integration.contacts.enabled</code>, and
+            <code>surfaces.md</code> lists the settings toggle.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Keep the import, <b>bound it</b>, and give it a stated matching
+            rule.</p>
+        <span class="vc-read">size the write, then make it reversible in one step</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pp-panel">
+              <p class="pp-sub" style="margin:0">Three additions, all definitional:</p>
+              <div class="pp-tl" style="margin-top:8px"><span class="d">1</span>
+                <span><b>State the rule.</b> Match on phone, then email, then exact name — and a
+                  match links, never creates.</span></div>
+              <div class="pp-tl"><span class="d">2</span>
+                <span><b>State the count</b> before the write, on the button.</span></div>
+              <div class="pp-tl"><span class="d">3</span>
+                <span><b>One import, one undo.</b> The import is a set; archiving it is one
+                  action.</span></div>
+            </div>
+            <div class="pp-note">
+              <p class="pp-h" style="margin:0">Nothing about the flow's shape changes. What changes
+                is that the largest write the app can make stops being the least specified.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Three silences become statements, and one of them (the matching rule) is the
+            difference between an import that links and an import that duplicates. The undo needs a
+            batch identity on <code>person.created</code> — an ADR, and the only structural
+            change here.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A batch id is the app's first event field that exists purely to support a reversal,
+            and it is the thin end of a wedge: every bulk operation afterwards will want one. It
+            also makes archival two-tier — archived alone, or archived as part of an import — which
+            <code>person.unarchived</code> does not distinguish.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether a contact <b>is</b> a Person. Import creates People from a phone's address
+            book, which is a list of contact records — and the doc's first line says "People is not
+            a CRM". A 312-person import makes the People list a contact list with a `[last: —]` on
+            most rows, which is the thing the module refuses to be. The honest options are to import
+            only contacts the user has interacted with (needs data the app does not have) or to
+            accept that People starts as a contact list and becomes a graph.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the import measures</h2>
+    <div class="measure" id="measure-import">…</div>
+  </div>
+</section>
+
+<!-- ================================================================== QUIET -->
+<section class="screen" id="quiet" hidden>
+  <div class="lede">
+    <h2 class="t-title-2">Resurfacing</h2>
+    <p class="lede-p">
+      <code>06-flows/resurfacing.md</code> §People resurfacing: <i>"People marked 'worth
+      maintaining' (<b>default: on</b>) whose last interaction is > 30 days. Fires weekly, at most
+      once."</i>
+    </p>
+    <p class="lede-p">
+      The forgotten-captures surface, two sections earlier, solves the same problem explicitly:
+      <i>"Fires weekly, at most once. <b>Shows the top 5 by age.</b>"</i> People has the frequency
+      but <b>no cap and no ordering</b> — and because "worth maintaining" defaults to on, the
+      qualifying set is <b>everyone you have not spoken to in a month</b>.
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The rule as written, with a realistic contact list.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pp-panel">
+              <p class="pp-sub" style="margin:0">The nudge, exactly as the example gives it:</p>
+              <p class="pt" style="font-size:15px;line-height:20px;color:var(--text-primary);
+                margin-top:8px">"You haven't talked to Sarah in 6 weeks."</p>
+              <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+                <span style="font-size:13px;padding:5px 11px;border-radius:8px;
+                  background:var(--accent-subtle);color:var(--accent-text);font-weight:600">Add a
+                  task</span>
+                <span style="font-size:13px;padding:5px 11px;border-radius:8px;
+                  background:var(--surface-2);color:var(--text-secondary)">Snooze 30 days</span>
+                <span style="font-size:13px;padding:5px 11px;border-radius:8px;
+                  background:var(--surface-2);color:var(--text-secondary)">Not important</span>
+              </div>
+            </div>
+            <div class="pp-note">
+              <p class="pp-h" style="margin:0">One person, singular. But the rule qualifies
+                <b>every</b> person past 30 days, and nothing selects among them.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The rule and the example as written, with the population the rule implies.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="quiet-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One, by omission. The captures surface caps at <b>top 5 by age</b>; this one states a
+            frequency and no population rule, so the nudge's body is undefined — it either names an
+            unbounded list or silently picks one, and neither is specified.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">Same shape as captures: <b>top N by age</b>, one nudge.</p>
+        <span class="vc-read">reuse the solved rule · stop reinventing it per surface</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pp-panel">
+              <p class="pt" style="font-size:15px;line-height:20px;color:var(--text-primary);
+                margin:0">"4 people you haven't talked to in a while."</p>
+              <div class="pp-tl" style="margin-top:8px"><span class="d">9w</span>
+                <span>Priya Raman</span></div>
+              <div class="pp-tl"><span class="d">7w</span><span>Tom Whitfield</span></div>
+              <div class="pp-tl"><span class="d">6w</span><span>Sarah Chen</span></div>
+              <div class="pp-tl"><span class="d">5w</span><span>Ada Whitmore</span></div>
+              <p class="pp-h" style="margin-top:8px">Top 5 by age, same as captures — and the list
+                shape is the one the captures example already uses ("5 things you captured but never
+                acted on.").</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>People resurfacing adopts the captures surface's rule: one nudge, top 5 by age, so the
+            population is bounded and the ordering is stated.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Age is the wrong sort for people. Captures age monotonically toward irrelevance; a
+            person can matter more at 9 weeks than at 5, and "top 5 by age" surfaces whoever you
+            have neglected <i>longest</i> — which is the least likely to be the one worth
+            re-contacting, and the more likely to be someone you have deliberately let go.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: the doc's people example is a single person and an immediate action ("Add a task
+            → Reach out to Sarah"), so a list changes the nudge's chrome from a card with three
+            actions to a list with per-row actions. Nothing specifies the latter.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">One person, chosen by a <b>stated</b> rule — and the rule is
+            "longest since you acted".</p>
+        <span class="vc-read">one nudge, one subject · say how the subject is picked</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pp-panel">
+              <p class="pt" style="font-size:15px;line-height:20px;color:var(--text-primary);
+                margin:0">"You haven't talked to Priya in 9 weeks."</p>
+              <p class="pp-h" style="margin-top:8px">Picked as the person you have gone longest
+                without acting on. The "Add a task" path suppresses them for 60 days, so the queue
+                advances one person per action — which makes the selection rule the same thing as
+                the pacing rule.</p>
+            </div>
+            <div class="pp-note">
+              <p class="pp-h" style="margin:0">With <b>N</b> qualifying people and one per week, a
+                person comes round every <b>N weeks</b> — so the interval is set by the contact list,
+                not by the flow.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The nudge keeps its single subject and the rule that picks it is written down: longest
+            without an action, not longest since contact. The 60-day suppression already in the doc
+            becomes the queue's pacing mechanism.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It makes the flow's cadence depend on the user's contact list: with 50 quiet people the
+            same person surfaces every 50 weeks, and the nudge silently ignores 49 people the user
+            said were worth maintaining. It also still needs the cap the captures surface has, or
+            the queue's length is unbounded.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: §Frequency fixes people at weekly and the flow "consumes the attention budget like
+            any other nudge" — a queue that never reaches most of its members delivers on the
+            frequency and not on the surface's purpose.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">"Worth maintaining" shouldn't default to on for <b>everyone</b>.</p>
+        <span class="vc-read">cut the tell · opt-in is honest about intent</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pp-panel">
+              <p class="pp-sub" style="margin:0">Default off, and set where a relationship is
+                acknowledged:</p>
+              <div class="pp-tl" style="margin-top:8px"><span class="d">→</span>
+                <span>Linking a person to a task or event marks them worth maintaining</span></div>
+              <div class="pp-tl"><span class="d">→</span>
+                <span>The person detail carries the toggle</span></div>
+              <p class="pp-h" style="margin-top:8px">So the set is people you have actually
+                involved, not people in your phone.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>"Worth maintaining" starts off and turns on when a Person is linked to something. The
+            resurfacing set becomes the graph rather than the address book.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It removes resurfacing for exactly the people it is for: someone you have not
+            contacted in six weeks has no recent links <i>by definition</i>, so an "on when linked"
+            rule can only be decided by the <b>first</b> link — which is a different rule and a
+            one-way door. And the doc currently calls the default "opt-out", which is a deliberate
+            posture.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two: <code>resurfacing.md</code> says "Resurfacing is opt-out. People default to 'worth
+            maintaining'", and <code>people.md</code> says the same with the defaults spelled out.
+            Changing it changes the flow's stated posture, not a detail.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Keep opt-out, and give people the rule captures already has — plus a
+            <b>cap</b>.</p>
+        <span class="vc-read">same shape as the surface next to it</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pp-panel">
+              <p class="pp-sub" style="margin:0">Three statements, no new chrome:</p>
+              <div class="pp-tl" style="margin-top:8px"><span class="d">1</span>
+                <span><b>Who.</b> "Worth maintaining" (default on) and last interaction &gt; 30
+                  days — unchanged.</span></div>
+              <div class="pp-tl"><span class="d">2</span>
+                <span><b>How many.</b> One nudge, and it names <b>one</b> person: the longest since
+                  an action, not since contact.</span></div>
+              <div class="pp-tl"><span class="d">3</span>
+                <span><b>At most.</b> The nudge is subject to the attention budget like every other
+                  one, and it never exceeds it.</span></div>
+            </div>
+            <div class="pp-note">
+              <p class="pp-h" style="margin:0">The cap that matters is not a top-N: it is that this
+                surface produces <b>one</b> subject per firing, which is what the doc's own example
+                already shows and what its rule never says.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The population rule and the ordering are stated. Nothing about the flow's posture
+            changes and no new chrome is needed: the example was already singular, so the doc is
+            being made to say what it demonstrated. The 60-day suppression becomes the pacing
+            mechanism it already reads as.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One subject per week means most qualifying people are never surfaced, and the doc has
+            no way to say so — the set is defined by a threshold, the delivery by a rate, and the two
+            numbers are unrelated. With 40 quiet people the honesty problem is that the app claims to
+            resurface quiet relationships and in practice picks one a week.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether the Quiet <b>scope</b> is the same surface as the nudge. <code>people.md</code>
+            makes Quiet "an opt-in view" and the nudge fires weekly; if a user opens Quiet they see
+            all 40, and the nudge shows one of them. Those are two different answers to "who have I
+            lost touch with", in one module, and the doc never says whether they are the same list.
+            The lab can show both is what actually happens — deciding which one is <i>the</i>
+            surface is a product call.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What resurfacing measures</h2>
+    <div class="measure" id="measure-quiet">…</div>
+  </div>
+</section>
+
+</main>
+
+<script src="lab.js"></script>
+<script src="nav.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var screens = ['row', 'layer', 'import', 'quiet'];
+  var seen = {};
+  var tabs = document.getElementById('tabs');
+
+  tabs.addEventListener('click', function (e) {
+    var b = e.target.closest('.tab');
+    if (b && b.dataset.go) go(b.dataset.go);
+  });
+
+  function go(id) {
+    screens.forEach(function (s) {
+      var el = document.getElementById(s);
+      if (el) el.hidden = (s !== id);
+    });
+    Array.prototype.forEach.call(tabs.children, function (b) {
+      b.classList.toggle('on', b.dataset.go === id);
+    });
+    if (!seen[id]) {
+      seen[id] = true;
+      requestAnimationFrame(function () { MEASURE[id](); });
+    }
+  }
+
+  function px(name) {
+    return parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name));
+  }
+
+  var MEASURE = {};
+
+  // -- row
+  MEASURE.row = function () {
+    var name = 20, meta = px('--type-footnote-line');   // the row's two lines
+    var def = px('--row-default');                      // 56
+    var pad = 9 * 2, gap = 2, border = 1;
+    var chrome = pad + gap + border;
+
+    // The chip's values across the two scopes.
+    var recentDays = 30;
+
+    var drawn = Math.round(document.getElementById('pw-1').querySelector('.pp-row')
+      .getBoundingClientRect().height);
+
+    var rows = [
+      ['Name line', '15px / 20px', name + 'px'],
+      ['Meta line', 'type-footnote 13 / 18', meta + 'px'],
+      ['Text', 'two lines', (name + meta) + 'px'],
+      ['Chrome', 'padding 9×2 + gap 2 + border 1', chrome + 'px'],
+      ['Row, total', 'text + chrome', '<b>' + (name + meta + chrome) + 'px</b>'],
+      ['row-default', 'the specified height', def + 'px'],
+      ['As drawn', 'the row with no height applied', '<b>' + drawn + 'px</b>'],
+      ['Labels for one field', 'row · detail · definition', '3'],
+      ['"Involving them" hops', 'no doc states it', 'undefined'],
+      ['The doc\u2019s own example note', 'notes.md attaches it to a', 'task'],
+      ['The same note in people.md', 'the prep card calls it', "Sarah's last note"],
+      ['Recent / Quiet boundary', 'activity within', recentDays + ' days']
+    ];
+
+    document.getElementById('measure-row').innerHTML =
+      '<div class="rows">' + rows.map(function (r) {
+        return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+          '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+      }).join('') + '</div>' +
+      '<p class="mf">The row is over its token too, by the smallest margin in this lab set: ' +
+      (name + meta + chrome) + 'px of content and chrome against a stated ' + def + 'px height — ' +
+      '<b>' + (name + meta + chrome - def) + 'px over</b>, driven by a ' + gap + 'px gap and a ' +
+      '1px border that no doc subtracts. Three labs have now found three rows over their stated ' +
+      'height by <b>34px</b> (the note row), <b>14px</b> (the protocol card) and <b>3px</b> (this ' +
+      'one) — the overrun shrinks with the row\u2019s complexity, and the one thing in common is that ' +
+      'the chrome is never in the arithmetic.</p>' +
+      '<p class="mf">What this row <i>cannot</i> express is the unlinked Person, and the reason is ' +
+      'the traversal. <b>"Most recent task, event, or note involving them"</b> is one hop for a task ' +
+      'and one for an event; for a note it is undefined, and the doc\u2019s own examples use both ' +
+      'readings of the same sentence — <code>notes.md</code> attaches "She mentioned wanting to try ' +
+      'pottery" to a <b>task</b>, and <code>people.md</code>\u2019s prep card reports that identical ' +
+      'sentence as Sarah\u2019s <b>last note</b>.</p>';
+
+    document.getElementById('row-cost').innerHTML =
+      'The row needs <b>' + (name + meta + chrome) + 'px</b> against a stated <b>' + def +
+      'px</b> height — <b>' + (name + meta + chrome - def) + 'px over</b>, the smallest overrun of ' +
+      'the three labs that found one. Its other costs are a field with three names (<b>"last"</b> ' +
+      'on the row, <b>"Last talked"</b> in the detail example, <b>"Last activity"</b> in the ' +
+      'definition) and a traversal nobody defined: <b>"involving them"</b> means one hop in the ' +
+      'rule and two hops in the doc\u2019s own prep-card example.';
+  };
+
+  // -- layer
+  MEASURE.layer = function () {
+    var rows = [
+      ['Invariant', 'people.md, first', 'a layer, not an atom'],
+      ['"does not exist on its own"', 'the same sentence', 'a claim about existence'],
+      ['Manual creation', '§Person creation, path 1', '+ → a Person, no links'],
+      ['All empty state', '§Empty states',
+        '"People appear here when you link them"'],
+      ['Archival', '§Archival', 'removes a Person from All and Recent'],
+      ['So a Person can exist', 'with no links', 'yes, via +'],
+      ['And arrive', 'with no links', 'no, per the empty state'],
+      ['Prep card fields', 'tier-2 owns the list', '5'],
+      ['Edges those fields come from', 'object-model', '3 (2, 5, 11)'],
+      ['Fields the card stores', '"adds no data"', '0'],
+      ['A Person\u2019s own fields', 'object-model', 'name · source · lifecycle'],
+      ['The checkable version', '"no field a link cannot produce"', 'true today']
+    ];
+
+    document.getElementById('measure-layer').innerHTML =
+      '<div class="rows">' + rows.map(function (r) {
+        return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+          '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+      }).join('') + '</div>' +
+      '<p class="mf">The invariant says a Person <b>cannot exist on its own</b>, and three ' +
+      'affordances in the same doc let one: the <code>+</code> creates a Person from a name field ' +
+      'with no links, the <b>All</b> empty state explains arrival as "when you link them to a task, ' +
+      'an event, or a note", and archival removes a Person from lists of People. Two statements ' +
+      'about the same entity, and only one can be a rule.</p>' +
+      '<p class="mf">The claim that <b>is</b> enforceable is the one the prep card depends on: ' +
+      'its <b>5</b> fields all come from <b>3</b> edges and it stores <b>0</b> of its own. "A ' +
+      'Person has no field that a link cannot produce" is testable against ' +
+      '<code>object-model.md</code>; "does not exist on its own" is not testable at all, which is ' +
+      'why the rest of the doc reads past it.</p>';
+
+    document.getElementById('layer-cost').innerHTML =
+      'A Person created with <code>+</code> has <b>no links</b>, so the row\u2019s ' +
+      '<code>[last]</code> slot and its counts line are both empty and the doc gives no form for ' +
+      'either. The invariant is doing rhetorical work — it is the module\u2019s stated defence ' +
+      'against becoming a CRM — but as written it forbids the affordance the empty state\u2019s own ' +
+      'action ("Add a person") depends on.';
+  };
+
+  // -- import
+  MEASURE.import = function () {
+    var contacts = 312;
+    var alreadyKnown = 8;
+    var nameOnly = 3;
+    var create = contacts - alreadyKnown;
+
+    var rows = [
+      ['Contacts found', 'the example list', contacts + ''],
+      ['Match rule', 'people.md §Contacts sync', 'name + phone/email'],
+      ['Resolution on collision', 'any doc', 'not stated'],
+      ['Already in People', 'matched, no new record', alreadyKnown + ''],
+      ['Would be created', 'contacts − matched', '<b>' + create + '</b>'],
+      ['Name-only matches', 'no phone or email', nameOnly + ''],
+      ['Bulk operations', 'the app', '1 (this one)'],
+      ['Bulk removal', 'the model', 'none'],
+      ['Removal available', '§Invariants', 'archival, one at a time'],
+      ['Archives to undo it', 'one action per Person', '<b>' + create + '</b>'],
+      ['Sync direction', '§Invariants', 'contacts → app only'],
+      ['Re-import safety', 'if a name was renamed in-app', 'undefined']
+    ];
+
+    document.getElementById('measure-import').innerHTML =
+      '<div class="rows">' + rows.map(function (r) {
+        return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+          '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+      }).join('') + '</div>' +
+      '<p class="mf">Importing ' + contacts + ' contacts writes <b>' + create +
+      ' Person records</b> on one tap — the largest single write the app can perform, into a ' +
+      'local-first store. Removing them again needs <b>' + create + ' archives</b>, because ' +
+      '"person deletion is not supported; only archival" and nothing in the model carries the ' +
+      '<b>set</b> that created them.</p>' +
+      '<p class="mf">The matching rule is the other silence. "Name + phone/email where available" ' +
+      'states what to match on and not what a match <i>does</i> — and <code>person.renamed</code> ' +
+      'exists, so a Person the user renamed in the app can fail to match on the next import and be ' +
+      'created a second time. There are ' + nameOnly + ' contacts in the example with no phone or ' +
+      'email, for whom the rule degrades to names alone.</p>';
+
+    document.getElementById('import-cost').innerHTML =
+      '<b>' + create + '</b> records on one tap, and <b>' + create + '</b> archives to undo it. ' +
+      'The app\u2019s only bulk creation has no bulk reversal, against a reversibility invariant ' +
+      'that every other operation honours — and the matching rule is undefined, so a re-import can ' +
+      'duplicate people the user has renamed.';
+  };
+
+  // -- quiet
+  MEASURE.quiet = function () {
+    // The qualifying set, and how long a person waits if one surfaces per firing.
+    var populations = [10, 25, 50, 100];
+    var perWeek = 1;
+    var threshold = 30;
+
+    var rows = [
+      ['Threshold', 'resurfacing.md §People', '> ' + threshold + ' days'],
+      ['Default', 'people.md · resurfacing.md', 'worth maintaining: on'],
+      ['Frequency', 'the same section', 'weekly, at most once'],
+      ['Population cap', 'people resurfacing', '<b>none</b>'],
+      ['Ordering', 'people resurfacing', '<b>none</b>'],
+      ['Compare: captures', 'two sections earlier', 'top 5 by age'],
+      ['The example', 'the same section', 'one person, singular'],
+      ['Subjects per firing', 'what the rule allows', 'all qualifying'],
+      ['Suppression after acting', 'the same section', '60 days'],
+      ['Wait per person at 10 quiet', 'one per week', (10 * perWeek) + ' weeks'],
+      ['Wait per person at 25 quiet', 'one per week', (25 * perWeek) + ' weeks'],
+      ['Wait per person at 50 quiet', 'one per week', (50 * perWeek) + ' weeks'],
+      ['Quiet scope', 'people.md §Scopes', 'shows all of them']
+    ];
+
+    document.getElementById('measure-quiet').innerHTML =
+      '<div class="rows">' + rows.map(function (r) {
+        return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+          '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+      }).join('') + '</div>' +
+      '<p class="mf">The captures surface next door solves exactly this and states its answer: ' +
+      '<b>"top 5 by age"</b>. People resurfacing states a frequency and <b>no population rule at ' +
+      'all</b>, while defaulting <i>everyone</i> into the qualifying set — so the nudge either names ' +
+      'a list of unbounded length or picks one silently, and the doc does neither.</p>' +
+      '<p class="mf">The two rates do not relate. The qualifying set is a threshold (' + threshold +
+      ' days); the delivery is a rate (weekly); and with one person per firing a user with ' +
+      '<b>50</b> quiet people sees the same person again every <b>50 weeks</b>. Meanwhile the ' +
+      '<b>Quiet scope</b> shows all 50 at once — two different answers to "who have I lost touch ' +
+      'with", in one module, and the doc does not say whether they are the same list.</p>';
+
+    document.getElementById('quiet-cost').innerHTML =
+      'The population is <b>unbounded</b> and the ordering is <b>unspecified</b> — captures has ' +
+      '<b>top 5 by age</b> and people has nothing. Worse, "worth maintaining" defaults to <b>on</b>, ' +
+      'so the set is everyone past ' + threshold +
+      ' days including 300 imported contacts, and the Quiet scope (which shows all of them) and the ' +
+      'weekly nudge (which can show one) are two different surfaces answering one question.';
+  };
+
+  go('row');
+})();
+</script>
+</body>
+</html>
