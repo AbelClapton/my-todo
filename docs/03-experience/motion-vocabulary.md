@@ -103,8 +103,11 @@ position, because a week column *is* a day; **week → month** holds
 vertical position, because a month cell keeps the week's time axis
 (`05-modules/calendar.md`, "The Month view layout"); and
 **month → year** holds neither, because a year cell is too small to
-position anything in. Two of the three steps hold — which makes this
-a constraint with a stated exception, not a preference.
+position anything in (`05-modules/calendar.md`, "The Year's fit": a
+cell is 44 × 9px against the Month's 50 × 115px, so every mark the
+Month positions by time collapses to a single pixel). Two of the
+three steps hold — which makes this a constraint with a stated
+exception, not a preference.
 
 **Shared-element transition (list → detail).** `duration-slow`,
 `ease-standard`. The list row expands into the detail view. The

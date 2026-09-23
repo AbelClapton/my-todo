@@ -37,8 +37,9 @@ is the Day.
 - **Month view** — a grid, fixed at **six rows**. Days show event density
   as position, not as a count, and never as titles. Tapping a day opens
   it. See "The Month view layout" below.
-- **Year view** — 12 month grids at reduced density. Used for
-  browsing, not acting.
+- **Year view** — 12 months, one row each, with the month's days in
+  **calendar order** rather than in weekday columns. Used for browsing,
+  not acting. See "The Year view layout" below.
 
 Pinch zooms between views (`03-experience/gesture-vocabulary.md`).
 
@@ -210,6 +211,54 @@ September's cells would be **138px** and an hour would be **11.8px**. That is th
 price of comparability and it is the only price the view pays — at 50px wide,
 nothing in a cell is clipped, which is the Week's problem and not this one.
 
+### The Year view layout
+
+Twelve months, one row each. The year is an **instrument** rather than a page: it is
+read as a whole or not at all, and every part of it is `type-caption`.
+
+1. **Month rows.** Twelve, in order, each labelled on the leading edge. The current
+   month is accented.
+2. **The day strip.** The month's days in **calendar order** — left to right, first to
+   last — against the row's full height. Load is the cell's own height, so a heavy week
+   is a ridge and a quiet one a floor. A day with nothing on it still marks its place,
+   or the strip's gaps read as missing days rather than as quiet ones.
+3. **Today.** Marked in the strip with the accent. There is no now rule at this scale:
+   with no time axis left, there is nothing for one to cross.
+4. **The month total.** The trailing figure, accented for the current month.
+
+**Days are not aligned to weekdays.** This is the view's one real departure, and it is
+forced by arithmetic rather than chosen for looks: seven days across a phone is **44px**
+a column, because the phone's width is the floor at every zoom level. Aligning days to
+weekdays therefore leaves each cell **9px tall**, and every encoding the Month uses is
+vertical. Where a month grid keeps the weekday, the day cannot be drawn; where the day
+is drawn, the weekday cannot be kept. The Year keeps the day, because a year is looked
+at for *when it was busy*, and a column of weekdays does not answer that.
+
+A row is also the right unit for a second reason: **a month is comparable with a
+month.** Twelve rows of equal height, normalised against one load scale, make October's
+ridge and March's readable against each other. That is what browsing needs, and it is
+why the layout is twelve rows rather than twelve grids.
+
+### The Year's fit
+
+The Year does not overflow — and that is the problem. Twelve month grids, seven columns
+by six rows each, is **504 cells**, and they fit a 390 × 844 phone comfortably. What
+does not fit is the **encoding**.
+
+Measured: a cell is **44 × 9px**. The Month's cell, one zoom up, is **50 × 115px** — a
+hair wider and **13 times** the height. That takes a day from **9.5px an hour to 0.9px**,
+and a 30-minute event to **0.4px**, before the mark's 2px floor. Every mark in the grid
+therefore draws as **exactly one pixel**: a 30-minute meeting and a 3-hour one are the
+same mark, and a day holding one event looks like a day holding four. The date is worse
+than the mark — `type-caption` is **12px** and the cell is **9px**, so the days are not
+merely unreadable, they are unnumbered.
+
+So "reduced density" names a reduction that cannot be made. The Year is not too small to
+draw; it is that the Month's encoding is entirely vertical and the Year has no vertical
+room, so that encoding does not degrade — it ceases to exist. The layout above is what
+replaces it: the time axis goes, and the day's own height carries **amount** instead of
+**time**.
+
 ### Surfaces
 
 **Day view (default).** As above.
@@ -221,7 +270,8 @@ gutter, with titles omitted by rule rather than by omission.
 positioned by time, with the neighbouring months' days drawn muted. Tapping a day
 opens the Day view for it; pinching is the gesture that reaches the Week.
 
-**Year view.** 12 month grids at reduced density. Used for browsing, not acting.
+**Year view.** As above — twelve month rows with the days in calendar order, load drawn
+as the cell's own height. Used for browsing, not acting.
 
 **Event detail.** Opened by tapping an event. Shows title, time,
 attendees (People), linked notes, prep card (via Tier 2 "Prep me"),
@@ -284,7 +334,7 @@ instead (`07-infrastructure/integrations.md`).
   genuinely bare, and the Day is not one.
 - **The Week can be bare, and is.** The reasoning above is a Day-view argument and
   does not survive the zoom levels: a week with nothing on it has no Daily Note
-  and no other content, so the **Week and Month views carry the standard
+  and no other content, so the **Week, Month and Year views carry the standard
   empty-state form**. An empty day inside a populated week is the other case — a
   **section**, not a view: its column renders empty and its counts read zero,
   with no headline and no action.

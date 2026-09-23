@@ -225,6 +225,66 @@
      has no discrete steps to reach for. That is the point of drawing it. */
   .mo-heat { position: absolute; inset: 0; background: var(--accent-default); }
 
+  /* ---- the year -------
+     Twelve months on one screen. The width is not what has to give: seven columns
+     across a phone is 50px a column at EVERY zoom, so a `reduced` month grid can
+     only be reduced vertically. Every cell in the Year is therefore wide and flat,
+     and every encoding the Month uses is vertical. That is the collision. */
+  .yr {
+    flex: 1; min-height: 0; display: flex; flex-direction: column;
+    gap: 2px; margin: 0 var(--space-5) var(--space-3);
+  }
+  .yr-m { flex: 1; min-height: 0; display: grid; grid-template-columns: 38px minmax(0, 1fr); gap: var(--space-2); }
+  .yr-m.b3 { grid-template-columns: 38px minmax(0, 1fr) 34px; }
+  .yr-m .name {
+    align-self: center; font-size: var(--type-caption-size);
+    letter-spacing: var(--type-caption-track); color: var(--text-muted);
+  }
+  .yr-m.now .name { color: var(--accent-text); }
+  .yr-m .tot {
+    align-self: center; text-align: right; font-family: var(--font-mono);
+    font-size: var(--type-caption-size); color: var(--text-muted);
+  }
+  .yr-m.now .tot { color: var(--accent-text); }
+  /* The literal reading: seven columns by six rows per month, twelve of them. */
+  .yr-g {
+    display: grid; grid-template-columns: repeat(7, minmax(0, 1fr));
+    grid-auto-rows: 1fr; gap: 1px; height: 100%; background: var(--border-subtle);
+  }
+  .yr-c { position: relative; overflow: hidden; background: var(--bg-base); }
+  .yr-c.out { background: var(--bg-sunken); }
+  .yr-c.today { box-shadow: inset 0 0 0 1px var(--accent-default); }
+  .yr-c .fill { position: absolute; inset: 0; background: var(--accent-default); }
+  /* The Month's own encoding, one zoom down. It needs vertical room to exist. */
+  .yr-c .tick { position: absolute; left: 1px; right: 1px; min-height: 1px; background: var(--accent-default); }
+  /* The alternative: the month's days in calendar order, no weekday columns, so a
+     day gets a readable cell rather than a sliver. Load is the cell's own height. */
+  .yr-s {
+    display: grid; grid-template-columns: repeat(31, minmax(0, 1fr));
+    gap: 1px; height: 100%; align-items: end;
+  }
+  .yr-s i { display: block; border-radius: 1px; background: var(--accent-default); }
+  .yr-s i.l0 { background: var(--surface-2); height: 2px; }
+  .yr-s i.pad { background: transparent; height: 2px; }
+  .yr-s i.today { background: var(--accent-text); }
+  /* The year as one instrument: 53 weeks, no days at all. */
+  .yr-spark { flex: 1; min-height: 0; display: flex; flex-direction: column; margin: 0 var(--space-5) var(--space-2); }
+  .yr-spark .bars {
+    flex: 1; min-height: 0; display: grid;
+    grid-template-columns: repeat(53, minmax(0, 1fr)); gap: 1px; align-items: end;
+  }
+  .yr-spark .bars i { display: block; background: var(--accent-default); border-radius: 1px; }
+  .yr-spark .bars i.q { background: var(--surface-3); }
+  .yr-spark .ml { flex: none; position: relative; height: 16px; }
+  .yr-spark .ml span {
+    position: absolute; transform: translateX(-50%);
+    font-size: var(--type-caption-size); letter-spacing: var(--type-caption-track);
+    color: var(--text-muted);
+  }
+  /* Month bars: the grid and the day both gone. */
+  .yr-m .yr-bar { align-self: center; height: 12px; position: relative; background: var(--surface-2); border-radius: 1px; overflow: hidden; }
+  .yr-m .yr-bar i { position: absolute; inset: 0 auto 0 0; background: var(--accent-default); }
+
   /* The fit overlay: what a clipped phone is hiding, stated rather than implied.
      A screen that overflows silently is the defect these labs exist to catch, so
      the mock draws the boundary. */
@@ -273,7 +333,7 @@
       <button class="tab" data-go="day" aria-selected="true"><span class="n">1</span> Day</button>
       <button class="tab" data-go="week"><span class="n">2</span> Week</button>
       <button class="tab" data-go="month"><span class="n">3</span> Month</button>
-      <button class="tab" data-go="year" disabled><span class="n">4</span> Year</button>
+      <button class="tab" data-go="year"><span class="n">4</span> Year</button>
       <button class="tab" data-go="event" disabled><span class="n">5</span> Event detail</button>
       <button class="tab" data-go="new" disabled><span class="n">6</span> New event</button>
       <button class="tab" data-go="picker" disabled><span class="n">7</span> Date picker</button>
@@ -1298,6 +1358,207 @@
     </section>
   </section>
 
+  <!-- ==================== THE YEAR VIEW ==================== -->
+  <section class="screen" id="year" hidden>
+    <section class="lede">
+      <h2 class="t-title-2">Year view — “reduced density” is a promise about scale</h2>
+      <p>`calendar.md` gives the Year the shortest sentence in the Calendar:</p>
+      <blockquote class="t-callout" style="margin: 0 0 var(--space-5); padding-left: var(--space-5); border-left: 2px solid var(--accent-default); color: var(--text-secondary);">
+        “<b>Year view</b> — 12 month grids at reduced density. Used for browsing, not acting.”
+      </blockquote>
+      <p>
+        <b>Reduced density</b> is a promise about scale, and a month grid cannot be scaled down.
+        Seven days is the phone's width divided by seven — <b>50px</b> in the Month and <b>44px</b>
+        here, where 38px of each row goes to the month's name. That width is a floor rather than a
+        setting, and it barely moves. The only thing there is room to shrink is a cell's height, and
+        it does: from <b>115px</b> in the Month to <b>9px</b> here.
+      </p>
+      <p>
+        That matters because of what the Month decided. The Month's answer to “density” was
+        <b>position by time</b> — a mark drawn where the event sits in its day. That encoding is
+        entirely vertical. Squash the cell and it does not degrade gracefully, it <b>disappears</b>:
+        a 30-minute event and a 3-hour one are both one pixel.
+      </p>
+      <p>
+        So the question is not how to fit twelve of these. It is: <b>what survives the zoom?</b>
+      </p>
+    </section>
+
+    <div class="grid">
+
+      <!-- ================= V1 · baseline ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Baseline</span>
+          <p class="vc-stance">“12 month grids at reduced density”, read literally — with the Month's own encoding carried down into them.</p>
+          <span class="vc-read">no lens · the control arm</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">2026</span>
+                <span class="t-footnote" style="color: var(--text-muted);">September</span>
+              </div>
+              <div class="yr" id="yr-lit"></div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>Nothing. Twelve month grids, seven columns by six rows each, with the Month's positioned marks drawn inside every cell — the same encoding, one zoom level down.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd id="yr-cost">…</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>None — this is the sentence, drawn with the encoding the zoom level below it chose. Which is the finding: the sentence asks for two things that cannot both hold. <b>“12 month grids”</b> keeps a day aligned to its weekday, and <b>“reduced density”</b> cannot happen without destroying the only encoding the Month has.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= V2 · impeccable ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Impeccable</span>
+          <p class="vc-stance">The year is one instrument. Its unit is the week, because “when was I busy?” is a question about shape, not about days.</p>
+          <span class="vc-read">impeccable · operate<br>scanability outranks expression</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">2026</span>
+                <span class="t-footnote" id="yr-head" style="color: var(--text-muted);">…</span>
+              </div>
+              <div class="yr-spark" id="yr-spark">
+                <div class="bars"></div>
+                <div class="ml"></div>
+              </div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>Twelve grids and 365 cells both go. What is left is <b>53 weeks as bars</b> — the whole year's load in one instrument, months labelled beneath and September accented. A single heavy week is a spike you can find across the page.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>The unit is the week, so <b>one heavy day inside a quiet week is invisible</b> — the spike averages away. And there is no day to tap, so the view cannot be acted on at all. “Used for browsing, not acting” permits that, but it also leaves the Year with neither of the Calendar's two gestures: no pinch target of its own and nothing to open.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>One. `calendar.md` says <b>12 month grids</b>, and this draws none — it is a chart of weeks, not a calendar of months.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= V3 · frontend design ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Frontend design</span>
+          <p class="vc-stance">Keep the grid and the weekdays. Change the encoding, because a wash survives 9px and a positioned mark does not.</p>
+          <span class="vc-read">frontend-design<br>if the mark cannot fit, stop drawing a mark</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">2026</span>
+                <span class="t-footnote" style="color: var(--text-muted);">September</span>
+              </div>
+              <div class="yr" id="yr-heat"></div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>The geometry is <b>Baseline</b>'s — twelve grids, seven columns, weekday alignment intact. The encoding is not: load is a <b>wash across the whole cell</b> rather than a mark inside it, so a day can still be read when its cell is nine pixels tall.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>It needs a <b>colour ramp</b>, and the token set has none — the Month lab hit exactly this and refused to invent one, drawing interpolated opacity to show the gap instead. And a wash says <b>how much</b> and never <b>when</b>: a day built around a 09:00 meeting and a day built around a 17:30 one are the same square.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>One, and it is the closed token set. A load ramp needs discrete steps the palette does not have, and new tokens require an ADR rather than a lab.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= V4 · design taste ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Design taste</span>
+          <p class="vc-stance">Delete the day. A year is for browsing, so a month can be a length.</p>
+          <span class="vc-read">design-taste-frontend<br>remove the accessory the others defend</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">2026</span>
+                <span class="t-footnote" style="color: var(--text-muted);">by month</span>
+              </div>
+              <div class="yr" id="yr-bars"></div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>The grids, the cells and the days all go. Twelve rows: month name, a bar whose length is that month's load, and the count. The year reads as <b>twelve comparable magnitudes</b>, which is the fastest possible answer to “which month was worst”.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>It is <b>no longer a calendar</b>. Nothing about <i>when</i> inside a month survives, so “busy November” cannot be followed to the week that made it busy. And “tapping a day opens it” has nothing to tap — the view answers one question and cannot be asked another.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>Two. There are no month grids, and there is no day to open.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= recommended ================= -->
+      <article class="vc rec">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Recommended</span>
+          <p class="vc-stance">Twelve rows, one cell per day — and give up weekday alignment, because at this scale it costs the most and buys the least.</p>
+          <span class="vc-read">baseline's twelve months + design taste's one row each<br>minus the columns</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">2026</span>
+                <span class="t-footnote" id="yr-head-2" style="color: var(--text-muted);">…</span>
+              </div>
+              <div class="yr" id="yr-rec"></div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for twelve months stacked and for a cell per day — the sentence is right that a year is twelve months. <b>Impeccable</b> for the realisation that the view is an instrument rather than a page. <b>Frontend design</b> for proving the encoding has to change, and for the one thing a wash is genuinely good at: it stops describing <i>time</i> and starts describing <i>amount</i>. <b>Design taste</b> for showing what deleting the day answers, which is a different question from the one the Year is for.</dd></div>
+          <div class="vc-line cost"><dt>Fixes</dt><dd id="yr-fixes">…</dd></div>
+          <div class="vc-line open"><dt>Still needs</dt><dd>Four decisions the view cannot make for itself. <b>One:</b> <b>“reduced density” has no scale.</b> The doc says the grid is reduced and never says by how much, and the reduction that decides everything — a cell's height — is set by how many rows the twelve grids get, which the doc also does not say. <b>Two:</b> <b>weekday alignment is the unexamined default.</b> Every Calendar surface so far aligns days to weekdays. At the Year's scale that alignment is exactly what costs the day its height, so the doc has to say whether the Year keeps it, because it can have that or per-day resolution and not both. <b>Three:</b> <b>the Month's encoding does not survive.</b> The Month specified density as position-by-time; at the Year's cell height that is one pixel per event. Either the Year uses a different encoding — which needs saying, since the pinch is supposed to cross-scale smoothly — or the Month's rule needs a floor. <b>Four:</b> <b>the zoom rule now has nothing to hold.</b> `motion-vocabulary.md` says month→year holds neither horizontal nor vertical position. Worth confirming that is deliberate rather than a consequence of the Year having no day grid left to hold.</dd></div>
+        </dl>
+      </article>
+
+    </div>
+
+    <section class="lede">
+      <h2 class="t-title-2">The measurement</h2>
+      <div class="panel" style="margin-top: var(--space-5);">
+        <div class="measure" id="measure-year"></div>
+      </div>
+    </section>
+  </section>
+
 </div>
 
 <script>
@@ -1308,6 +1569,7 @@
   // have produced a page of confident zeros.
   let weekMeasured = false;
   let monthMeasured = false;
+  let yearMeasured = false;
   // The Week cannot measure the Day once the Day is hidden — a hidden element
   // reports zero for everything — so the Day's timeline height is captured while
   // it is still on screen.
@@ -1317,6 +1579,7 @@
     tabs.forEach(t => t.setAttribute('aria-selected', String(t.dataset.go === id)));
     if (id === 'week' && !weekMeasured) { measureWeek(); weekMeasured = true; }
     if (id === 'month' && !monthMeasured) { measureMonth(); monthMeasured = true; }
+    if (id === 'year' && !yearMeasured) { measureYear(); yearMeasured = true; }
     window.scrollTo({ top: 0 });
   }
   tabs.forEach(t => t.addEventListener('click', () => go(t.dataset.go)));
@@ -1654,6 +1917,242 @@
       '<span class="l">Design taste — values the grid describes ' + cells5 +
       ' cells with; the recommendation draws ' + (ROWS_FIXED - ROWS_AS_NEEDED) +
       ' more cells and loses none of them</span></div>';
+  }
+
+  // ==========================================================================
+  // THE YEAR
+  // ==========================================================================
+
+  const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const DAYS_IN = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  // The same 08:00–18:00 window the Week and the Month use. If the four views ever
+  // disagree about it, the pinch between them draws two different days in one place.
+  const YEAR_WINDOW_START = 8 * 60;
+  const YEAR_WINDOW_MIN = 600;
+
+  // 2026, generated rather than typed out: 365 days of invented events would be 365
+  // lines nobody could check. The generator is seeded, so the year is the same every
+  // load. 1 January 2026 is a Thursday, which is where `dow` starts.
+  const YEAR = (function () {
+    let seed = 20260922;
+    const rnd = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+    let dow = 4;
+    const months = DAYS_IN.map((n, m) => {
+      const start = dow;
+      const days = [];
+      for (let d = 1; d <= n; d++) {
+        const r = rnd();
+        const weekend = dow === 0 || dow === 6;
+        // Weekends are quieter, which is what gives the year a shape worth looking at.
+        const load = weekend
+          ? (r < 0.72 ? 0 : r < 0.94 ? 1 : 2)
+          : (r < 0.26 ? 0 : r < 0.60 ? 1 : r < 0.84 ? 2 : r < 0.96 ? 3 : 4);
+        const ev = [];
+        for (let k = 0; k < load; k++) {
+          // Spread evenly across the window, which is the most generous arrangement
+          // available: clustered marks could only sit closer together, so what the
+          // measurement concludes about them is a best case and not a worst one.
+          ev.push(9 * 60 + (load === 1 ? 240 : Math.round(k * 480 / (load - 1))));
+        }
+        days.push({ d, load, ev, today: m === 8 && d === 22 });
+        dow = (dow + 1) % 7;
+      }
+      return { m, start, days };
+    });
+    // September is the month the Day, Week and Month views all draw, so it is not
+    // invented here — it is that same data, so the four views can be compared.
+    months[8].days = SEPT.filter(c => !c.out).map(c => ({
+      d: c.d, load: c.ev.length, ev: c.ev.map(e => e[0] * 60 + e[1]), today: !!c.today
+    }));
+    return months;
+  })();
+
+  const YEAR_TOTALS = YEAR.map(M => M.days.reduce((n, d) => n + d.load, 0));
+  const YEAR_EVENTS = YEAR_TOTALS.reduce((a, b) => a + b, 0);
+
+  // 53 seven-day buckets from 1 January: the standard way to chart a year, and the
+  // only one that needs no calendar arithmetic.
+  const WEEKS = (function () {
+    const flat = [];
+    YEAR.forEach(M => M.days.forEach(d => flat.push(d.load)));
+    const out = [];
+    for (let i = 0; i < 53; i++) out.push(flat.slice(i * 7, i * 7 + 7).reduce((a, b) => a + b, 0));
+    return out;
+  })();
+  const WEEKS_MAX = Math.max(...WEEKS);
+
+  function renderYearGrid(host, mode) {
+    if (!host) return;
+    host.innerHTML = YEAR.map((M, mi) => {
+      let cells = '';
+      for (let i = 0; i < 42; i++) {
+        const day = i - M.start + 1;
+        const c = day >= 1 && day <= M.days.length ? M.days[day - 1] : null;
+        let inner = '';
+        if (c) {
+          if (mode === 'heat') {
+            if (c.load) inner = '<span class="fill" style="opacity:' +
+              (0.12 + 0.24 * (c.load - 1)).toFixed(2) + '"></span>';
+          } else {
+            inner = c.ev.map(k => '<span class="tick" style="top:' +
+              ((k - YEAR_WINDOW_START) / YEAR_WINDOW_MIN * 100).toFixed(2) + '%"></span>').join('');
+          }
+        }
+        cells += '<span class="yr-c' + (c ? '' : ' out') + (c && c.today ? ' today' : '') + '">' +
+                 inner + '</span>';
+      }
+      return '<span class="yr-m' + (mi === 8 ? ' now' : '') + '">' +
+             '<span class="name">' + MONTH_NAMES[mi] + '</span>' +
+             '<span class="yr-g">' + cells + '</span></span>';
+    }).join('');
+  }
+
+  function renderYearBars(host) {
+    if (!host) return;
+    const max = Math.max(...YEAR_TOTALS);
+    host.innerHTML = YEAR.map((M, mi) =>
+      '<span class="yr-m b3' + (mi === 8 ? ' now' : '') + '">' +
+      '<span class="name">' + MONTH_NAMES[mi] + '</span>' +
+      '<span class="yr-bar"><i style="width:' + (YEAR_TOTALS[mi] / max * 100).toFixed(1) + '%"></i></span>' +
+      '<span class="tot">' + YEAR_TOTALS[mi] + '</span></span>').join('');
+  }
+
+  function renderYearStrips(host) {
+    if (!host) return;
+    const maxDay = Math.max(...YEAR.flatMap(M => M.days.map(d => d.load)), 1);
+    host.innerHTML = YEAR.map((M, mi) => {
+      let cells = '';
+      for (let d = 1; d <= 31; d++) {
+        const c = M.days[d - 1];
+        if (!c) { cells += '<i class="pad"></i>'; continue; }
+        // The floor is 3%, so a day with nothing on it still marks its place: without
+        // it the strip's gaps would read as missing days rather than as quiet ones.
+        const h = c.load ? Math.max(8, Math.round(c.load / maxDay * 100)) : 3;
+        cells += '<i class="' + (c.load ? '' : 'l0') + (c.today ? ' today' : '') +
+                 '" style="height:' + h + '%"></i>';
+      }
+      return '<span class="yr-m b3' + (mi === 8 ? ' now' : '') + '">' +
+             '<span class="name">' + MONTH_NAMES[mi] + '</span>' +
+             '<span class="yr-s">' + cells + '</span>' +
+             '<span class="tot">' + YEAR_TOTALS[mi] + '</span></span>';
+    }).join('');
+  }
+
+  function renderYearSpark(host) {
+    if (!host) return;
+    const bars = host.querySelector('.bars');
+    const ml = host.querySelector('.ml');
+    if (bars) {
+      bars.innerHTML = WEEKS.map(w =>
+        '<i class="' + (w ? '' : 'q') + '" style="height:' +
+        Math.max(1, Math.round(w / WEEKS_MAX * 100)) + '%"></i>').join('');
+    }
+    if (ml) {
+      // Each label sits under the middle of its month.
+      let dayOfYear = 0;
+      ml.innerHTML = YEAR.map((M) => {
+        const mid = dayOfYear + M.days.length / 2;
+        dayOfYear += M.days.length;
+        return '<span style="left:' + (mid / 365 * 100).toFixed(2) + '%">' +
+               MONTH_NAMES[M.m] + '</span>';
+      }).join('');
+    }
+  }
+
+  renderYearGrid(document.getElementById('yr-lit'), 'tick');
+  renderYearGrid(document.getElementById('yr-heat'), 'heat');
+  renderYearBars(document.getElementById('yr-bars'));
+  renderYearStrips(document.getElementById('yr-rec'));
+  renderYearSpark(document.getElementById('yr-spark'));
+  ['yr-head', 'yr-head-2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = YEAR_EVENTS + ' events';
+  });
+
+  function measureYear() {
+    const host = document.getElementById('measure-year');
+    const lit = document.querySelector('#yr-lit .yr-c');
+    if (!host || !lit) return;
+
+    // The Month's numbers are needed for comparison and the Month is hidden while
+    // this runs. A hidden element reports zero for everything, so the Month is shown
+    // for exactly as long as the measurement takes and hidden again — no paint can
+    // happen in between, because none of this yields.
+    const monthScreen = document.getElementById('month');
+    const monthWasHidden = monthScreen.hidden;
+    monthScreen.hidden = false;
+    const monthCell = document.querySelector('#mo-rec .mo-cell').getBoundingClientRect();
+    const monthSheetH = document.querySelector('#mo-rec .mo-sheet').getBoundingClientRect().height;
+    const dateSize = parseFloat(getComputedStyle(document.querySelector('#mo-rec .mo-hd .n')).fontSize);
+    monthScreen.hidden = monthWasHidden;
+
+    const cw = lit.getBoundingClientRect().width;
+    const ch = lit.getBoundingClientRect().height;
+    const cells = document.querySelectorAll('#yr-lit .yr-c').length;
+    const ticks = document.querySelectorAll('#yr-lit .tick').length;
+    const perHour = ch / 10;                  // the cell's whole height is the axis
+    const monthPerHour = monthSheetH / 10;
+    const halfHour = perHour / 2;             // a 30-minute event, before the floor
+    const stripHost = document.querySelector('#yr-rec .yr-s');
+    const stripW = stripHost ? stripHost.getBoundingClientRect().width : 0;
+    const stripRow = document.querySelector('#yr-rec .yr-m');
+    const stripRowH = stripRow ? stripRow.getBoundingClientRect().height : 0;
+    const d5 = (n) => n.toFixed(1);
+
+    document.getElementById('yr-cost').innerHTML =
+      'Twelve grids is <b>' + cells + ' cells</b>, and they fit — the Year does not overflow, ' +
+      'which is the problem. A cell is <b>' + Math.round(cw) + 'px wide and ' + Math.round(ch) +
+      'px tall</b>. Seven days across a phone is ' + Math.round(cw) +
+      'px <i>at every zoom level</i>, so “reduced” can only mean reduced vertically, and the ' +
+      'Month’s cell was ' + Math.round(monthCell.height) + 'px. That takes a day from <b>' +
+      d5(monthPerHour) + 'px an hour to ' + d5(perHour) + 'px</b> — a factor of ' +
+      Math.round(monthPerHour / perHour) + '. A 30-minute event is <b>' + d5(halfHour) +
+      'px</b> tall before the mark’s 2px floor, so it does not draw small, it draws as ' +
+      '<b>one pixel</b>: a 30-minute meeting and a 3-hour one are the same mark. ' +
+      'The date is worse than the mark. It is set at <b>' + Math.round(dateSize) +
+      'px</b> and the cell is <b>' + Math.round(ch) + 'px</b>, so the days are not merely ' +
+      'unreadable, they are unnumbered.';
+
+    document.getElementById('yr-fixes').innerHTML =
+      'Twelve rows, one per month, and each row the month’s days in <b>calendar order</b> ' +
+      'rather than in weekday columns. That is the whole trade: seven columns across a phone ' +
+      'is ' + Math.round(cw) + 'px, so aligning a day to its weekday leaves it ' + Math.round(ch) +
+      'px of height; unaligned, it gets <b>' + d5(stripW / 31) + 'px across and ' +
+      Math.round(stripRowH) + 'px of row</b> to be drawn in. Load becomes the cell’s own ' +
+      'height, so a month reads as a landscape — a heavy week is a ridge, a quiet one is a ' +
+      'floor — and <b>today</b> is marked. The trailing figure is the month’s total. ' +
+      'Nothing new is invented to do it: the same accent the Week and the Month already use, ' +
+      'and no new tokens at all.';
+
+    host.innerHTML =
+      '<div><span class="n">' + cells + '</span>' +
+      '<span class="l">Baseline — cells a literal twelve month grids draws, and it fits</span></div>' +
+      '<div><span class="n">' + Math.round(cw) + ' × ' + Math.round(ch) + 'px</span>' +
+      '<span class="l">one of those cells; seven columns is a fixed ' + Math.round(cw) +
+      'px, so only the height was ever “reduced”</span></div>' +
+      '<div><span class="n">' + Math.round(monthCell.width) + ' × ' + Math.round(monthCell.height) + 'px</span>' +
+      '<span class="l">the Month’s cell, one zoom up — a hair wider, ' +
+      Math.round(monthCell.height / ch) + ' times the height</span></div>' +
+      '<div><span class="n">' + d5(perHour) + 'px</span>' +
+      '<span class="l">one hour of the day inside a Year cell, which is what the mark is drawn against</span></div>' +
+      '<div><span class="n">' + d5(monthPerHour) + 'px</span>' +
+      '<span class="l">the same hour inside a Month cell — what one zoom level costs</span></div>' +
+      '<div><span class="n">' + d5(halfHour) + 'px</span>' +
+      '<span class="l">a 30-minute event, before the mark’s 2px floor turns it into one pixel</span></div>' +
+      '<div><span class="n">' + Math.round(dateSize) + 'px</span>' +
+      '<span class="l">the date number, set at type-caption</span></div>' +
+      '<div><span class="n">' + Math.round(ch) + 'px</span>' +
+      '<span class="l">the cell it has to fit into</span></div>' +
+      '<div><span class="n">' + Math.round(stripRowH) + 'px</span>' +
+      '<span class="l">Recommended — a day’s room once weekday alignment is given up</span></div>' +
+      '<div><span class="n">' + d5(stripW / 31) + ' × ' + Math.round(stripRowH) + 'px</span>' +
+      '<span class="l">one day on the recommendation, with the month’s whole width to itself</span></div>' +
+      '<div><span class="n">' + WEEKS.length + '</span>' +
+      '<span class="l">Impeccable — weeks drawn, which is the whole year in one instrument</span></div>' +
+      '<div><span class="n">' + Math.max(...YEAR_TOTALS) + '</span>' +
+      '<span class="l">Design taste — the largest of the twelve magnitudes it keeps, having deleted the day</span></div>' +
+      '<div><span class="n">' + ticks + '</span>' +
+      '<span class="l">marks Baseline draws into the grid, each one a single pixel</span></div>';
   }
 </script>
 <script src="nav.js"></script>
