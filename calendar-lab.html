@@ -285,6 +285,77 @@
   .yr-m .yr-bar { align-self: center; height: 12px; position: relative; background: var(--surface-2); border-radius: 1px; overflow: hidden; }
   .yr-m .yr-bar i { position: absolute; inset: 0 auto 0 0; background: var(--accent-default); }
 
+  /* ---- event detail -------
+     The Calendar's first second-level surface, and the only one reached from inside a
+     view rather than from the mode. Its container is a spec question, not a layout
+     question, because `app-shell.md` allows at most one sheet at a time. */
+  .ev-scrim { position: absolute; inset: 0; background: var(--bg-overlay); }
+  .ev-sheet {
+    position: absolute; left: 0; right: 0; bottom: 0; max-height: 86%;
+    display: flex; flex-direction: column; overflow: hidden;
+    background: var(--bg-raised); box-shadow: var(--elevation-3);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  }
+  .ev-grab {
+    flex: none; width: 32px; height: 4px; margin: var(--space-3) auto var(--space-1);
+    border-radius: var(--radius-full); background: var(--border-strong);
+  }
+  .ev-body {
+    flex: 1; min-height: 0; display: flex; flex-direction: column;
+    gap: var(--space-5); padding: var(--space-3) var(--space-7) var(--space-7);
+  }
+  .ev-body > * { flex: none; }
+  .ev-title { display: block; }
+  .ev-when { display: flex; align-items: baseline; gap: var(--space-4); }
+  .ev-people { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+  .ev-sec { display: flex; flex-direction: column; gap: var(--space-3); }
+  .ev-hd {
+    display: flex; align-items: baseline; gap: var(--space-4);
+    font-size: var(--type-caption-size); letter-spacing: var(--type-caption-track);
+    text-transform: uppercase; color: var(--text-muted);
+  }
+  .ev-hd .n { margin-left: auto; font-family: var(--font-mono); }
+  /* The invitation: what the prep card would be, before anyone has asked for it. */
+  .ev-invite {
+    display: flex; align-items: center; gap: var(--space-5);
+    padding: var(--space-4) var(--space-5); text-align: left;
+    border: 1px solid var(--accent-default); border-radius: var(--radius-lg);
+    background: var(--accent-subtle); color: var(--accent-text);
+    font: inherit; font-size: var(--type-subhead-size); cursor: pointer;
+  }
+  .ev-invite .grow { flex: 1; }
+  .ev-invite .sub {
+    display: block; margin-top: 2px; color: var(--text-secondary);
+    font-size: var(--type-footnote-size);
+  }
+  /* Tier 2's result, drawn where Tier 2 puts it: a sheet, over the view it read. */
+  .ev-card {
+    display: flex; flex-direction: column; gap: var(--space-4);
+    padding: var(--space-5); border-radius: var(--radius-lg);
+    background: var(--surface-1); border: 1px solid var(--border-default);
+    font-size: var(--type-footnote-size); line-height: var(--type-footnote-line);
+    color: var(--text-secondary);
+  }
+  .ev-card .k { color: var(--text-muted); }
+  /* The hub variant: four equal doors, because the detail joins four modules. */
+  .ev-regions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+  .ev-region {
+    display: flex; flex-direction: column; gap: var(--space-2);
+    padding: var(--space-5); border-radius: var(--radius-lg);
+    background: var(--surface-1); border: 1px solid var(--border-default);
+  }
+  .ev-region .n { font-family: var(--font-mono); font-size: var(--type-subhead-size); color: var(--text-primary); }
+  .ev-region .l { font-size: var(--type-caption-size); letter-spacing: var(--type-caption-track); color: var(--text-muted); }
+  /* The layer chain, drawn rather than described: what is between the card and the day. */
+  .ev-chain { display: flex; flex-direction: column; gap: 3px; }
+  .ev-chain span {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 22px; padding: 0 var(--space-4); border-radius: var(--radius-xs);
+    font-size: var(--type-caption-size); letter-spacing: var(--type-caption-track);
+    background: var(--surface-2); color: var(--text-muted);
+  }
+  .ev-chain span.on { background: var(--accent-subtle); color: var(--accent-text); }
+
   /* The fit overlay: what a clipped phone is hiding, stated rather than implied.
      A screen that overflows silently is the defect these labs exist to catch, so
      the mock draws the boundary. */
@@ -308,6 +379,7 @@
   <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol>
   <symbol id="i-mode-notes" viewBox="0 0 24 24"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></symbol>
   <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
 </defs></svg>
 
 <div class="shell">
@@ -334,7 +406,7 @@
       <button class="tab" data-go="week"><span class="n">2</span> Week</button>
       <button class="tab" data-go="month"><span class="n">3</span> Month</button>
       <button class="tab" data-go="year"><span class="n">4</span> Year</button>
-      <button class="tab" data-go="event" disabled><span class="n">5</span> Event detail</button>
+      <button class="tab" data-go="event"><span class="n">5</span> Event detail</button>
       <button class="tab" data-go="new" disabled><span class="n">6</span> New event</button>
       <button class="tab" data-go="picker" disabled><span class="n">7</span> Date picker</button>
       <button class="tab" data-go="machine" disabled><span class="n">8</span> Time machine</button>
@@ -1559,6 +1631,332 @@
     </section>
   </section>
 
+  <!-- ==================== EVENT DETAIL ==================== -->
+  <section class="screen" id="event" hidden>
+    <section class="lede">
+      <h2 class="t-title-2">Event detail — the container is a spec question</h2>
+      <p>
+        The four zoom levels are all reached the same way: from the mode, by pinch. Event detail
+        is the first surface reached from <b>inside</b> a view, and the only one that joins other
+        modules — <b>attendees</b> are People, <b>linked notes</b> are Notes, and the
+        <b>prep card</b> is Tier 2. Its whole specification is one sentence:
+      </p>
+      <blockquote class="t-callout" style="margin: 0 0 var(--space-5); padding-left: var(--space-5); border-left: 2px solid var(--accent-default); color: var(--text-secondary);">
+        “<b>Event detail.</b> Opened by tapping an event. Shows title, time, attendees (People),
+        linked notes, prep card (via Tier 2 ‘Prep me’), and an Edit action for in-app events.”
+      </blockquote>
+      <p>
+        Three other docs contradict or constrain that sentence, and the three readings do not agree:
+      </p>
+      <ul class="t-callout" style="color: var(--text-secondary); margin: 0 0 var(--space-5); padding-left: var(--space-6);">
+        <li style="margin-bottom: var(--space-3);">
+          <code>surfaces.md</code> calls Event detail a <b>Screen</b>. <code>calendar.md</code>'s own
+          example says it “opens as a <b>sheet</b>”. <code>motion-vocabulary.md</code> describes a
+          shared-element <b>list → detail</b> transition where the row expands into the detail,
+          which is a screen push. One of these is wrong.
+        </li>
+        <li style="margin-bottom: var(--space-3);">
+          <code>tier-2-contextual.md</code>: “Tier 2 is always user-initiated. <b>There is no ambient
+          Tier 2.</b>” So the prep card cannot be on the view when it opens. The sentence lists a
+          part that is absent by invariant.
+        </li>
+        <li>
+          The same doc's fallbacks say a Tier 2 result appears <b>in the sheet</b>, and
+          <code>gesture-vocabulary.md</code> says the long-press menu “appears as a <b>sheet</b>”.
+          With <code>app-shell.md</code>'s <b>at most one sheet at a time</b>, those two facts settle
+          the first question — and not in <code>calendar.md</code>'s favour.
+        </li>
+      </ul>
+      <p>The sample event below is a <b>mirrored</b> one, which makes two more rules live: it carries a
+        freshness annotation, and “Edit for in-app events” means it has no Edit.</p>
+    </section>
+
+    <div class="grid">
+
+      <!-- ================= V1 · baseline ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Baseline</span>
+          <p class="vc-stance">The sentence, in order, as a sheet — which is what `calendar.md`'s own example says it is.</p>
+          <span class="vc-read">no lens · the control arm</span>
+        </div>
+        <div class="vc-stage">
+          <div style="display: flex; flex-direction: column; gap: var(--space-5); align-items: center;">
+            <div class="phone tall">
+              <div class="day" style="position: relative;">
+                <div class="day-head">
+                  <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                  <span class="t-title-2">Tue 22 Sep</span>
+                  <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 39</span>
+                </div>
+                <div class="tl" style="flex: 1; min-height: 0; padding: var(--space-5) var(--space-7);">
+                  <div class="slot"><span class="at">09:00</span><span class="ev"><span class="t-body">Standup</span></span></div>
+                  <div class="slot"><span class="at">11:42</span><span class="ev acc"><span class="t-body">Design review</span><span class="t-footnote" style="display: block; color: var(--text-muted);">30 min</span></span></div>
+                  <div class="slot"><span class="at">13:00</span><span class="ev"><span class="t-body">Lunch with Sarah</span></span></div>
+                </div>
+                <div class="ev-scrim"></div>
+                <div class="ev-sheet" id="ev-sheet-1">
+                  <span class="ev-grab"></span>
+                  <div class="ev-body" id="ev-body-1">
+                    <span class="t-title-3 ev-title">Design review with Sarah</span>
+                    <div class="ev-when">
+                      <span class="t-callout">11:42 – 12:12</span>
+                      <span class="t-footnote" style="color: var(--text-muted);">30 min · in 18 min</span>
+                    </div>
+                    <div class="ev-people">
+                      <span class="chip">Sarah Chen</span><span class="chip">Mark Reid</span>
+                    </div>
+                    <div class="ev-card">
+                      <span class="k">PREP CARD · TIER 2</span>
+                      <span><span class="k">Last talked</span> — 3 weeks ago, 1 Sep</span>
+                      <span><span class="k">About Sarah</span> — “wants to review the onboarding flow before we ship”</span>
+                      <span><span class="k">Last task together</span> — Send Sarah the mockups, 8 Sep</span>
+                      <span><span class="k">Suggested focus</span> — follow up on the onboarding flow</span>
+                    </div>
+                    <div class="ev-sec">
+                      <div class="ev-hd"><span>Linked notes</span><span class="n">2</span></div>
+                      <div class="list">
+                        <div class="row r-default"><div class="r-main"><span class="t-body r-title">Q4 planning — notes</span></div></div>
+                        <div class="row r-default"><div class="r-main"><span class="t-body r-title">Onboarding review</span></div></div>
+                      </div>
+                    </div>
+                    <div class="btn btn-secondary btn-block">Edit</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: var(--space-2); align-items: stretch; width: 390px;">
+              <span class="t-caption" style="color: var(--text-muted);">what the prep card sits above</span>
+              <div class="ev-chain">
+                <span>day view</span>
+                <span>event detail · sheet</span>
+                <span>contextual menu · sheet</span>
+                <span class="on">prep card · sheet</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>Nothing. Title, time, attendees, notes, prep card, Edit — the sentence's five parts in the sentence's order, in a sheet.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd id="ev-cost">…</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>Three, and the control arm is where they show. <b>One:</b> the prep card cannot be here — Tier 2 has “no ambient” mode, so this slot is empty on arrival and drawing it filled is the sentence's error made visible. <b>Two:</b> the sheet itself, once the prep card is a sheet too, puts the card above the <i>long-press menu</i> rather than above the event, because at most one sheet may be open. <b>Three:</b> this event is mirrored, so it has no Edit — the sentence's “for in-app events” qualifier is the one part of it Baseline ignored.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= V2 · impeccable ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Impeccable</span>
+          <p class="vc-stance">A screen, and time-first. The detail's one job is the thirty seconds before the meeting.</p>
+          <span class="vc-read">impeccable · operate<br>scanability outranks expression</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Event</span>
+              </div>
+              <div class="ev-body" style="padding: var(--space-5) var(--space-7);">
+                <span class="t-title-2 ev-title">Design review with Sarah</span>
+                <div class="ev-when">
+                  <span class="t-title-3">11:42</span>
+                  <span class="t-callout" style="color: var(--accent-text);">in 18 min</span>
+                  <span class="t-footnote" style="color: var(--text-muted);">30 min</span>
+                </div>
+                <div class="ev-people">
+                  <span class="chip">Sarah Chen</span><span class="chip">Mark Reid</span>
+                </div>
+                <div class="ev-invite">
+                  <span class="grow"><b>Prep me</b><span class="sub">Reads 2 attendees, 2 notes, 1 task</span></span>
+                  <svg class="ic ic-md"><use href="#i-chevron-right"/></svg>
+                </div>
+                <div class="ev-hd" style="margin-top: var(--space-4);"><span>2 notes · 1 task · mirrored</span></div>
+              </div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>A <b>screen</b> rather than a sheet, so nothing behind it is dismissed. The order inverts to what the next thirty seconds need: the time and how long until it, then who is in the room, then <b>one invitation</b> to prep that states what it will read. The record collapses to a single line of counts — the same move this lens made to the Week and the Month.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>A push is heavier than a sheet for something you glance at standing up, and it costs the sheet's dismiss gesture. The invitation row is a part no other surface has, and its “reads 2 attendees, 2 notes, 1 task” is a promise the card must then keep — if the card comes back thinner than the invitation said, the invitation lied.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd><b>None.</b> Every choice here is inside `surfaces.md`'s Screen, inside Tier 2's user-initiated rule, and inside the closed token set. That is the tell: the only thing wrong with the sentence is the container, and correcting it costs nothing else.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= V3 · frontend design ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Frontend design</span>
+          <p class="vc-stance">Draw the join. The detail is where four modules meet, so show the four edges.</p>
+          <span class="vc-read">frontend-design<br>the object is its relationships</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Event</span>
+              </div>
+              <div class="ev-body" style="padding: var(--space-5) var(--space-7);">
+                <span class="t-title-3 ev-title">Design review with Sarah</span>
+                <div class="ev-when">
+                  <span class="t-callout">11:42 – 12:12</span>
+                  <span class="t-footnote" style="color: var(--text-muted);">in 18 min</span>
+                </div>
+                <div class="ev-regions">
+                  <span class="ev-region"><span class="n">2</span><span class="l">ATTENDEES</span><span class="t-footnote" style="color: var(--text-secondary);">Sarah · Mark</span></span>
+                  <span class="ev-region"><span class="n">2</span><span class="l">NOTES</span><span class="t-footnote" style="color: var(--text-secondary);">attached</span></span>
+                  <span class="ev-region"><span class="n">1</span><span class="l">TASK</span><span class="t-footnote" style="color: var(--text-secondary);">linked to Sarah</span></span>
+                  <span class="ev-region"><span class="n">—</span><span class="l">RECORD</span><span class="t-footnote" style="color: var(--text-secondary);">mirrored</span></span>
+                </div>
+                <div class="ev-invite">
+                  <span class="grow"><b>Prep me</b><span class="sub">Reads the three regions above</span></span>
+                  <svg class="ic ic-md"><use href="#i-chevron-right"/></svg>
+                </div>
+              </div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>The event becomes <b>four equal regions with counts</b> — attendees, notes, tasks, record — each one a door, because the detail is not an object so much as a place four modules meet. The prep invitation says its sources are the regions above it, so the promise is checkable on screen.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>It reads as a <b>directory rather than a briefing</b>. The two things you actually came for — who, and when — are now one region and one line among four equal ones. And each region is a door into another screen or sheet, which is four more ways to leave the meeting you were preparing for.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>One, and it is a real one: `calendar.md` lists <b>linked notes</b> as a content of the view, and this demotes them to a count in a tile. The same lens did that to the Week and the Month and was right both times; here it is deleting the thing the view exists to show.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= V4 · design taste ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Design taste</span>
+          <p class="vc-stance">Delete the two parts that cannot be there. Keep the two that can.</p>
+          <span class="vc-read">design-taste-frontend<br>remove the accessory the others defend</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Event</span>
+              </div>
+              <div class="ev-body" style="padding: var(--space-5) var(--space-7);">
+                <span class="t-title-3 ev-title">Design review with Sarah</span>
+                <div class="ev-when">
+                  <span class="t-callout">11:42 – 12:12</span>
+                  <span class="chip" style="background: var(--stale-bg); color: var(--stale-text);">mirrored · as of 2 hours ago</span>
+                </div>
+                <div class="ev-people">
+                  <span class="chip">Sarah Chen</span><span class="chip">Mark Reid</span>
+                </div>
+                <div class="ev-sec">
+                  <div class="ev-hd"><span>Notes</span><span class="n">2</span></div>
+                  <div class="list">
+                    <div class="row r-default"><div class="r-main"><span class="t-body r-title">Q4 planning — notes</span></div></div>
+                    <div class="row r-default"><div class="r-main"><span class="t-body r-title">Onboarding review</span></div></div>
+                  </div>
+                </div>
+              </div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>Two deletions. The <b>prep card</b> goes, because it is a Tier 2 result and Tier 2 owns it — it already has a home in the long-press menu, which is where the spec actually invokes it. The <b>Edit</b> button goes, because this event is mirrored and the sentence says Edit is “for in-app events”. What is left is title, time, people, notes, and the freshness annotation the sentence never mentioned but the event owes.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>The app's <b>highest-value feature becomes invisible</b> — `people.md` calls the prep card exactly that, and here it is reachable only by knowing to long-press. And a mirrored event now has no action of any kind in its own detail: it is a read-only object with nowhere to go, which is correct and bleak.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>One: it deletes a part `calendar.md` lists. It is the <i>right</i> deletion — the part cannot exist — but a lens may argue for that and cannot decide it. The correction belongs in the doc, not here.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= recommended ================= -->
+      <article class="vc rec">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Recommended</span>
+          <p class="vc-stance">A screen, time-first, with the prep card as an invitation that names its sources — because Tier 2 may not run until asked.</p>
+          <span class="vc-read">impeccable's order + design taste's deletions<br>+ the record, which is the view's job</span>
+        </div>
+        <div class="vc-stage">
+          <div style="display: flex; flex-direction: column; gap: var(--space-5); align-items: center;">
+            <div class="phone tall">
+              <div class="day">
+                <div class="day-head">
+                  <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                  <span class="t-title-2">Event</span>
+                  <span class="t-footnote" style="margin-left: auto; color: var(--stale-text);">as of 2 hours ago</span>
+                </div>
+                <div class="ev-body" id="ev-body-5" style="padding: var(--space-5) var(--space-7);">
+                  <span class="t-title-3 ev-title">Design review with Sarah</span>
+                  <div class="ev-when">
+                    <span class="t-title-3">11:42</span>
+                    <span class="t-callout" style="color: var(--accent-text);">in 18 min</span>
+                    <span class="t-footnote" style="color: var(--text-muted);">30 min</span>
+                  </div>
+                  <div class="ev-people">
+                    <span class="chip">Sarah Chen</span><span class="chip">Mark Reid</span>
+                  </div>
+                  <div class="ev-invite" id="ev-invite-5">
+                    <span class="grow"><b>Prep me</b><span class="sub">Reads 2 attendees · 2 notes · 1 task</span></span>
+                    <svg class="ic ic-md"><use href="#i-chevron-right"/></svg>
+                  </div>
+                  <div class="ev-sec">
+                    <div class="ev-hd"><span>Linked notes</span><span class="n">2</span></div>
+                    <div class="list">
+                      <div class="row r-default"><div class="r-main"><span class="t-body r-title">Q4 planning — notes</span></div></div>
+                      <div class="row r-default"><div class="r-main"><span class="t-body r-title">Onboarding review</span></div></div>
+                    </div>
+                  </div>
+                  <span class="t-footnote" style="color: var(--text-muted);">Mirrored from Google Calendar. Edit it at the source.</span>
+                </div>
+                <div class="dock">
+                  <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                  <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                  <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                  <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: var(--space-2); align-items: stretch; width: 390px;">
+              <span class="t-caption" style="color: var(--text-muted);">what the prep card sits above</span>
+              <div class="ev-chain">
+                <span>event detail · screen — still open</span>
+                <span>contextual menu · sheet</span>
+                <span class="on">prep card · sheet</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Takes</dt><dd><b>Impeccable</b> for the order, which is the whole point of the surface: time, then people, then the way in. <b>Design taste</b> for the two deletions, both of which are corrections rather than preferences. <b>Frontend design</b> for the counts — but folded into one invitation rather than spread across four equal doors, because the counts are a promise about the card, not four destinations. <b>Baseline</b> for keeping the record, which the collapsing lenses both threw away.</dd></div>
+          <div class="vc-line cost"><dt>Fixes</dt><dd id="ev-fixes">…</dd></div>
+          <div class="vc-line open"><dt>Still needs</dt><dd>Four corrections, and they are doc edits rather than design choices. <b>One:</b> <code>calendar.md</code>'s example says Event detail “opens as a sheet”; the sheet rule settles it the other way, so the example is wrong and <code>surfaces.md</code> is right. <b>Two:</b> the same doc lists the prep card as a <i>content of the view</i>, and Tier 2's “no ambient Tier 2” invariant says it cannot be. <b>Three:</b> the prep card has <b>three content lists that do not agree</b> — <code>people.md</code> lists attendees, last note, last completed task and <b>open tasks</b>; <code>tier-2-contextual.md</code> lists attendees, last notes, last tasks and <b>notes attached to the event</b>; and the worked example adds <b>last talked</b> and <b>suggested focus</b>, which appear in neither prose list. Seven distinct items across three lists; no two lists match and the longest has five. <b>Four:</b> <code>cost-model.md</code> names only “break down” and “find related” as on-device Tier 2 actions, so “Prep me” is presumably one of the units <code>tier-2-contextual.md</code> charges — but no doc says so, and it is the one action whose cost the user is asked to spend blind.</dd></div>
+        </dl>
+      </article>
+
+    </div>
+
+    <section class="lede">
+      <h2 class="t-title-2">The measurement</h2>
+      <div class="panel" style="margin-top: var(--space-5);">
+        <div class="measure" id="measure-event"></div>
+      </div>
+    </section>
+  </section>
+
 </div>
 
 <script>
@@ -1570,6 +1968,7 @@
   let weekMeasured = false;
   let monthMeasured = false;
   let yearMeasured = false;
+  let eventMeasured = false;
   // The Week cannot measure the Day once the Day is hidden — a hidden element
   // reports zero for everything — so the Day's timeline height is captured while
   // it is still on screen.
@@ -1580,6 +1979,7 @@
     if (id === 'week' && !weekMeasured) { measureWeek(); weekMeasured = true; }
     if (id === 'month' && !monthMeasured) { measureMonth(); monthMeasured = true; }
     if (id === 'year' && !yearMeasured) { measureYear(); yearMeasured = true; }
+    if (id === 'event' && !eventMeasured) { measureEvent(); eventMeasured = true; }
     window.scrollTo({ top: 0 });
   }
   tabs.forEach(t => t.addEventListener('click', () => go(t.dataset.go)));
@@ -2153,6 +2553,122 @@
       '<span class="l">Design taste — the largest of the twelve magnitudes it keeps, having deleted the day</span></div>' +
       '<div><span class="n">' + ticks + '</span>' +
       '<span class="l">marks Baseline draws into the grid, each one a single pixel</span></div>';
+  }
+
+  // ==========================================================================
+  // EVENT DETAIL
+  // ==========================================================================
+
+  // Colour helpers, for the one thing here that is not geometry: what the scrim
+  // does to the event behind it. The palette lab computes contrast from live token
+  // values; this is the same arithmetic, on two colours rather than a table.
+  function toRgb(css) {
+    css = (css || '').trim();
+    if (css[0] === '#') {
+      const h = css.slice(1);
+      const f = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
+      return [parseInt(f.slice(0, 2), 16), parseInt(f.slice(2, 4), 16), parseInt(f.slice(4, 6), 16)];
+    }
+    const n = (css.match(/[\d.]+/g) || [0, 0, 0]).map(Number);
+    return [n[0] || 0, n[1] || 0, n[2] || 0];
+  }
+  const lin = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+  const lum = c => 0.2126 * lin(c[0]) + 0.7152 * lin(c[1]) + 0.0722 * lin(c[2]);
+  function contrast(a, b) {
+    const x = lum(a), y = lum(b);
+    return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+  }
+  // The scrim is painted OVER the content, so the text and its ground are both
+  // dimmed by the same fraction. Comparing the two dimmed colours is the honest
+  // question: can the event still be read through the sheet that covers it?
+  const dim = (c, ov, a) => c.map((v, i) => ov[i] * a + v * (1 - a));
+
+  function measureEvent() {
+    const host = document.getElementById('measure-event');
+    const sheet = document.getElementById('ev-sheet-1');
+    const sheetBody = document.getElementById('ev-body-1');
+    const screenBody = document.getElementById('ev-body-5');
+    if (!host || !sheet || !sheetBody || !screenBody) return;
+
+    const cs = getComputedStyle(document.documentElement);
+    const text = toRgb(cs.getPropertyValue('--text-primary'));
+    const bg = toRgb(cs.getPropertyValue('--bg-base'));
+    const ovRaw = cs.getPropertyValue('--bg-overlay');
+    const ov = toRgb(ovRaw);
+    const nums = (ovRaw.match(/[\d.]+/g) || []).map(Number);
+    const alpha = nums.length ? nums[nums.length - 1] : 0;
+
+    const plain = contrast(text, bg);
+    const through = contrast(dim(text, ov, alpha), dim(bg, ov, alpha));
+
+    const sheetH = sheet.getBoundingClientRect().height;
+    const sheetContent = sheetBody.scrollHeight;
+    // The sheet is content-sized, so its own height says nothing about the cap it was
+    // under. Read the cap, or the row just says "it fitted".
+    const sheetCap = Math.round(sheet.parentElement.getBoundingClientRect().height * 0.86);
+    const screenFrame = screenBody.clientHeight;
+    // `scrollHeight` on an element that does not scroll returns its own height, so the
+    // content's extent is measured from the first child's top to the last child's
+    // bottom instead. Otherwise this row reports "728 / 728" and tells you nothing.
+    const kids = [...screenBody.children];
+    const screenContent = kids.length
+      ? Math.round(kids[kids.length - 1].getBoundingClientRect().bottom -
+                   kids[0].getBoundingClientRect().top)
+      : screenBody.scrollHeight;
+
+    const cards = document.querySelectorAll('#event .ev-card').length;
+    const invites = document.querySelectorAll('#event .ev-invite').length;
+    const regions = document.querySelectorAll('#event .ev-region').length;
+    const edits = document.querySelectorAll('#event .btn-block').length;
+    const d1 = n => n.toFixed(1);
+
+    document.getElementById('ev-cost').innerHTML =
+      'The sheet holds <b>' + sheetContent + 'px</b> of content in a <b>' + Math.round(sheetH) +
+      'px</b> frame — it fits, and fitting is not the question. The question is what the sheet does to ' +
+      'the event it covers. The scrim takes the event’s own title from <b>' + d1(plain) + ':1 to ' +
+      d1(through) + ':1</b> against its ground, at ' + Math.round(alpha * 100) +
+      '% — still above 4.5:1, so this is not a contrast failure. It is a <b>context</b> failure: the ' +
+      'prep card ends up above the <i>long-press menu</i> rather than above the meeting, because ' +
+      '`app-shell.md` allows at most one sheet at a time, so opening “Prep me” dismisses the very view ' +
+      'you asked it about. You read the card over a menu, about an event you can no longer see.';
+
+    document.getElementById('ev-fixes').innerHTML =
+      'A <b>screen</b> rather than a sheet, so nothing behind it is dismissed: the prep card sits above a ' +
+      'menu that sits above the event, and <b>one dismissal</b> puts you back in the meeting instead of ' +
+      'two. The order is time, then people, then the way in. The prep card becomes an <b>invitation that ' +
+      'names its sources</b>, because Tier 2 may not run until asked — so the view promises exactly what ' +
+      'it can deliver and the promise is checkable on screen. The record stays, because showing it is the ' +
+      'view’s actual job, and a mirrored event <b>says so</b> rather than offering an Edit it does not have. ' +
+      'One thing this row cannot fix: it draws <b>' + screenContent + 'px of ' + screenFrame +
+      'px</b>, and the part that would fill the rest — the prep card — is specified to arrive in a sheet of ' +
+      'its own. Whether a Tier 2 result may land <i>in</i> the view it read is a container question no lab ' +
+      'can settle, but the room is there.';
+
+    host.innerHTML =
+      '<div><span class="n">' + Math.round(sheetH) + 'px</span>' +
+      '<span class="l">Baseline’s sheet, content-sized — its 86% cap allows ' + sheetCap +
+      'px, so height was never the constraint</span></div>' +
+      '<div><span class="n">' + screenContent + ' / ' + screenFrame + 'px</span>' +
+      '<span class="l">Recommended — the screen’s body, the content’s extent against the room it has</span></div>' +
+      '<div><span class="n">' + d1(plain) + ':1</span>' +
+      '<span class="l">the event’s title against its ground, uncovered</span></div>' +
+      '<div><span class="n">' + d1(through) + ':1</span>' +
+      '<span class="l">the same title behind the sheet’s scrim, both dimmed by the same ' +
+      Math.round(alpha * 100) + '% — legible, and idle, because you are not looking at it</span></div>' +
+      '<div><span class="n">2 → 1</span>' +
+      '<span class="l">dismissals from the prep card back to the event, sheet against screen</span></div>' +
+      '<div><span class="n">6</span>' +
+      '<span class="l">parts the sentence lists: title, time, attendees, notes, prep card, Edit</span></div>' +
+      '<div><span class="n">4 / 6</span>' +
+      '<span class="l">of those, the ones that can be on screen when it opens — the card needs Tier 2 to be ' +
+      'asked, and this event is mirrored, so Edit does not apply either</span></div>' +
+      '<div><span class="n">' + cards + ' / ' + invites + '</span>' +
+      '<span class="l">prep cards drawn against invitations drawn — only the control arm draws a card, ' +
+      'which is the invariant it breaks</span></div>' +
+      '<div><span class="n">' + regions + '</span>' +
+      '<span class="l">Frontend design — equal regions, one of them the record</span></div>' +
+      '<div><span class="n">' + edits + '</span>' +
+      '<span class="l">Edit buttons drawn in the whole section, for an event the sentence gives none</span></div>';
   }
 </script>
 <script src="nav.js"></script>
