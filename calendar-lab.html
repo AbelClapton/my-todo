@@ -383,6 +383,33 @@
     background: var(--accent-subtle);
   }
 
+  /* ---- date picker -------
+     An overlay whose grid is the Month view's grid, reused class for class. That
+     reuse is the point: the same 42 cells appear twice in the app, and the rule
+     about what a day carries was written for only one of them. */
+  .pk-scrim { position: absolute; inset: 0; background: var(--bg-overlay); }
+  .pk-panel {
+    position: absolute; left: var(--space-4); right: var(--space-4); top: 16%; height: 66%;
+    display: flex; flex-direction: column; gap: var(--space-4);
+    padding: var(--space-5) 0 var(--space-5);
+    background: var(--bg-raised); box-shadow: var(--elevation-3);
+    border-radius: var(--radius-xl);
+  }
+  .pk-head { display: flex; align-items: center; gap: var(--space-4); padding: 0 var(--space-5); }
+  .pk-head .grow { flex: 1; }
+  .pk-foot {
+    display: flex; align-items: center; gap: var(--space-4); padding: var(--space-3) var(--space-5) 0;
+    border-top: 1px solid var(--border-subtle);
+  }
+  /* The mirror's horizon: a date before it re-fetches from the source, so it can
+     arrive incomplete. Nothing in the app draws this boundary today. */
+  .mo-cell.old::after {
+    content: ""; position: absolute; left: 4px; right: 4px; bottom: 3px;
+    border-bottom: 1px dashed var(--border-strong);
+  }
+  /* The day you are leaving, which is not the same as today. */
+  .mo-cell.from { box-shadow: inset 0 0 0 1px var(--border-strong); }
+
   /* The fit overlay: what a clipped phone is hiding, stated rather than implied.
      A screen that overflows silently is the defect these labs exist to catch, so
      the mock draws the boundary. */
@@ -435,7 +462,7 @@
       <button class="tab" data-go="year"><span class="n">4</span> Year</button>
       <button class="tab" data-go="event"><span class="n">5</span> Event detail</button>
       <button class="tab" data-go="new"><span class="n">6</span> New event</button>
-      <button class="tab" data-go="picker" disabled><span class="n">7</span> Date picker</button>
+      <button class="tab" data-go="picker"><span class="n">7</span> Date picker</button>
       <button class="tab" data-go="machine" disabled><span class="n">8</span> Time machine</button>
     </div>
   </div>
@@ -2252,6 +2279,249 @@
     </section>
   </section>
 
+  <!-- ==================== DATE PICKER ==================== -->
+  <section class="screen" id="picker" hidden>
+    <section class="lede">
+      <h2 class="t-title-2">Date picker — three month grids, one rule</h2>
+      <p>
+        The Date picker's whole specification is one line: “A month grid overlay. Tap to jump to a
+        day.” It is reached from three places — the date in the Day header, the defer sheet's
+        “Pick a date…”, and now the New event form's “Other…” — which makes it the most-reached
+        overlay in the Calendar.
+      </p>
+      <p>
+        And it is the <b>third</b> month grid in the app. The Month view's 42 cells carry the day's
+        shape, positioned by time, and that rule cost a whole lab to arrive at. The Year's twelve
+        grids carry load as height, which is a different answer to the same question. The picker's
+        carries <b>a number and nothing else</b> — because nothing said otherwise.
+      </p>
+      <p>
+        Three grids, one of them specified. The question here is not what the picker looks like; it
+        is <b>whether a day in one month grid means the same thing as a day in another</b>.
+      </p>
+      <p>
+        Two smaller gaps come with it. <code>gesture-vocabulary.md</code> has a row for every
+        surface's swipes and <b>no row for this one</b> — which matters, because swiping left across
+        a month grid is what every calendar does to change month, and swipe-left is globally “defer
+        / dismiss”. And <code>surfaces.md</code> gives the Time machine's entry as “Tap a date →
+        ‘As of’” while <code>calendar.md</code> gives a tap on a date as “jump to a day”: one tap,
+        two meanings.
+      </p>
+    </section>
+
+    <div class="grid">
+
+      <!-- ================= V1 · baseline ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Baseline</span>
+          <p class="vc-stance">“A month grid overlay. Tap to jump to a day.” A grid of dates, today marked, arrows to change month.</p>
+          <span class="vc-read">no lens · the control arm</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day" style="position: relative;">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Wed 23 Sep</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 39</span>
+              </div>
+              <div class="tl" style="flex: 1; min-height: 0; padding: var(--space-5) var(--space-7);">
+                <div class="slot"><span class="at">09:00</span><span class="ev"><span class="t-body">Standup</span></span></div>
+                <div class="slot"><span class="at">10:00</span><span class="ev"><span class="t-body">1:1 with Mark</span></span></div>
+              </div>
+              <div class="pk-scrim"></div>
+              <div class="pk-panel">
+                <div class="pk-head">
+                  <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                  <span class="t-title-3 grow" style="text-align: center;">September 2026</span>
+                  <svg class="ic ic-md" style="color: var(--text-secondary); transform: rotate(180deg);"><use href="#i-back"/></svg>
+                </div>
+                <div class="mo-dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+                <div class="mo" id="pk-plain"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>Nothing. A six-row grid of dates, the adjacent months muted, today ringed, and nothing else.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd id="pk-cost">…</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>None — this <i>is</i> the sentence, and the sentence is short because nobody looked at the other two grids while writing it. Which is the finding: the app has three month grids and one rule, and the one you reach most often is the one without it.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= V2 · impeccable ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Impeccable</span>
+          <p class="vc-stance">One drawing, one rule. The picker carries exactly what the Month carries, at the same scale.</p>
+          <span class="vc-read">impeccable · operate<br>a day means the same thing wherever it is drawn</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day" style="position: relative;">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Wed 23 Sep</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 39</span>
+              </div>
+              <div class="tl" style="flex: 1; min-height: 0; padding: var(--space-5) var(--space-7);">
+                <div class="slot"><span class="at">09:00</span><span class="ev"><span class="t-body">Standup</span></span></div>
+              </div>
+              <div class="pk-scrim"></div>
+              <div class="pk-panel">
+                <div class="pk-head">
+                  <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                  <span class="t-title-3 grow" style="text-align: center;">September 2026</span>
+                  <svg class="ic ic-md" style="color: var(--text-secondary); transform: rotate(180deg);"><use href="#i-back"/></svg>
+                </div>
+                <div class="mo-dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+                <div class="mo" id="pk-marks"></div>
+                <div class="pk-foot">
+                  <span class="t-caption" style="color: var(--text-muted);">RINGED today · OUTLINED the day you are on</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>The grid carries the Month's marks — each event a tick positioned by its time — so the same 42 cells read the same way in both places. <b>Today</b> is ringed and the <b>day you are leaving</b> is outlined, because a picker has two fixed points where a month view has one.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>The picker becomes the Month view in an overlay, so the app now draws the same instrument twice with the same information. That redundancy is the point and it is still redundancy: two surfaces, one drawing, and the marks are too small to read a title from either. The footer has to explain its own two rings, which is a legend no other surface needs.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd><b>None.</b> It adds nothing the token set cannot express and removes nothing the sentence promised. The sentence promised a grid of dates and this is one, with the day's shape in it — the rule that was missing, not a rule broken.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= V3 · frontend design ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Frontend design</span>
+          <p class="vc-stance">Delete the picker. There is already a month grid; let it do the choosing.</p>
+          <span class="vc-read">frontend-design<br>one drawing, not two that agree</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">September</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--accent-text);">Choosing</span>
+              </div>
+              <div class="mo-dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+              <div class="mo" id="pk-month"></div>
+              <div class="pk-foot" style="border-top: 0; margin: 0 var(--space-5);">
+                <span class="t-caption" style="color: var(--accent-text);">PICK A DAY</span>
+                <span class="t-caption" style="color: var(--text-muted);">a tap returns to the day view · Esc cancels</span>
+              </div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>There is no picker. Asking to choose a day opens the <b>Month view in a choosing state</b>, marking the days the Month already marks; a tap there returns a day instead of opening one. One grid, one drawing, one rule — and the rule cannot drift because there is only one place to write it.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>It makes the Month view's tap mean two things depending on how you arrived, which is the ambiguity this row was supposed to remove, moved rather than deleted. It also loses the overlay's best property: dismissing a picker returns you exactly where you were, and a full screen has to be exited rather than dismissed.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>One: `03-experience/surfaces.md` lists the <b>Date picker</b> as an Overlay, and the Calendar's own actions table gives “Tap the date in the day header” as its entry. Deleting it deletes that entry with it.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= V4 · design taste ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Design taste</span>
+          <p class="vc-stance">Delete the grid. 42 targets is not how anyone chooses a date.</p>
+          <span class="vc-read">design-taste-frontend<br>use the pattern the app already has</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day" style="position: relative;">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Wed 23 Sep</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 39</span>
+              </div>
+              <div class="tl" style="flex: 1; min-height: 0; padding: var(--space-5) var(--space-7);">
+                <div class="slot"><span class="at">09:00</span><span class="ev"><span class="t-body">Standup</span></span></div>
+              </div>
+              <div class="pk-scrim"></div>
+              <div class="pk-panel" style="padding: var(--space-3) 0 var(--space-4);">
+                <div class="pk-head"><span class="t-caption" style="color: var(--text-muted);">JUMP TO</span></div>
+                <div class="list" style="margin: 0 var(--space-5);">
+                  <div class="row r-compact"><span class="t-body">Today</span><span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">Tue 22</span></div>
+                  <div class="row r-compact"><span class="t-body">Tomorrow</span><span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">Wed 23</span></div>
+                  <div class="row r-compact"><span class="t-body">This week</span><span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">Mon 21</span></div>
+                  <div class="row r-compact"><span class="t-body">This month</span><span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">1 Sep</span></div>
+                  <div class="row r-compact"><span class="t-body">Three months ago</span><span class="t-footnote" style="margin-left: auto; color: var(--stale-text);">needs a re-fetch</span></div>
+                </div>
+                <div class="pk-foot">
+                  <span class="t-caption" style="color: var(--text-muted);">The same shape as the defer sheet's list, which already ends in “Pick a date…” — except this <i>is</i> the last resort.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>The grid goes. What is left is <b>five relative rows</b>, which is the shape `03-experience/gesture-vocabulary.md` already gives the defer sheet — “Tomorrow · Next week · Someday · Pick a date…” — and each row carries the date it resolves to, so the phrase is never the only thing you are trusting.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>An arbitrary date is unreachable, and arbitrary is exactly what a picker is for. Removing the grid also removes the end of the defer sheet's list, which offered “Pick a date…” as its last resort — so the one surface that genuinely needed a grid is the one that has to go without.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>One: `03-experience/surfaces.md` lists a Date picker Overlay. The relative list is a different surface, and the defer sheet already has one.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= recommended ================= -->
+      <article class="vc rec">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Recommended</span>
+          <p class="vc-stance">Keep the overlay, give the grid the Month's rule, one tap meaning, and draw the one boundary the app hides.</p>
+          <span class="vc-read">impeccable's shared rule + the overlay's dismiss<br>+ the mirror's horizon, which nothing draws</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day" style="position: relative;">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Wed 23 Sep</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 39</span>
+              </div>
+              <div class="tl" style="flex: 1; min-height: 0; padding: var(--space-5) var(--space-7);">
+                <div class="slot"><span class="at">09:00</span><span class="ev"><span class="t-body">Standup</span></span></div>
+              </div>
+              <div class="pk-scrim"></div>
+              <div class="pk-panel">
+                <div class="pk-head">
+                  <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                  <span class="t-title-3 grow" style="text-align: center;">September 2026</span>
+                  <svg class="ic ic-md" style="color: var(--text-secondary); transform: rotate(180deg);"><use href="#i-back"/></svg>
+                </div>
+                <div class="mo-dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+                <div class="mo" id="pk-rec"></div>
+                <div class="pk-foot" style="flex-direction: column; align-items: flex-start; gap: var(--space-2);">
+                  <span class="t-caption" style="color: var(--text-muted);">Tap a day to go there. <span style="color: var(--accent-text);">As of…</span> opens it read-only.</span>
+                  <span class="t-caption" style="color: var(--stale-text);">Dashed days are before 24 Jun — the mirror drops them, so opening one re-fetches.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Takes</dt><dd><b>Impeccable</b> for the shared rule — a day means the same thing in every grid — and for the two fixed points a picker needs. <b>Frontend design</b> for showing that one grid is better than two that agree, and for the reason it cannot be done here: the Month's tap already means something. <b>Design taste</b> for the observation that a grid is the last resort rather than the common case, which is why it should be good at distance rather than at speed.</dd></div>
+          <div class="vc-line cost"><dt>Fixes</dt><dd id="pk-fixes">…</dd></div>
+          <div class="vc-line open"><dt>Still needs</dt><dd>Four decisions. <b>One:</b> the three month grids need a <b>shared rule</b> written once — the Month's “a day shows its shape, positioned by time” — and the picker and the Year should be stated as its consequences rather than as separate designs. <b>Two:</b> <code>gesture-vocabulary.md</code> has <b>no row for the picker</b>, and it needs one, because the swipe that changes month everywhere else is the swipe that globally means “defer / dismiss”. <b>Three:</b> one tap cannot both jump to a day and open it read-only; this row separates them and the docs do not. <b>Four:</b> the <b>90-day mirror horizon</b> is real — <code>02-architecture/data-lifecycle.md</code> prunes mirrored events past it and re-fetches only “if the user navigates to them via time machine” — and no surface draws it. Choosing a date the app cannot answer for is the picker's most likely failure and its least visible one.</dd></div>
+        </dl>
+      </article>
+
+    </div>
+
+    <section class="lede">
+      <h2 class="t-title-2">The measurement</h2>
+      <div class="panel" style="margin-top: var(--space-5);">
+        <div class="measure" id="measure-picker"></div>
+      </div>
+    </section>
+  </section>
+
 </div>
 
 <script>
@@ -2265,6 +2535,7 @@
   let yearMeasured = false;
   let eventMeasured = false;
   let newMeasured = false;
+  let pickerMeasured = false;
   // The Week cannot measure the Day once the Day is hidden — a hidden element
   // reports zero for everything — so the Day's timeline height is captured while
   // it is still on screen.
@@ -2277,6 +2548,7 @@
     if (id === 'year' && !yearMeasured) { measureYear(); yearMeasured = true; }
     if (id === 'event' && !eventMeasured) { measureEvent(); eventMeasured = true; }
     if (id === 'new' && !newMeasured) { measureNew(); newMeasured = true; }
+    if (id === 'picker' && !pickerMeasured) { measurePicker(); pickerMeasured = true; }
     window.scrollTo({ top: 0 });
   }
   tabs.forEach(t => t.addEventListener('click', () => go(t.dataset.go)));
@@ -2499,6 +2771,8 @@
           (0.10 + 0.20 * (load - 1)).toFixed(2) + '"></span>';
       } else if (mode === 'dot') {
         if (load) tail = '<span class="mo-dot"></span>';
+      } else if (mode === 'plain') {
+        // Dates and nothing else: the literal reading of "a month grid overlay".
       } else {
         tail = '<span class="mo-sheet">' + c.ev.map(e => {
           const centre = e[0] * 60 + e[1] + e[2] / 2;
@@ -2879,6 +3153,7 @@
   // dimmed by the same fraction. Comparing the two dimmed colours is the honest
   // question: can the event still be read through the sheet that covers it?
   const dim = (c, ov, a) => c.map((v, i) => ov[i] * a + v * (1 - a));
+  const d1 = n => n.toFixed(1);
 
   function measureEvent() {
     const host = document.getElementById('measure-event');
@@ -2932,7 +3207,6 @@
     const invites = document.querySelectorAll('#event .ev-invite').length;
     const regions = document.querySelectorAll('#event .ev-region').length;
     const edits = document.querySelectorAll('#event .btn-block').length;
-    const d1 = n => n.toFixed(1);
 
     document.getElementById('ev-cost').innerHTML =
       'The sheet holds <b>' + sheetContent + 'px</b> of content in a <b>' + Math.round(sheetH) +
@@ -3070,6 +3344,114 @@
       '<div><span class="n">' + (rec.doors + other) + '</span>' +
       '<span class="l">overlays the recommended form can still open — both of them now over a screen ' +
       'rather than replacing one</span></div>';
+  }
+
+  // ==========================================================================
+  // DATE PICKER
+  // ==========================================================================
+
+  const PICKER_FROM = 23;   // the day the Day view is on, which is not today
+
+  function renderPicker() {
+    const plain = document.getElementById('pk-plain');
+    const marks = document.getElementById('pk-marks');
+    const month = document.getElementById('pk-month');
+    const rec = document.getElementById('pk-rec');
+    // All four are built from the Month lab's data, so the two surfaces can be
+    // compared cell for cell rather than by description.
+    buildMonth(plain, 'plain', 42);
+    buildMonth(marks, 'ticks', 42);
+    buildMonth(month, 'ticks', 42);
+    buildMonth(rec, 'ticks', 42);
+    const fromIdx = SEPT.findIndex(c => !c.out && c.d === PICKER_FROM);
+    [marks, month, rec].forEach(host => {
+      if (host && fromIdx >= 0 && host.children[fromIdx]) {
+        host.children[fromIdx].classList.add('from');
+      }
+    });
+  }
+  renderPicker();
+
+  function measurePicker() {
+    const host = document.getElementById('measure-picker');
+    const plainCell = document.querySelector('#pk-plain .mo-cell');
+    const markCell = document.querySelector('#pk-marks .mo-cell');
+    if (!host || !plainCell || !markCell) return;
+
+    // The Month view's own cell is in a hidden section while this runs, and a hidden
+    // element reports zero for everything. Shown for exactly as long as the measurement
+    // takes, then hidden again — before any of this yields, so nothing paints.
+    const monthScreen = document.getElementById('month');
+    const monthWasHidden = monthScreen.hidden;
+    monthScreen.hidden = false;
+    const mCell = document.querySelector('#mo-rec .mo-cell').getBoundingClientRect();
+    monthScreen.hidden = monthWasHidden;
+
+    const pc = plainCell.getBoundingClientRect();
+    const mc = markCell.getBoundingClientRect();
+    // `#mo-rec` is the Month's fixed six-row grid — 42 cells, the same count the picker
+    // draws — so the cells are compared like for like. `#mo-ticks` is the five-row
+    // variation and would have compared 35 cells against 42.
+    const monthMarks = document.querySelectorAll('#mo-rec .tick').length;
+    const pickerMarks = document.querySelectorAll('#pk-rec .tick').length;
+    const pickerNumbers = document.querySelectorAll('#pk-plain .mo-hd .n').length;
+    const cells = document.querySelectorAll('#pk-plain .mo-cell').length;
+
+    // The axis each grid gives one hour, once the date row is taken out of the cell.
+    const DATE_ROW = 18;
+    const pickerPerHour = (pc.height - DATE_ROW) / 10;
+    const monthPerHour = (mCell.height - DATE_ROW) / 10;
+    const pickerMerge = 2 / pickerPerHour * 60;   // minutes before two 2px marks touch
+
+    document.getElementById('pk-cost').innerHTML =
+      'The picker’s cell is <b>' + Math.round(pc.width) + ' × ' + Math.round(pc.height) +
+      'px</b> and the Month view’s is <b>' + Math.round(mCell.width) + ' × ' +
+      Math.round(mCell.height) + 'px</b>. Both grids are ' + cells + ' cells, drawn with the same ' +
+      'classes — but the picker is an overlay over part of the screen, so its cells come out ' +
+      '<b>' + (mCell.height / pc.height).toFixed(1) + ' times shorter</b>. That is the one honest ' +
+      'defence of the plain grid, so work it through: its axis would be <b>' + d1(pickerPerHour) +
+      'px an hour</b> against the Month’s <b>' + d1(monthPerHour) + 'px</b>, and two marks would ' +
+      'merge below <b>' + Math.round(pickerMerge) + ' minutes</b> apart instead of the Month’s 13. ' +
+      'That is enough resolution to see <i>which days are heavy</i> and not enough to read ' +
+      '<i>when</i>. Which is precisely the question a chooser asks, and precisely why the Month ' +
+      'view exists separately. So the finding is not that the picker is empty — it is that nothing ' +
+      'says a picker cannot carry the marks at a coarser scale, and nothing says whether it should.';
+
+    document.getElementById('pk-fixes').innerHTML =
+      'One rule, two scales. The picker keeps the <b>overlay</b> — dismissing returns you exactly ' +
+      'where you were, which a full screen cannot do — and takes the Month’s marks knowing they come ' +
+      'out coarser here: ' + pickerMarks + ' marks where the Month draws ' + monthMarks +
+      ', at <b>' + d1(pickerPerHour) + 'px an hour</b> instead of ' + d1(monthPerHour) +
+      '. A coarser version of one rule is worth more than an unexplained second one. It also gets ' +
+      '<b>two fixed points instead of one</b>: today ringed, and the day you are on outlined, because ' +
+      'a chooser has to know where you are as well as where today is. And the <b>horizon is drawn</b>: ' +
+      '90 days back is 24 June, before which the mirror has pruned and opening a day re-fetches from ' +
+      'the source. Choosing a date the app cannot answer for is the picker’s most likely failure and ' +
+      'its least visible one.';
+
+    host.innerHTML =
+      '<div><span class="n">' + Math.round(pc.width) + ' × ' + Math.round(pc.height) + 'px</span>' +
+      '<span class="l">one picker cell, in an overlay that covers two thirds of the screen</span></div>' +
+      '<div><span class="n">' + Math.round(mCell.width) + ' × ' + Math.round(mCell.height) + 'px</span>' +
+      '<span class="l">one Month-view cell, same 42 cells and the same classes — ' +
+      (mCell.height / pc.height).toFixed(1) + '× the height</span></div>' +
+      '<div><span class="n">' + d1(pickerPerHour) + 'px</span>' +
+      '<span class="l">one hour of the day in a picker cell, which is what a mark would be drawn against</span></div>' +
+      '<div><span class="n">' + d1(monthPerHour) + 'px</span>' +
+      '<span class="l">the same hour in the Month view — the resolution the overlay gives up</span></div>' +
+      '<div><span class="n">' + Math.round(pickerMerge) + ' min</span>' +
+      '<span class="l">the gap below which two marks merge in the picker; the Month’s is 13</span></div>' +
+      '<div><span class="n">' + pickerNumbers + ' / 0</span>' +
+      '<span class="l">Baseline — dates the picker draws across the grid, and marks it draws: ' +
+      'one number per cell and nothing else</span></div>' +
+      '<div><span class="n">' + pickerMarks + '</span>' +
+      '<span class="l">Recommended — marks drawn, the Month’s rule at the overlay’s scale, against ' +
+      monthMarks + ' in the Month view</span></div>' +
+      '<div><span class="n">90</span>' +
+      '<span class="l">days before today that the mirror prunes — 24 June, which no surface draws</span></div>' +
+      '<div><span class="n">0 of 12</span>' +
+      '<span class="l">rows in `gesture-vocabulary.md`’s surface table covering the picker; the swipe ' +
+      'that changes month elsewhere is the swipe that means “defer” everywhere</span></div>';
   }
 </script>
 <script src="nav.js"></script>
