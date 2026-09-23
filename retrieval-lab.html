@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="warm" data-mode="light" data-accent="teal"
+      data-semantics="vivid" data-type="system">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Retrieval lab · Small Wins</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="lab.css">
+<style>
+/* tabular readouts */
+.rt-r{display:grid;grid-template-columns:132px minmax(0,1fr) auto;gap:10px;align-items:baseline;
+  padding:8px 0;border-bottom:1px solid var(--border-subtle);font-size:13px;line-height:18px}
+.rt-r:last-child{border-bottom:0}
+.rt-k{color:var(--text-tertiary)}
+.rt-d{color:var(--text-secondary)}
+.rt-n{font-variant-numeric:tabular-nums;font-weight:600;color:var(--text-primary)}
+.rt-n.good{color:var(--success-text)}
+.rt-n.bad{color:var(--warning-text)}
+
+/* container tags */
+.rt-tag{display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:5px;
+  font-size:11px;letter-spacing:.04em;text-transform:uppercase;font-weight:600}
+.rt-tag.ov{background:var(--accent-subtle);color:var(--accent-text)}
+.rt-tag.sc{background:var(--surface-2);color:var(--text-secondary)}
+.rt-tag.no{background:var(--warning-subtle);color:var(--warning-text)}
+
+/* the palette */
+.rt-pal{border:1px solid var(--border-strong);border-radius:12px;background:var(--bg-raised);
+  overflow:hidden}
+.rt-pal-h{display:flex;align-items:center;gap:9px;padding:11px 13px;
+  border-bottom:1px solid var(--border-subtle)}
+.rt-pal-h .grow{flex:1;font-size:15px;color:var(--text-primary)}
+.rt-pal-h .ph{color:var(--text-muted)}
+.rt-row{display:flex;align-items:center;gap:9px;padding:8px 13px;font-size:14px;line-height:20px;
+  color:var(--text-secondary);border-bottom:1px solid var(--border-subtle)}
+.rt-row:last-child{border-bottom:0}
+.rt-row.sel{background:var(--accent-subtle);color:var(--accent-text);font-weight:600}
+.rt-row .kind{margin-left:auto;font-size:12px;color:var(--text-muted);font-weight:400}
+
+/* result rows and the why line */
+.rt-res{padding:9px 0;border-bottom:1px solid var(--border-subtle)}
+.rt-res:last-child{border-bottom:0}
+.rt-res .t{font-size:14px;line-height:20px;color:var(--text-primary);display:flex;
+  align-items:baseline;gap:8px}
+.rt-res .t .meta{margin-left:auto;font-size:12px;color:var(--text-muted)}
+.rt-why{font-size:12.5px;line-height:18px;color:var(--text-secondary);margin:3px 0 0;
+  padding-left:11px;border-left:2px solid var(--border-subtle)}
+.rt-why.none{color:var(--text-muted);border-left-color:transparent;font-style:italic}
+.rt-h{font-size:11px;line-height:15px;color:var(--text-muted);margin:10px 0 2px;
+  text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.rt-h:first-child{margin-top:0}
+
+/* source preview */
+.rt-code{font-family:var(--type-mono-family,ui-monospace,Menlo,monospace);font-size:11px;
+  line-height:17px;color:var(--text-secondary);white-space:pre-wrap;word-break:break-word;
+  background:var(--surface-2);border-radius:8px;padding:10px 12px}
+.rt-code .bad{color:var(--warning-text);font-weight:600}
+.rt-code .dim{color:var(--text-muted)}
+
+/* keyboard */
+kbd{font-family:var(--type-mono-family,ui-monospace,Menlo,monospace);font-size:11.5px;line-height:1;
+  padding:4px 6px;border-radius:5px;background:var(--surface-2);
+  border:1px solid var(--border-subtle);color:var(--text-secondary)}
+.kb{display:grid;gap:7px}
+.kb-r{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;
+  font-size:13px;line-height:18px;color:var(--text-secondary)}
+.kb-r .lbl{display:flex;align-items:center;gap:7px}
+.kb-r .miss{color:var(--warning-text);font-weight:600}
+
+/* two-column boxes */
+.rt-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.rt-box{border:1px solid var(--border-subtle);border-radius:10px;padding:10px 12px}
+.rt-box.on{border-color:var(--accent-border,var(--accent-default))}
+.rt-box h4{margin:0 0 7px;font-size:11px;line-height:14px;color:var(--text-muted);font-weight:600;
+  text-transform:uppercase;letter-spacing:.05em}
+.rt-box p{margin:0;font-size:12.5px;line-height:18px;color:var(--text-secondary)}
+</style>
+</head>
+<body data-lab="retrieval">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol>
+  <symbol id="i-mode-tasks" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol>
+  <symbol id="i-mode-notes" viewBox="0 0 24 24"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+</svg>
+
+<header class="masthead">
+  <p class="eyebrow">Lab 12 · the surfaces that route through one layer</p>
+  <h1 class="t-title-1">Retrieval</h1>
+  <p class="lede-p">
+    <code>retrieval.md</code> is the flow with the widest licence in the set: <i>"Retrieval is not
+    one feature. It is a set of surfaces that all route through the same underlying tools."</i>
+    Four surfaces, one layer, and the layer is specified as tightly as anything else in the app.
+  </p>
+  <p class="lede-p">
+    So this lab looks for the seams. Every disagreement here is between <b>a doc and the doc it
+    cites</b> — the surface table against the flow, the flow against its own examples, the layer
+    against the invariant that quotes it. Three of them are counting errors: a list that is one
+    short, an owner that names the consumer, and a chord with three claimants.
+  </p>
+</header>
+
+<div class="bar">
+  <nav class="tabs" id="tabs">
+    <button class="tab" data-go="doors">The four surfaces</button>
+    <button class="tab" data-go="why">Why this matched</button>
+    <button class="tab" data-go="keys">The chords</button>
+    <button class="tab" data-go="offline">What degrades</button>
+  </nav>
+</div>
+
+<main id="main">
+
+<!-- ================================================================== DOORS -->
+<section class="screen" id="doors">
+  <div class="lede">
+    <h2 class="t-title-2">The four surfaces</h2>
+    <p class="lede-p">
+      <code>surfaces.md</code> is the inventory: every surface in the app, with its <b>Kind</b> —
+      Mode, Screen, Overlay, Card, Control, Ambient — and the doc that <b>defines</b> it. Its
+      retrieval table has four rows, and all four surfaces are specified somewhere. Nothing is
+      missing.
+    </p>
+    <p class="lede-p">
+      The owners are the problem. Three of the four rows name a document that describes the
+      surface from the outside, and one names a container that the doc specifying it does not
+      give. A consumer is not a definer, and a table whose whole purpose is to say who owns what
+      is the one place that cannot be sloppy about it.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The table as written: four rows, four owners, four containers.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="rt-h">surfaces.md · capture and retrieval</p>
+            <div class="rt-r"><span class="rt-k">Command palette</span>
+              <span class="rt-d">Overlay · <code>capture.md</code></span>
+              <span class="rt-tag ov">overlay</span></div>
+            <div class="rt-r"><span class="rt-k">Search results</span>
+              <span class="rt-d"><code>gesture-vocabulary.md</code> + <code>retrieval-layer.md</code></span>
+              <span class="rt-tag sc">screen</span></div>
+            <div class="rt-r"><span class="rt-k">NL filter</span>
+              <span class="rt-d"><code>retrieval.md</code></span>
+              <span class="rt-tag ov">overlay</span></div>
+            <div class="rt-r"><span class="rt-k">Time machine</span>
+              <span class="rt-d"><code>retrieval.md</code></span>
+              <span class="rt-tag sc">screen</span></div>
+            <div class="rt-box" style="margin-top:6px">
+              <h4>One of four</h4>
+              <p>Row 4 is the only entry whose <b>Defined in</b> names the doc that actually
+                specifies the surface. Rows 1–3 name a consumer, two of three owners, and a
+                container no other doc repeats.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. <code>surfaces.md</code>'s retrieval table, verbatim.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="doors-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>No rule is broken by any single row. <code>surfaces.md</code> has no section that
+            says the <b>Defined in</b> column means "the doc that specifies this surface" — and
+            that is the whole defect: four rows, three readings of one column.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The palette is owned by a consumer</span>
+        <p class="vc-stance">Row 1 says <code>capture.md</code>. The palette is entry point 2 of
+          that flow and is defined in none of it.</p>
+        <span class="vc-read">cut the consumer · point at the definer</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="rt-cols">
+              <div class="rt-box">
+                <h4>capture.md says</h4>
+                <p><i>"2. <b>Command palette.</b> <code>Cmd+K</code> → type → the first result is
+                  'Capture: &lt;text&gt;'."</i></p>
+              </div>
+              <div class="rt-box on">
+                <h4>retrieval.md defines</h4>
+                <p>The input, the three-tier result order, the row set, the example, and the rule
+                  that this doc <i>"owns what appears in that list and in what order."</i></p>
+              </div>
+            </div>
+            <div class="rt-box">
+              <h4>app-shell.md defines</h4>
+              <p>The container: an overlay anchored to the top of the viewport, one input row, one
+                result list of <code>row-compact</code> rows, first result preselected,
+                <code>Esc</code> to close.</p>
+            </div>
+            <div class="rt-r" style="border-top:1px solid var(--border-subtle)">
+              <span class="rt-k">Docs describing it</span>
+              <span class="rt-d">retrieval · app-shell · tier-3</span>
+              <span class="rt-n bad">0 of 3 named</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Row 1's owner becomes <code>06-flows/retrieval.md</code>, with the overlay chrome
+            attributed to <code>app-shell.md</code> the way every other overlay's is.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The citation count is the same. What changes is that a reader looking for the
+            palette's specification lands on the doc that has it, rather than on the flow that
+            lists it as one of four doors.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd><code>capture.md</code> is one of <b>three</b> flows that reach the palette as a door
+            — <code>retrieval.md</code>, <code>lapsed-recovery.md</code> and <code>auth.md</code>
+            all invoke it in examples. Picking one consumer as the owner is arbitrary; picking
+            none of them is the same as picking the definer.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Search results omits its own doc</span>
+        <p class="vc-stance">Row 2 names a gesture table and a tool layer. The screen's layout,
+          grouping, token and empty state are in a third doc.</p>
+        <span class="vc-read">add the third · the screen has a spec already</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="rt-h">What each doc contributes</p>
+            <div class="rt-r"><span class="rt-k">gesture-vocabulary</span>
+              <span class="rt-d">one matrix row: attach, AI menu, capture, back</span>
+              <span class="rt-tag sc">gestures</span></div>
+            <div class="rt-r"><span class="rt-k">retrieval-layer</span>
+              <span class="rt-d"><code>semantic_search</code>, with <code>why</code> and
+                <code>score</code></span>
+              <span class="rt-tag sc">tools</span></div>
+            <div class="rt-r"><span class="rt-k">retrieval.md</span>
+              <span class="rt-d">the input row, the four groups and their order, the
+                <code>text-secondary</code> why line, the empty-state copy</span>
+              <span class="rt-tag no">not named</span></div>
+            <div class="rt-box" style="margin-top:6px">
+              <h4>The row that is unimplementable from its own citation</h4>
+              <p>A build that followed only rows 1–2 would know the screen closes on
+                <code>Esc</code> and that results come from a tool. It would not know the row type,
+                the group order, or what to print when nothing matched.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Row 2's owner becomes <code>06-flows/retrieval.md</code>, with the gesture row and
+            the tool named as contributions rather than as definitions.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>None. This is the one row where the fix is purely additive: the third doc already
+            contains all of it, and the two named docs keep their roles.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd><code>retrieval.md</code> §Search results says <i>"Rows are the standard row
+            components. A result is not a new row type."</i> So the screen's row is owned by the
+            row components' doc and its <i>composition</i> is owned here. The table has one column
+            and needs two.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The container that only one doc gives</span>
+        <p class="vc-stance">Row 3 calls the natural-language filter an <b>Overlay</b>.
+          <code>retrieval.md</code> returns them as lists and names no container at all.</p>
+        <span class="vc-read">reconcile · or admit it is the palette</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="rt-cols">
+              <div class="rt-box">
+                <h4>surfaces.md</h4>
+                <p>Natural-language filter · <span class="rt-tag ov">overlay</span></p>
+                <p style="margin-top:7px">A container. Says nothing about where the query is
+                  typed.</p>
+              </div>
+              <div class="rt-box">
+                <h4>retrieval.md</h4>
+                <p><i>"parsed by Tier 3 into structured queries … and returned as
+                  <b>lists</b>."</i></p>
+                <p style="margin-top:7px">A result shape. Says nothing about the container.</p>
+              </div>
+            </div>
+            <div class="rt-box">
+              <h4>The third reading</h4>
+              <p>§The command palette already lists <b>commands</b>, then <b>direct matches</b>,
+                then the assistant, and says the palette <i>"is the universal retrieval
+                surface."</i> A natural-language filter is a fourth thing in that list, typed in
+                that field. If it is an Overlay, it is this one.</p>
+            </div>
+            <div class="rt-r" style="border-top:1px solid var(--border-subtle)">
+              <span class="rt-k">Containers stated</span>
+              <span class="rt-d">overlay · list · the palette</span>
+              <span class="rt-n bad">3 readings</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Either the row is deleted — a filter is a <i>query</i>, and the query has a
+            container, so listing it as a surface duplicates the palette — or
+            <code>retrieval.md</code> says where filter results appear and in what container.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Deleting it removes one of four rows from the only table that claims to inventory
+            retrieval. Keeping it means <code>retrieval.md</code> gains a paragraph, which is the
+            cheaper half of the pair.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd><code>retrieval.md</code> is explicit that these are <b>not</b> built through UI:
+            <i>"The user does not construct these queries via a filter UI. They type them."</i>
+            That rules out the filter sheet as a container and leaves the palette — which makes
+            the Overlay row a second name for a surface already in the table.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">One owner per row, one container per surface, and the API row
+          restored.</p>
+        <span class="vc-read">synthesis · the definer owns, the consumer cites</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="rt-h">The corrected table</p>
+            <div class="rt-r"><span class="rt-k">Command palette</span>
+              <span class="rt-d">Overlay · <b>retrieval.md</b> · chrome: app-shell.md</span>
+              <span class="rt-tag ov">overlay</span></div>
+            <div class="rt-r"><span class="rt-k">Search results</span>
+              <span class="rt-d">Screen · <b>retrieval.md</b> · row: the shared components</span>
+              <span class="rt-tag sc">screen</span></div>
+            <div class="rt-r"><span class="rt-k">NL filter</span>
+              <span class="rt-d">a result class of the palette, not a surface</span>
+              <span class="rt-tag no">merged</span></div>
+            <div class="rt-r"><span class="rt-k">Time machine</span>
+              <span class="rt-d">Screen · <b>retrieval.md</b> · state owned, views drawn</span>
+              <span class="rt-tag sc">screen</span></div>
+            <p class="rt-h">And the list header</p>
+            <div class="rt-r"><span class="rt-k">Notes · People</span>
+              <span class="rt-d">a search field in the header</span>
+              <span class="rt-n good">2</span></div>
+            <div class="rt-r"><span class="rt-k">Tasks</span>
+              <span class="rt-d">a filter button and <code>Cmd+F</code> — no search field</span>
+              <span class="rt-n bad">0</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Three owners corrected, one container decided, one row merged. Plus one sentence in
+            <code>surfaces.md</code> saying what the <b>Defined in</b> column means, which is what
+            stops all four of these from recurring.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The table loses a row and gains a footnote. The header-search claim in
+            <code>retrieval.md</code> changes from three surfaces to two, which is a smaller
+            promise than the one the doc can currently keep.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. Every correction points at a doc that already contains the specification; the
+            only new text is the column's definition and the palette's fourth result class.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the surfaces measure</h2>
+    <div class="measure" id="measure-doors">…</div>
+  </div>
+</section>
+
+<!-- ==================================================================== WHY -->
+<section class="screen" id="why">
+  <div class="lede">
+    <h2 class="t-title-2">Why this matched</h2>
+    <p class="lede-p">
+      The invariant is the feature: <i>"<b>Every result includes a 'why this matched' line</b>
+      (<code>04-ai/retrieval-layer.md</code>)."</i> The parenthetical makes it a citation, so the
+      line's existence should be checkable in the layer. The layer has twelve tools and exactly
+      one of them returns a reason string.
+    </p>
+    <p class="lede-p">
+      Then check the flow against its own examples, which is where this pattern always breaks. A
+      command row has no match to explain, a keyword row explains itself by the words it
+      highlights, and the one row class that genuinely needs the line is also the one whose shape
+      three docs draw three different ways.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The invariant, the mechanism it cites, and the examples it produces.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="rt-box">
+              <h4>retrieval-layer.md · 12 tools</h4>
+              <p><code>query_events</code> · <code>query_tasks</code> · <code>query_notes</code> ·
+                <code>query_habits</code> · <code>query_compliance</code> ·
+                <code>query_protocol</code> · <code>query_person</code> ·
+                <code>query_graph</code> · <b><code>semantic_search</code></b> ·
+                <code>research</code> · <code>now</code> · <code>freshness_of</code></p>
+            </div>
+            <div class="rt-pal-h" style="border:1px solid var(--border-strong);border-radius:10px">
+              <svg class="ic"><use href="#i-back"/></svg>
+              <svg class="ic"><use href="#i-search"/></svg>
+              <span class="grow">reading before bed</span></div>
+            <p class="rt-h">Rows that carry the line</p>
+            <div class="rt-res"><span class="t">Sleep protocol
+                <span class="meta">note</span></span>
+              <p class="rt-why">matched: reading before bed</p></div>
+            <div class="rt-res"><span class="t">Weekly review — Sep 14–20
+                <span class="meta">note</span></span>
+              <p class="rt-why none">no line</p></div>
+            <div class="rt-res"><span class="t">Read before bed
+                <span class="meta">task · Sleep</span></span>
+              <p class="rt-why none">no line</p></div>
+            <div class="rt-res"><span class="t">Sleep study follow-up
+                <span class="meta">Oct 3, 14:00</span></span>
+              <p class="rt-why none">no line</p></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The invariant, the tools, and §Search results' example rows.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="why-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The doc's own §Search results bullet says <i>"Every row carries its 'why this matched'
+            line in <code>text-secondary</code>"</i> — directly above an example tree in which one
+            of four rows has it. The example is the test case, and it fails.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">One tool wide</span>
+        <p class="vc-stance">Cite the layer instead, and the line has one producer: the semantic
+          tool.</p>
+        <span class="vc-read">cut the universals · a line is per result class</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="rt-h">Result classes and whether a line is possible</p>
+            <div class="rt-r"><span class="rt-k">Command</span>
+              <span class="rt-d">"Open calendar" — nothing matched; it is an action</span>
+              <span class="rt-n bad">impossible</span></div>
+            <div class="rt-r"><span class="rt-k">Direct match</span>
+              <span class="rt-d">matched by name; the highlight is the explanation</span>
+              <span class="rt-n bad">not drawn</span></div>
+            <div class="rt-r"><span class="rt-k">Semantic</span>
+              <span class="rt-d"><code>why: string</code> — the only producer</span>
+              <span class="rt-n good">1 of 12</span></div>
+            <div class="rt-r"><span class="rt-k">NL filter</span>
+              <span class="rt-d">a predicate, not a similarity; "deferred 5 times" is the line</span>
+              <span class="rt-n bad">not drawn</span></div>
+            <div class="rt-box" style="margin-top:6px">
+              <h4>The invariant's real scope</h4>
+              <p>It is a rule about <b>semantic</b> results that is written as a rule about all
+                results. Narrowed to its producer it becomes checkable, and the three classes it
+                sheds each already have an explanation of their own.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The invariant reads: <i>"Every <b>semantic</b> result includes a 'why this matched'
+            line."</i> The other three classes are named, with their own explanation, so the rule
+            is total by exclusion rather than by overreach.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The invariant gets longer and weaker-sounding. It is the same invariant the layer
+            implements, so the doc and the code agree for the first time.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>An invariant in this set is supposed to be verifiable. <i>"Every result"</i> is not,
+            because a result is four different things. Naming the class makes the same sentence
+            testable, which is what the other invariants in this doc already are.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The line has three shapes</span>
+        <p class="vc-stance">A field label, a sentence with a score, and a bare string. All three
+          describe the same line.</p>
+        <span class="vc-read">pick one · the score is the fork</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="rt-box">
+              <h4>retrieval.md §Search results</h4>
+              <p class="rt-why" style="margin-top:0">matched: reading before bed</p>
+            </div>
+            <div class="rt-box">
+              <h4>retrieval.md §Semantic search</h4>
+              <p class="rt-why" style="margin-top:0">Matches "kitchen renovation" (0.87)</p>
+            </div>
+            <div class="rt-box">
+              <h4>retrieval-layer.md</h4>
+              <p style="margin-top:0"><code>why: string // one-line explanation of the match</code></p>
+            </div>
+            <div class="rt-r" style="border-top:1px solid var(--border-subtle)">
+              <span class="rt-k">Score shown</span>
+              <span class="rt-d">1 of the 3 · and the tool returns <code>score</code></span>
+              <span class="rt-n bad">undecided</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>One shape, chosen once. The two candidates are the field label —
+            <code>matched: …</code>, which reads as data — and the sentence with the score, which
+            reads as prose and exposes a number the user has no scale for.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Choosing the label loses the score; choosing the sentence keeps a 0.87 that means
+            nothing without a threshold. <code>notes.md</code> already chose the label: it says the
+            results show <i>"a one-line 'why this matched' for each"</i> and prints no number.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The score is the <b>capture</b> flow's vocabulary leaking into search: there, a
+            0.85 threshold decides behaviour, so a number is meaningful on screen. In search
+            nothing branches on it, so printing it asks the user to weigh a quantity no doc tells
+            them how to read.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Six palette rows, no line</span>
+        <p class="vc-stance">The palette example is the flow's first impression and the invariant's
+          worst case.</p>
+        <span class="vc-read">state the exception · commands are not matches</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="rt-pal">
+              <div class="rt-pal-h">
+                <svg class="ic"><use href="#i-search"/></svg>
+                <span class="grow">sarah</span></div>
+              <div class="rt-row sel">Open calendar<span class="kind">command</span></div>
+              <div class="rt-row">Capture: Buy groceries<span class="kind">command</span></div>
+              <div class="rt-row">Switch to Habits<span class="kind">command</span></div>
+              <div class="rt-row">Sarah Chen<span class="kind">person</span></div>
+              <div class="rt-row">Design review<span class="kind">event, today 11:00</span></div>
+              <div class="rt-row">Ask: "what did I write about Sarah?"<span class="kind">tier 3</span></div>
+            </div>
+            <div class="rt-r" style="border-top:1px solid var(--border-subtle)">
+              <span class="rt-k">Rows</span>
+              <span class="rt-d">3 commands · 2 matches · 1 ask</span>
+              <span class="rt-n">6</span></div>
+            <div class="rt-r"><span class="rt-k">Carrying a why line</span>
+              <span class="rt-d">none, and the first three cannot</span>
+              <span class="rt-n bad">0 of 6</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing in the drawing. The invariant's exception is stated, and the palette section
+            says which of its three result classes get a line — the two that matched something, not
+            the three that are actions.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>None. The palette's look is already right; it is the invariant that reads as though
+            this drawing breaks it.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>This is the flow's most-copied drawing — <code>capture.md</code>,
+            <code>lapsed-recovery.md</code> and <code>auth.md</code> all put the palette in an
+            example, and the capture lab measured it as a door. An invariant that its own
+            front-page example violates is the one thing a reader will not check, because the
+            example looks finished.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">One class in the invariant, one shape for the line, one decision about
+          the score.</p>
+        <span class="vc-read">synthesis · scope the rule, then fix the shape</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="rt-box on">
+              <h4>The invariant, rewritten</h4>
+              <p><i>"Every <b>semantic</b> result includes a 'why this matched' line. Command,
+                direct-match and filter results do not: a command matched nothing, a name is its
+                own explanation, and a filter's count is the line."</i></p>
+            </div>
+            <div class="rt-box">
+              <h4>The line, decided</h4>
+              <p><code>matched: reading before bed</code> — the field-label shape, no score, in
+                <code>text-secondary</code>, truncating with an ellipsis at one line. This is what
+                <code>notes.md</code> already describes.</p>
+            </div>
+            <div class="rt-box">
+              <h4>The score</h4>
+              <p>Not shown. It stays in the tool result for diagnostics — the same place the
+                layer's other telemetry goes — because nothing on screen branches on it.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Four sentences: the invariant's scope, the palette's exception list, §Semantic
+            search's row, and a note in <code>retrieval-layer.md</code> that <code>score</code> is
+            diagnostic rather than displayed.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The invariant loses its "every", which is the part that made it sound like a
+            guarantee. What it gains is the ability to be wrong, which is what makes it a rule.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. The three classes that shed the requirement each keep an explanation, so no
+            result becomes less accountable — the rule just stops claiming credit for the other
+            three.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the why line measures</h2>
+    <div class="measure" id="measure-why">…</div>
+  </div>
+</section>
+
+<!-- =================================================================== KEYS -->
+<section class="screen" id="keys">
+  <div class="lede">
+    <h2 class="t-title-2">The chords</h2>
+    <p class="lede-p">
+      <code>gesture-vocabulary.md</code> §Keyboard equivalents opens with a promise: <i>"Every
+      gesture has a keyboard equivalent."</i> Nine rows follow, and the table is cross-referenced
+      by the help sheet, so it is the app's actual key map. <code>Cmd+K</code> is in it zero times.
+    </p>
+    <p class="lede-p">
+      It is in four other docs. <code>retrieval.md</code> gives it to the palette,
+      <code>tier-3-assistant.md</code> gives it to Tier 3, and <code>tier-2-contextual.md</code>
+      gives it to the contextual menu when an item is focused — which is exactly the state a user
+      is in while using the palette. The three claims overlap.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">Nine rows, one per gesture, and the entries the app actually uses.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="rt-h">gesture-vocabulary.md · keyboard equivalents</p>
+            <div class="kb">
+              <div class="kb-r"><span class="lbl">Swipe right (complete)</span><kbd>E</kbd></div>
+              <div class="kb-r"><span class="lbl">Swipe left (defer)</span><kbd>D</kbd></div>
+              <div class="kb-r"><span class="lbl">Swipe up (attach)</span><kbd>A</kbd></div>
+              <div class="kb-r"><span class="lbl">Swipe down (remove)</span><kbd>X</kbd></div>
+              <div class="kb-r"><span class="lbl">Long-press (AI menu)</span><kbd>Cmd+Enter</kbd></div>
+              <div class="kb-r"><span class="lbl">Pull down (capture)</span><kbd>C</kbd></div>
+              <div class="kb-r"><span class="lbl">Back</span><kbd>Esc</kbd></div>
+              <div class="kb-r"><span class="lbl">Zoom</span><kbd>Cmd +</kbd></div>
+              <div class="kb-r"><span class="lbl">Zoom</span><kbd>Cmd −</kbd></div>
+            </div>
+            <p class="rt-h">Elsewhere in the set</p>
+            <div class="kb">
+              <div class="kb-r"><span class="lbl">Command palette</span>
+                <kbd class="miss">Cmd+K</kbd></div>
+              <div class="kb-r"><span class="lbl">Filter sheet</span>
+                <kbd class="miss">Cmd+F</kbd></div>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The nine documented rows and the two chords the rest of the set uses.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="keys-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The set has two keyboard surfaces — the palette and the filter sheet — and the table
+            that promises completeness contains neither. They are the only two chords in the app
+            that a user has to be told, which is why their absence is the expensive kind.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">One chord, three targets</span>
+        <p class="vc-stance">Palette, Tier 3, and the focused-item menu. The third claim fires in
+          the state the first one creates.</p>
+        <span class="vc-read">cut the collision · assign, then compose</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="rt-h">Cmd+K, per each doc</p>
+            <div class="rt-r"><span class="rt-k">retrieval.md</span>
+              <span class="rt-d">"Invoked by <code>Cmd+K</code> (desktop/tablet)" — the palette</span>
+              <span class="rt-tag ov">palette</span></div>
+            <div class="rt-r"><span class="rt-k">tier-3-assistant.md</span>
+              <span class="rt-d">"Tier 3 is invoked via the command palette: Keyboard:
+                <code>Cmd+K</code>"</span>
+              <span class="rt-tag ov">tier 3</span></div>
+            <div class="rt-r"><span class="rt-k">tier-2-contextual.md</span>
+              <span class="rt-d">"Keyboard: <code>Cmd+K</code> on a focused item"</span>
+              <span class="rt-tag ov">tier 2</span></div>
+            <div class="rt-box" style="margin-top:6px">
+              <h4>Why the third claim lands inside the first</h4>
+              <p>The palette's first result is <b>preselected</b>. So by the time the palette is
+                open, an item is focused — and <code>tier-2-contextual.md</code>'s condition is
+                satisfied without the user doing anything else. Both readings fire from one
+                keystroke.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Tier 3 stops claiming a chord. Its own doc already says it is <i>"invoked via the
+            command palette"</i>, so the palette holds <code>Cmd+K</code> and Tier 3 is reached by
+            typing — which is what its fallback rule describes anyway.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The assistant loses its direct door and keeps its indirect one. That is what
+            <code>tier-3-assistant.md</code> means when it says <i>"The user does not choose 'ask
+            the assistant'"</i> — a dedicated chord contradicts the sentence one paragraph
+            below it.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>A chord is a resource with exactly one owner, and this one has three docs asserting
+            it in good faith. Each is internally consistent; none acknowledges the other two. The
+            table that owns chords is the only place the collision is visible, and the chords are
+            not in it.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The menu has two chords</span>
+        <p class="vc-stance">Same scope, same phrase — "on a focused item" — and two different
+          keys, in the two docs that own it.</p>
+        <span class="vc-read">reconcile with the matrix · one row, one key</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="rt-cols">
+              <div class="rt-box">
+                <h4>gesture-vocabulary.md</h4>
+                <p style="margin-bottom:8px">The doc that owns the keyboard equivalents.</p>
+                <kbd>Cmd+Enter</kbd>
+                <p style="margin-top:8px">"Long-press (AI menu) — <code>Cmd+Enter</code> on a
+                  focused item"</p>
+              </div>
+              <div class="rt-box">
+                <h4>tier-2-contextual.md</h4>
+                <p style="margin-bottom:8px">The doc that owns the menu.</p>
+                <kbd>Cmd+K</kbd>
+                <p style="margin-top:8px">"Keyboard: <code>Cmd+K</code> on a focused item"</p>
+              </div>
+            </div>
+            <div class="rt-r" style="border-top:1px solid var(--border-subtle)">
+              <span class="rt-k">Docs containing Cmd+Enter</span>
+              <span class="rt-d">the whole set, searched</span>
+              <span class="rt-n">1 file</span></div>
+            <div class="rt-r"><span class="rt-k">Rows the menu is granted</span>
+              <span class="rt-d">Task/Habit/Note/People lists · Calendar day · month · Inbox ·
+                Search results</span>
+              <span class="rt-n bad">8 surfaces</span></div>
+            <div class="rt-r"><span class="rt-k">Atom types its contents cover</span>
+              <span class="rt-d">Task · Event · Note · Habit</span>
+              <span class="rt-n bad">4 of 8</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The menu gets one chord. <code>Cmd+Enter</code> is the better candidate because it is
+            the row the gesture table already prints and because <code>Cmd+K</code> now belongs to
+            the palette; <code>tier-2-contextual.md</code>'s line changes to match.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Zero. The three docs' other claims are untouched: the menu is still long-press, and
+            it is still invoked on the same atoms.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The matrix grants the AI menu to <b>8</b> surfaces while the doc that specifies the
+            menu's contents covers <b>4</b> atom types. A Person, a Calendar day, an Inbox capture
+            and a Search result each get a menu whose contents no doc describes — the same shape as
+            the capture flow's Calendar gap, where a gesture is granted and its behaviour is
+            not.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Two more entry points with no row</span>
+        <p class="vc-stance">The palette's mobile door is in two prose docs and zero matrices; the
+          long-press has no surface to land on.</p>
+        <span class="vc-read">state the entry · a gesture needs a host</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="rt-h">The palette's doors</p>
+            <div class="rt-r"><span class="rt-k">Desktop · tablet</span>
+              <span class="rt-d"><code>Cmd+K</code> — in 3 docs, 0 keyboard rows</span>
+              <span class="rt-n bad">0 rows</span></div>
+            <div class="rt-r"><span class="rt-k">Mobile</span>
+              <span class="rt-d">long-press the mode switcher — in 2 docs, 0 matrix rows</span>
+              <span class="rt-n bad">0 rows</span></div>
+            <p class="rt-h">And the same gesture elsewhere</p>
+            <div class="rt-r"><span class="rt-k">On a list surface</span>
+              <span class="rt-d">the matrix has a row per surface, long-press = AI menu</span>
+              <span class="rt-n good">8 rows</span></div>
+            <div class="rt-r"><span class="rt-k">On the mode switcher</span>
+              <span class="rt-d">the rail and dock have no row in any matrix</span>
+              <span class="rt-n bad">0 rows</span></div>
+            <div class="rt-box" style="margin-top:6px">
+              <h4>Why it matters</h4>
+              <p><code>tier-3-assistant.md</code> argues the collision away — <i>"the mode switcher
+                is not an atom, so this does not collide"</i> — which is sound reasoning about a
+                surface the inventory does not list.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The keyboard table gains its two missing rows; the gesture matrix gains a row for the
+            mode switcher, which is the surface both prose docs already gesture on.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Two rows. The matrix grows past the list surfaces it was written for, which is a
+            scope change worth noting in the doc that owns it rather than a cost.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd><code>retrieval.md</code> and <code>tier-3-assistant.md</code> both describe the
+            mobile door as a gesture <i>on a control</i>, and every other gesture in the set is
+            recorded per surface. A gesture with no host surface is the mirror of a surface with
+            no gesture — the Calendar's capture problem, in reverse.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">One table, one row per chord, and the promise kept by making the table
+          complete instead of narrowing the promise.</p>
+        <span class="vc-read">synthesis · the map owns the map</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="rt-h">The chord table, corrected</p>
+            <div class="kb">
+              <div class="kb-r"><span class="lbl">Open the palette, from anywhere</span>
+                <kbd>Cmd+K</kbd></div>
+              <div class="kb-r"><span class="lbl">Open the palette, mobile</span>
+                <kbd>long-press the mode switcher</kbd></div>
+              <div class="kb-r"><span class="lbl">Focused item's menu (Tier 2)</span>
+                <kbd>Cmd+Enter</kbd></div>
+              <div class="kb-r"><span class="lbl">Filter sheet</span>
+                <kbd>Cmd+F</kbd></div>
+            </div>
+            <div class="rt-box" style="margin-top:6px">
+              <h4>And the rule that follows</h4>
+              <p>One chord, one target. <code>Cmd+K</code> is the palette; the assistant has no
+                chord because it is what the palette does when nothing else matches; the
+                focused-item menu keeps the key the table already prints.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Four rows added to one table and one line changed in
+            <code>tier-2-contextual.md</code>. The matrix gains the mode switcher; the keyboard
+            table gains <code>Cmd+K</code> and <code>Cmd+F</code>.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The table stops being "one row per gesture" and becomes "one row per binding", which
+            is what a key map is. That is a heading change, not a rewriting.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. Every added row names a binding that has appeared in the set all along; the
+            correction is that the doc which owns the map now contains the map.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the chords measure</h2>
+    <div class="measure" id="measure-keys">…</div>
+  </div>
+</section>
+
+<!-- ================================================================ OFFLINE -->
+<section class="screen" id="offline">
+  <div class="lede">
+    <h2 class="t-title-2">What degrades</h2>
+    <p class="lede-p">
+      Two sentences count the same thing. The invariant: <i>"Search works offline. <b>Only semantic
+      search may degrade</b> to keyword-only when offline."</i> The section that implements it
+      lists five features and closes: <i>"<b>Only</b> 'Ask: …' is unavailable, with a note."</i>
+    </p>
+    <p class="lede-p">
+      So one sentence admits one degradation and the other lists two. The real number is three,
+      because a whole surface in this flow is parsed by Tier 3 and appears in neither list. And the
+      one degradation both sentences name has no explanation anywhere, for a reason the same flow
+      states itself.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">Five retrieval features and what each one does with no network.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="rt-h">§Degraded search</p>
+            <div class="rt-r"><span class="rt-k">Semantic search</span>
+              <span class="rt-d">falls back to keyword, with a note</span>
+              <span class="rt-n bad">degrades</span></div>
+            <div class="rt-r"><span class="rt-k">Time machine</span>
+              <span class="rt-d">works — the log is local</span>
+              <span class="rt-n good">works</span></div>
+            <div class="rt-r"><span class="rt-k">Direct navigation</span>
+              <span class="rt-d">works — it is a link, not a query</span>
+              <span class="rt-n good">works</span></div>
+            <div class="rt-r"><span class="rt-k">Command palette</span>
+              <span class="rt-d">commands and direct matches</span>
+              <span class="rt-n good">works</span></div>
+            <div class="rt-r"><span class="rt-k">Ask (Tier 3)</span>
+              <span class="rt-d">"The assistant needs a connection."</span>
+              <span class="rt-n bad">unavailable</span></div>
+            <div class="rt-r"><span class="rt-k">Natural-language filters</span>
+              <span class="rt-d">parsed by Tier 3 — in neither list</span>
+              <span class="rt-n bad">unlisted</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. §Degraded search's five bullets, plus the sixth feature this flow defines
+            that the section does not mention.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="offline-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The section's last line uses the word <b>"Only"</b> after listing two unavailabilities
+            in the same list. And the invariant's word is <b>"degrade"</b>, which is true of a
+            keyword fallback and false of a feature that stops existing.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The feature that is not in the list</span>
+        <p class="vc-stance">Natural-language filters are Tier 3 by this doc's own sentence, and
+          Tier 3 is the surface it declares unavailable.</p>
+        <span class="vc-read">add the row · the same rule, one layer up</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="rt-box">
+              <h4>retrieval.md §Natural-language filters</h4>
+              <p><i>"These are parsed by <b>Tier 3</b> into structured queries against the retrieval
+                tools and returned as lists. The user does not construct these queries via a filter
+                UI. They type them, and Tier 3 translates."</i></p>
+            </div>
+            <div class="rt-box">
+              <h4>retrieval.md §Degraded search</h4>
+              <p><i>"Only 'Ask: …' is unavailable, with a note: 'The assistant needs a
+                connection.'"</i></p>
+            </div>
+            <p class="rt-h">Offline, for a typed query</p>
+            <div class="rt-r"><span class="rt-k">"tasks I've deferred more than 3 times"</span>
+              <span class="rt-d">needs a count over <code>task.rescheduled</code></span>
+              <span class="rt-n bad">no parser</span></div>
+            <div class="rt-r"><span class="rt-k">Keyword form of the same query</span>
+              <span class="rt-d">substring "deferred more than 3 times" matches nothing</span>
+              <span class="rt-n bad">no fallback</span></div>
+            <div class="rt-r"><span class="rt-k">What the user sees</span>
+              <span class="rt-d">a zero-result screen with an input that works</span>
+              <span class="rt-n bad">unstated</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>§Degraded search gains a sixth line: natural-language filters are unavailable
+            offline, for the same reason the assistant is, and the doc says so in the same
+            sentence.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One line. The alternative — leaving it out — is that the app's most impressive search
+            returns nothing at all in the state the invariant is most emphatic about, with no note
+            to explain it.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The invariant is <i>"Search works offline."</i> A feature that stops working offline
+            with no note is the failure mode that sentence exists to prevent. The doc's own
+            §Semantic search writes a note — <i>"Offline: keyword-only results."</i> — for a
+            partial failure, while a total one has none.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">One, two, three</span>
+        <p class="vc-stance">The invariant counts one, the section lists two, and the flow defines
+          three that behave differently without a network.</p>
+        <span class="vc-read">count the thing the same way twice</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="rt-cols">
+              <div class="rt-box">
+                <h4>§Invariants says</h4>
+                <p><b>1</b> — "only semantic search may degrade"</p>
+              </div>
+              <div class="rt-box">
+                <h4>§Degraded search says</h4>
+                <p><b>2</b> — semantic falls back, Ask is unavailable</p>
+              </div>
+            </div>
+            <div class="rt-box on">
+              <h4>The flow defines</h4>
+              <p><b>3</b> — the two above, plus natural-language filters, which are Tier 3 by this
+                doc's own specification.</p>
+            </div>
+            <div class="rt-r" style="border-top:1px solid var(--border-subtle)">
+              <span class="rt-k">Tier-3-dependent surfaces</span>
+              <span class="rt-d">Ask · natural-language filters</span>
+              <span class="rt-n">2</span></div>
+            <div class="rt-r"><span class="rt-k">Of those, in §Degraded search</span>
+              <span class="rt-d">the assistant only</span>
+              <span class="rt-n bad">1 of 2</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>One source for the count. §Degraded search becomes a table over all five features,
+            with a column for offline behaviour, and the invariant cites it instead of summarising
+            it.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Three lines of table replace one line of prose. The invariant stops being a
+            free-standing sentence and becomes a pointer, which is how the rest of this doc
+            already handles detail it does not own.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>An invariant that disagrees with the section implementing it is the specific defect
+            this set's two-doc structure is supposed to prevent. Here both docs agree about the
+            <i>fact</i> — semantic falls back — and disagree about the <i>scope</i>, which is the
+            version a reader cannot catch by checking either one alone.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The named degradation is unexplained</span>
+        <p class="vc-stance">Semantic search runs on-device. Nothing in the set says why losing the
+          radio breaks it.</p>
+        <span class="vc-read">cut the fallback · or say why it exists</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="rt-h">Three sentences, in two docs</p>
+            <div class="rt-box">
+              <h4>¬ the condition</h4>
+              <p>retrieval-layer.md: <i>"Semantic search runs <b>on-device</b> where possible.
+                <b>Only if a query requires cloud models</b> does it leave the device."</i></p>
+            </div>
+            <div class="rt-box">
+              <h4>¬ the claim</h4>
+              <p>retrieval.md §Semantic search: <i>"Semantic search runs <b>on-device</b>. If the
+                user is offline, results may fall back to keyword matching."</i></p>
+            </div>
+            <div class="rt-box">
+              <h4>¬ the question</h4>
+              <p>An offline query is not one that "requires cloud models", so by the layer's own
+                rule it never leaves the device — and an on-device search does not stop working
+                when the radio does.</p>
+            </div>
+            <div class="rt-r" style="border-top:1px solid var(--border-subtle)">
+              <span class="rt-k">Explanations for the fallback</span>
+              <span class="rt-d">first-run model download · index size · none stated</span>
+              <span class="rt-n bad">0 of 3 docs</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>One of two. Either the fallback is dropped — an on-device semantic index keeps
+            working offline, and the note becomes dead code — or the layer states the condition
+            that makes it real, which for a local vector index is almost always a model that has
+            not been downloaded yet.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Dropping it removes an entire degraded state and the note from the search screen.
+            Keeping it costs one sentence in the layer and moves the trigger from
+            <i>"offline"</i> to <i>"not yet downloaded"</i>, which is a different user
+            instruction.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd><code>retrieval-layer.md</code> gives exactly one condition for leaving the device.
+            A fallback keyed on network state contradicts it, and the contradiction is invisible
+            because the two docs are describing different things — one a capability, one a
+            behaviour — and neither restates the other's rule.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">A table over all five features, owned here, cited by the invariant.</p>
+        <span class="vc-read">synthesis · make the matrix total again</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="rt-h">Offline behaviour, per feature</p>
+            <div class="rt-r"><span class="rt-k">Command palette</span>
+              <span class="rt-d">commands and direct matches; no assistant row</span>
+              <span class="rt-n good">works</span></div>
+            <div class="rt-r"><span class="rt-k">List search</span>
+              <span class="rt-d">substring over the local projection</span>
+              <span class="rt-n good">works</span></div>
+            <div class="rt-r"><span class="rt-k">Semantic</span>
+              <span class="rt-d">keyword-only, with the note — and the trigger named</span>
+              <span class="rt-n bad">degrades</span></div>
+            <div class="rt-r"><span class="rt-k">NL filters</span>
+              <span class="rt-d">unavailable, with the same note the assistant gets</span>
+              <span class="rt-n bad">unavailable</span></div>
+            <div class="rt-r"><span class="rt-k">Time machine</span>
+              <span class="rt-d">works — it reads the log</span>
+              <span class="rt-n good">works</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Five rows replace five bullets, the sixth feature becomes a sixth row, and the
+            invariant reads: <i>"Search works offline. Semantic search and natural-language filters
+            degrade; §Degraded search is the authoritative list."</i></dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The word "only" disappears, because the app has three offline behaviours and not one.
+            Naming which two of nine features stop working is a smaller claim that survives being
+            tested.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. Every row states behaviour a feature already has; the correction is that the
+            list is total, so a reader can tell an omission from a decision — the same repair the
+            capture flow's confidence bands needed, in the one other place in this set where a set
+            of ranges was written without checking that it covers the space.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the offline matrix measures</h2>
+    <div class="measure" id="measure-offline">…</div>
+  </div>
+</section>
+
+</main>
+
+<script src="lab.js"></script>
+<script src="nav.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var screens = ['doors', 'why', 'keys', 'offline'];
+  var seen = {};
+  var tabs = document.getElementById('tabs');
+
+  tabs.addEventListener('click', function (e) {
+    var b = e.target.closest('.tab');
+    if (b && b.dataset.go) go(b.dataset.go);
+  });
+
+  function go(id) {
+    screens.forEach(function (s) {
+      var el = document.getElementById(s);
+      if (el) el.hidden = (s !== id);
+    });
+    Array.prototype.forEach.call(tabs.children, function (b) {
+      b.classList.toggle('on', b.dataset.go === id);
+    });
+    if (!seen[id]) {
+      seen[id] = true;
+      requestAnimationFrame(function () {
+        MEASURE[id]();
+        // Mechanical: the content strings above were authored with \uXXXX escape
+        // sequences, which JS renders literally. Decode them once, on first render.
+        ['measure-' + id, id + '-cost'].forEach(function (el) {
+          var node = document.getElementById(el);
+          if (node) node.innerHTML = unesc(node.innerHTML);
+        });
+      });
+    }
+  }
+
+  // The authored strings contain a literal backslash-backslash-u sequence; turn each
+  // into the character it names. Built from char codes so this file needs no escapes.
+  var BS = String.fromCharCode(92);
+  var SEQ = new RegExp(BS + BS + 'u([0-9a-fA-F]{4})', 'g');
+  function unesc(s) {
+    return String(s).replace(SEQ, function (m, h) {
+      return String.fromCharCode(parseInt(h, 16));
+    });
+  }
+
+  // Long strings are built as arrays joined, never as +-continued literals.
+  function paras(list) {
+    return list.map(function (s) { return '<p class="mf">' + s + '</p>'; }).join('');
+  }
+  function table(rows) {
+    return '<div class="rows">' + rows.map(function (r) {
+      return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+        '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+    }).join('') + '</div>';
+  }
+
+  var MEASURE = {};
+
+  // -- doors
+  MEASURE.doors = function () {
+    var rows = [
+      ['Surfaces in the retrieval table', 'surfaces.md', '4'],
+      ['"Defined in" names the definer', 'time machine → retrieval.md', '<b>1 of 4</b>'],
+      ['Command palette, owner', 'surfaces.md', 'capture.md — a consumer'],
+      ['Docs that specify the palette', 'retrieval · app-shell · tier-3', '<b>0 of 3</b> named'],
+      ['Palette, consumers that cite it', 'capture · lapsed-recovery · auth', '3 flows'],
+      ['Search results, owner', 'surfaces.md', '2 docs, omits retrieval.md'],
+      ['What retrieval.md gives it', 'rows · group order · token · empty state', 'an entire screen'],
+      ['NL filter container', 'retrieval.md §Natural-language filters', '"returned as lists"'],
+      ['NL filter container', 'surfaces.md', 'an Overlay'],
+      ['NL filter, per the palette', 'a fourth result class, in the same field', 'a third reading'],
+      ['Header search field claimed on', 'retrieval.md §Search from anywhere', 'Tasks · Notes · People'],
+      ['Modules documenting one', 'notes.md; tasks.md documents a filter button', '<b>1 of 3</b>'],
+      ['Search surfaces in surfaces.md', 'Notes only', '<b>1</b>'],
+      ['Gesture matrix rows authored', 'gesture-vocabulary.md', '13'],
+      ['Rows that render inside the table', 'Search results sits below a blank line', '<b>12</b>'],
+      ['So the Pull ↓ count is', 'capture.md now points at this matrix', '<b>6, not 5</b>']
+    ];
+
+    document.getElementById('measure-doors').innerHTML = table(rows) + paras([
+      'Three of four owners are wrong, and each is wrong differently. Row 1 names a <b>consumer</b>; row 2 names <b>two of three</b> contributors; row 3 names a container <b>no other doc repeats</b>. Only row 4 names the doc that specifies the surface. The column has no definition, so four authors read it four ways \\u2014 which is the actual defect, and the four rows are its symptoms.',
+      'The harder one is the matrix. <code>capture.md</code> was corrected to point at it as authoritative, and the matrix\'s <b>Search results</b> row sits after a blank line, so Markdown ends the table before it. Authored rows: <b>13</b>. Rendered rows: <b>12</b>. The surface that adds a sixth <code>Pull \\u2193</code> is invisible to every reader who trusts the render \\u2014 including the last lab.'
+    ]);
+
+    document.getElementById('doors-cost').innerHTML =
+      'One owner names a consumer, one omits the doc that defines the screen, and one invents a container. Plus this: the gesture matrix the capture lab made <b>authoritative</b> silently drops its Search results row \\u2014 authored <b>13</b>, rendered <b>12</b> \\u2014 so the Pull \\u2193 surface count is <b>6</b>, not the 5 that lab wrote into two docs.';
+  };
+
+  // -- why
+  MEASURE.why = function () {
+    var rows = [
+      ['Tools in retrieval-layer.md', 'query_* \\u00d78 · semantic · research · now · freshness', '12'],
+      ['Tools returning a reason', 'semantic_search \\u2192 why: string', '<b>1</b>'],
+      ['The invariant says', 'retrieval.md §Invariants', '"every result"'],
+      ['Rows in §Search results', '2 notes · 1 task · 1 event', '4'],
+      ['Carrying a "matched:" line', 'the first note only', '<b>1</b>'],
+      ['Invariant requires', 'on the same rows', '<b>4</b>'],
+      ['Rows in §The command palette', '3 commands · 2 matches · 1 ask', '6'],
+      ['Carrying a why line', 'the first three cannot have one', '<b>0</b>'],
+      ['Palette result classes, tier-3', 'commands · assistant', '2'],
+      ['Palette result classes, retrieval', 'commands · direct · assistant', '<b>3</b>'],
+      ['Class tier-3 omits', 'and calls the assistant the fallback', 'direct matches'],
+      ['Line shapes across the set', 'matched: · Matches "x" (0.87) · why:', '<b>3</b>'],
+      ['Shapes that show a score', '§Semantic search', '1 of 3'],
+      ['semantic_search returns', 'score: number', 'yes'],
+      ['Docs asserting the line', 'retrieval · notes · retrieval-layer', '3'],
+      ['Docs agreeing on its shape', 'none of them', '<b>0</b>']
+    ];
+
+    document.getElementById('measure-why').innerHTML = table(rows) + paras([
+      'The invariant cites the layer, and the layer supports <b>1</b> of its <b>12</b> tools with a reason string. Then the flow tests itself: <b>1</b> of <b>4</b> search rows has the line, and <b>0</b> of <b>6</b> palette rows do \\u2014 three of which are commands, where a reason is not missing but meaningless.',
+      'The line also has <b>3</b> documented shapes. Two of them are in the same doc, four paragraphs apart: a field label with no score, and a sentence with <code>(0.87)</code> in it. <code>semantic_search</code> returns the score, so the number exists; nothing says whether the user sees it, and nothing branches on it on screen. The capture flow prints a confidence for the same reason and then <i>acts</i> on it \\u2014 which is the difference between a fact and a decoration.'
+    ]);
+
+    document.getElementById('why-cost').innerHTML =
+      'The invariant that makes search auditable \\u2014 <b>"every result includes a why this matched line"</b> \\u2014 is backed by <b>1</b> of the layer\'s <b>12</b> tools and appears on <b>1 of 4</b> search rows and <b>0 of 6</b> palette rows in its own examples. The line itself has <b>3</b> shapes, and <b>2</b> of them disagree about whether the user sees the score.';
+  };
+
+  // -- keys
+  MEASURE.keys = function () {
+    var rows = [
+      ['Rows in the keyboard table', 'gesture-vocabulary.md §Keyboard equivalents', '9'],
+      ['Rows for Cmd+K', 'the palette · the assistant · the menu', '<b>0</b>'],
+      ['Docs claiming Cmd+K', 'retrieval · tier-3 · tier-2', '3'],
+      ['Targets Cmd+K opens', 'palette · tier 3 · tier 2 menu', '<b>3</b>'],
+      ['Docs containing Cmd+Enter', 'gesture-vocabulary.md, searched across the set', '1'],
+      ['Chords for the Tier 2 menu', 'gesture-vocabulary: Cmd+Enter · tier-2: Cmd+K', '<b>2</b>'],
+      ['Rows for Cmd+F', 'surfaces.md and tasks.md both give it a sheet', '<b>0</b>'],
+      ['Chords the app has', 'the 9 rows plus Cmd+K and Cmd+F', '<b>11</b>'],
+      ['In the table that owns them', 'of those 11', '<b>9</b>'],
+      ['Matrix rows with an AI menu', '4 lists · Calendar \\u00d72 · Inbox · Search results', '<b>8</b>'],
+      ['Atom types tier-2 covers', 'Task · Event · Note · Habit', '<b>4</b>'],
+      ['Surfaces with an undescribed menu', 'the other 4', '4'],
+      ['Mode switcher in the matrix', 'the mobile door to the palette', 'no row'],
+      ['Mode switcher in prose', 'retrieval.md and tier-3-assistant.md', '2 docs'],
+      ['Palette preselection', 'app-shell.md: first result preselected', 'always']
+    ];
+
+    document.getElementById('measure-keys').innerHTML = table(rows) + paras([
+      'The table promises "every gesture has a keyboard equivalent" and holds <b>9</b> rows. The app has <b>11</b> bindings. The two it omits are the two the user cannot guess: the palette and the filter sheet. <code>Cmd+K</code> is claimed by <b>3</b> docs for <b>3</b> different targets and appears in <b>0</b> rows.',
+      'The collision is worse than a duplicate, because the palette preselects its first result \\u2014 so the moment the palette is open, an item is focused, and <code>tier-2-contextual.md</code>\'s condition is met. One keystroke, two documented readings, and the doc that owns the map prints a <b>third</b> answer (<code>Cmd+Enter</code>) for the same menu. Separately, the menu is granted to <b>8</b> surfaces while its contents are specified for <b>4</b> atom types.'
+    ]);
+
+    document.getElementById('keys-cost').innerHTML =
+      '<b>9</b> rows for <b>11</b> bindings, and the two missing ones are the palette and the filter sheet. <code>Cmd+K</code> has <b>3</b> claimants and <b>0</b> rows; the Tier 2 menu has <b>2</b> chords for one scope; and the menu is granted to <b>8</b> surfaces with contents specified for <b>4</b>.';
+  };
+
+  // -- offline
+  MEASURE.offline = function () {
+    var rows = [
+      ['Retrieval features', 'palette · list search · semantic · filters · time machine', '5'],
+      ['Degradations the invariant admits', '§Invariants: "only semantic search"', '<b>1</b>'],
+      ['Degradations the section lists', 'semantic \\u2192 keyword · Ask unavailable', '<b>2</b>'],
+      ['Features the section omits', 'natural-language filters', '<b>1</b>'],
+      ['NL filters are parsed by', '§Natural-language filters', 'Tier 3'],
+      ['Tier-3-dependent surfaces', 'Ask · NL filters', '2'],
+      ['Of those, in §Degraded search', 'the assistant only', '<b>1 of 2</b>'],
+      ['Features that behave differently offline', 'the true count', '<b>3</b>'],
+      ['Sentences containing a false "only"', '§Degraded search, last line', '<b>1</b>'],
+      ['Notes written for a partial failure', '§Semantic search, keyword-only', '1'],
+      ['Notes written for a total failure', 'none', '<b>0</b>'],
+      ['Semantic search runs', '§Semantic search: "on-device"', 'on-device'],
+      ['It falls back when', '"the user is offline"', 'the radio'],
+      ['Layer\'s condition for leaving', '"a query requires cloud models"', 'not this'],
+      ['Explanations for the fallback', 'across all three docs', '<b>0</b>']
+    ];
+
+    document.getElementById('measure-offline').innerHTML = table(rows) + paras([
+      'Three counts of the same thing: the invariant admits <b>1</b>, the section lists <b>2</b>, and the flow defines <b>3</b>. The third is the one that matters, because it is a <i>total</i> failure with no note \\u2014 the doc writes <i>"Offline: keyword-only results"</i> for a partial one and nothing at all for a query that stops being parseable.',
+      'And the degradation the invariant <i>does</i> name has <b>0</b> explanations. Both docs say semantic search runs <b>on-device</b>; the layer gives exactly one condition for leaving the device, and an offline query is not it. Either the index needs a first-run download \\u2014 in which case the fallback is real and the trigger is mis-stated \\u2014 or an on-device search should not degrade at all and the note is unreachable. Neither doc says which.'
+    ]);
+
+    document.getElementById('offline-cost').innerHTML =
+      'Offline behaviour is <b>1</b> degradation in the invariant, <b>2</b> in the section that implements it, and <b>3</b> in the flow \\u2014 because natural-language filters are Tier 3 and appear in neither list. The one degradation both sentences do name has <b>0</b> explanations anywhere, since the flow itself says semantic search runs <b>on-device</b>.';
+  };
+
+  go('doors');
+})();
+</script>
+</body>
+</html>
