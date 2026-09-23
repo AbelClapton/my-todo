@@ -91,9 +91,13 @@ Long-press always means "do something with this specific thing."
 
 **6. Pull down — capture.**
 
-On any scrollable list: reveals the capture field at the top.
-Releasing while pulled past threshold focuses the input.
-Capturing always starts with pull-down.
+On the lists this gesture is granted to: reveals the capture field at
+the top. Releasing while pulled past threshold focuses the input.
+Which lists those are is the §Gesture-to-surface matrix below — it is
+authoritative, and **the Calendar is not on the list** (both of its
+rows carry other gestures). Pull-down is the gesture form of capture,
+not the only way into it; the command palette, the share sheet and the
+in-field microphone are the other three (`06-flows/capture.md`).
 
 **7. Swipe from left edge — back.**
 

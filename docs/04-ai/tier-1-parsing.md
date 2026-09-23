@@ -49,9 +49,13 @@ Tier 1 produces one or more structured items:
 
 ### Confidence thresholds
 
-- **≥ 0.85.** Apply silently. Show a "parsed" chip.
-- **0.60 – 0.84.** Show a confirmation chip: "Did you mean X?"
-- **< 0.60.** Do not apply. Keep the raw text as a note in the
+This doc owns the thresholds. The ranges below are **half-open and
+adjacent**, so every confidence in `0.0 – 1.0` falls in exactly one
+band and there is no value that belongs to none or to two.
+
+- **`c ≥ 0.85`.** Apply silently. Show a "parsed" chip.
+- **`0.60 ≤ c < 0.85`.** Show a confirmation chip: "Did you mean X?"
+- **`c < 0.60`.** Do not apply. Keep the raw text as a note in the
   inbox with the "[unparsed]" title prefix.
 
 The thresholds are tunable via ADR. The contract is: high
@@ -118,7 +122,8 @@ user can audit, not so they have to approve.
 
 ### The confirmation chip
 
-When confidence is 0.60–0.84:
+When confidence is in the medium band (`0.60 ≤ c < 0.85`, see
+§Confidence thresholds):
 
 - The chip appears: "Did you mean: task · due Tue Sep 29?"
 - Two buttons: "Yes" and "Edit."

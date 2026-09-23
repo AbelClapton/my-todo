@@ -13,11 +13,23 @@ happen later, either by AI or by the sort ritual.
 
 ## Invariants
 
-- Capture is available from anywhere via the pull-down gesture
-  (`03-experience/gesture-vocabulary.md`).
+- Capture is available from every list surface via the pull-down
+  gesture. The surface list is `03-experience/gesture-vocabulary.md`'s
+  gesture matrix, which is authoritative: it grants **Pull ↓** to the
+  Task, Habit, Note and People lists and to the Inbox. **The Calendar
+  has no capture gesture** — its two rows are assigned other gestures
+  — so capture from the Calendar runs through the command palette.
+  Availability means *every surface the matrix grants the gesture to*,
+  not *every screen*.
 - Capture never requires the user to pick a type. Tier 1 parses; the
   user confirms or corrects.
-- Capture is under two seconds from gesture to input field.
+- Capture is under two seconds from gesture to input field, **on the
+  entry points that begin with a gesture** — pull-down and the
+  in-field microphone. This invariant does not cover the command
+  palette (`Cmd+K`, then type, then pick a result) or the share sheet
+  (which starts in another app), because neither begins with a
+  gesture. **One** of the four entry points is measured by this
+  clause.
 - Capture works fully offline.
 - Nothing captured is lost. If parsing fails, the raw text becomes an
   inbox note.
@@ -30,8 +42,9 @@ happen later, either by AI or by the sort ritual.
 
 ### The four entry points
 
-1. **Pull-down.** On any scrollable list, pull down to reveal the
-   capture field at the top.
+1. **Pull-down.** On a list surface, pull down to reveal the capture
+   field at the top. The surface is one of the five the gesture matrix
+   grants the gesture to — see §Invariants.
 2. **Command palette.** `Cmd+K` → type → the first result is
    "Capture: <text>."
 3. **Share sheet.** From any other app, share text or a link to this
@@ -39,7 +52,10 @@ happen later, either by AI or by the sort ritual.
 4. **Voice.** Push-to-talk microphone inside the capture field, or
    from the command palette.
 
-All four feed the same pipeline.
+All four feed the same pipeline. Note that the palette is a modal
+surface (`02-architecture/app-shell.md`), so palette capture and
+gesture capture are different interactions over the same field, not
+two doors into one screen.
 
 ### The capture field
 
@@ -52,20 +68,29 @@ Below the field, Tier 1 shows a live preview of what it will parse:
     [ Buy standing desk under $500            ]  [🎤]
     → task · area: Inbox · parsed
 
-The preview updates as the user types. It is informational, not a
-confirmation. The user does not have to act on it.
+The preview updates as the user types. At high confidence it is
+informational: a live read of Tier 1's parse, not a request for
+permission, and the capture is created without the user touching it.
+At medium confidence the same position is a two-button confirmation
+("Yes" / "Edit"), and leaving it unanswered **is** a decision — the
+parse is not applied (§The pipeline step 3). "The user does not have
+to act on it" is therefore true of one band and false of the other.
+The chip's controls and its exact thresholds are owned by
+`04-ai/tier-1-parsing.md`; this doc does not restate them.
 
 ### The pipeline
 
 1. User types or speaks.
 2. Tier 1 (`04-ai/tier-1-parsing.md`) parses.
-3. Three outcomes based on confidence:
-   - **≥ 0.85.** Apply silently. Show a "parsed" chip.
-   - **0.60 – 0.84.** Show a confirmation chip: "Did you mean X?"
+3. Three outcomes based on confidence. **The bands themselves — both
+   their values and their boundaries — are owned by
+   `04-ai/tier-1-parsing.md`; this list names the outcomes, not the
+   numbers.**
+   - **High.** Apply silently. Show a "parsed" chip.
+   - **Medium.** Show a confirmation chip: "Did you mean X?"
      Left unanswered, the parse is not applied: the raw text is kept
-     as an unparsed note, with the parse still on offer
-     (`04-ai/tier-1-parsing.md`).
-   - **< 0.60.** Raw text becomes an inbox note with an
+     as an unparsed note, with the parse still on offer.
+   - **Low.** Raw text becomes an inbox note with an
      "[unparsed]" title prefix.
 4. The user can tap the chip to edit the parse, or ignore it.
 5. The parsed result is created (or noted in the inbox).
@@ -83,6 +108,29 @@ confirmation. The user does not have to act on it.
 - **Unparsed.** Created as a note attached to today's Day, with
   the title prefixed "[unparsed]." Surfaces in the inbox sort
   ritual.
+
+#### The outcome this list omits
+
+Two of the three bands fall back to the same place — an unparsed note
+in the inbox — so the inbox is where most uncertain captures end up.
+Leaving it is a supported outcome, and this list should say so:
+
+- **Left in the inbox.** The capture stays as-is. The inbox is a
+  valid resting state, not a backlog to clear; the ritual "ends when
+  the inbox is empty **or the user exits**" (§The sort ritual), and
+  exiting is a normal ending.
+
+Captures leave the inbox in exactly three ways: **classified** (a
+sort-ritual gesture, or editing the note), **removed** (swipe down,
+§The sort ritual), or **left there**. Only the first is named above.
+
+**Note the ambiguity in "Remove"** (§The sort ritual). It "takes the
+capture out of the inbox, reversibly" and does not say what happens
+to the underlying note. It cannot be a delete — a capture that was
+never parsed is a note, and `05-modules/notes.md` and ADR 0016 give
+a note no removal state, which is why the note list's own swipe-down
+was disabled. Until this is resolved, read "Remove" as *removing the
+inbox marking*, not the note.
 
 ### The inbox
 
