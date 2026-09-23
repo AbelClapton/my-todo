@@ -284,12 +284,15 @@ thirty seconds before a meeting need the time and the people first. An **Edit** 
 appears for in-app events only; a mirrored event carries its freshness annotation
 instead, and says that it is edited at the source.
 
-**The prep card is not a content of this view.** Tier 2 is user-initiated with no
-ambient mode (`04-ai/tier-2-contextual.md`), so the card cannot be present when the
-view opens. What the view carries is an **invitation** that names what the card would
-read — attendees, notes, linked tasks — and the card itself arrives in a sheet over
-this view, reached from the long-press menu where
-`03-experience/gesture-vocabulary.md` puts it.
+**The prep card is the view's second state, not part of its first.** Tier 2 has no
+ambient mode (`04-ai/tier-2-contextual.md`), so the card cannot be present when the view
+opens. What the view carries first is an **invitation** naming what the card would
+read — attendees, notes, linked tasks — and the card **lands in that place**, replacing
+the invitation, when "Prep me" is invoked from here.
+
+That is what the view's spare room is for. It draws **393px of a 728px body** before the
+card and about **590px** after, so the card the sentence promises is the thing that space
+was always going to hold.
 
 **New event.** Created via capture (`pull down`) or the `+` button
 in the header. Opens a form with title, time, attendees, and notes.

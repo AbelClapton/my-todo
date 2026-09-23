@@ -170,13 +170,32 @@ and `source` (Invariant 4).
   (see `07-infrastructure/cost-model.md`).
 - The user sees a running total in settings if they want it.
 
+### Where a result lands
+
+**A result lands in the surface it was invoked from.** Long-pressing a row in a list
+opens the contextual menu as a sheet and the result appears in a sheet with it, because
+a list row has no surface for a card to land in. Long-pressing the same atom **inside
+its detail** puts the result there instead, inline, because the detail is the surface the
+result is about.
+
+Inline matters more than it looks. `03-experience/app-shell.md` allows at most one sheet
+at a time, so a result shown in a sheet would dismiss the very detail it was asked about
+and leave the card sitting over a long-press menu. And a detail is where the room is: an
+event detail draws well under half its body before the card arrives, and the card is what
+the rest of that space is for.
+
+This is also why a detail offers an **invitation** rather than the result itself. Tier 2
+has no ambient mode (Invariants), so the card cannot be present until it is asked for.
+The invitation names what the card would read, and the card replaces it in place.
+
 ### Fallbacks
 
 If Tier 2 cannot produce a proposal (e.g., research returns
 nothing, or the model is offline):
 
-- The action shows an error message in the sheet: "Couldn't
-  complete. Try again?"
+- The action shows an error message where the result would have
+  landed — in the detail it was invoked from, or in the sheet:
+  "Couldn't complete. Try again?"
 - No partial proposals are shown.
 - The user can dismiss and try later.
 

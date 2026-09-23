@@ -1887,8 +1887,8 @@
       <article class="vc rec">
         <div class="vc-head">
           <span class="vc-name t-title-3">Recommended</span>
-          <p class="vc-stance">A screen, time-first, with the prep card as an invitation that names its sources — because Tier 2 may not run until asked.</p>
-          <span class="vc-read">impeccable's order + design taste's deletions<br>+ the record, which is the view's job</span>
+          <p class="vc-stance">A screen, time-first, shown <i>after</i> the card lands — in the room the view already had, because Tier 2 may not run until asked.</p>
+          <span class="vc-read">impeccable's order + design taste's deletions<br>+ the record + the card, in the view it read</span>
         </div>
         <div class="vc-stage">
           <div style="display: flex; flex-direction: column; gap: var(--space-5); align-items: center;">
@@ -1909,9 +1909,13 @@
                   <div class="ev-people">
                     <span class="chip">Sarah Chen</span><span class="chip">Mark Reid</span>
                   </div>
-                  <div class="ev-invite" id="ev-invite-5">
-                    <span class="grow"><b>Prep me</b><span class="sub">Reads 2 attendees · 2 notes · 1 task</span></span>
-                    <svg class="ic ic-md"><use href="#i-chevron-right"/></svg>
+                  <div class="ev-card" id="ev-card-5">
+                    <span class="k">PREP CARD · JUST NOW · from 2 attendees, 2 notes, 1 task</span>
+                    <span><span class="k">Last talked</span> — 3 weeks ago, 1 Sep</span>
+                    <span><span class="k">About Sarah</span> — “wants to review the onboarding flow before we ship”</span>
+                    <span><span class="k">Last task together</span> — Send Sarah the mockups, 8 Sep</span>
+                    <span><span class="k">Open tasks linked to Sarah</span> — 1 · Get feedback on pricing page, due Friday</span>
+                    <span><span class="k">Suggested focus</span> — follow up on the onboarding flow</span>
                   </div>
                   <div class="ev-sec">
                     <div class="ev-hd"><span>Linked notes</span><span class="n">2</span></div>
@@ -1934,8 +1938,8 @@
               <span class="t-caption" style="color: var(--text-muted);">what the prep card sits above</span>
               <div class="ev-chain">
                 <span>event detail · screen — still open</span>
-                <span>contextual menu · sheet</span>
-                <span class="on">prep card · sheet</span>
+                <span>contextual menu · sheet — dismisses, nothing lost</span>
+                <span class="on">prep card · in the view's own room</span>
               </div>
             </div>
           </div>
@@ -1943,7 +1947,7 @@
         <dl class="vc-foot">
           <div class="vc-line"><dt>Takes</dt><dd><b>Impeccable</b> for the order, which is the whole point of the surface: time, then people, then the way in. <b>Design taste</b> for the two deletions, both of which are corrections rather than preferences. <b>Frontend design</b> for the counts — but folded into one invitation rather than spread across four equal doors, because the counts are a promise about the card, not four destinations. <b>Baseline</b> for keeping the record, which the collapsing lenses both threw away.</dd></div>
           <div class="vc-line cost"><dt>Fixes</dt><dd id="ev-fixes">…</dd></div>
-          <div class="vc-line open"><dt>Still needs</dt><dd>Four corrections, and they are doc edits rather than design choices. <b>One:</b> <code>calendar.md</code>'s example says Event detail “opens as a sheet”; the sheet rule settles it the other way, so the example is wrong and <code>surfaces.md</code> is right. <b>Two:</b> the same doc lists the prep card as a <i>content of the view</i>, and Tier 2's “no ambient Tier 2” invariant says it cannot be. <b>Three:</b> the prep card has <b>three content lists that do not agree</b> — <code>people.md</code> lists attendees, last note, last completed task and <b>open tasks</b>; <code>tier-2-contextual.md</code> lists attendees, last notes, last tasks and <b>notes attached to the event</b>; and the worked example adds <b>last talked</b> and <b>suggested focus</b>, which appear in neither prose list. Seven distinct items across three lists; no two lists match and the longest has five. <b>Four:</b> <code>cost-model.md</code> names only “break down” and “find related” as on-device Tier 2 actions, so “Prep me” is presumably one of the units <code>tier-2-contextual.md</code> charges — but no doc says so, and it is the one action whose cost the user is asked to spend blind.</dd></div>
+          <div class="vc-line open"><dt>Still needs</dt><dd>Four corrections, and they are doc edits rather than design choices. <b>One:</b> <code>calendar.md</code>'s example says Event detail “opens as a sheet”; the sheet rule settles it the other way, so the example is wrong and <code>surfaces.md</code> is right. <b>Two:</b> where a Tier 2 result lands — settled here as <i>the surface it was invoked from</i>, and written into <code>tier-2-contextual.md</code>; the sheet case survives for an invocation from a list row, where there is no surface for a result to land in. <b>Three:</b> the prep card has <b>three content lists that do not agree</b> — <code>people.md</code> lists attendees, last note, last completed task and <b>open tasks</b>; <code>tier-2-contextual.md</code> lists attendees, last notes, last tasks and <b>notes attached to the event</b>; and the worked example adds <b>last talked</b> and <b>suggested focus</b>, which appear in neither prose list. Seven distinct items across three lists; no two lists match and the longest has five. <b>Four:</b> <code>cost-model.md</code> names only “break down” and “find related” as on-device Tier 2 actions, so “Prep me” is presumably one of the units <code>tier-2-contextual.md</code> charges — but no doc says so, and it is the one action whose cost the user is asked to spend blind.</dd></div>
         </dl>
       </article>
 
@@ -2610,11 +2614,26 @@
     // `scrollHeight` on an element that does not scroll returns its own height, so the
     // content's extent is measured from the first child's top to the last child's
     // bottom instead. Otherwise this row reports "728 / 728" and tells you nothing.
-    const kids = [...screenBody.children];
-    const screenContent = kids.length
-      ? Math.round(kids[kids.length - 1].getBoundingClientRect().bottom -
-                   kids[0].getBoundingClientRect().top)
-      : screenBody.scrollHeight;
+    const extent = (box) => {
+      const k = [...box.children];
+      if (!k.length) return box.scrollHeight;
+      return Math.round(k[k.length - 1].getBoundingClientRect().bottom -
+                       k[0].getBoundingClientRect().top);
+    };
+    // The recommended view's two states, measured rather than estimated. The card is
+    // hidden for exactly as long as it takes to read the invitation state, then
+    // restored — before this yields, so nothing paints in between.
+    const recCard = document.getElementById('ev-card-5');
+    const after = extent(screenBody);
+    let before = after;
+    if (recCard) {
+      const shown = recCard.style.display;
+      recCard.style.display = 'none';
+      before = extent(screenBody);
+      recCard.style.display = shown;
+    }
+    const cardH = recCard ? Math.round(recCard.getBoundingClientRect().height) : 0;
+    const screenContent = after;
 
     const cards = document.querySelectorAll('#event .ev-card').length;
     const invites = document.querySelectorAll('#event .ev-invite').length;
@@ -2635,21 +2654,23 @@
     document.getElementById('ev-fixes').innerHTML =
       'A <b>screen</b> rather than a sheet, so nothing behind it is dismissed: the prep card sits above a ' +
       'menu that sits above the event, and <b>one dismissal</b> puts you back in the meeting instead of ' +
-      'two. The order is time, then people, then the way in. The prep card becomes an <b>invitation that ' +
-      'names its sources</b>, because Tier 2 may not run until asked — so the view promises exactly what ' +
-      'it can deliver and the promise is checkable on screen. The record stays, because showing it is the ' +
-      'view’s actual job, and a mirrored event <b>says so</b> rather than offering an Edit it does not have. ' +
-      'One thing this row cannot fix: it draws <b>' + screenContent + 'px of ' + screenFrame +
-      'px</b>, and the part that would fill the rest — the prep card — is specified to arrive in a sheet of ' +
-      'its own. Whether a Tier 2 result may land <i>in</i> the view it read is a container question no lab ' +
-      'can settle, but the room is there.';
+      'two. The order is time, then people, then the way in. The prep card’s <b>invitation holds its place ' +
+      'until it is asked for</b>, so Tier 2’s no-ambient rule is kept and the view still promises exactly ' +
+      'what it can deliver — then the card replaces the invitation, taking the view from <b>' + before +
+      'px to ' + after + 'px</b> of a ' + screenFrame + 'px body. That is what the room was for, and it is a ' +
+      'second reason this has to be a screen: a sheet-hosted detail would have been dismissed before the ' +
+      'card ever arrived. The record stays, because showing it is the view’s actual job, and a mirrored ' +
+      'event <b>says so</b> rather than offering an Edit it does not have.';
 
     host.innerHTML =
       '<div><span class="n">' + Math.round(sheetH) + 'px</span>' +
       '<span class="l">Baseline’s sheet, content-sized — its 86% cap allows ' + sheetCap +
       'px, so height was never the constraint</span></div>' +
-      '<div><span class="n">' + screenContent + ' / ' + screenFrame + 'px</span>' +
-      '<span class="l">Recommended — the screen’s body, the content’s extent against the room it has</span></div>' +
+      '<div><span class="n">' + before + ' → ' + after + 'px</span>' +
+      '<span class="l">Recommended — content before and after the card lands, in a ' + screenFrame +
+      'px body</span></div>' +
+      '<div><span class="n">' + cardH + 'px</span>' +
+      '<span class="l">the card itself — the part the view had room for all along</span></div>' +
       '<div><span class="n">' + d1(plain) + ':1</span>' +
       '<span class="l">the event’s title against its ground, uncovered</span></div>' +
       '<div><span class="n">' + d1(through) + ':1</span>' +
@@ -2662,9 +2683,10 @@
       '<div><span class="n">4 / 6</span>' +
       '<span class="l">of those, the ones that can be on screen when it opens — the card needs Tier 2 to be ' +
       'asked, and this event is mirrored, so Edit does not apply either</span></div>' +
-      '<div><span class="n">' + cards + ' / ' + invites + '</span>' +
-      '<span class="l">prep cards drawn against invitations drawn — only the control arm draws a card, ' +
-      'which is the invariant it breaks</span></div>' +
+      '<div><span class="n">' + invites + ' / ' + cards + '</span>' +
+      '<span class="l">invitations drawn against cards drawn — Baseline’s card is present on arrival, ' +
+      'which is the invariant it breaks; Recommended’s is the second state, which is what the invitation ' +
+      'was holding the place for</span></div>' +
       '<div><span class="n">' + regions + '</span>' +
       '<span class="l">Frontend design — equal regions, one of them the record</span></div>' +
       '<div><span class="n">' + edits + '</span>' +
