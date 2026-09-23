@@ -57,9 +57,11 @@ based on the item type and state.
 
 **On an Event:**
 
-- **Prep me.** Returns a prep card: attendees (People), last notes
-  about them, last tasks completed with them, and any notes
-  attached to the event.
+- **Prep me.** Returns a prep card: attendees (People), when you last
+  met each of them, the last note about each, the last completed task
+  with each, open tasks linked to each, and any notes attached to the
+  event. **This list owns the card's contents** — `05-modules/people.md`
+  describes the same card and points here rather than repeating it.
 - **Find related.** Semantic search over the user's own data.
 - **Reschedule.** Proposes new times, respecting buffer and travel
   time.

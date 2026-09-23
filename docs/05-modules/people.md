@@ -99,13 +99,12 @@ A note attached to a Person is about that Person.
 
 ### The prep card
 
-Tier 2's "Prep me" action on an event produces a text card
-(`04-ai/tier-2-contextual.md`). It reads from the People graph:
-
-- Attendees (linked People).
-- Last note about each attendee.
-- Last completed task with each attendee.
-- Open tasks linked to each attendee.
+Tier 2's "Prep me" action on an event produces a text card, and
+`04-ai/tier-2-contextual.md` owns its contents. What matters here is
+that **every field of it comes out of the People graph**: attendees,
+when you last met each of them, the last note and the last completed
+task for each, and the open tasks linked to each. The card needs no
+store of its own and adds no data.
 
 This is the highest-value feature of the People module. It is
 enabled by the graph, not by a separate data store.

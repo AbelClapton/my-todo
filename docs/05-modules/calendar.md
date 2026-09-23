@@ -273,9 +273,23 @@ opens the Day view for it; pinching is the gesture that reaches the Week.
 **Year view.** As above — twelve month rows with the days in calendar order, load drawn
 as the cell's own height. Used for browsing, not acting.
 
-**Event detail.** Opened by tapping an event. Shows title, time,
-attendees (People), linked notes, prep card (via Tier 2 "Prep me"),
-and an Edit action for in-app events.
+**Event detail.** Opened by tapping an event. It is a **screen, not a sheet**, and that
+is forced rather than chosen: the view offers Tier 2 and the person picker, both of
+which are sheets, and `03-experience/app-shell.md` allows at most one sheet at a time —
+so a sheet-hosted detail would be dismissed by the very action it offers, and the prep
+card would be read over a long-press menu instead of over the meeting.
+
+It shows title, time, attendees (People) and linked notes, in that order, because the
+thirty seconds before a meeting need the time and the people first. An **Edit** action
+appears for in-app events only; a mirrored event carries its freshness annotation
+instead, and says that it is edited at the source.
+
+**The prep card is not a content of this view.** Tier 2 is user-initiated with no
+ambient mode (`04-ai/tier-2-contextual.md`), so the card cannot be present when the
+view opens. What the view carries is an **invitation** that names what the card would
+read — attendees, notes, linked tasks — and the card itself arrives in a sheet over
+this view, reached from the long-press menu where
+`03-experience/gesture-vocabulary.md` puts it.
 
 **New event.** Created via capture (`pull down`) or the `+` button
 in the header. Opens a form with title, time, attendees, and notes.
@@ -380,7 +394,9 @@ instead (`07-infrastructure/integrations.md`).
 
 **Tapping an event.**
 
-    Event detail opens as a sheet.
+    Event detail opens as a screen. It is not a sheet: it offers
+    Tier 2 and the person picker, and both of those are sheets, so a
+    sheet here would be dismissed by its own actions.
     Title, time, attendees, notes.
     Long-press on the event in the detail also opens Tier 2.
     "Prep me" produces a text card (see

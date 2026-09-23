@@ -27,7 +27,7 @@ metered where expensive.**
 | Feature | Runs on | Cost to app |
 |---|---|---|
 | Tier 1 parsing | On-device | $0 |
-| Tier 2 local actions (break down, find related) | On-device | $0 |
+| Tier 2 local actions (break down, find related, prep me) | On-device | $0 |
 | Semantic search (embeddings + retrieval) | On-device | $0 |
 | Tier 3 simple queries (state, history) | On-device | $0 |
 | Tier 3 complex queries (reasoning) | Cloud | per-call |
