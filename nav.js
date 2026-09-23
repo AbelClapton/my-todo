@@ -46,7 +46,8 @@
     { file: 'palette-lab.html',     name: 'Palette' },
     { file: 'onboarding-lab.html',  name: 'Onboarding' },
     { file: 'calendar-lab.html',    name: 'Calendar' },
-    { file: 'habits-lab.html',      name: 'Habits' }
+    { file: 'habits-lab.html',      name: 'Habits' },
+    { file: 'notes-lab.html',       name: 'Notes' }
   ];
 
   var here = (location.pathname.split('/').pop() || 'index.html').toLowerCase();

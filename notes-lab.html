@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="warm" data-mode="light" data-accent="teal"
+      data-semantics="vivid" data-type="system">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notes lab · Small Wins</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="lab.css">
+<style>
+/* ============================================================================
+   THE NOTE ROW — `row-rich`, 72px, and four things inside it.
+   Drawn without a fixed height first so its natural height can be measured.
+   ============================================================================ */
+.nt{background:var(--surface-1);border-radius:14px;overflow:hidden;border:1px solid var(--border-subtle)}
+.nt-row{display:flex;flex-direction:column;gap:2px;padding:12px 14px;
+  border-bottom:1px solid var(--border-subtle)}
+.nt-row:last-child{border-bottom:0}
+.nt-top{display:flex;align-items:baseline;gap:8px}
+.nt-title{font-size:17px;line-height:24px;font-weight:600;color:var(--text-primary);
+  flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nt-chip{font-size:13px;line-height:18px;color:var(--accent-text);white-space:nowrap;
+  display:inline-flex;align-items:center;gap:3px;flex:none}
+.nt-prev{font-size:15px;line-height:20px;color:var(--text-secondary);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.nt-stamp{font-size:13px;line-height:18px;color:var(--text-muted)}
+/* the specified box, for the row that shows what 72px does */
+.nt-row.clamped{height:72px;overflow:hidden}
+.nt-h{font-size:12px;color:var(--text-muted);margin:2px 0 0}
+
+/* the editor */
+.nt-ed{background:var(--surface-1);border-radius:14px;border:1px solid var(--border-subtle);
+  display:flex;flex-direction:column;overflow:hidden}
+.nt-ed-t{padding:14px 16px 0;font-size:20px;line-height:28px;font-weight:600;color:var(--text-primary)}
+.nt-ed-t.ghost{color:var(--text-muted)}
+.nt-ed-b{padding:10px 16px 16px;font-size:16px;line-height:24px;color:var(--text-secondary)}
+.nt-ed-b .ln{display:block}
+.nt-ed-b .h2{font-size:17px;line-height:24px;font-weight:600;color:var(--text-primary);margin-top:8px}
+.nt-ed-bar{display:flex;align-items:center;gap:8px;padding:8px 16px;
+  border-top:1px solid var(--border-subtle);background:var(--surface-2)}
+.nt-ed-bar .s{font-size:13px;line-height:18px;color:var(--text-muted);margin-left:auto}
+.nt-md{font-size:16px;line-height:24px;color:var(--text-secondary)}
+.nt-md b{color:var(--text-primary)}
+.nt-md code{font-family:var(--font-mono, ui-monospace);font-size:14px;
+  background:var(--surface-2);padding:1px 5px;border-radius:4px}
+.nt-md .q{border-left:2px solid var(--border-strong);padding-left:10px;color:var(--text-tertiary)}
+.nt-md .ck{display:flex;gap:8px;align-items:center}
+
+/* scopes, empty states, and the link */
+.nt-seg{display:flex;gap:6px}
+.nt-seg span{font-size:13px;padding:5px 11px;border-radius:8px;background:var(--surface-2);color:var(--text-secondary)}
+.nt-seg span.on{background:var(--accent-subtle);color:var(--accent-text);font-weight:600}
+.nt-empty{border:1px dashed var(--border-subtle);border-radius:14px;padding:20px;text-align:center}
+.nt-empty .h{font-size:17px;line-height:24px;font-weight:600;color:var(--text-primary)}
+.nt-empty .d{font-size:15px;line-height:20px;color:var(--text-secondary);margin-top:4px}
+.nt-empty .a{font-size:15px;line-height:20px;font-weight:600;color:var(--accent-text);margin-top:12px}
+.nt-lk{color:var(--accent-text);text-decoration:underline;text-underline-offset:2px}
+.nt-rule{margin:0;border:0;border-top:1px solid var(--border-subtle)}
+.nt-cap{font-size:12px;line-height:16px;color:var(--text-muted);margin-top:6px}
+.nt-ov{font-size:13px;line-height:18px;color:var(--warning-text);margin-top:6px}
+.nt-badge{font-size:12px;padding:2px 7px;border-radius:6px;background:var(--surface-2);
+  color:var(--text-tertiary);white-space:nowrap}
+</style>
+</head>
+<body data-lab="notes">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="i-mode-notes" viewBox="0 0 24 24"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol>
+  <symbol id="i-mode-tasks" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+</svg>
+
+<header class="masthead">
+  <p class="eyebrow">Lab 06 · the connective tissue</p>
+  <h1 class="t-title-1">Notes</h1>
+  <p class="lede-p">
+    Notes are the only module that is <b>two things at once</b> — a home (a list and an editor) and an
+    attachment every other module can have. Its spec is the shortest in the doc set and it contains
+    the app's longest list of separate surfaces.
+  </p>
+  <p class="lede-p">
+    The one component is a row specified at <b><code>row-rich</code> 72px</b> holding a title, an
+    attachment chip, <b>two</b> lines of preview, and an edit stamp. Four things. Its numbers do not
+    survive being drawn — and the module's real problem is not the row at all: it is that
+    <b>two docs describe how a note is born and they disagree</b>, one of them in its own closing
+    sentence: <i>"Does not require the user to pick anything."</i>
+  </p>
+</header>
+
+<div class="bar">
+  <nav class="tabs" id="tabs">
+    <button class="tab" data-go="row">The row</button>
+    <button class="tab" data-go="birth">Where a note comes from</button>
+    <button class="tab" data-go="editor">The editor</button>
+    <button class="tab" data-go="reading">Reading a note</button>
+  </nav>
+</div>
+
+<main id="main">
+
+<!-- ==================================================================== ROW -->
+<section class="screen" id="row">
+  <div class="lede">
+    <h2 class="t-title-2">The note row</h2>
+    <p class="lede-p">
+      <code>notes.md</code> §The note row specifies three parts:
+      <code>Title (or first line)</code> with an <code>[attachment chip]</code> opposite it, a
+      two-line preview, and <code>Edited 2d ago</code>. Row height is
+      <code>row-rich</code> (72px).
+    </p>
+    <p class="lede-p">
+      That is four lines of text. At the token sizes the doc implies — title
+      <code>type-title-3</code> 17/24, preview <code>type-callout</code> 15/20 ×2, stamp
+      <code>type-footnote</code> 13/18 — the text is <b>82px</b> before any padding. The row has
+      72px.
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">Four parts, three lines of spec, one 72px row.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="nt-top" style="align-items:center">
+              <span class="t-title-2" style="flex:1">Notes</span>
+              <svg class="ic ic-lg" style="color:var(--text-secondary)"><use href="#i-search"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-plus"/></svg>
+            </div>
+            <div class="nt-seg"><span class="on">Recent</span><span>All</span><span>Daily</span></div>
+            <div class="nt">
+              <!-- measured: no fixed height, so the natural height is readable -->
+              <div class="nt-row" id="nr-1">
+                <div class="nt-top">
+                  <span class="nt-title">Plan Sarah's birthday</span>
+                  <span class="nt-chip">→ Plan Sarah's birthday</span>
+                </div>
+                <div class="nt-prev">She mentioned wanting to try pottery. Look for beginner classes
+                  in the area.</div>
+                <div class="nt-stamp">Edited 2d ago</div>
+              </div>
+              <div class="nt-row">
+                <div class="nt-top">
+                  <span class="nt-title">Tue, Sep 22</span>
+                  <span class="nt-chip">→ Today</span>
+                </div>
+                <div class="nt-prev">Felt sharp this morning. The contractor called — tile arrives
+                  Friday. Idea: try a standing desk.</div>
+                <div class="nt-stamp">Edited 20m ago</div>
+              </div>
+            </div>
+            <p class="nt-h">Natural height is measured below; the row above is drawn at it.</p>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. Four parts, the specified type sizes, no fixed height — so the row is as tall
+            as its content.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="row-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One, and it is arithmetic rather than taste: <code>row-rich</code> is 72px and the
+            specified contents are taller. The doc names the height and the parts and never multiplies
+            them.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">The row keeps its 72px and <b>the preview becomes one line</b>.</p>
+        <span class="vc-read">the container wins · drop the part with the least job</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-4)">
+            <div class="nt-seg"><span class="on">Recent</span><span>All</span><span>Daily</span></div>
+            <div class="nt">
+              <div class="nt-row clamped">
+                <div class="nt-top">
+                  <span class="nt-title">Plan Sarah's birthday</span>
+                  <span class="nt-chip">→ Plan Sarah's birthday</span>
+                </div>
+                <div class="nt-prev" style="-webkit-line-clamp:1">She mentioned wanting to try
+                  pottery. Look for beginner classes in the area.</div>
+                <div class="nt-stamp">Edited 2d ago</div>
+              </div>
+              <div class="nt-row clamped">
+                <div class="nt-top">
+                  <span class="nt-title">Tue, Sep 22</span>
+                  <span class="nt-chip">→ Today</span>
+                </div>
+                <div class="nt-prev" style="-webkit-line-clamp:1">Felt sharp this morning. The
+                  contractor called — tile arrives Friday.</div>
+                <div class="nt-stamp">Edited 20m ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The preview goes from two lines to one. Title, chip and stamp are untouched, and the
+            row fits 72px.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A note's identity <i>is</i> its prose, and one line of <code>type-callout</code> is
+            about 45 characters at this width. Two notes that begin "Felt sharp this morning" are
+            indistinguishable, which is the failure the preview exists to prevent.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: §The note row says the preview is two lines. But it is the only line here with a
+            number attached that the row can honour, so if 72px is fixed this is the thing that
+            moves.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">The row keeps its contents and <b>grows to its measurement</b>.</p>
+        <span class="vc-read">let the content set the size · 72 is not load-bearing</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-4)">
+            <div class="nt-seg"><span class="on">Recent</span><span>All</span><span>Daily</span></div>
+            <div class="nt">
+              <div class="nt-row">
+                <div class="nt-top">
+                  <span class="nt-title">Plan Sarah's birthday</span>
+                  <span class="nt-chip">→ Plan Sarah's birthday</span>
+                </div>
+                <div class="nt-prev">She mentioned wanting to try pottery. Look for beginner classes
+                  in the area.</div>
+                <div class="nt-stamp">Edited 2d ago</div>
+              </div>
+              <div class="nt-row">
+                <div class="nt-top">
+                  <span class="nt-title">Tue, Sep 22</span>
+                  <span class="nt-chip">→ Today</span>
+                </div>
+                <div class="nt-prev">Felt sharp this morning. The contractor called — tile arrives
+                  Friday. Idea: try a standing desk.</div>
+                <div class="nt-stamp">Edited 20m ago</div>
+              </div>
+            </div>
+            <p class="nt-h">The row is <b>111px</b>, not 72. `row-rich` stops being a height and
+              becomes a minimum.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The row is declared as <code>min-height</code> rather than <code>height</code>, so the
+            four specified parts fit and the 72px becomes a floor.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd><code>row-rich</code> is a token shared with every other rich row in the app — task
+            detail previews, protocol cards. Redefining it as a minimum changes all of them, and a
+            note list at 111px per row shows <b>6 notes</b> on a 700px phone instead of 9.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: the row-height scale is a closed set of numbers (<code>row-compact</code>,
+            <code>row-default</code>, <code>row-rich</code>) and <code>components.md</code> treats
+            them as sizes, not minimums. Changing one to suit Notes re-sizes surfaces that were never
+            measured against it.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">The <b>edit stamp</b> is the part with no job. Cut it; the list is
+            round-ordered already.</p>
+        <span class="vc-read">cut the tell · "newest first" is the order, not a line</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-4)">
+            <div class="nt-seg"><span class="on">Recent</span><span>All</span><span>Daily</span></div>
+            <div class="nt">
+              <div class="nt-row clamped">
+                <div class="nt-top">
+                  <span class="nt-title">Plan Sarah's birthday</span>
+                  <span class="nt-chip">→ Plan Sarah's birthday</span>
+                </div>
+                <div class="nt-prev">She mentioned wanting to try pottery. Look for beginner classes
+                  in the area.</div>
+              </div>
+              <div class="nt-row clamped">
+                <div class="nt-top">
+                  <span class="nt-title">Tue, Sep 22</span>
+                  <span class="nt-chip">→ Today</span>
+                </div>
+                <div class="nt-prev">Felt sharp this morning. The contractor called — tile arrives
+                  Friday. Idea: try a standing desk.</div>
+              </div>
+            </div>
+            <p class="nt-h">Three parts: 24 + 40 = 64px, inside 72 with 4px of slack per side.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Deletes <code>Edited 2d ago</code>. The Recent scope is already "newest first", so the
+            order carries the recency and the row stops spending 18px restating it.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>In the <b>All</b> scope the order is a filter's order, not recency — so the stamp is the
+            only place "when was this last touched" is answerable there. Deleting it costs information
+            in exactly one of the three scopes.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: §The note row lists the stamp as a part. And <code>row-rich</code> exists
+            <i>because</i> rich rows carry metadata — a rich row with no metadata is a
+            <code>row-default</code>, which would be the honest rename.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">The stamp moves <b>onto the chip line</b>, and the row is three lines in
+            72px.</p>
+        <span class="vc-read">collapse, don't delete · the trailer is a line with room</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-4)">
+            <div class="nt-seg"><span class="on">Recent</span><span>All</span><span>Daily</span></div>
+            <div class="nt">
+              <div class="nt-row clamped">
+                <div class="nt-top">
+                  <span class="nt-title">Plan Sarah's birthday</span>
+                  <span class="nt-chip">→ Sarah</span>
+                </div>
+                <div class="nt-prev">She mentioned wanting to try pottery. Look for beginner classes
+                  in the area.</div>
+                <div class="nt-stamp">Edited 2d ago</div>
+              </div>
+              <div class="nt-row clamped">
+                <div class="nt-top">
+                  <span class="nt-title">Tue, Sep 22</span>
+                  <span class="nt-chip">→ Today</span>
+                </div>
+                <div class="nt-prev">Felt sharp this morning. The contractor called — tile arrives
+                  Friday. Idea: try a standing desk.</div>
+                <div class="nt-stamp">Edited 20m ago</div>
+              </div>
+            </div>
+            <p class="nt-h">Title 24 + preview 40 + stamp 18 = <b>82px</b>; with 12px of padding top
+              and bottom the budget is 48. So the row is <b>111px</b> — and the honest fix is the
+              header, not the prose.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing is deleted. The chip drops to its shortest form (the <i>entity</i>, not the
+            entity's full title — "→ Sarah", not "→ Plan Sarah's birthday"), and the row is accepted
+            as a 111px row. The chip's long form was the thing making the header two lines' worth of
+            width in one line.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Nothing about this makes 72px true. It trades a named token for a real height and says
+            so — which means <code>row-rich</code> needs either a new sibling or a redefinition, and
+            that is an ADR-shaped change, not a lab decision.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Which of the three is wrong: the 72px, the two-line preview, or the stamp. The lab can
+            prove they cannot coexist at the specified sizes — it cannot say which one the app should
+            lose, because that depends on whether this list is for <i>scanning</i> (cut the preview)
+            or <i>recognising</i> (cut the stamp).</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the row measures</h2>
+    <div class="measure" id="measure-row">…</div>
+  </div>
+</section>
+
+<!-- ================================================================== BIRTH -->
+<section class="screen" id="birth" hidden>
+  <div class="lede">
+    <h2 class="t-title-2">Where a note comes from</h2>
+    <p class="lede-p">
+      Two docs describe how a note is born. <code>06-flows/capture.md</code>, on what happens when
+      Tier 1 parses a capture as a note: <i>"<b>Note.</b> Created with <code>note.created</code>,
+      attached to <b>today's Day</b> by default."</i> Its closing section is called
+      <i>"What capture does not do"</i> and its first line is: <i>"<b>Does not require the user to
+      pick anything.</b>"</i>
+    </p>
+    <p class="lede-p">
+      <code>05-modules/notes.md</code>, on the Notes mode's <code>+</code>:
+      <i>"The <b>New note</b> action opens the attachment target picker rather than a bare editor,
+      because <b>a note without a parent is not a thing this app has</b>."</i>
+    </p>
+    <p class="lede-p">
+      Both are true, and they disagree about whether writing a note requires a decision. The app
+      already has a default parent for a note — <b>today's Day</b> — and the Notes mode is the one
+      place that refuses to use it.
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">Both creation paths, as specified, side by side.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-4)">
+            <p class="t-title-3" style="margin:0">Capture (from anywhere)</p>
+            <div class="nt" style="padding:14px">
+              <div class="nt-md">The thing with the stuff</div>
+              <p class="nt-cap">Tier 1 → note · attached to today's Day · 0 decisions</p>
+            </div>
+            <hr class="nt-rule">
+            <p class="t-title-3" style="margin:0">Notes mode · <code>+</code></p>
+            <div class="nt" style="padding:14px">
+              <div class="nt-top" style="margin-bottom:8px">
+                <span class="nt-title" style="font-size:15px">Where does this note live?</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div class="nt-md" style="color:var(--text-secondary)">Search a task, event, habit,
+                  protocol, day, or person…</div>
+                <div class="nt-seg" style="flex-wrap:wrap">
+                  <span>Plan Sarah's birthday</span><span>Sleep protocol</span><span>Sarah</span>
+                </div>
+                <div class="nt-top" style="align-items:center">
+                  <span class="nt-md" style="flex:1">Tue, Sep 22 — today</span>
+                  <svg class="ic ic-sm" style="color:var(--text-muted)"><use href="#i-chevron-right"/></svg>
+                </div>
+              </div>
+              <p class="nt-cap">A target must be chosen before the editor opens · 1 decision</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. Both paths at their specified behaviour.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="birth-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None individually — each doc is internally consistent. The conflict is that the same
+            action ("write a note") has two different requirements depending on the door, and
+            <code>notes.md</code>'s justification for the stricter one is the thing
+            <code>capture.md</code> disproves.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">One answer to "where does it go": <b>today's Day, always</b>, like
+            capture.</p>
+        <span class="vc-read">one rule, two doors · the default is a default</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-4)">
+            <p class="t-title-3" style="margin:0">Notes mode · <code>+</code></p>
+            <div class="nt" style="padding:14px">
+              <div class="nt-top">
+                <span class="nt-title" style="font-size:15px">Untitled</span>
+                <span class="nt-chip">→ Today</span>
+              </div>
+              <p class="nt-cap">The editor opens immediately, already attached to today's Day.</p>
+            </div>
+            <p class="nt-h">Moving it later is the existing "Move to…" affordance, which already
+              logs <code>note.reattached</code>.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The <code>+</code> opens the editor attached to today's Day, and the target picker
+            moves behind "Move to…" where it already exists for every note.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Today's Day collects every note that nobody reattached. Combined with the Recent scope
+            (14 days) that is fine; combined with the <b>Daily</b> scope it is not — see the next
+            row.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: §Scopes/Empty states says the New note action opens the target picker. Amending
+            it means one doc changes, and the change makes it agree with
+            <code>capture.md</code>.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">The <b>Daily</b> scope is the problem, not the picker. "One per day" is
+            a promise capture breaks.</p>
+        <span class="vc-read">name the filter by what it filters</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-4)">
+            <div class="nt-seg"><span>Recent</span><span>All</span><span class="on">Daily</span></div>
+            <div class="nt">
+              <div class="nt-row" style="padding:9px 14px">
+                <div class="nt-top">
+                  <span class="nt-title" style="font-size:15px">Tue, Sep 22</span>
+                  <span class="nt-badge">day.note_created</span>
+                </div>
+                <div class="nt-stamp">The one auto-created Daily Note</div>
+              </div>
+              <div class="nt-row" style="padding:9px 14px">
+                <div class="nt-top">
+                  <span class="nt-title" style="font-size:15px">[unparsed] The thing with the
+                    stuff</span>
+                  <span class="nt-badge">note.created</span>
+                </div>
+                <div class="nt-stamp">A capture, attached to the same Day</div>
+              </div>
+              <div class="nt-row" style="padding:9px 14px">
+                <div class="nt-top">
+                  <span class="nt-title" style="font-size:15px">Kitchen tile arrives Friday</span>
+                  <span class="nt-badge">note.created</span>
+                </div>
+                <div class="nt-stamp">A second capture, same Day</div>
+              </div>
+            </div>
+            <p class="nt-h">Same Day. Three notes. One of them is "the Daily Note".</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing changes — the row <i>shows</i> that "the Daily Note" and "a note attached to a
+            Day" are different things that the docs use interchangeably, and that the Daily scope's
+            "one per day" is only true if the filter is <b>which event created it</b>.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The distinction is real but invisible: nothing in the UI tells a user why one
+            day-scoped note is in the Daily list and three others are not. A scope whose filter is
+            the creation event is a scope with no user-facing name.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two. §Scopes says "Daily. Only Daily Notes, one per day" <i>and</i> that other
+            day-attached notes "appear under Recent and All" — but it also says the Daily Note
+            "appears in three places: the Notes mode (Recent <b>and</b> Daily scopes)", so the two
+            scopes are one place and the count is four. And <code>capture.md</code> attaches every
+            unparsed note to today's Day, so Recent accumulates them by the dozen.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">Delete the <b>Daily</b> scope. A day's notes are the Day's, and the Day
+            view already shows them.</p>
+        <span class="vc-read">cut the tell · a scope that re-slices one entity</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-4)">
+            <div class="nt-seg"><span class="on">Recent</span><span>All</span></div>
+            <p class="nt-cap">Two scopes. The Daily Note is reachable where a Day is: the Calendar's
+              Day view and the shutdown flow.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Deletes the Daily scope. The Daily Note keeps two of its three homes and the Notes
+            mode stops having a scope whose definition needs a paragraph.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The Daily Note is the AI's context anchor and the app's most-used note. Removing its
+            list is removing the fastest way to reach the thing the app writes to most often — and
+            the empty-state table already has a blank row for this scope, which suggests it was
+            never designed.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: §Scopes lists three scopes and §"The Daily Note" names the Notes mode as home
+            one of three. Removing it re-homes the Daily Note and needs the count rewritten
+            everywhere it appears.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">The picker stays; the <b>default is today</b>, and the default is one
+            tap away.</p>
+        <span class="vc-read">keep the door, remove the toll</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-4)">
+            <p class="t-title-3" style="margin:0">Notes mode · <code>+</code></p>
+            <div class="nt" style="padding:14px">
+              <div class="nt-top" style="margin-bottom:10px">
+                <span class="nt-title" style="font-size:15px">New note</span>
+              </div>
+              <div class="nt-seg" style="flex-wrap:wrap">
+                <span style="background:var(--accent-subtle);color:var(--accent-text);font-weight:600">
+                  Today</span>
+                <span>Pick something else…</span>
+              </div>
+              <p class="nt-cap">Typing anything opens the editor attached to Today. Choosing
+                "Pick something else…" opens the picker.</p>
+            </div>
+            <p class="nt-h">The picker is preserved for the case that needs it, and the case that
+              does not stops paying for it — which is what <code>capture.md</code> already
+              does.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The picker becomes a chip row with <b>Today</b> pre-selected and pre-focused, so
+            typing immediately attaches to today's Day and the editor opens. "Pick something else…"
+            keeps the specified picker for the minority case.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Adds a chip row to a flow the spec wanted to be a picker. And Today-as-default means
+            every hasty note lands on a Day, so the Daily scope's filter has to be the creation
+            event or the scope becomes the capture inbox — which is <i>another</i> list that already
+            exists, in the Tasks mode.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether a note's parent is a <b>choice</b> or a <b>default</b>. <code>capture.md</code>
+            says default; <code>notes.md</code> says choice; the invariant ("every note attaches to
+            exactly one entity") permits both. That is a product decision about what a note is
+            <i>for</i> — a filing act or a thought — and the two docs each assumed a different
+            answer.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the two paths measure</h2>
+    <div class="measure" id="measure-birth">…</div>
+  </div>
+</section>
+
+<!-- ================================================================= EDITOR -->
+<section class="screen" id="editor" hidden>
+  <div class="lede">
+    <h2 class="t-title-2">The editor</h2>
+    <p class="lede-p">
+      <code>notes.md</code> §Surfaces: <i>"A markdown editor. Title field at top, body below.
+      <b>Autosaves on blur and every 5 seconds while typing</b> (<code>note.edited</code>). No save
+      button."</i>
+    </p>
+    <p class="lede-p">
+      <code>02-architecture/event-log.md</code> defines <code>note.edited</code> as
+      <code>{ note_id, body, title? }</code> — <b>the whole body</b>, not a diff — and contains no
+      coalescing rule. The log is append-only. So the note editor's timer sets the log's write
+      rate, and the log's unit is a whole document.
+    </p>
+    <p class="lede-p">
+      And the module's one reversal affordance is attached to the <b>attachment</b>: reattaching
+      produces an undo toast, while the body — which saves itself, unattended, 720 times an hour —
+      has no stated way back.
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">Title, body, autosave line. No save button, no undo.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-4)">
+            <div class="nt-ed">
+              <div class="nt-top" style="padding:14px 16px 0;align-items:center">
+                <svg class="ic ic-md" style="color:var(--text-secondary)"><use href="#i-back"/></svg>
+                <span class="nt-ed-t" style="padding:0">Tue, Sep 22</span>
+              </div>
+              <div class="nt-ed-b">
+                <span class="ln">Felt sharp this morning. The contractor called — tile arrives
+                  Friday.</span>
+                <span class="ln h2">Idea</span>
+                <span class="ln">Try a standing desk. Ask <b>Mark</b> about the pricing page.</span>
+                <span class="ln">- [ ] measure the alcove</span>
+                <span class="ln ck"><svg class="ic ic-sm" style="color:var(--success-default)"><use href="#i-check"/></svg> call the contractor back</span>
+                <span class="ln q">"the tile place closes at 4"</span>
+              </div>
+              <div class="nt-ed-bar">
+                <span class="s">Edited just now · saved</span>
+              </div>
+            </div>
+            <p class="nt-h">No save button, which is right. What is not stated is what happens to the
+              previous 5 seconds.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. Title at top, markdown body, autosave indicator, no save button.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="editor-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None in this doc. But <code>event-log.md</code> requires an ADR for a new log type and
+            is silent on coalescing, so "the log grows at the speed of typing" is a consequence no
+            doc has agreed to. And <code>08-decisions/0010-undo-exemptions.md</code> names exactly
+            four confirmation actions — none of them is "editing a note".</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">Autosave <b>coalesces to one event per editing session</b>.</p>
+        <span class="vc-read">one write per intent · the log records decisions, not keystrokes</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-4)">
+            <div class="nt-ed">
+              <div class="nt-ed-t">Tue, Sep 22</div>
+              <div class="nt-ed-b">
+                <span class="ln">Felt sharp this morning. The contractor called — tile arrives
+                  Friday.</span>
+                <span class="ln h2">Idea</span>
+                <span class="ln">Try a standing desk. Ask <b>Mark</b> about the pricing page.</span>
+              </div>
+              <div class="nt-ed-bar">
+                <span class="s">Edited just now · saved</span>
+              </div>
+            </div>
+            <div class="nt" style="padding:14px">
+              <p class="nt-cap" style="margin:0">One <code>note.edited</code> on blur, carrying the
+                final body — or one on the 5s tick, superseded rather than appended.</p>
+              <p class="nt-cap">10 minutes of typing: <b>1–8 events</b> instead of
+                <b>120</b>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Coalescing: the editor still saves every 5 seconds and on blur, but consecutive saves
+            from one editing session collapse to a single log entry carrying the final body.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Coalescing forces a choice of granularity the log currently avoids: either the entry is
+            rewritten (which makes the log mutable, the one thing event sourcing forbids) or the
+            intermediate entries are marked superseded (which is a new field on
+            <code>note.edited</code>, hence an ADR).</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two. <code>event-log.md</code> is append-only with no supersede concept, and
+            <code>02-architecture/local-first.md</code>'s sync story is "send the log" — so changing
+            what the log records changes the sync payload. Both need an ADR, not a note.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">The 5-second tick writes a <b>local draft</b>; the log gets an event on
+            blur and on close.</p>
+        <span class="vc-read">separate durability from history</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-4)">
+            <div class="nt-ed">
+              <div class="nt-ed-t">Tue, Sep 22</div>
+              <div class="nt-ed-b">
+                <span class="ln">Felt sharp this morning. The contractor called — tile arrives
+                  Friday.</span>
+                <span class="ln h2">Idea</span>
+                <span class="ln">Try a standing desk. Ask <b>Mark</b> about the pricing page.</span>
+              </div>
+              <div class="nt-ed-bar">
+                <span class="s">Draft saved 2s ago · last logged 11:20</span>
+              </div>
+            </div>
+            <div class="nt" style="padding:14px">
+              <p class="nt-cap" style="margin:0">Two mechanisms, two jobs. The draft survives a
+                crash; the log records the note.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Splits "does not lose my words" from "the log has my note". The 5-second timer feeds a
+            draft; <code>note.edited</code> is written on blur and on leaving the editor.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The log now has no entry for a note that was typed and then killed — the words survive
+            in a draft but not in the record, so "every state is derived from the log" becomes false
+            for the app's most personal content.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One, and it is structural: <code>02-architecture/projections.md</code> derives every
+            projection from the log, so a draft that is not in the log is a state with no projection
+            — the note list would not show a note being written.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">Log every tick, and <b>give the body an undo</b>. The asymmetry is the
+            bug.</p>
+        <span class="vc-read">reversibility is the invariant · fix the missing one</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-4)">
+            <div class="nt-ed">
+              <div class="nt-ed-t">Tue, Sep 22</div>
+              <div class="nt-ed-b">
+                <span class="ln">Felt sharp this morning. The contractor called — tile arrives
+                  Friday.</span>
+              </div>
+              <div class="nt-ed-bar">
+                <span class="nt-chip" style="font-size:13px">Undo edit</span>
+                <span class="s">Edited just now · saved</span>
+              </div>
+            </div>
+            <p class="nt-h">Reversibility is one of the app's four invariants. The body is the only
+              content a user writes by hand, and it is the one thing with no reversal.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Adds an undo to the body, using the 5-second history the log is already keeping. The
+            ticks become the undo stack rather than a cost.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>An undo beside the save indicator is a second thing to look at in a surface whose whole
+            argument is that there is nothing to look at. And "undo edit" is ambiguous — one tick,
+            one session, or to the last blur?</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: <code>0010-undo-exemptions.md</code> lists the direct-toggle types, and
+            <code>note.edited</code> is not among them, so a toast
+            would be the fifth confirmation action. An inline undo is not a toast — but the ADR's
+            count is what defines the app's reversal budget, and this adds one without amending
+            it.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Keep the tick and the whole-body entry, and <b>say how many</b>. The
+            number is small; the silence is the problem.</p>
+        <span class="vc-read">measure it, then decide · don't coalesce blind</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-4)">
+            <div class="nt-ed">
+              <div class="nt-ed-t">Tue, Sep 22</div>
+              <div class="nt-ed-b">
+                <span class="ln">Felt sharp this morning. The contractor called — tile arrives
+                  Friday.</span>
+              </div>
+              <div class="nt-ed-bar">
+                <span class="s">Edited just now · saved</span>
+              </div>
+            </div>
+            <div class="nt" style="padding:14px">
+              <p class="nt-cap" style="margin:0">The doc gains one line: <b>what
+                <code>note.edited</code> costs</b>, and the two rules that follow from it — that
+                entries for one session are superseded rather than appended, and that the
+                retrieval layer's index is rebuilt on blur, not on tick.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>No visual change. The fix is a measurement recorded where the decision lives: one
+            <code>note.edited</code> per 5 seconds carrying the whole body, and the two consequences
+            nobody wrote down (log growth; when embeddings are recomputed).</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Writing the number down makes the append-only log's most expensive writer explicit,
+            which will eventually force the coalescing decision rather than deferring it. That is a
+            cost only if the answer is "log every tick" — in which case the doc should say
+            so.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether the log is a <b>record of states</b> or a <b>record of decisions</b>. Every
+            5-second tick is a state; "I edited the note" is a decision. The app's own framing
+            ("event-sourced", ADR 0001) implies decisions, and the note editor is the one surface
+            that would produce states — so this is the decision that tells you which the log
+            is.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the editor measures</h2>
+    <div class="measure" id="measure-editor">…</div>
+  </div>
+</section>
+
+<!-- ================================================================ READING -->
+<section class="screen" id="reading" hidden>
+  <div class="lede">
+    <h2 class="t-title-2">Reading a note</h2>
+    <p class="lede-p">
+      <code>notes.md</code> §Auto-linking: a Person's name in the body renders as a tappable link
+      only if <b>both</b> hold — the name is Title Case exactly as in the People list, <b>and</b>
+      the Person "has appeared in a prior interaction (task, event, or note) within the
+      <b>last 90 days</b>".
+    </p>
+    <p class="lede-p">
+      The first condition is about the text. The second is about <b>today's date</b>. So a note is
+      not a stable document: the same bytes render differently in October than they did in
+      September, and the user gets no signal that a link was suppressed. Nothing about the note
+      changed; the calendar moved.
+    </p>
+    <p class="lede-p">
+      Also in this section, from adjacent paragraphs: the note detail is in <b>"read-only mode"</b>
+      and <b>"tapping opens the editor"</b>; and the Daily Note "appears in three places", two of
+      which ("Recent and Daily scopes") are both inside the Notes mode.
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">One body, rendered on two different days.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-4)">
+            <div class="nt" style="padding:16px">
+              <p class="nt-cap" style="margin:0 0 8px">Read on <b>22 Sep</b> — Mark last seen 20
+                days ago</p>
+              <div class="nt-md">Ask <span class="nt-lk">Mark</span> about the pricing page before
+                Friday.</div>
+            </div>
+            <div class="nt" style="padding:16px">
+              <p class="nt-cap" style="margin:0 0 8px">Read on <b>22 Dec</b> — Mark last seen 111
+                days ago</p>
+              <div class="nt-md">Ask Mark about the pricing page before Friday.</div>
+            </div>
+            <p class="nt-h">Identical bytes. The second rendering is "correct" by the rule and
+              wrong by the reader.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The two conditions as written, applied on two dates.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="reading-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None inside this doc. But <code>02-architecture/local-first.md</code> and the
+            event-log premise is that the log is the truth and views are derived from it — and here
+            a <i>view</i> depends on a wall clock the log does not contain, so the derivation is not
+            reproducible from the log alone.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">Drop the 90-day condition; keep the case condition. <b>Links are
+            stable.</b></p>
+        <span class="vc-read">the text decides the text</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-4)">
+            <div class="nt" style="padding:16px">
+              <p class="nt-cap" style="margin:0 0 8px">Read on <b>22 Sep</b> — Mark last seen 20
+                days ago</p>
+              <div class="nt-md">Ask <span class="nt-lk">Mark</span> about the pricing page before
+                Friday.</div>
+            </div>
+            <div class="nt" style="padding:16px">
+              <p class="nt-cap" style="margin:0 0 8px">Read on <b>22 Dec</b> — Mark last seen 111
+                days ago</p>
+              <div class="nt-md">Ask <span class="nt-lk">Mark</span> about the pricing page before
+                Friday.</div>
+            </div>
+            <p class="nt-h">Case + membership in People is a property of the text and the People
+              list, both of which are in the log.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Auto-linking requires only Title Case matching a name in People. The 90-day recency
+            condition is deleted.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>This is exactly the false positive the 90-day rule was written to prevent: "Mark the
+            checkbox as done" now links to a person named Mark. <code>notes.md</code> names that
+            example itself, and its own answer is that the second condition catches it — so the
+            rule is the thing that makes the doc's example work.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One, and the doc's own example is the counter-example. Worth noting that the two
+            conditions fix two <i>different</i> errors and the doc presents them as one rule.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">Keep both conditions and <b>resolve the link once, at write time</b>.</p>
+        <span class="vc-read">the log stores the decision, not the rule</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-4)">
+            <div class="nt" style="padding:16px">
+              <p class="nt-cap" style="margin:0 0 8px">Read on <b>22 Sep</b> and <b>22 Dec</b> —
+                link resolved 22 Sep</p>
+              <div class="nt-md">Ask <span class="nt-lk">Mark</span> about the pricing page before
+                Friday.</div>
+            </div>
+            <p class="nt-h">The note is stable because the decision is stored with the note. A
+              person whose name stops matching keeps the link they had — which is what the reader
+              expects, and what a re-derivation would silently take away.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Auto-linking is evaluated when the note is written and the result is part of the
+            note's stored form, rather than recomputed on every read.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Renaming a Person now leaves every old note pointing at the old name — the link
+            becomes stale text, which is the failure mode the app has a whole discipline about
+            elsewhere (<code>data-lifecycle.md</code>'s freshness). And it contradicts
+            §Auto-linking's own framing: "Auto-linking is a display feature," which is a statement
+            that it is <i>not</i> stored.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two. §Auto-linking says it is a display feature and is "visual only; it does not
+            appear in the graph" — storing it gives it a place in the data model. And
+            <code>note.edited</code> carries <code>{ note_id, body, title? }</code>, so a stored
+            link list is a new field on an existing event, which needs an ADR.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">The link needs <b>no rule</b>: underline names in People, let the rest
+            be text.</p>
+        <span class="vc-read">cut the tell · a heuristic that needs two guards is a coin flip</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-4)">
+            <div class="nt" style="padding:16px">
+              <div class="nt-md">Mark the checkbox as done, then archive. Ask <span class="nt-lk">Mark</span>
+                about pricing.</div>
+              <p class="nt-cap">Both "Mark"s are the same rendering, and the second one is right
+                half the time.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Deletes both conditions. Any Title Case occurrence of a name in People is linked, and
+            the feature's false-positive rate is accepted rather than engineered away.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A wrong link is worse than no link: tapping "Mark" in "Mark the checkbox" opens a
+            person, which is a navigation the user did not ask for and cannot undo. That is the
+            argument for the rule, and this row does not answer it.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: §Auto-linking exists precisely to avoid the common-word case, and names the
+            words (Will, Grace, Mark, Rose). Deleting the mechanism keeps the requirement.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Split the one rule into the two it actually is, and <b>say which error
+            each catches</b>.</p>
+        <span class="vc-read">one condition per error · name the trade</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-4)">
+            <div class="nt" style="padding:16px">
+              <div class="nt-md">Ask <span class="nt-lk">Mark</span> about the pricing page before
+                Friday.</div>
+              <p class="nt-cap">Linked: Title Case <b>and</b> the person is reachable — not "seen
+                recently".</p>
+            </div>
+            <div class="nt" style="padding:16px">
+              <div class="nt-md">Mark the checkbox as done, then archive.</div>
+              <p class="nt-cap">Not linked, and the reason is <b>grammar</b>, not a 90-day window:
+                the word is sentence-initial or followed by a determiner.</p>
+            </div>
+            <p class="nt-h">The 90-day window becomes a <b>ranking</b> input for disambiguation, not
+              a gate on rendering — so it can still prefer a recently-seen Mark without making the
+              note's text a function of today.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Two conditions, each with a stated job: <b>case + People membership</b> decides
+            <i>candidate</i>; <b>position</b> ("Mark the…", start of sentence) decides
+            <i>not-a-name</i>. Recency stops gating rendering and becomes the tiebreak when two
+            people share a name — which is the case it was actually needed for and the case the doc
+            does not mention.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Replaces a 90-day number — which is at least a number — with "followed by a determiner
+            or sentence-initial", which is a linguistic heuristic with no owner and no test. And it
+            makes auto-linking's output depend on the <i>note's own grammar</i>, so a body edited
+            from "Ask Mark…" to "Mark, ask…" silently unlinks.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether a link that disappears is acceptable at all. The app's four invariants include
+            <b>freshness</b> — "the user is never shown a value that silently changed" — and a link
+            that vanishes between two readings of the same note is that failure, in the module whose
+            whole job is text. Either the rule is stable or the note needs a marker that something
+            about it is time-dependent.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What reading measures</h2>
+    <div class="measure" id="measure-reading">…</div>
+  </div>
+</section>
+
+</main>
+
+<script src="lab.js"></script>
+<script src="nav.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var screens = ['row', 'birth', 'editor', 'reading'];
+  var seen = {};
+  var tabs = document.getElementById('tabs');
+
+  tabs.addEventListener('click', function (e) {
+    var b = e.target.closest('.tab');
+    if (b && b.dataset.go) go(b.dataset.go);
+  });
+
+  function go(id) {
+    screens.forEach(function (s) {
+      var el = document.getElementById(s);
+      if (el) el.hidden = (s !== id);
+    });
+    Array.prototype.forEach.call(tabs.children, function (b) {
+      b.classList.toggle('on', b.dataset.go === id);
+    });
+    // Hidden sections measure zero, so each screen measures on first show.
+    if (!seen[id]) {
+      seen[id] = true;
+      requestAnimationFrame(function () { MEASURE[id](); });
+    }
+  }
+
+  // ---------------------------------------------------- the tokens, as numbers
+  // Read the *live* values, because the whole finding is an arithmetic claim about
+  // the type scale and the row-height scale, and both are in tokens.css.
+  function px(name) {
+    return parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name));
+  }
+
+  var MEASURE = {};
+
+  // -- the row
+  MEASURE.row = function () {
+    var host = document.getElementById('measure-row');
+
+    var title = px('--type-title-3-line');    // 24
+    var prev  = px('--type-callout-line');    // 20
+    var stamp = px('--type-footnote-line');   // 18
+    var rich  = px('--row-rich');             // 72
+    var pad   = px('--space-4');              // 12
+
+    var needed = title + prev * 2 + stamp;
+    var budget = rich - pad * 2;
+
+    // And the real thing: the row as drawn, with no height applied.
+    var drawn = document.getElementById('nr-1').getBoundingClientRect().height;
+
+    var rows = [
+      ['Title', 'type-title-3 line-height', title + 'px'],
+      ['Preview', 'type-callout line-height × 2', prev * 2 + 'px'],
+      ['Edited stamp', 'type-footnote line-height', stamp + 'px'],
+      ['Text, total', 'the three parts added up', '<b>' + needed + 'px</b>'],
+      ['row-rich', 'the specified height', rich + 'px'],
+      ['Over, unpadded', 'text vs the row itself', needed - rich + 'px'],
+      ['Content budget', 'row-rich minus 12px padding top and bottom', budget + 'px'],
+      ['Over, padded', 'text vs the budget', needed - budget + 'px'],
+      ['As drawn', 'the row with no height applied', '<b>' + Math.round(drawn) + 'px</b>'],
+      ['Chip vs title', 'the doc\u2019s own task-attached example', 'the same 21 characters'],
+      ['Rows per screen', '700px phone, one row per note',
+        Math.floor(700 / Math.round(drawn)) + ' notes']
+    ];
+
+    host.innerHTML =
+      '<div class="rows">' + rows.map(function (r) {
+        return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+          '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+      }).join('') + '</div>' +
+      '<p class="mf">Nothing here is a preference. <code>notes.md</code> names the height, names the ' +
+      'parts, and fixes the type scale in <code>03-experience/design-tokens.md</code> — and ' +
+      '<b>' + needed + 'px of text does not fit in ' + rich + 'px</b>. With the standard 12px of row ' +
+      'padding it does not fit in ' + budget + 'px either: it is <b>' + (needed - budget) +
+      'px over</b>.</p>' +
+      '<p class="mf">Which one gives is the only open question, and the lab cannot answer it: the ' +
+      '72px is shared with every rich row in the app, the two-line preview is what makes a note ' +
+      'recognisable, and the stamp is the only metadata the row carries. Each is defensible alone.</p>';
+
+    document.getElementById('row-cost').innerHTML =
+      'At the specified type sizes the row needs <b>' + needed + 'px</b> and has <b>' + rich +
+      'px</b> — <b>' + (needed - budget) + 'px</b> over its padded budget, and the row as drawn is ' +
+      '<b>' + Math.round(drawn) + 'px</b>. A 700px phone shows <b>' +
+      Math.floor(700 / Math.round(drawn)) + '</b> notes instead of <b>' +
+      Math.floor(700 / rich) + '</b>. And the header line can spend its whole width twice: the ' +
+      'doc\u2019s own example is a note whose chip is <i>"\u2192 Plan Sarah\u2019s birthday"</i> on a ' +
+      'note attached to the task <i>"Plan Sarah\u2019s birthday"</i> — the same 21 characters, ' +
+      'left and right, with a 2-line preview pressed against them.';
+  };
+
+  // -- birth
+  MEASURE.birth = function () {
+    // What actually lands on today's Day, given how the other docs behave.
+    var caps = 12;                          // the inbox ritual's own threshold
+    var notesOnToday = caps;                // every unparsed capture attaches to today
+    var dailyScopeShows = 1;                // "one per day"
+
+    var rows = [
+      ['Decisions before writing', 'capture · notes mode', '0 · 1'],
+      ['Default parent', 'capture.md', "today's Day"],
+      ['New note action', 'notes.md', 'target picker, no editor'],
+      ['Notes per Day', 'model, edge 11', 'many'],
+      ['Daily scope claim', 'notes.md §Scopes', 'one per day'],
+      ['After 12 captures', 'all unparsed, all today',
+        notesOnToday + ' notes on one Day'],
+      ['Daily scope then shows', 'if filtered by attachment', notesOnToday + ''],
+      ['Daily scope shows', 'if filtered by creation event', dailyScopeShows + ''],
+      ['Homes the doc claims for the Daily Note', '§The Daily Note', '3'],
+      ['Distinct homes, counting scopes', 'Recent and Daily are both the Notes mode', '2'],
+      ['Inbox', 'capture.md §The inbox', 'the same unparsed notes again']
+    ];
+
+    document.getElementById('measure-birth').innerHTML =
+      '<div class="rows">' + rows.map(function (r) {
+        return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+          '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+      }).join('') + '</div>' +
+      '<p class="mf">The Daily scope is the only scope whose definition is not in the scope list. ' +
+      '"One per day" is true only if the filter is <b>which event created the note</b> ' +
+      '(<code>day.note_created</code> vs <code>note.created</code>) and not the attachment — and ' +
+      'if it is the attachment, then a single capture can put ' + caps + ' notes into a scope that ' +
+      'promises one.</p>' +
+      '<p class="mf">The Daily Note is also counted twice in its own "three places": "the Notes ' +
+      'mode (Recent <b>and</b> Daily scopes)" is one mode, so the honest count is ' +
+      '<b>three surfaces across two homes</b>, or four items in a list of three.</p>';
+
+    document.getElementById('birth-cost').innerHTML =
+      'The same action has <b>0</b> decisions through one door and <b>1</b> through the other, and ' +
+      '<code>notes.md</code> justifies the stricter path with the claim <code>capture.md</code> ' +
+      'disproves in its closing line — <i>"Does not require the user to pick anything."</i> One ' +
+      'capture can also put <b>' + caps + ' notes</b> on today\u2019s Day, so a Daily scope ' +
+      'filtered by attachment promises "one per day" and delivers a dozen.';
+  };
+
+  // -- editor
+  MEASURE.editor = function () {
+    var tick = 5;                       // seconds, from notes.md
+    var minutes = 10;
+    var events = (minutes * 60) / tick;
+    var bodyChars = 300;                // a short daily note
+    var wholeBody = events * bodyChars;
+    // While typing, the body grows, so the sum is the integral, not events × final.
+    var integral = Math.round(events / 2 * bodyChars);
+
+    var rows = [
+      ['Autosave interval', 'notes.md §Surfaces', tick + 's'],
+      ['Event payload', 'event-log.md', 'the whole body'],
+      ['Events · 10 minutes typing', 'one per tick', events + ''],
+      ['Events · 1 hour typing', 'one per tick', ((60 * 60) / tick) + ''],
+      ['Chars written · 10 min', 'events × final body, upper bound',
+        wholeBody.toLocaleString()],
+      ['Chars written · 10 min', 'the integral, body growing linearly',
+        integral.toLocaleString()],
+      ['Coalescing rule', 'event-log.md', 'none stated'],
+      ['Embedding trigger', 'retrieval-layer.md', 'not stated'],
+      ['Reversal for the body', 'notes.md', 'none'],
+      ['Reversal for the attachment', '§Reattaching', 'undo toast'],
+      ['Confirmation actions', 'ADR 0010', '4, and reattach is not one']
+    ];
+
+    document.getElementById('editor-cost').innerHTML =
+      'Ten minutes of writing produces <b>' + events + '</b> <code>note.edited</code> entries, each ' +
+      'carrying the <b>whole body</b> — roughly <b>' + integral.toLocaleString() + '</b> characters ' +
+      'of log for a 300-character note. An hour produces <b>' + ((60 * 60) / tick) + '</b>. ' +
+      '<code>event-log.md</code> states no coalescing rule and <code>retrieval-layer.md</code> ' +
+      'never says when embeddings are recomputed, so nobody has decided whether typing re-embeds ' +
+      'the note. And the body — the only thing here a user writes by hand — is the one part with no ' +
+      'stated reversal, while the attachment gets an undo toast.';
+
+    document.getElementById('measure-editor').innerHTML =
+      '<div class="rows">' + rows.map(function (r) {
+        return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+          '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+      }).join('') + '</div>' +
+      '<p class="mf">The number is not the problem — <b>' + integral.toLocaleString() +
+      '</b> characters is small. The problem is that the note editor is the app\u2019s <b>only</b> ' +
+      'surface whose write rate is set by a timer, and the log is the app\u2019s source of truth, ' +
+      'and no doc connects the two. <code>event-log.md</code>\u2019s own rule — a new type needs an ' +
+      'ADR — shows the log is meant to change deliberately.</p>' +
+      '<p class="mf">The reversal asymmetry is the sharper half. Reversibility is one of the four ' +
+      'invariants. The body saves itself without asking and cannot be undone; the attachment is ' +
+      'chosen deliberately and gets an undo toast.</p>';
+  };
+
+  // -- reading
+  MEASURE.reading = function () {
+    // Auto-linking is a function of the clock, so the note's rendering has a lifetime.
+    var gate = 90;
+    var dayA = 20, dayB = 111;
+
+    var bodyChars = 52;   // "Ask Mark about the pricing page before Friday."
+    var nameChars = 4;
+
+    var rows = [
+      ['Condition 1', 'notes.md §Auto-linking', 'Title Case = People'],
+      ['Condition 2', 'the same rule', 'seen within 90 days'],
+      ['Renders linked on', 'day 20 since last contact', 'yes'],
+      ['Renders linked on', 'day 111 since last contact', 'no'],
+      ['The note itself', 'bytes changed between the two', '0'],
+      ['Signal that a link was dropped', 'anywhere in the UI', 'none'],
+      ['Machine names in People', 'the doc\u2019s own list', '4'],
+      ['Link that is wrong', 'a false positive', 'opens a person'],
+      ['Link that is missing', 'a false negative', 'reads as plain text']
+    ];
+
+    document.getElementById('reading-cost').innerHTML =
+      'The rendering is a function of <b>today</b>: the same ' + bodyChars + ' bytes link a ' +
+      nameChars + '-character name on day ' + dayA + ' and do not on day ' + dayB + '. Nothing in ' +
+      'the note changed and nothing tells the user a link was suppressed. That is the freshness ' +
+      'invariant — "never shown a value that silently changed" — applied to the one module whose ' +
+      'entire content is the value.';
+
+    document.getElementById('measure-reading').innerHTML =
+      '<div class="rows">' + rows.map(function (r) {
+        return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+          '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+      }).join('') + '</div>' +
+      '<p class="mf">The rule is two conditions doing two different jobs, presented as one. The ' +
+      '<b>case</b> condition prevents the generic-word error and depends on the text. The ' +
+      '<b>90-day</b> condition prevents the stale-person error and depends on the clock. Only one ' +
+      'of them can be satisfied at read time without making a note unstable, and the doc does not ' +
+      'say which error it cares about more.</p>' +
+      '<p class="mf">Two adjacent paragraphs also disagree about the same surface: the note detail ' +
+      'is titled <b>"read-only mode"</b> and its first sentence is <b>"Tapping opens the ' +
+      'editor."</b> A read-only view whose tap edits is an editor with a preview — which is three ' +
+      'surfaces in one heading, and the fourth place a note appears.</p>';
+  };
+
+  go('row');
+})();
+</script>
+</body>
+</html>
