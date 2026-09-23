@@ -410,6 +410,46 @@
   /* The day you are leaving, which is not the same as today. */
   .mo-cell.from { box-shadow: inset 0 0 0 1px var(--border-strong); }
 
+  /* ---- time machine -------
+     `read-only` is asserted in three docs and drawn in none. The Day view has eight
+     parts and seven of them carry an action, so the state has to neutralise something
+     and say so once. */
+  .tm-banner {
+    flex: none; display: flex; align-items: center; gap: var(--space-4);
+    padding: var(--space-3) var(--space-5);
+    background: var(--warning-subtle); color: var(--warning-text);
+    font-size: var(--type-footnote-size);
+  }
+  .tm-banner .grow { flex: 1; }
+  .tm-banner button {
+    border: 0; background: none; padding: 0; cursor: pointer;
+    font: inherit; font-weight: 500; color: inherit;
+  }
+  /* A writer that is off. Readers stay on: read-only removes writing, not reading. */
+  .tm-off { opacity: .4; pointer-events: none; }
+  .tm-rail {
+    flex: none; display: flex; align-items: center; gap: var(--space-5);
+    padding: var(--space-4) var(--space-5); border-bottom: 1px solid var(--border-default);
+  }
+  .tm-rail .grow { flex: 1; }
+  .tm-rail button {
+    border: 0; background: none; padding: 0; cursor: pointer;
+    font: inherit; font-size: var(--type-subhead-size); color: var(--text-secondary);
+  }
+  .tm-rail button[aria-current="page"] { color: var(--accent-text); font-weight: 500; }
+  .tm-scrub {
+    flex: none; display: flex; align-items: center; gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+  }
+  .tm-track {
+    position: relative; flex: 1; height: 4px;
+    border-radius: var(--radius-full); background: var(--surface-3);
+  }
+  .tm-track .knob {
+    position: absolute; top: -5px; width: 14px; height: 14px;
+    border-radius: var(--radius-full); background: var(--accent-default);
+  }
+
   /* The fit overlay: what a clipped phone is hiding, stated rather than implied.
      A screen that overflows silently is the defect these labs exist to catch, so
      the mock draws the boundary. */
@@ -463,7 +503,7 @@
       <button class="tab" data-go="event"><span class="n">5</span> Event detail</button>
       <button class="tab" data-go="new"><span class="n">6</span> New event</button>
       <button class="tab" data-go="picker"><span class="n">7</span> Date picker</button>
-      <button class="tab" data-go="machine" disabled><span class="n">8</span> Time machine</button>
+      <button class="tab" data-go="machine"><span class="n">8</span> Time machine</button>
     </div>
   </div>
 
@@ -2522,6 +2562,323 @@
     </section>
   </section>
 
+  <!-- ==================== TIME MACHINE ==================== -->
+  <section class="screen" id="machine" hidden>
+    <section class="lede">
+      <h2 class="t-title-2">Time machine — one name, three different things</h2>
+      <p>
+        Every other surface in this lab had one sentence that was too short. This one has
+        <b>three sentences in three docs, and they describe three different features</b>:
+      </p>
+      <blockquote class="t-callout" style="margin: 0 0 var(--space-5); padding-left: var(--space-5); border-left: 2px solid var(--accent-default); color: var(--text-secondary);">
+        <b>`calendar.md`</b> — “A mode within the Day view: pick a past date and see the day as it
+        was. Read-only.” <span style="color: var(--text-muted);">(day-scoped, entered from the picker)</span>
+      </blockquote>
+      <blockquote class="t-callout" style="margin: 0 0 var(--space-5); padding-left: var(--space-5); border-left: 2px solid var(--accent-default); color: var(--text-secondary);">
+        <b>`retrieval.md`</b> — “Accessible from the command palette: ‘As of [date].’ Opens <b>any
+        mode</b> as it was on that date… Read-only. A <b>‘Return to now’</b> button.”
+        <span style="color: var(--text-muted);">(app-wide, four modes)</span>
+      </blockquote>
+      <blockquote class="t-callout" style="margin: 0 0 var(--space-4); padding-left: var(--space-5); border-left: 2px solid var(--accent-default); color: var(--text-secondary);">
+        <b>`data-lifecycle.md`</b> — “Accessible from <b>search</b>: ‘show me <b>this</b> as of
+        [date].’ … Not a module. A mode within existing views.”
+        <span style="color: var(--text-muted);">(entity-scoped, one thing)</span>
+      </blockquote>
+      <p>
+        Three entries, three scopes, and none of the three mentions the other two.
+        <code>surfaces.md</code> files it once — under Calendar, as a Screen — while the doc that
+        specifies it opens <b>all four modes</b>. And “Return to now”, the only exit anyone wrote
+        down, appears in exactly one of the three.
+      </p>
+      <p>
+        Two things follow. The scope has to be settled before the layout can be. And <b>“read-only”
+        is asserted in all three docs and drawn in none</b> — the Day view's eight parts carry
+        seven actions between them, three of which write.
+      </p>
+    </section>
+
+    <div class="grid">
+
+      <!-- ================= V1 · baseline ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Baseline</span>
+          <p class="vc-stance">`calendar.md`'s reading: a mode of the Day view at a past date, with the read-only claim stated in a banner and enforced nowhere.</p>
+          <span class="vc-read">no lens · the control arm</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="tm-banner" style="background: var(--surface-2); color: var(--text-secondary);">
+                <span class="grow">Read-only · viewing Sat 14 Mar 2026</span>
+              </div>
+              <div class="day-head" data-kind="read">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Sat 14 Mar</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 11</span>
+              </div>
+              <div class="ob-body scroll" style="padding: var(--space-4) var(--space-7); gap: var(--space-6);">
+                <div class="nowline" data-kind="read" data-referent="none">
+                  <span class="t-caption" style="color: var(--text-secondary);">11:24</span>
+                  <span class="t-footnote" style="color: var(--text-primary);">Nothing scheduled</span>
+                  <span class="grow"></span>
+                </div>
+                <div class="tl" data-kind="read">
+                  <div class="slot"><span class="at">10:00</span><span class="ev"><span class="t-body">Park run</span></span></div>
+                  <div class="slot"><span class="at">15:00</span><span class="ev"><span class="t-body">Coffee with Mark</span></span></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: var(--space-5);" data-kind="write">
+                  <span class="check"></span><span class="t-body" style="flex: 1;">Meditate</span>
+                  <span class="t-footnote" style="color: var(--text-muted);">1 min</span>
+                </div>
+                <span class="metric-row" data-kind="write"><button>1</button><button>2</button><button>3</button><button aria-pressed="true">4</button><button>5</button></span>
+                <div class="note-card" data-kind="read">
+                  <span class="t-subhead">Daily note</span>
+                  <span class="t-footnote" style="color: var(--text-secondary);">Long walk, slept badly.</span>
+                </div>
+                <div class="list" data-kind="write">
+                  <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Draft the Q1 retro</span></div></div>
+                </div>
+                <div class="list" data-kind="none">
+                  <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Send the invoice</span></div></div>
+                </div>
+              </div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>Nothing. The Day view at a past date, with a banner stating the rule and every control left exactly as it is in the present.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd id="tm-cost">…</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>Three, and all three are the docs' doing. <b>One:</b> `surfaces.md` calls this a <b>Screen</b> and `calendar.md` calls it a <b>mode within the Day view</b> — those are different containers with different exits. <b>Two:</b> it opens <b>one</b> mode, and `retrieval.md` says it opens <b>four</b>. <b>Three:</b> the banner says read-only and nothing enforces it — the habit check, the metric row and the top-three checkbox all write, to a date the log says is closed.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= V2 · impeccable ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Impeccable</span>
+          <p class="vc-stance">`retrieval.md`'s reading: one state, four modes, one exit — and read-only taken at its word.</p>
+          <span class="vc-read">impeccable · operate<br>a state has one exit, and the exit is visible</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="tm-rail">
+                <span class="t-footnote" style="color: var(--warning-text);">As of 14 Mar 2026</span>
+                <span class="grow"></span>
+                <button aria-current="page">Calendar</button><button>Tasks</button><button>Habits</button><button>Notes</button>
+              </div>
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Sat 14 Mar</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 11</span>
+              </div>
+              <div class="ob-body scroll" style="padding: var(--space-4) var(--space-7); gap: var(--space-6);">
+                <div class="nowline">
+                  <span class="t-caption" style="color: var(--text-secondary);">11:24</span>
+                  <span class="t-footnote" style="color: var(--text-primary);">Nothing scheduled</span>
+                  <span class="grow"></span>
+                </div>
+                <div class="tl tm-off">
+                  <div class="slot"><span class="at">10:00</span><span class="ev"><span class="t-body">Park run</span></span></div>
+                  <div class="slot"><span class="at">15:00</span><span class="ev"><span class="t-body">Coffee with Mark</span></span></div>
+                </div>
+                <div class="tm-off" style="display: flex; align-items: center; gap: var(--space-5);">
+                  <span class="check"></span><span class="t-body" style="flex: 1;">Meditate</span>
+                </div>
+                <span class="metric-row tm-off"><button>1</button><button>2</button><button>3</button><button>4</button><button>5</button></span>
+                <div class="note-card tm-off">
+                  <span class="t-subhead">Daily note</span>
+                  <span class="t-footnote" style="color: var(--text-secondary);">Long walk, slept badly.</span>
+                </div>
+                <div class="list tm-off">
+                  <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Draft the Q1 retro</span></div></div>
+                </div>
+              </div>
+              <div class="btn btn-primary btn-block" style="margin: 0 var(--space-5) var(--space-5);">Return to now</div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd><b>One exit, stated once.</b> The mode switcher stays live so the same date follows you across all four modes, the date lives in that rail rather than in a banner, and “Return to now” is a <b>commit button</b> at the foot of the view. Every control below is off.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>It disables <b>reading</b> as well as writing. You cannot open an event to see what it was, or tap a note to read it — and a retrieval feature that will not let you retrieve anything is the opposite of one. “Read-only” is about writes; the doc never said a past day should be untouchable to the eye. And a persistent rail plus a commit button is a lot of chrome for a state most sessions never enter.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd><b>None that the docs state</b> — and that is the problem. Nothing in the three definitions says whether tapping an event in a past day is allowed, so both this row and its opposite are defensible. The absence of the rule is the defect.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= V3 · frontend design ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Frontend design</span>
+          <p class="vc-stance">“As of” is a continuum, so make it one. The date is the control.</p>
+          <span class="vc-read">frontend-design<br>the log is append-only, so every date resolves</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Sat 14 Mar</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--accent-text);">Return to now</span>
+              </div>
+              <div class="tm-scrub">
+                <span class="t-caption" style="color: var(--text-muted);">1 Jan</span>
+                <span class="tm-track"><span class="knob" style="left: 20%;"></span></span>
+                <span class="t-caption" style="color: var(--text-muted);">Now</span>
+              </div>
+              <div class="ob-body scroll" style="padding: var(--space-4) var(--space-7); gap: var(--space-6);">
+                <div class="nowline">
+                  <span class="t-caption" style="color: var(--text-secondary);">11:24</span>
+                  <span class="t-footnote" style="color: var(--text-primary);">Nothing scheduled</span>
+                  <span class="grow"></span>
+                </div>
+                <div class="tl">
+                  <div class="slot"><span class="at">10:00</span><span class="ev"><span class="t-body">Park run</span></span></div>
+                  <div class="slot"><span class="at">15:00</span><span class="ev"><span class="t-body">Coffee with Mark</span></span></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: var(--space-5);">
+                  <span class="check"></span><span class="t-body" style="flex: 1;">Meditate</span>
+                </div>
+                <div class="note-card">
+                  <span class="t-subhead">Daily note</span>
+                  <span class="t-footnote" style="color: var(--text-secondary);">Long walk, slept badly.</span>
+                </div>
+              </div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>The date becomes a <b>scrubber</b> across the year, with the knob where you are and the day recalculated as you drag. Writes stay off, reads stay on: you can still open an event, and you can still drag back past it. “Return to now” is the header's action rather than a banner's.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd><b>Every date is a projection replay.</b> `02-architecture/projections.md` loads a snapshot and replays forward from it, so a drag crosses snapshot boundaries repeatedly — the app's most expensive read, performed per frame. And a scrubber says the past is recorded footage, when it is <i>recomputed</i>: `data-lifecycle.md` has renames showing “as of that date”, so what you scrub through is a reconstruction, not a tape.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>One, and it is a real one: nothing in the three definitions makes the Time machine <b>continuous</b>. All three treat it as a date you choose — “as of [date]” — and a scrubber makes the boundary between one date and the next a thing the user can be mid-way through.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= V4 · design taste ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Design taste</span>
+          <p class="vc-stance">Delete the date-scoped version. Keep the one that answers a question people ask.</p>
+          <span class="vc-read">design-taste-frontend<br>three definitions is two too many</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Research note</span>
+              </div>
+              <div class="ob-body" style="padding: var(--space-5) var(--space-7); gap: var(--space-5);">
+                <div class="chip" style="background: var(--warning-subtle); color: var(--warning-text); align-self: flex-start;">As of 14 Mar 2026<span style="color: var(--text-secondary);"> · Return to now</span></div>
+                <span class="t-title-3">Standing desk prices</span>
+                <span class="t-body" style="color: var(--text-secondary);">Three models under €600. The Fjord is the only one with a memory preset at this price, and it was on offer until the 20th.</span>
+                <span class="t-footnote" style="color: var(--text-muted);">This is what the note said on 14 March. It has been edited twice since.</span>
+                <div class="panel" style="padding: var(--space-5);">
+                  <span class="t-caption" style="color: var(--text-muted);">LATER VERSIONS</span>
+                  <div class="t-footnote" style="margin-top: var(--space-3); color: var(--text-secondary);">2 Apr · added the Uplift</div>
+                  <div class="t-footnote" style="margin-top: var(--space-2); color: var(--text-secondary);">9 Jun · prices refreshed</div>
+                </div>
+              </div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>The date-scoped Time machine goes. What is left is the one `data-lifecycle.md` describes — “show me <b>this</b> as of [date]” — where the as-of state belongs to <b>the thing you are already looking at</b>, and a chip in its own header carries it. That also gives the later versions a home, which a whole-app date view never had.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>It deletes what `retrieval.md` calls “the app's most powerful retrieval feature”, and with it the append-only log's headline trick: the ability to answer <i>what did everything look like then</i>. Reading one note at a past date is a smaller question, and it is not the one an event-sourced app is built to answer.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>Two: `surfaces.md` lists the Time machine on the Calendar, and `retrieval.md` specifies it opening all four modes. This keeps neither.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= recommended ================= -->
+      <article class="vc rec">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Recommended</span>
+          <p class="vc-stance">One entry, two scopes, one exit — and no new chrome, because the now line is already the slot for “what is current”.</p>
+          <span class="vc-read">retrieval.md's scope + calendar.md's container<br>+ the now line, which already means this</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="tm-rail">
+                <button aria-current="page">Calendar</button><button>Tasks</button><button>Habits</button><button>Notes</button>
+                <span class="grow"></span>
+                <span class="t-caption" style="color: var(--warning-text);">14 Mar 2026</span>
+              </div>
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Sat 14 Mar</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 11</span>
+              </div>
+              <div class="ob-body scroll" style="padding: var(--space-4) var(--space-7); gap: var(--space-6);">
+                <!-- The now line, in the time state: same slot, same position, and the only
+                     part of the view whose meaning was "what is current". The Time machine
+                     does not add a banner — it changes what this line refers to. -->
+                <div class="nowline" style="padding: var(--space-3) 0; border-bottom: 1px solid var(--border-subtle);">
+                  <span class="t-footnote" style="color: var(--warning-text);">As of 14 Mar 2026</span>
+                  <span class="grow"></span>
+                  <span class="t-footnote" style="color: var(--accent-text);">Return to now</span>
+                </div>
+                <div class="tl">
+                  <div class="slot"><span class="at">10:00</span><span class="ev"><span class="t-body">Park run</span></span></div>
+                  <div class="slot"><span class="at">15:00</span><span class="ev"><span class="t-body">Coffee with Mark</span></span></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: var(--space-5);">
+                  <span class="check tm-off"></span><span class="t-body" style="flex: 1; opacity: .55;">Meditate</span>
+                  <span class="t-footnote" style="color: var(--text-muted);">1 min</span>
+                </div>
+                <span class="metric-row tm-off"><button>1</button><button>2</button><button>3</button><button>4</button><button>5</button></span>
+                <div class="note-card">
+                  <span class="t-subhead">Daily note</span>
+                  <span class="t-footnote" style="color: var(--text-secondary);">Long walk, slept badly.</span>
+                </div>
+                <div class="list">
+                  <div class="row r-default"><span class="check tm-off"></span><div class="r-main"><span class="t-body r-title" style="opacity: .55;">Draft the Q1 retro</span></div></div>
+                </div>
+              </div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Takes</dt><dd><b>`retrieval.md`</b> for the scope, because it is the only one of the three that says what the state covers — all four modes. <b>`calendar.md`</b> for the container, because a mode of a view is what a state should be, and the app-shell layers have no room for a fourth kind of surface. <b>Design taste</b> for the observation that three definitions is two too many. <b>Impeccable</b> for insisting the exit be visible — this row just declines to spend a banner and a commit button on it.</dd></div>
+          <div class="vc-line cost"><dt>Fixes</dt><dd id="tm-fixes">…</dd></div>
+          <div class="vc-line open"><dt>Still needs</dt><dd>Three corrections, and the first two are the same correction. <b>One:</b> the Time machine needs <b>one definition</b> — this row's shape is “a state with a date, covering every mode” — and `calendar.md`'s day-scoped version and `data-lifecycle.md`'s entity-scoped one should be stated as its two <i>scopes</i> rather than as two features with one name. <b>Two:</b> `surfaces.md` files it once, under Calendar, as a Screen. If it covers four modes it is listed four times, or once as a state rather than a surface. <b>Three:</b> <b>read-only needs a rule, not an adjective.</b> All three docs say it and none says what it disables — and the answer is not obvious in either direction, since disabling taps removes reading and leaving them on lets a checkbox write to a closed date. This row's answer is <b>writes off, reads on</b>, and no doc currently supports or forbids it.</dd></div>
+        </dl>
+      </article>
+
+    </div>
+
+    <section class="lede">
+      <h2 class="t-title-2">The measurement</h2>
+      <div class="panel" style="margin-top: var(--space-5);">
+        <div class="measure" id="measure-machine"></div>
+      </div>
+    </section>
+  </section>
+
 </div>
 
 <script>
@@ -2536,6 +2893,7 @@
   let eventMeasured = false;
   let newMeasured = false;
   let pickerMeasured = false;
+  let machineMeasured = false;
   // The Week cannot measure the Day once the Day is hidden — a hidden element
   // reports zero for everything — so the Day's timeline height is captured while
   // it is still on screen.
@@ -2549,6 +2907,7 @@
     if (id === 'event' && !eventMeasured) { measureEvent(); eventMeasured = true; }
     if (id === 'new' && !newMeasured) { measureNew(); newMeasured = true; }
     if (id === 'picker' && !pickerMeasured) { measurePicker(); pickerMeasured = true; }
+    if (id === 'machine' && !machineMeasured) { measureMachine(); machineMeasured = true; }
     window.scrollTo({ top: 0 });
   }
   tabs.forEach(t => t.addEventListener('click', () => go(t.dataset.go)));
@@ -3452,6 +3811,77 @@
       '<div><span class="n">0 of 12</span>' +
       '<span class="l">rows in `gesture-vocabulary.md`’s surface table covering the picker; the swipe ' +
       'that changes month elsewhere is the swipe that means “defer” everywhere</span></div>';
+  }
+
+  // ==========================================================================
+  // TIME MACHINE
+  // ==========================================================================
+
+  function measureMachine() {
+    const host = document.getElementById('measure-machine');
+    const rows = [...document.querySelectorAll('#machine .grid > article')];
+    if (!host || rows.length < 5) return;
+
+    // The Day view's parts, classified by what they do. The classification is mine and
+    // it is the argument; the counts are read off the markup rather than asserted.
+    const parts = [...rows[0].querySelectorAll('[data-kind]')];
+    const kind = k => parts.filter(p => p.dataset.kind === k).length;
+    const writes = kind('write');
+    const reads = kind('read');
+    const inert = kind('none');
+    // The now line can be read, but it refers to nothing on a past date — which is a
+    // different failure from Completed, which is inert by design.
+    const noRef = parts.filter(p => p.dataset.referent === 'none').length;
+    const actionable = writes + reads;
+
+    const off = rows[4].querySelectorAll('.tm-off').length;
+    const modes = rows[4].querySelectorAll('.tm-rail button').length;
+    const exits = rows[4].querySelectorAll('.nowline [style*="accent-text"]').length;
+
+    document.getElementById('tm-cost').innerHTML =
+      'The Day view has <b>' + parts.length + ' parts</b>. <b>' + actionable +
+      '</b> of them carry an action and <b>' + writes +
+      '</b> of those write — the habit check, the metric row, and the top-three checkbox that ' +
+      'completes a task. Only <b>Completed</b> is already inert, because `calendar.md` calls it “a ' +
+      'record, not a control”. So “read-only” is not a banner: it is a decision about <b>' +
+      actionable + ' things</b>, made in four words with nothing drawn. And ' + noRef +
+      ' of those ' + actionable + ' has no referent at all — the <b>now line</b> is specified as ' +
+      '“the current event or the next scheduled task”, and on 14 March 2026 there is no “now”.';
+
+    document.getElementById('tm-fixes').innerHTML =
+      '<b>Writes off, reads on.</b> The <b>' + off + ' writers</b> are disabled and the readers stay ' +
+      'live, because read-only is about writing — and a retrieval feature that will not let you ' +
+      'retrieve anything is the opposite of one. The scope is `retrieval.md`’s: one date across <b>' +
+      modes + ' modes</b>, so the switcher stays live and the date follows you. And <b>no new ' +
+      'chrome</b>: the now line already means “what is current in this view”, so in the time state ' +
+      'it says a date instead of a time and carries the single exit. One slot changes what it ' +
+      'refers to instead of a banner being added above it.';
+
+    host.innerHTML =
+      '<div><span class="n">' + parts.length + '</span>' +
+      '<span class="l">parts in `calendar.md`’s Day view layout, counted in the mock</span></div>' +
+      '<div><span class="n">' + actionable + ' of ' + parts.length + '</span>' +
+      '<span class="l">parts that carry an action — every one but Completed, which the doc already ' +
+      'calls “a record, not a control”</span></div>' +
+      '<div><span class="n">' + writes + '</span>' +
+      '<span class="l">of those, the ones that <b>write</b>: the habit check, the metric row, the ' +
+      'top-three completion</span></div>' +
+      '<div><span class="n">' + reads + '</span>' +
+      '<span class="l">of those, the ones that only <b>read</b> — and what a literal reading of ' +
+      'read-only would take away</span></div>' +
+      '<div><span class="n">' + actionable + '</span>' +
+      '<span class="l">controls the Baseline leaves live while its banner says read-only</span></div>' +
+      '<div><span class="n">' + off + '</span>' +
+      '<span class="l">the Recommended disables — the writers, and only the writers</span></div>' +
+      '<div><span class="n">' + noRef + '</span>' +
+      '<span class="l">readable part with no referent on a past date: the now line, in a header that ' +
+      '`doing-the-day.md` says always carries one</span></div>' +
+      '<div><span class="n">' + modes + '</span>' +
+      '<span class="l">modes `retrieval.md` says the state covers, against <b>1</b> that ' +
+      '`surfaces.md` files it under</span></div>' +
+      '<div><span class="n">' + exits + '</span>' +
+      '<span class="l">exit the Recommended states — in the slot that already tracks what is ' +
+      'current, rather than in a banner plus a commit button</span></div>';
   }
 </script>
 <script src="nav.js"></script>
