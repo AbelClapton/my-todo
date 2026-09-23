@@ -315,7 +315,27 @@ yet — the field says so rather than implying otherwise.
 
 In-app events sync to the source calendar.
 
-**Date picker.** A month grid overlay. Tap to jump to a day.
+**Date picker.** A month grid overlay, reached from the date in the day header, the defer
+sheet's "Pick a date…", and the new event form's "Other…". It draws the **same grid as
+the Month view** — 42 cells, the same classes — and follows the same rule about what a
+day carries ("The Month view layout"): *a day shows its shape, positioned by time*.
+
+It is an overlay rather than a screen, so its cells come out **1.6× shorter** and the rule
+is drawn at **5.4px an hour against the Month's 9.7**, where two marks merge below
+**22 minutes** instead of 13. That is enough to see which days are heavy and not enough to
+read when — which is the question a chooser asks. A coarser version of one rule is worth
+more than an unexplained second one.
+
+**Two fixed points, because a chooser has two:** today is ringed, and the day you are on
+is outlined. A month view has only the first.
+
+**One tap means one thing.** A tap on a day goes to that day. The Time machine is reached
+from an explicit "As of…" action rather than from the same tap.
+
+**The mirror's horizon is drawn.** `02-architecture/data-lifecycle.md` prunes mirrored
+events older than 90 days and re-fetches only when a past date is opened, so a day before
+that boundary carries a dashed underline. Choosing a date the app cannot answer for is
+then a visible choice rather than a surprise.
 
 **Time machine.** A mode within the Day view: pick a past date and
 see the day as it was. Read-only. See

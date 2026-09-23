@@ -119,6 +119,7 @@ not a general gesture.
 | Note editor | — | — | — | — | — | — | back | — |
 | Calendar (day) | — | — | — | — | AI menu (event) | — | back | zoom |
 | Calendar (month) | — | — | — | — | AI menu (day) | — | back | zoom |
+| Date picker | — | dismiss | — | — | — | — | — | — |
 | People list | — | — | attach | archive | AI menu | capture | back | — |
 | Protocol report | — | — | — | — | — | — | back | zoom |
 | Inbox | today | someday | attach | remove | AI menu | capture | back | — |
@@ -127,8 +128,12 @@ not a general gesture.
 
 A dash means the gesture is disabled on that surface.
 
-Two rows are worth reading twice:
+Three rows are worth reading twice:
 
+- **Date picker.** Neither horizontal swipe pages the month. Every calendar on
+  earth uses a horizontal swipe for that, and here it would mean “defer /
+  dismiss” — so the arrows and the keyboard page it instead, and this row records
+  the refusal rather than leaving it undecided.
 - **Note list.** Neither horizontal swipe does anything. Swipe left
   is not a delete, and swipe down has nothing to remove, because a
   Note has no removal state (ADR 0016). Notes leave Recent by aging
