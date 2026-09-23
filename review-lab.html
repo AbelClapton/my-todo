@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="warm" data-mode="light" data-accent="teal"
+      data-semantics="vivid" data-type="system">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review lab · Small Wins</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="lab.css">
+<style>
+/* the review as a note */
+.rv-note{background:var(--surface-1);border:1px solid var(--border-subtle);
+  border-radius:14px;overflow:hidden}
+.rv-edbar{display:flex;align-items:center;gap:8px;padding:9px 14px;
+  border-bottom:1px solid var(--border-subtle);background:var(--surface-2)}
+.rv-edbar .s{font-size:13px;line-height:18px;color:var(--text-muted);margin-left:auto}
+.rv-title{font-size:20px;line-height:28px;font-weight:600;color:var(--text-primary);
+  padding:14px 16px 0}
+.rv-body{padding:10px 16px 16px;font-size:16px;line-height:24px;color:var(--text-secondary)}
+.rv-body p{margin:0 0 12px}
+.rv-body .src{font-size:13px;line-height:18px;color:var(--text-tertiary);
+  border-top:1px solid var(--border-subtle);padding-top:10px;margin:0}
+.rv-body .h2{font-size:17px;line-height:24px;font-weight:600;color:var(--text-primary);margin:0 0 8px}
+.rv-h{font-size:12px;line-height:16px;color:var(--text-muted);margin:2px 0 0}
+.rv-alert{font-size:13px;line-height:18px;color:var(--warning-text);margin-top:6px}
+.rv-note2{border:1px solid var(--border-subtle);border-radius:12px;padding:14px}
+.rv-card{background:var(--surface-1);border:1px solid var(--border-subtle);
+  border-radius:12px;padding:12px 14px}
+.rv-card .t{font-size:15px;line-height:20px;font-weight:600;color:var(--text-primary);
+  display:flex;align-items:center;gap:6px}
+.rv-card .d{font-size:13px;line-height:18px;color:var(--text-tertiary);margin-top:2px}
+.rv-row{display:grid;grid-template-columns:118px minmax(0,1fr) auto;gap:10px;
+  align-items:baseline;padding:7px 0;border-bottom:1px solid var(--border-subtle)}
+.rv-row:last-child{border-bottom:0}
+.rv-k{font-size:13px;line-height:18px;color:var(--text-tertiary)}
+.rv-v{font-size:13px;line-height:18px;color:var(--text-secondary)}
+.rv-n{font-size:13px;line-height:18px;font-variant-numeric:tabular-nums;
+  color:var(--text-primary);font-weight:600}
+.rv-n.bad{color:var(--warning-text)}
+.rv-wide{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.rv-col{border:1px solid var(--border-subtle);border-radius:10px;padding:10px 12px}
+.rv-col h4{margin:0 0 6px;font-size:12px;line-height:16px;color:var(--text-muted);
+  font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.rv-said{font-size:14px;line-height:20px;color:var(--text-secondary)}
+</style>
+</head>
+<body data-lab="review">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol>
+  <symbol id="i-mode-tasks" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol>
+  <symbol id="i-mode-notes" viewBox="0 0 24 24"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+</svg>
+
+<header class="masthead">
+  <p class="eyebrow">Lab 09 · the highest-value AI output</p>
+  <h1 class="t-title-1">Review</h1>
+  <p class="lede-p">
+    <code>review.md</code> calls the weekly review <i>"the highest-value AI output in the app — it is
+    the moment the app becomes something other than a tracker."</i> It is also the app's most
+    constrained artefact: <b>two paragraphs</b>, no prescription, no ranking, no gamification, and
+    it must <b>cite its sources and their freshness</b>.
+  </p>
+  <p class="lede-p">
+    The module is well specified — the nudge, the queue merge and the tone rules all check out
+    against the attention budget, down to the exact urgency and TTL. The defects are inside the
+    document. <b>Its own example breaks three of its rules</b>, and one of them has already
+    propagated into a second doc.
+  </p>
+</header>
+
+<div class="bar">
+  <nav class="tabs" id="tabs">
+    <button class="tab" data-go="note">The review is a note</button>
+    <button class="tab" data-go="example">The example</button>
+    <button class="tab" data-go="fresh">Freshness</button>
+    <button class="tab" data-go="long">Monthly and annual</button>
+  </nav>
+</div>
+
+<main id="main">
+
+<!-- =================================================================== NOTE -->
+<section class="screen" id="note">
+  <div class="lede">
+    <h2 class="t-title-2">The review is a note</h2>
+    <p class="lede-p">
+      <code>review.md</code> §The review card gives the review three presentations — <i>a nudge</i>,
+      <i>a note</i>, <i>a calendar card</i> — and <code>surfaces.md</code> agrees, listing three rows.
+      The middle one is the one that matters, because it decides what reading the app's
+      highest-value output actually is:
+    </p>
+    <p class="lede-p" style="padding-left:16px">
+      <i>"Once opened, the review is a Note attached to the Day. It lives in the Notes mode and is
+      searchable."</i>
+    </p>
+    <p class="lede-p">
+      <code>notes.md</code> lists exactly four note surfaces: <b>List</b>, <b>Editor</b>, <b>Note
+      detail (read-only)</b> and <b>Search</b>. So the surface the review opens on is
+      <code>notes.md</code>'s <b>Editor</b> — <i>"A markdown editor. Title field at top, body below.
+      Autosaves on blur and every 5 seconds while typing. No save button."</i>
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The review, opened. It is a note, so it opens on the note editor.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="rv-edbar">
+              <svg class="ic ic-md" style="color:var(--text-secondary)"><use href="#i-back"/></svg>
+              <span class="s">Edited just now · saved</span>
+            </div>
+            <div class="rv-note">
+              <div class="rv-title">Weekly review — Sep 16–22</div>
+              <div class="rv-body">
+                <p>You completed 14 tasks, hit 24 of 28 habit checks, and attended 6 events. Sleep
+                  quality averaged 3.6, up from 3.1 the week before. Two protocols were active: Sleep
+                  (day 18) and Focus (day 4).</p>
+                <p>Tuesday was dense — 4 events plus 3 tasks due. Wednesday slipped: 2 tasks
+                  deferred twice. Your meditation habit correlated with days you walked first (6 of
+                  7). Consider putting the walk before meditation on the calendar.</p>
+                <p class="src">Sources: 18 tasks, 4 habits, 7 events, 1 protocol.<br>
+                  Calendar as of 2 hours ago. Health as of 8 hours ago.</p>
+              </div>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The review's own example body and its own Sources line, on the only surface
+            <code>notes.md</code> provides for opening a Note.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="note-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None, and that is the finding: <code>surfaces.md</code> files the review note as a
+            <b>Screen</b> and the note preview as a <b>Card</b>, but a Note's Screen <i>is</i> the
+            editor. Reading the app's highest-value output means opening a markdown editor with a
+            title field and an autosaving body.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">A generated note opens <b>read-only</b>, with an explicit door to the
+          editor.</p>
+        <span class="vc-read">a citation is not editable and still true</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="rv-edbar">
+              <svg class="ic ic-md" style="color:var(--text-secondary)"><use href="#i-back"/></svg>
+              <span class="s">Generated 22 Sep, 18:00</span>
+            </div>
+            <div class="rv-note">
+              <div class="rv-title">Weekly review — Sep 14–20</div>
+              <div class="rv-body">
+                <p>You completed 14 tasks, hit 24 of 28 habit checks, and attended 6 events. Sleep
+                  quality averaged 3.6, up from 3.1 the week before.</p>
+                <p>Tuesday was dense — 4 events plus 3 tasks due. Wednesday slipped: 2 tasks
+                  deferred twice.</p>
+                <p class="src">Sources: 14 tasks, 4 habits, 6 events, 2 protocols.<br>
+                  Generated 22 Sep 18:00 · calendar snapshot taken then.</p>
+              </div>
+            </div>
+            <p class="rv-h">Edit is a door, not the default surface. The Sources block is part of the
+              generated artefact and is not one of the editable regions.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Two things. The review opens <b>read</b>, with the editor behind an explicit action —
+            which is what <code>notes.md</code>'s own "Note detail (read-only mode)" row already
+            describes for notes attached to other entities. And the Sources block becomes part of
+            the artefact rather than the body.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It gives the Note two modes with different rules depending on who wrote it, and
+            <code>notes.md</code> would need to say that a generated note is read-only until the user
+            asks otherwise. It also contradicts §The review card's "Once opened, the review is a
+            Note" if "a Note" means the same thing a user's note is.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: <code>05-modules/protocols.md</code> establishes the opposite for the other
+            generated note — <i>"The user may edit a report; the edit is a <code>note.edited</code>
+            entry… There is no separate 'original preserved' UI."</i> Two generated notes, two
+            rules.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">The review is a note for <b>storage</b>; give it a <b>reading</b>
+          surface.</p>
+        <span class="vc-read">separate the container from the presentation</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="rv-card">
+              <div class="t">Weekly review
+                <svg class="ic ic-sm" style="color:var(--text-muted);margin-left:auto">
+                  <use href="#i-chevron-right"/></svg></div>
+              <div class="d">Sep 14–20 · 2 paragraphs · read 1m</div>
+            </div>
+            <div class="rv-note2">
+              <p class="rv-h" style="margin:0">The note stays the storage form — attached to the Day,
+              searchable, in the Notes mode. What it gains is a reader: the two paragraphs at
+              <code>type-body</code> width, the sources in a footer, and Edit behind the overflow.</p>
+            </div>
+            <p class="rv-h">The review is the app's only output that is <i>written to be read once
+              and well</i>, and its only reading surface is built for writing.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Adds a reading surface for generated notes, leaving storage unchanged. The note keeps
+            its attachment, its search presence and its editability; it stops opening on an editor
+            by default.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A fourth note surface for one kind of note — <code>notes.md</code> lists four and this
+            makes five, for a note the user did not write. And the review is <i>meant</i> to be
+            edited: it is a note because the doc wanted it to live with the user's own writing.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: <code>surfaces.md</code> lists the review note as a <b>Screen</b> distinct from
+            <code>notes.md</code>'s Editor, so the index already assumes a separate surface that no
+            doc specifies. This makes the index true.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">Don't put the review in <b>Recent</b>. It is output, not writing.</p>
+        <span class="vc-read">cut the tell · a list of your own notes</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="rv-card">
+              <div class="t">Recent <span style="margin-left:auto;font-size:12px;
+                color:var(--text-muted);font-weight:400">your notes only</span></div>
+            </div>
+            <div class="rv-note2">
+              <p class="rv-h" style="margin:0">Reviews move to their own list — the existing
+                <b>Daily</b> scope already holds day-attached notes, and
+                <code>notes.md</code> already says notes attached by other flows appear under Recent
+                and All. This makes generated notes a scope rather than prose the user's own notes
+                share a list with.</p>
+              <p class="rv-h">Cost: the review stops being discoverable beside the writing it is
+                about, and a user who never opens the new scope never finds their review again.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Generated notes leave <b>Recent</b>, which is defined as "Notes edited in the last 14
+            days" — a definition the review satisfies while belonging to the app rather than the
+            user.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Recent is the Notes mode's default scope. Moving reviews out of it means the app's
+            highest-value output is on a secondary list, and the doc currently argues the opposite:
+            the review <i>lives</i> in the Notes mode precisely so it sits beside the user's
+            writing.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two: §The review card says the review "lives in the Notes mode and is searchable", and
+            <code>notes.md</code>'s Daily scope explicitly anticipates day-attached notes by other
+            flows appearing under Recent and All. Both docs put it there deliberately.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Keep it a note, and give the <b>Sources block</b> a rule.</p>
+        <span class="vc-read">one generated-note rule for both generated notes</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="rv-note2">
+              <p class="rv-h" style="margin:0">The fix is one rule in <code>notes.md</code>, applied
+                to both generated notes (the review and the protocol report), and one line in each:</p>
+              <p class="rv-said" style="margin-top:8px">"A <b>generated</b> note's Sources block is
+                part of the artefact, not the body. It is editable, and
+                <code>note.edited</code> records the change — but the block is rendered from the
+                event's own metadata, so an edit to it is a correction the user can see, not a
+                silent one."</p>
+            </div>
+            <div class="rv-note">
+              <div class="rv-title" style="font-size:17px">Weekly review — Sep 14–20</div>
+              <div class="rv-body" style="padding-bottom:10px">
+                <p style="font-size:14px;line-height:20px;margin-bottom:0">…two paragraphs…</p>
+                <p class="src">Sources: 14 tasks, 4 habits, 6 events, 2 protocols.<br>
+                  Generated 22 Sep 18:00. Freshness as recorded at generation.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing about the surfaces. One shared rule for generated notes, and a Sources block
+            that says <b>what it is</b> — a record taken at generation — instead of asserting a
+            freshness that decays. Invariant 4 is satisfied and stays satisfied.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It concedes that a generated note's citation can be edited, which means the invariant
+            is enforced by convention rather than by the model. And a block "rendered from the
+            event's own metadata" is a new rendering path for a note body part — the app's only
+            non-markdown region inside one.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether the review is the user's note or the app's. Every surface decision above
+            follows from that one, and the doc leans both ways: the review <i>lives with the user's
+            writing</i> (so it is theirs) and it <i>cites its sources</i> (so it is a record). The
+            lab can show the consequence of each — there is no reading that satisfies both, because
+            a note the user owns is a note the user can change.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the note measures</h2>
+    <div class="measure" id="measure-note">…</div>
+  </div>
+</section>
+
+<!-- ================================================================ EXAMPLE -->
+<section class="screen" id="example">
+  <div class="lede">
+    <h2 class="t-title-2">The example</h2>
+    <p class="lede-p">
+      A spec's worked example is its test case. <code>review.md</code> has two of them — §Review
+      structure and §Examples — and they use the same block. It breaks three of the doc's own rules,
+      and each break is checkable against the doc's own words.
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The example block, with the doc's rules beside it.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="rv-col">
+              <h4>The example says</h4>
+              <p class="rv-said">14 tasks · 24 of 28 habit checks · 6 events · “Two protocols were
+                active: Sleep and Focus”</p>
+              <p class="rv-said" style="margin-top:6px">“Consider putting the walk before meditation
+                on the calendar.”</p>
+              <p class="rv-said" style="margin-top:6px">Title: “Weekly review — Sep 16–22”</p>
+            </div>
+            <div class="rv-col">
+              <h4>Its own Sources line says</h4>
+              <p class="rv-said">Sources: 18 tasks, 4 habits, 7 events, 1 protocol</p>
+            </div>
+            <div class="rv-col">
+              <h4>The doc says</h4>
+              <p class="rv-said">“The review does not: Prescribe actions.”</p>
+              <p class="rv-said" style="margin-top:6px">Fires “weekly, at the user's configured
+                review time (default: Sunday 18:00 local)”</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The example and the rules it is supposed to demonstrate, read together.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="example-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Three, all internal. The Sources line is the review's <b>Invariant 4 citation</b> and
+            four of its five numbers disagree with the paragraph above it. The second paragraph
+            prescribes an action the content rules forbid. And the date window is not a week the
+            Sunday-18:00 rule can produce.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">The Sources line is <b>derived</b>, so it cannot disagree.</p>
+        <span class="vc-read">one source of truth per number</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="rv-row"><span class="rv-k">Tasks completed</span>
+              <span class="rv-v">the count in paragraph 1</span><span class="rv-n">14</span></div>
+            <div class="rv-row"><span class="rv-k">Habit checks</span>
+              <span class="rv-v">the same count</span><span class="rv-n">24/28</span></div>
+            <div class="rv-row"><span class="rv-k">Events attended</span>
+              <span class="rv-v">the same count</span><span class="rv-n">6</span></div>
+            <div class="rv-row"><span class="rv-k">Protocols active</span>
+              <span class="rv-v">the same count</span><span class="rv-n">2</span></div>
+            <div class="rv-note2">
+              <p class="rv-h" style="margin:0">One renderer produces both the prose and the Sources
+                block from the same query, so a disagreement is impossible rather than
+                unlikely.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The Sources line stops being text the model writes. The four aggregates are computed
+            once and rendered in both places, which is what Invariant 4 needs to mean anything.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It fixes four numbers and not the fifth: <b>freshness</b>. "Calendar as of 2 hours ago"
+            is not an aggregate and cannot be derived at read time, so the citation is half-derived
+            and half-asserted — a mix that reads as uniform.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None — and it is the only repair here that <i>removes</i> a class of defect rather than
+            correcting an instance. It does assume the review's counts and its prose come from one
+            pass, which the doc does not state.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">Fix the window: <b>a week ends where the review fires</b>.</p>
+        <span class="vc-read">derive the range from the trigger</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="rv-row"><span class="rv-k">Fire rule</span>
+              <span class="rv-v">default Sunday 18:00</span><span class="rv-n">Sun 20 Sep</span></div>
+            <div class="rv-row"><span class="rv-k">Window it implies</span>
+              <span class="rv-v">the 7 days ending there</span><span class="rv-n">Sep 14–20</span></div>
+            <div class="rv-row"><span class="rv-k">The doc's title</span>
+              <span class="rv-v">in three examples</span><span class="rv-n bad">Sep 16–22</span></div>
+            <div class="rv-row"><span class="rv-k">Sep 16–22 is</span>
+              <span class="rv-v">a Wednesday to a Tuesday</span><span class="rv-n bad">wrong end</span></div>
+            <div class="rv-note2">
+              <p class="rv-h" style="margin:0">Sep 22 2026 is a Tuesday — the same date the Calendar,
+                Habits and Notes labs all use, and the one <code>notes.md</code>'s Daily Note example
+                is titled with. So Sep 16–22 is Wed→Tue and cannot come from a Sunday 18:00
+                trigger.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The window is defined as the seven days ending at the trigger, and the examples use
+            <b>Sep 14–20</b>. The late-generation case follows: a review generated the following
+            Wednesday still covers Sep 14–20 and is still titled for it.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A Sunday-18:00 trigger means the window's last day is <b>incomplete</b> — Sunday's
+            events after 18:00 and its habit check land in the next review. Nothing in the doc says
+            whether the review excludes the firing day or includes it partially, and either choice
+            makes one week's boundary arbitrary.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One, and it has already spread: "Sep 16–22" appears three times in
+            <code>review.md</code> and once in <code>06-flows/retrieval.md</code>'s example. A wrong
+            example propagates as a copy, which is the case for deriving the range rather than
+            writing it.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">The <b>prescription</b> is the example being honest. Move the rule.</p>
+        <span class="vc-read">cut the tell · the boundary is in the wrong place</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="rv-col">
+              <h4>Disallowed · "prescribes"</h4>
+              <p class="rv-said">“You should walk before meditating.”<br>
+                “Put the walk on the calendar.”</p>
+            </div>
+            <div class="rv-col">
+              <h4>Allowed · what the example does</h4>
+              <p class="rv-said">“Your meditation habit correlated with days you walked first (6 of
+                7). A consistent order would make the correlation testable.”</p>
+            </div>
+            <div class="rv-note2">
+              <p class="rv-h" style="margin:0">The line to hold is between <b>changing the user's
+                day</b> and <b>describing what the data suggests</b>. "Consider putting the walk
+                before meditation" crosses it; naming the pattern and its strength does not.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The rule is made precise: the review may <b>describe</b> a correlation and may not
+            <b>direct</b> a change. The example's sentence is rewritten to stay on the describing
+            side, which is what the rest of the paragraph already does.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>"A consistent order would make the correlation testable" is the weak version of the
+            same thought, and the strong version was the useful one. The doc's P2 explicitly allows a
+            "forward-looking observation", which is nearly a suggestion — so the line may be in the
+            wrong place rather than the example being wrong.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None — and note the direction: the example is doing the thing the doc wanted and the
+            <i>rule</i> is stated too broadly. That is the same shape as the Week view's finding, where
+            the spec's only sentence was the thing every variant had to break.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Derive the numbers, derive the range, and <b>narrow the rule</b>.</p>
+        <span class="vc-read">the example is the test — make it pass</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="rv-note">
+              <div class="rv-title" style="font-size:17px">Weekly review — Sep 14–20</div>
+              <div class="rv-body" style="padding-bottom:10px">
+                <p style="font-size:14px;line-height:20px">You completed <b>14</b> tasks, hit <b>24
+                  of 28</b> habit checks, and attended <b>6</b> events. Two protocols were active:
+                  Sleep (day 18) and Focus (day 4).</p>
+                <p style="font-size:14px;line-height:20px;margin-bottom:0">Wednesday slipped: 2
+                  tasks deferred twice. Your meditation habit correlated with days you walked first
+                  (<b>6 of 7</b>).</p>
+                <p class="src">Sources: <b>14</b> tasks, <b>24/28</b> checks, <b>6</b> events, <b>2</b>
+                  protocols — computed from the same query as paragraph 1.<br>
+                  Generated 22 Sep 18:00.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Three fixes to the doc, none to the module. <b>(1)</b> The Sources line is derived from
+            the same query as the prose, so its numbers cannot disagree. <b>(2)</b> The window is the
+            seven days ending at the trigger — <b>Sep 14–20</b> — and the four places carrying
+            "Sep 16–22" are corrected, including <code>retrieval.md</code>'s. <b>(3)</b> The
+            no-prescription rule is narrowed to forbid <i>directing a change to the user's day</i>
+            while allowing the correlation to be named as the example does.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Deriving the Sources line means four aggregates must be available to the renderer
+            independently of the prose, so the review's generation is split into a query and a
+            composition where the doc currently describes one Tier 3 pass. That is a real change to
+            how the app produces its highest-value output.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>What the Sources line is <b>for</b>. Invariant 4 says the review cites its sources and
+            their freshness, which is a claim about trust — but the numbers are the review's own
+            front page restated, and the freshness decays (see the next screen). If the citation's
+            purpose is auditability, it wants the query and the moment; if it is reassurance, it
+            wants neither. The doc never says which, and the block's shape follows.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the example measures</h2>
+    <div class="measure" id="measure-example">…</div>
+  </div>
+</section>
+
+<!-- ================================================================= FRESH -->
+<section class="screen" id="fresh">
+  <div class="lede">
+    <h2 class="t-title-2">Freshness</h2>
+    <p class="lede-p">
+      Invariant 4: <i>"The review cites its data sources and <b>their freshness</b>."</i> The block
+      that satisfies it reads:
+    </p>
+    <p class="lede-p" style="padding-left:16px">
+      <code>Calendar as of 2 hours ago. Health as of 8 hours ago.</code>
+    </p>
+    <p class="lede-p">
+      That is a <b>relative</b> claim written into a <b>static</b> document. The same section says the
+      note "remains in the Notes mode; the user can read it at any time" — so the document whose
+      invariant is that it states freshness contains a freshness statement that stops being true the
+      moment it is stored.
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The same note, read at four points after generation.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="rv-row"><span class="rv-k">Read immediately</span>
+              <span class="rv-v">“Calendar as of 2 hours ago”</span><span class="rv-n">true</span></div>
+            <div class="rv-row"><span class="rv-k">Read 24 hours later</span>
+              <span class="rv-v">still says 2 hours</span><span class="rv-n bad">off by 24h</span></div>
+            <div class="rv-row"><span class="rv-k">Read a week later</span>
+              <span class="rv-v">still says 2 hours</span><span class="rv-n bad">off by 7d</span></div>
+            <div class="rv-row"><span class="rv-k">Read a month later</span>
+              <span class="rv-v">still says 2 hours</span><span class="rv-n bad">off by 30d</span></div>
+            <div class="rv-note2">
+              <p class="rv-h" style="margin:0">The error is not approximate — it is exactly the time
+                since generation. The statement's accuracy decays at one second per second, which is
+                the one property a freshness claim must not have.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The freshness line as specified, read at four intervals.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="fresh-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two, and they pull the same way. Invariant 4 <i>here</i> requires the freshness to be
+            cited; the app's <b>freshness invariant</b> elsewhere
+            (<code>02-architecture/data-lifecycle.md</code>) requires that the user never be shown a
+            value that silently changed. A relative "as of" in a stored document violates the second
+            while trying to satisfy the first.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">Record the <b>absolute</b> moment; let the reading surface compute the
+          age.</p>
+        <span class="vc-read">store the fact, render the relative</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="rv-note">
+              <p class="src" style="border:0;padding:0">
+                <b>Stored:</b> calendar snapshot 2026-09-20T17:58+01:00 · health snapshot
+                2026-09-20T11:00+01:00</p>
+            </div>
+            <div class="rv-row"><span class="rv-k">Read immediately</span>
+              <span class="rv-v">renders “2 hours ago”</span><span class="rv-n">true</span></div>
+            <div class="rv-row"><span class="rv-k">Read a week later</span>
+              <span class="rv-v">renders “7 days ago”</span><span class="rv-n">true</span></div>
+            <div class="rv-row"><span class="rv-k">Read a month later</span>
+              <span class="rv-v">renders “30 days ago”</span><span class="rv-n">true</span></div>
+            <div class="rv-note2">
+              <p class="rv-h" style="margin:0">Two timestamps in the note's metadata, one rendered
+                phrase, and it is never wrong — which is what "as of" was trying to say.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The freshness becomes two absolute timestamps recorded by the generator, and the
+            reading surface renders the relative phrase from them at the moment of reading.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The phrase is now part of the rendering rather than the note, so it is not searchable,
+            not copied when the note is shared, and not visible in a plain-text export. And the
+            note's body stops being self-contained markdown — the doc calls notes "markdown" with no
+            exceptions.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: <code>notes.md</code> says notes are markdown and lists what is supported, with no
+            provision for a computed region. This is the same shape as the Sources-block question on
+            the previous screen, and both want the same answer.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">Keep the relative phrase and <b>date the note</b>: "2 hours before this
+            review".</p>
+        <span class="vc-read">anchor to the artefact, not to now</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="rv-note">
+              <p class="src" style="border:0;padding:0">Calendar was 2 hours old when this review was
+                generated. Health was 8 hours old.</p>
+            </div>
+            <div class="rv-row"><span class="rv-k">Read immediately</span>
+              <span class="rv-v">same sentence</span><span class="rv-n">true</span></div>
+            <div class="rv-row"><span class="rv-k">Read a week later</span>
+              <span class="rv-v">same sentence</span><span class="rv-n">true</span></div>
+            <div class="rv-row"><span class="rv-k">Read a year later</span>
+              <span class="rv-v">same sentence</span><span class="rv-n">true</span></div>
+            <div class="rv-note2">
+              <p class="rv-h" style="margin:0">The sentence is still markdown, still searchable, still
+                exportable — and it is a statement about <i>generation</i>, which is a fact that cannot
+                change. The reader who wants "how old is this now" has the note's own date.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>One word: the phrase moves from the present tense to the past. "As of 2 hours ago"
+            asserts a relation to <i>now</i>; "was 2 hours old when this review was generated"
+            asserts a relation to the review, which is fixed.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It answers a different question. The user reading a month-old review may well want to
+            know how stale the underlying data is <i>right now</i> — and this sentence deliberately
+            refuses to say, leaving them to subtract. It also makes the note's own date load-bearing,
+            and the note's date is the review's <i>scheduled</i> date, not its generation time, which
+            the doc explicitly separates.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One, and it is subtle: §Invariants says a late review is "attached to the <i>review's
+            scheduled date</i>, not the open date". So the note's date is the Sunday, while the
+            freshness timestamps are the Wednesday — and a sentence anchored to generation would sit
+            under a title anchored to the schedule, four days apart.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">Cut the freshness line. The review is about the week, and the week is
+            past.</p>
+        <span class="vc-read">cut the tell · a stale caveat is worse than none</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="rv-note">
+              <p class="src" style="border:0;padding:0">Sources: 14 tasks, 4 habits, 6 events, 2
+                protocols.</p>
+            </div>
+            <div class="rv-note2">
+              <p class="rv-h" style="margin:0">A review of Sep 14–20 is a statement about a window
+                that has closed. Nothing in it can go stale, because nothing in it claims to be
+                current — so the freshness clause has no referent and the citation keeps only the
+                counts.</p>
+              <p class="rv-alert">But Invariant 4 names freshness explicitly, and
+                <code>02-architecture/data-lifecycle.md</code> requires the annotation wherever a
+                mirrored value is shown. Deleting it makes the doc's own invariant false.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Deletes the freshness clause. The Sources line keeps the aggregates and drops the
+            portion that cannot stay true.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The review's own example cites "Calendar as of 2 hours ago", which means the Calendar
+            was <b>mirrored</b> — and mirrored data is the app's designated case for a freshness
+            annotation. Hiding it means a review can present a synced event as fact with no
+            indication of when the sync last ran.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two: Invariant 4 in this doc, and the freshness requirement in
+            <code>data-lifecycle.md</code>. This is the one row in the lab that trades a rule for
+            tidiness, and the rule is not this module's to trade.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Say <b>what was true at generation</b>, and give the note both dates.</p>
+        <span class="vc-read">anchor to the artefact · keep the invariant</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="rv-note">
+              <div class="rv-title" style="font-size:17px">Weekly review — Sep 14–20</div>
+              <div class="rv-body" style="padding-bottom:10px">
+                <p class="src">Sources: 14 tasks, 24/28 checks, 6 events, 2 protocols.<br>
+                  Snapshots taken 20 Sep 18:00 — calendar 2h old, health 8h old.</p>
+              </div>
+            </div>
+            <div class="rv-note2">
+              <p class="rv-h" style="margin:0">Both dates are present and they are different facts:
+                the <b>window</b> (Sep 14–20) and the <b>snapshot</b> (20 Sep 18:00). The freshness
+                clause is anchored to the snapshot, so it is permanently true, and the note's
+                scheduled-date attachment is untouched.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The freshness clause gains an anchor — the snapshot moment — so it describes the
+            generation rather than the reading. This also separates two things §Invariants currently
+            conflates by giving the note one date: <b>which week this is about</b> and <b>when it was
+            produced</b>. The late-generation case needs both, and the doc gives one.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Two dates on one note is a small piece of bookkeeping the user now has to read, and in
+            the ordinary case they are minutes apart, so the second date is noise on 51 reviews a
+            year. It is load-bearing only on the review generated late — which §Invariants handles by
+            making the note's date <i>not</i> the generation time.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Which date is the review's identity. §Invariants attaches a late review to its
+            <b>scheduled</b> date "not the open date" — so the app already decided the scheduled date
+            wins, and a review generated the following Wednesday is filed under a Sunday. That is the
+            right call for grouping and the wrong one for freshness, and the doc argues for one date
+            while needing two.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What freshness measures</h2>
+    <div class="measure" id="measure-fresh">…</div>
+  </div>
+</section>
+
+<!-- =================================================================== LONG -->
+<section class="screen" id="long">
+  <div class="lede">
+    <h2 class="t-title-2">Monthly and annual</h2>
+    <p class="lede-p">
+      <code>review.md</code> §The annual and monthly reviews: <i>"<b>Monthly review.</b> 4 weeks
+      aggregated. Generated on the first of the month. <b>Annual review.</b> 12 months aggregated.
+      Generated on January 1."</i>
+    </p>
+    <p class="lede-p">
+      The monthly review's window is a <b>duration</b> and its trigger is a <b>calendar boundary</b>,
+      and the two do not agree for eleven months of the year. The annual review then multiplies the
+      disagreement: twelve of the monthly windows cover <b>336 days</b>.
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">4 weeks, on the first of the month, twelve times.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div id="month-rows"></div>
+            <div class="rv-note2">
+              <p class="rv-h" style="margin:0">Each row is a month the trigger fires and the window the
+                rule gives it. The uncovered days are never reviewed by the monthly surface.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. "4 weeks aggregated", fired on the first of each month.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="long-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: the window and the trigger are two different definitions of a month, and the doc
+            states both in one sentence without noticing. The annual review then inherits the
+            question — its "12 months" is a calendar year, so it does not aggregate twelve monthly
+            reviews.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">The window <b>is</b> the calendar month the trigger closes.</p>
+        <span class="vc-read">derive the range from the trigger · one month, one meaning</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div id="month-rows-2"></div>
+            <div class="rv-note2">
+              <p class="rv-h" style="margin:0">"The previous calendar month, 1st to last." Twelve of
+                them tile the year exactly, and the annual review aggregates the same twelve windows
+                it already has.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The window becomes "the previous calendar month" rather than 4 weeks. The monthly and
+            annual reviews become nested rather than two independent windows, and no day is
+            uncovered.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Calendar months are unequal — 28 to 31 days — so the monthly review's numbers are not
+            comparable between months, which is the one thing a monthly aggregate is for. "You
+            completed 62 tasks" means something different in February than in March, and the review
+            has no way to say so without printing the window length.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: §The annual and monthly reviews fixes "4 weeks aggregated", and 4 weeks is at
+            least a duration — comparable by construction. The row trades comparability for coverage,
+            and the doc chose the other way.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">Keep 4 weeks and <b>state the gaps</b>: a rolling 13-week quarter.</p>
+        <span class="vc-read">13 × 4 = 52 weeks, so nothing is lost</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="rv-row"><span class="rv-k">Monthly</span>
+              <span class="rv-v">4 weeks, on the 1st</span><span class="rv-n">12 × 28 = 336d</span></div>
+            <div class="rv-row"><span class="rv-k">Annual</span>
+              <span class="rv-v">12 months aggregated</span><span class="rv-n">365d</span></div>
+            <div class="rv-row"><span class="rv-k">Never covered</span>
+              <span class="rv-v">by the monthly surface</span><span class="rv-n bad">29 days</span></div>
+            <div class="rv-row"><span class="rv-k">13 four-week windows</span>
+              <span class="rv-v">52 weeks</span><span class="rv-n">364d</span></div>
+            <div class="rv-note2">
+              <p class="rv-h" style="margin:0">An annual review generated on January 1 covers 12
+                months. A monthly review generated on the 1st covers 4 weeks. Over a year the monthly
+                windows leave <b>29 days</b> unaccounted for — and the annual review's own "12 months"
+                is a third window that matches neither.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing changes in the product. The doc states the relationship: the monthly window is
+            4 weeks, twelve of them are 336 days, and the annual review's window is a calendar year —
+            so the two longer reviews are <b>independent windows, not nested ones</b>. That is a
+            legitimate choice and it has to be written down, because otherwise 29 days a year vanish
+            silently.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Writing it down makes the gap permanent rather than fixing it, and a user who reads that
+            their monthly reviews cover 336 days a year will reasonably ask what happened to the rest.
+            The fix that removes the question is a window derived from the trigger, which this row
+            rejects.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None — and it is the least invasive row here, because the annual review being a separate
+            window is arguably what an annual review <i>is</i>. What it cannot do is make the three
+            windows line up, and the doc's three sentences currently read as if they do.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">Delete the annual review. A year is 52 weekly reviews, and they are
+            already there.</p>
+        <span class="vc-read">cut the tell · an aggregate of aggregates</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="rv-row"><span class="rv-k">Weekly</span>
+              <span class="rv-v">the primary output</span><span class="rv-n">52/yr</span></div>
+            <div class="rv-row"><span class="rv-k">Monthly</span>
+              <span class="rv-v">optional, off by default</span><span class="rv-n">12/yr</span></div>
+            <div class="rv-row"><span class="rv-k">Annual</span>
+              <span class="rv-v">what the weekly reviews already contain</span>
+              <span class="rv-n bad">removed</span></div>
+            <div class="rv-note2">
+              <p class="rv-h" style="margin:0">A year's narrative is 52 two-paragraph reviews plus a
+                search. Adding a 53rd that summarises them is the app generating a document about its
+                own documents.</p>
+              <p class="rv-alert">But the annual review is the only surface that looks at a year, and
+                "the moment the app becomes something other than a tracker" is a claim about
+                perspective — which is exactly what a year gives and a week cannot.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Deletes the annual review, leaving weekly and monthly. The year is reachable by reading
+            the weekly reviews, which the doc already says remain readable forever.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The annual review is where a year-long pattern could be named — a habit that changed in
+            March and held, a protocol's effect eight months on. Nothing else in the app has a window
+            that long except the Year view, which shows busyness rather than meaning. Deleting it
+            removes the only surface that could say "this year, this changed".</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two: §The annual and monthly reviews specifies it, and <code>surfaces.md</code>'s
+            "Review note (weekly / monthly / annual)" row names all three in one entry — so deleting
+            one means editing a row that treats them as a set.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">One window rule: <b>the period the trigger closes</b>, for all three.</p>
+        <span class="vc-read">fix the definition once</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="rv-row"><span class="rv-k">Weekly</span>
+              <span class="rv-v">7 days ending at the trigger</span><span class="rv-n">Sep 14–20</span></div>
+            <div class="rv-row"><span class="rv-k">Monthly</span>
+              <span class="rv-v">the calendar month the trigger closes</span>
+              <span class="rv-n">Sep 1–30</span></div>
+            <div class="rv-row"><span class="rv-k">Annual</span>
+              <span class="rv-v">the calendar year the trigger closes</span>
+              <span class="rv-n">2026</span></div>
+            <div class="rv-row"><span class="rv-k">Nesting</span>
+              <span class="rv-v">52 weeks = 12 months = 1 year</span>
+              <span class="rv-n">exact</span></div>
+            <div class="rv-note2">
+              <p class="rv-h" style="margin:0">One sentence replaces three: <b>a review covers the
+                period its trigger closes.</b> The weekly keeps its seven days, the monthly becomes a
+                month, and the annual becomes a year — and the three nest, so the annual review can
+                be computed from the monthly windows the app already produced.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>One definition governs all three windows, so the nesting is exact and no day is
+            unreviewed. The weekly is unchanged (its trigger is already periodic), and this is the
+            same fix the previous screen's date-range row needs — one rule for "which days is this
+            review about".</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It gives up the one property "4 weeks" had: equal-length windows. Monthly totals stop
+            being comparable month to month, which for a report whose whole job is comparison is a
+            real loss — and the doc may have chosen 4 weeks for exactly that reason without saying
+            so.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether comparability or coverage matters more for the monthly review. A 4-week window
+            makes "you completed 62 tasks" mean the same thing every month; a calendar month makes it
+            true for the month and different every time. The lab can show that the doc's current
+            answer is <b>neither</b> — it states a 4-week window and fires it on a calendar boundary
+            — so the decision is open rather than made, and the doc should make it.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the windows measure</h2>
+    <div class="measure" id="measure-long">…</div>
+  </div>
+</section>
+
+</main>
+
+<script src="lab.js"></script>
+<script src="nav.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var screens = ['note', 'example', 'fresh', 'long'];
+  var seen = {};
+  var tabs = document.getElementById('tabs');
+
+  tabs.addEventListener('click', function (e) {
+    var b = e.target.closest('.tab');
+    if (b && b.dataset.go) go(b.dataset.go);
+  });
+
+  function go(id) {
+    screens.forEach(function (s) {
+      var el = document.getElementById(s);
+      if (el) el.hidden = (s !== id);
+    });
+    Array.prototype.forEach.call(tabs.children, function (b) {
+      b.classList.toggle('on', b.dataset.go === id);
+    });
+    if (!seen[id]) {
+      seen[id] = true;
+      requestAnimationFrame(function () { MEASURE[id](); });
+    }
+  }
+
+  var MEASURE = {};
+
+  // -- note
+  MEASURE.note = function () {
+    var rows = [
+      ['Note surfaces', 'notes.md §Surfaces', '4'],
+      ['Which one opens a note', 'by default', 'the Editor'],
+      ['Editor\u2019s editable regions', 'title · body', '2'],
+      ['Editor\u2019s save behaviour', 'notes.md', 'autosave, no button'],
+      ['Review presentations', 'review.md §The review card', '3'],
+      ['surfaces.md rows for review', 'the index', '3'],
+      ['The review, as a Note', 'per surfaces.md', 'Screen'],
+      ['A note\u2019s Screen', 'notes.md', 'the Editor'],
+      ['Recent = notes edited within', 'notes.md §Scopes', '14 days'],
+      ['Reviews in Recent', 'weekly generation', '2'],
+      ['Invariant 4 elements', 'sources + freshness', '2'],
+      ['Of those, user-deletable', 'the note is editable', '2 of 2'],
+      ['Protocol report, same question', 'protocols.md', '"the user may edit"']
+    ];
+
+    document.getElementById('measure-note').innerHTML =
+      '<div class="rows">' + rows.map(function (r) {
+        return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+          '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+      }).join('') + '</div>' +
+      '<p class="mf"><code>notes.md</code> defines <b>4</b> note surfaces and the review, being a ' +
+      'Note, resolves to the <b>Editor</b> — a markdown field with a title, an autosaving body and ' +
+      'no save button. The doc called the review <i>"a conversation, not a dashboard"</i>, and the ' +
+      'surface it opens on is the one built for composing.</p>' +
+      '<p class="mf">The stronger consequence is editability. Invariant 4 requires the review to ' +
+      'cite its sources and their freshness — <b>2 of 2</b> of those elements live in the note body, ' +
+      'and the note body is editable. <code>protocols.md</code> states the rule for the other ' +
+      'generated note explicitly: the user may edit a report, and there is <i>"no separate ' +
+      '\'original preserved\' UI"</i>. So an invariant about the review\u2019s content is enforced ' +
+      'by nothing.</p>';
+
+    document.getElementById('note-cost').innerHTML =
+      'The app\u2019s highest-value output opens on a <b>markdown editor</b> — 2 editable regions, ' +
+      'autosave, no save button — and both elements Invariant 4 requires (sources and freshness) ' +
+      'are inside it. And because the review is a Note, it enters <b>Recent</b>: the list the user ' +
+      'writes into holds <b>2</b> weekly AI documents at all times.';
+  };
+
+  // -- example
+  MEASURE.example = function () {
+    var rows = [
+      ['Example: tasks', 'paragraph 1', '14'],
+      ['Sources line: tasks', 'the same example', '18'],
+      ['Example: habit checks', 'paragraph 1', '24 / 28'],
+      ['Sources line: habits', 'the same example', '4'],
+      ['Example: events', 'paragraph 1', '6'],
+      ['Sources line: events', 'the same example', '7'],
+      ['Example: protocols', 'paragraph 1', '2'],
+      ['Sources line: protocol', 'the same example', '1'],
+      ['Numbers that disagree', 'of the four in the block', '<b>4</b>'],
+      ['The rule it breaks', 'Invariant 4', 'cite sources'],
+      ['Example: "Consider putting…"', 'paragraph 2', 'a prescription'],
+      ['The rule it breaks', '§The review content', '"does not prescribe"'],
+      ['Example window', 'three examples', 'Sep 16–22'],
+      ['A Sunday 18:00 trigger gives', 'the 7 days ending there', 'Sep 14–20'],
+      ['Sep 22 2026 is a', 'the date 4 labs use', 'Tuesday'],
+      ['Copies of the wrong window', 'review.md ×3 · retrieval.md ×1', '4']
+    ];
+
+    document.getElementById('measure-example').innerHTML =
+      '<div class="rows">' + rows.map(function (r) {
+        return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+          '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+      }).join('') + '</div>' +
+      '<p class="mf">The block is the doc\u2019s own test case and it fails three of the doc\u2019s ' +
+      'own rules. <b>All four</b> numbers in the Sources line disagree with the paragraph above it — ' +
+      '18/4/7/1 against 14/28/6/2 — and the Sources line is precisely the artefact Invariant 4 exists ' +
+      'to require, so the citation is the one part of the review that can be wrong and is.</p>' +
+      '<p class="mf">The window is the third and it has already spread: <b>Sep 16–22</b> appears three ' +
+      'times in <code>review.md</code> and once in <code>06-flows/retrieval.md</code>. Sep 22 2026 is ' +
+      'a Tuesday, so that range runs Wednesday to Tuesday and no Sunday-18:00 trigger can produce it. ' +
+      'A wrong example propagates as a copy.</p>';
+
+    document.getElementById('example-cost').innerHTML =
+      '<b>All four</b> Sources numbers contradict the body above them, the second paragraph ' +
+      '<b>prescribes an action</b> while the content rules forbid it, and the date window is ' +
+      '<b>Wed–Tue</b> against a Sunday rule — copied into a second doc. Three defects, all in the ' +
+      'block that is supposed to demonstrate the rules working.';
+  };
+
+  // -- fresh
+  MEASURE.fresh = function () {
+    // "as of 2 hours ago", read at intervals. The error is exactly the elapsed time.
+    var stated = 2;
+    var reads = [
+      ['on generation', 0],
+      ['24 hours later', 24],
+      ['7 days later', 24 * 7],
+      ['30 days later', 24 * 30],
+      ['1 year later', 24 * 365]
+    ];
+    var rows = reads.map(function (r) {
+      var hours = r[1];
+      var actual = stated + hours;
+      var off = hours;
+      var unit = off >= 48 ? Math.round(off / 24) + ' days' : off + ' hours';
+      return [r[0], 'the true age / what it says',
+        '<b>' + (off === 0 ? 'correct' : 'off by ' + unit) + '</b>'];
+    });
+
+    document.getElementById('measure-fresh').innerHTML =
+      '<div class="rows">' + rows.map(function (r) {
+        return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+          '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+      }).join('') + '</div>' +
+      '<p class="mf">The statement is exactly right once and wrong forever after, by an amount equal ' +
+      'to the time since generation — <b>2 hours</b> becomes "2 hours ago" read a year later. ' +
+      'A freshness claim whose error grows with the reader\u2019s delay inverts its purpose: it is ' +
+      'most wrong precisely when the document is oldest and most in need of it.</p>' +
+      '<p class="mf">And the doc does not merely permit reading it late — it plans on it: ' +
+      '<i>"The review note remains in the Notes mode; the user can read it at any time."</i> The one ' +
+      'sentence that makes the decay a defect rather than an edge case is in the same section as the ' +
+      'delivery rules.</p>';
+
+    document.getElementById('fresh-cost').innerHTML =
+      '<b>"Calendar as of 2 hours ago"</b> is true at generation and off by the elapsed time ' +
+      'thereafter — <b>7 days</b> after a week, <b>365 days</b> after a year. The doc requires the ' +
+      'freshness to be cited (Invariant 4) and requires the note to stay readable ' +
+      '("the user can read it at any time"), so it guarantees a stale freshness claim in the ' +
+      'document whose invariant is that it makes one.';
+  };
+
+  // -- long
+  MEASURE.long = function () {
+    var months = [
+      ['Jan', 31], ['Feb', 28], ['Mar', 31], ['Apr', 30], ['May', 31], ['Jun', 30],
+      ['Jul', 31], ['Aug', 31], ['Sep', 30], ['Oct', 31], ['Nov', 30], ['Dec', 31]
+    ];
+    var fourWeeks = 28;
+    var year = 365;
+
+    var covered = months.length * fourWeeks;
+    var gap = year - covered;
+
+    function render(host, derive) {
+      host.innerHTML = months.map(function (m) {
+        var len = m[1];
+        var w = derive ? len : fourWeeks;
+        var miss = len - w;
+        return '<div class="rv-row"><span class="rv-k">' + m[0] + '</span>' +
+          '<span class="rv-v">' + len + ' days in the month</span>' +
+          '<span class="rv-n' + (miss ? ' bad' : '') + '">' + w + 'd' +
+          (miss ? ' · ' + miss + ' missed' : '') + '</span></div>';
+      }).join('');
+    }
+    var host = document.getElementById('month-rows');
+    var host2 = document.getElementById('month-rows-2');
+    if (host) render(host, false);
+    if (host2) render(host2, true);
+
+    var rows = [
+      ['Monthly window', 'review.md', fourWeeks + ' days'],
+      ['Monthly trigger', 'the same sentence', 'the 1st'],
+      ['Months whose length ≠ 28', 'of 12', '11'],
+      ['Feb', 'the only match', '28 days'],
+      ['12 monthly windows', '12 × 28', '<b>' + covered + ' days</b>'],
+      ['A year', '2026', year + ' days'],
+      ['Never covered', 'by the monthly surface', '<b>' + gap + ' days</b>'],
+      ['Annual window', 'the same section', '12 months'],
+      ['Annual window in days', 'a calendar year', year + ''],
+      ['So monthly and annual', 'nested or independent', 'independent'],
+      ['Weekly windows', 'per year', '52'],
+      ['Both longer reviews', 'on by default?', 'off']
+    ];
+
+    document.getElementById('measure-long').innerHTML =
+      '<div class="rows">' + rows.map(function (r) {
+        return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+          '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+      }).join('') + '</div>' +
+      '<p class="mf">The monthly review is <b>' + fourWeeks + ' days</b> fired on a <b>calendar ' +
+      'boundary</b>, and only <b>February</b> is 28 days. Twelve windows cover <b>' + covered +
+      ' days</b>; the year is <b>' + year + '</b>. <b>' + gap + ' days a year</b> fall outside every ' +
+      'monthly window — and the annual review\u2019s "12 months" is a third window that matches ' +
+      'neither, so the two longer reviews are independent rather than nested.</p>' +
+      '<p class="mf">The doc states both halves in one sentence without noticing they disagree: ' +
+      '"4 weeks aggregated" is a duration, "generated on the first of the month" is a boundary. ' +
+      'Either fixes the ambiguity on its own — and the choice between them is a real one, because ' +
+      '4-week windows are <b>comparable</b> and calendar months are <b>complete</b>.</p>';
+
+    document.getElementById('long-cost').innerHTML =
+      'A <b>' + fourWeeks + '-day</b> window on a calendar trigger leaves <b>' + gap +
+      ' days a year</b> outside every monthly review, and the annual review does not close the gap ' +
+      'because its window is a calendar year. Whichever definition wins, 11 of 12 monthly windows ' +
+      'are currently neither the month they name nor comparable to each other.';
+  };
+
+  go('note');
+})();
+</script>
+</body>
+</html>
