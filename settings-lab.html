@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="warm" data-mode="light" data-accent="teal"
+      data-semantics="vivid" data-type="system">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings lab · Small Wins</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="lab.css">
+<style>
+/* the settings list */
+.st-hd{font-size:17px;line-height:24px;font-weight:600;color:var(--text-primary)}
+.st-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;
+  min-height:var(--row-compact);padding:0 14px;border-bottom:1px solid var(--border-subtle)}
+.st-row:last-child{border-bottom:0}
+.st-l{font-size:15px;line-height:20px;color:var(--text-primary);min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.st-l.dim{color:var(--text-tertiary)}
+.st-v{font-size:13px;line-height:18px;color:var(--text-tertiary);white-space:nowrap}
+.st-tg{width:38px;height:22px;border-radius:11px;background:var(--success-default);
+  position:relative;flex:none}
+.st-tg::after{content:'';position:absolute;top:2px;right:2px;width:18px;height:18px;
+  border-radius:50%;background:#fff}
+.st-tg.off{background:var(--surface-3)}
+.st-tg.off::after{left:2px;right:auto;background:var(--surface-1)}
+.st-grp{background:var(--surface-1);border:1px solid var(--border-subtle);border-radius:12px;
+  overflow:hidden}
+.st-group{display:flex;flex-direction:column;gap:var(--space-8)}
+.st-h{font-size:12px;line-height:16px;color:var(--text-muted);margin:2px 0 0}
+.st-alert{font-size:13px;line-height:18px;color:var(--warning-text);margin-top:6px}
+.st-note{border:1px solid var(--border-subtle);border-radius:12px;padding:14px}
+.st-who{display:grid;grid-template-columns:112px minmax(0,1fr) auto;gap:10px;
+  align-items:baseline;padding:7px 0;border-bottom:1px solid var(--border-subtle)}
+.st-who:last-child{border-bottom:0}
+.st-k{font-size:13px;line-height:18px;color:var(--text-tertiary)}
+.st-d{font-size:13px;line-height:18px;color:var(--text-secondary)}
+.st-n{font-size:13px;line-height:18px;font-variant-numeric:tabular-nums;font-weight:600;
+  color:var(--text-primary)}
+.st-n.bad{color:var(--warning-text)}
+.st-n.ok{color:var(--success-text)}
+.st-batch{display:flex;flex-direction:column;gap:3px;margin-top:10px}
+.st-batch i{display:block;height:7px;border-radius:2px;background:var(--surface-2)}
+.st-batch i.on{background:var(--accent-default)}
+.st-bar{height:10px;border-radius:5px;background:var(--surface-2);overflow:hidden;display:flex}
+.st-bar i{display:block;height:100%;background:var(--accent-default)}
+.st-2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.st-col{border:1px solid var(--border-subtle);border-radius:10px;padding:10px 12px}
+.st-col h4{margin:0 0 6px;font-size:12px;line-height:16px;color:var(--text-muted);
+  font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+</style>
+</head>
+<body data-lab="settings">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol>
+  <symbol id="i-mode-tasks" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol>
+  <symbol id="i-mode-notes" viewBox="0 0 24 24"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+</svg>
+
+<header class="masthead">
+  <p class="eyebrow">Lab 10 · the last module</p>
+  <h1 class="t-title-1">Settings</h1>
+  <p class="lede-p">
+    <code>settings.md</code> exists because settings "were referenced throughout the docs… but were
+    never canonically listed." It is a <b>surface, not a mode</b>, reached from the command palette
+    or a gear icon, and it is the app's <b>longest list by an order of magnitude</b>:
+    <b>49 rows across 12 groups</b>.
+  </p>
+  <p class="lede-p">
+    Its own invariants are unusually tight — one typed key per stored value, groups stable, exactly
+    three confirmed actions — and the tightness is what makes the defects visible. Two keys in the
+    log's <code>SettingsKey</code> union have no row here, one action writes <b>41</b> log entries
+    with nothing linking them, and the surface opens in <b>two different containers</b> depending on
+    which door you came through.
+  </p>
+</header>
+
+<div class="bar">
+  <nav class="tabs" id="tabs">
+    <button class="tab" data-go="list">The list</button>
+    <button class="tab" data-go="reset">Reset all settings</button>
+    <button class="tab" data-go="doors">Two containers</button>
+    <button class="tab" data-go="keys">The key union</button>
+  </nav>
+</div>
+
+<main id="main">
+
+<!-- =================================================================== LIST -->
+<section class="screen" id="list">
+  <div class="lede">
+    <h2 class="t-title-2">The list</h2>
+    <p class="lede-p">
+      <code>settings.md</code> §Behavior: <i>"The list uses <code>row-compact</code> (44px) rows,
+      grouped by section with a <code>type-title-3</code> header and <code>space-8</code> separation
+      between groups."</i>
+    </p>
+    <p class="lede-p">
+      Every number needed to size the surface is in that sentence, so this screen uses it. Twelve
+      groups, forty-nine rows, and <b>no search</b> — while the entry point the doc names for the
+      surface is the command palette, which is a search field.
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">All twelve groups, at the specified row height.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="st-row" style="border:0;padding:0">
+              <span class="t-title-2">Settings</span>
+              <svg class="ic ic-lg" style="color:var(--text-secondary)"><use href="#i-search"/></svg>
+            </div>
+            <p class="st-h">A search glyph, because 49 rows need one. The doc specifies no search.</p>
+            <div class="st-group" id="grp-1"></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The twelve groups with their specified row counts, and a search glyph the doc
+            does not mention.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="list-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One, by omission: the doc fixes the row height, the header style and the group
+            separation, and says nothing about finding a setting. Every other long list in the app
+            has a filter or a scope; this one is reached <i>through</i> a search UI and has
+            none.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">Search the settings from the palette that already opens them.</p>
+        <span class="vc-read">reuse the entry point · no new surface</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="st-note">
+              <p class="st-h" style="margin:0">Command palette · typed "quiet"</p>
+              <div class="st-who" style="margin-top:8px">
+                <span class="st-k">Setting</span>
+                <span class="st-d">Quiet hours start</span>
+                <span class="st-n">22:00</span></div>
+              <div class="st-who"><span class="st-k">Setting</span>
+                <span class="st-d">Quiet hours end</span><span class="st-n">07:00</span></div>
+              <div class="st-who"><span class="st-k">Group</span>
+                <span class="st-d">Notifications and nudges</span>
+                <span class="st-n">6</span></div>
+              <p class="st-h" style="margin-top:8px">Results are settings <i>and</i> groups, so a
+                partially-remembered name is enough.</p>
+            </div>
+            <p class="st-h">Cost: the palette now holds two kinds of thing — commands and values —
+              and picking a setting means choosing it <i>and</i> deciding to change it, which is two
+              steps for a control that was one.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The command palette indexes settings as well as commands, so the surface's own named
+            entry point becomes its search. No new control appears in Settings.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It makes the palette the app's universal index, and a palette result that is a *value*
+            rather than an action breaks the palette's contract — "Settings" opens a surface;
+            "Quiet hours start" has to open a time picker or a row, and nothing in the app's surface
+            list is a single setting.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two: §Invariants says "Settings never contains feature discovery" — a palette entry per
+            setting is arguably the opposite — and no doc gives the command palette a results model
+            that includes non-commands.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">The settings the user actually changes are <b>five</b>. Pin them.</p>
+        <span class="vc-read">measure the distribution, not the capability</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="st-h" style="margin:0">Frequently changed</p>
+            <div class="st-grp">
+              <div class="st-row" style="min-height:44px"><span class="st-l">Quiet hours</span>
+                <span class="st-v">22:00 – 07:00</span></div>
+              <div class="st-row" style="min-height:44px"><span class="st-l">Nudge frequency</span>
+                <span class="st-v">Standard</span></div>
+              <div class="st-row" style="min-height:44px"><span class="st-l">Theme</span>
+                <span class="st-v">System</span></div>
+              <div class="st-row" style="min-height:44px"><span class="st-l">Auto-linking in
+                notes</span><span class="st-tg"></span></div>
+            </div>
+            <p class="st-h">Then all twelve groups, unchanged. Nothing is removed.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>A "Frequently changed" group above the twelve, holding the handful of settings a user
+            touches more than once. The full list is still there, in order.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It is a guess with no data — nothing in the app tracks which settings are opened, and
+            the pinned set is asserted rather than derived. It also adds a thirteenth group to a doc
+            whose index row says "Settings (twelve groups)" and whose invariant says groups are
+            stable.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two, both explicit: §Invariants "Settings are grouped, not flat. <b>Groups are
+            stable.</b>" and <code>surfaces.md</code>'s row "Settings (<b>twelve groups</b>)". A
+            thirteenth group is a two-doc change.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">Move the two <b>lists</b> out. Settings is configuration.</p>
+        <span class="vc-read">cut the tell · a config surface with a log in it</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="st-note">
+              <p class="st-h" style="margin:0">Two things currently live inside Settings that are not
+                settings:</p>
+              <div class="st-who" style="margin-top:8px"><span class="st-k">Area list</span>
+                <span class="st-d">a Screen, per <code>surfaces.md</code></span>
+                <span class="st-n">1</span></div>
+              <div class="st-who"><span class="st-k">AI audit list</span>
+                <span class="st-d">every <code>ai.proposed</code> / <code>applied</code> /
+                  <code>rejected</code></span><span class="st-n bad">unbounded</span></div>
+            </div>
+            <p class="st-h">The Area list is already filed as a Screen — inside a Surface. The audit
+              list appears when its toggle is on and grows with every AI action the user takes.</p>
+            <p class="st-alert">But the audit list is the only place a user can see what the AI
+              proposed and what they accepted. Removing it from Settings means it needs a home, and
+              no doc gives it one.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Both lists leave Settings. The Area list becomes a top-level screen (it already is, in
+            the index), and the AI audit list becomes its own surface.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The audit list is the user-facing answer to "what is the AI doing", and its home is a
+            toggle in Settings. Moving it behind a navigation entry makes a trust feature harder to
+            find, which is the opposite of what it is for.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two: §Notes says audit mode's list "appears in a visible list in Settings" and the
+            worked example repeats it, and §Invariants forbids Settings containing feature discovery
+            — which is an argument <i>for</i> this row from the doc's own side.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Keep the twelve groups. Add a <b>jump list</b> and write down the row
+            count.</p>
+        <span class="vc-read">navigate, don't restructure · the doc lacks a number</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="st-note">
+              <p class="st-h" style="margin:0"><b>Two additions, both to the doc.</b></p>
+              <p class="st-d" style="margin-top:8px">1. A group index at the top of the list — twelve
+                lines, one tap, no new search model and no thirteenth group.</p>
+              <p class="st-d">2. The row count, stated: <b>49 rows</b>, <b>2,796px</b>, four screens
+                on a 700px phone.</p>
+            </div>
+            <div class="st-grp">
+              <div class="st-row" style="min-height:36px"><span class="st-l dim">Account</span>
+                <span class="st-v">4</span></div>
+              <div class="st-row" style="min-height:36px"><span class="st-l dim">Sync</span>
+                <span class="st-v">5–6</span></div>
+              <div class="st-row" style="min-height:36px"><span class="st-l dim">Notifications and
+                nudges</span><span class="st-v">6 + 12</span></div>
+              <div class="st-row" style="min-height:36px"><span class="st-l dim">…nine more</span>
+                <span class="st-v">—</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing in the model and no new group. The doc gains the two numbers that make its own
+            sentence sizeable, and the surface gains a jump list — which is navigation, not search,
+            so it needs no results model and no palette changes.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A jump list is a second navigation for a surface that already has two doors (palette
+            and gear), and it duplicates the group headers directly below it. It also makes the
+            surface's length more visible, which is a real cost when the number is 4 screens.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether 49 rows is right. Every row is defensible individually and the <i>set</i> has
+            never been reviewed — the doc lists what the rest of the docs reference, and
+            <code>surfaces.md</code> bakes "twelve groups" into its index. The lab can size the list;
+            it cannot say which of the 49 a user would delete, because that is a question about
+            which of the app's features they actually use.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the list measures</h2>
+    <div class="measure" id="measure-list">…</div>
+  </div>
+</section>
+
+<!-- ================================================================== RESET -->
+<section class="screen" id="reset" hidden>
+  <div class="lede">
+    <h2 class="t-title-2">Reset all settings</h2>
+    <p class="lede-p">
+      <code>settings.md</code> §Notes: <i>"<b>Reset all settings.</b> Resets every
+      <code>SettingsKey</code> to its default. Logs one <code>system.settings_changed</code> per key,
+      in one append batch. The UI undo toast reverses the batch atomically by compensating every entry
+      it created; <b>no shared grouping ID is stored in the log</b>. Does not touch user data.
+      <b>No confirmation dialog</b>; undo is the safety net."</i>
+    </p>
+    <p class="lede-p">
+      The invariant is careful about *why* it needs no confirmation — the action is reversible, and
+      the three confirmed actions are confirmed because they are not. What the sentence does not say
+      is what the reversibility rests on: a toast, and a log that was deliberately built without the
+      one field that would make the batch recoverable.
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">One tap, 41 entries, five seconds of undo.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="st-grp">
+              <div class="st-row"><span class="st-l">Reset all settings</span>
+                <span class="st-v">confirms: no</span></div>
+            </div>
+            <div class="st-note">
+              <p class="st-h" style="margin:0">The batch, as it lands in the log:</p>
+              <div class="st-batch" id="batch-1"></div>
+              <p class="st-h" style="margin-top:8px">41 entries, appended together, with nothing
+                connecting them.</p>
+            </div>
+            <div class="st-note">
+              <p class="st-h" style="margin:0">The toast is the only record that these 41 belong
+                together, and it lasts <b>5 seconds</b>.</p>
+              <div style="margin-top:6px;height:6px;border-radius:3px;background:var(--surface-2)">
+                <div id="toast-bar" style="height:100%;width:8%;border-radius:3px;
+                  background:var(--accent-default)"></div>
+              </div>
+              <p class="st-h" style="margin-top:6px">After it expires the 41 entries are
+                indistinguishable from 41 deliberate edits.</p>
+            </div>
+          </div>
+        </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The action, its batch, and the five-second window, as specified.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="reset-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One, and it is the invariant's own reasoning turned around: §Invariants says destructive
+            actions have a confirmation and there are exactly three, with everything else "undoable
+            instead". This is undoable for five seconds and then <b>not</b> — and the doc states the
+            mechanism that makes it unrecoverable (<i>no grouping ID</i>) in the same paragraph that
+            relies on the undo.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">Give the batch an ID. The log already has the shape for it.</p>
+        <span class="vc-read">one batch, one identifier · make the undo durable</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="st-note">
+              <p class="st-h" style="margin:0">The same batch, with the entries named:</p>
+              <p class="st-d" style="margin-top:8px">41 × <code>system.settings_changed</code><br>
+                <span class="st-k">each carrying <code>batch_id: 'rst_01H8…'</code></span></p>
+            </div>
+            <div class="st-who"><span class="st-k">Recoverable</span>
+              <span class="st-d">from the log, at any time</span><span class="st-n ok">41 entries</span></div>
+            <div class="st-who"><span class="st-k">Undo window</span>
+              <span class="st-d">no longer load-bearing</span><span class="st-n ok">any time</span></div>
+            <div class="st-note">
+              <p class="st-h" style="margin:0">A batch id also lets <b>Rebuild projections</b>
+                distinguish a reset from 41 deliberate edits — which is the operation that would
+                otherwise bake the reset in permanently.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>A batch identifier on the entries a reset creates, so the reversal does not depend on
+            the toast still being on screen.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It adds a field to `system.settings_changed` for one action's benefit — and the doc's
+            reason for omitting it is not laziness: a batch id in the log is a step toward
+            transactions, and the log is deliberately a list of individual facts. Every future
+            bulk action will want the same field.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two: <code>event-log.md</code> states adding a type needs an ADR (changing a payload's
+            shape is the same kind of change), and this doc explicitly records the omission as a
+            decision — "no shared grouping ID is stored".</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">The dangerous part is <b>four keys</b>, not forty-one.</p>
+        <span class="vc-read">size the blast radius · most of the reset is harmless</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="st-who"><span class="st-k">Appearance, Day, Reviews…</span>
+              <span class="st-d">preferences, trivially re-set</span><span class="st-n">37</span></div>
+            <div class="st-who"><span class="st-k">integration.calendar.enabled</span>
+              <span class="st-d">stops calendar sync</span><span class="st-n bad">1</span></div>
+            <div class="st-who"><span class="st-k">integration.contacts.enabled</span>
+              <span class="st-d">stops contact matching</span><span class="st-n bad">1</span></div>
+            <div class="st-who"><span class="st-k">integration.health.enabled</span>
+              <span class="st-d">stops health matching</span><span class="st-n bad">1</span></div>
+            <div class="st-who"><span class="st-k">integration.weather.home_location</span>
+              <span class="st-d">loses the saved place</span><span class="st-n bad">1</span></div>
+            <div class="st-note">
+              <p class="st-h" style="margin:0">Four of the forty-one keys are not preferences. One of
+                them — calendar — has a <b>confirmed, irreversible</b> action
+                (<code>Revoke calendar access</code>) whose visible effect is the same, and the
+                unconfirmed path reaches it.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The reset distinguishes preferences from integrations, and the integration keys are
+            either excluded from the reset or confirmed individually.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>"Reset all settings" that does not reset all settings is a lie in the label, and the
+            user who wants a clean slate has to find four more switches. It also requires the reset
+            to know which keys are integrations, which is a classification the `SettingsKey` union
+            does not carry.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two: §Invariants says destructive actions in Settings have a confirmation and names
+            exactly three — so either this is a fourth, or the integration keys are excluded, and the
+            doc currently does neither. And `SettingsKey` is a flat union with no grouping, so
+            "which keys are integrations" is not answerable from the type.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">Confirm it. It is the biggest action in the app.</p>
+        <span class="vc-read">cut the tell · the fourth confirmation is the honest one</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="st-note">
+              <p class="st-nm" style="margin:0;font-size:17px;line-height:24px;font-weight:600;
+                color:var(--text-primary)">Reset all settings?</p>
+              <p class="st-d" style="margin-top:6px">This restores 41 settings to their defaults,
+                including your calendar, contacts, health and weather connections. Your tasks, notes
+                and habits are not touched.</p>
+              <div style="display:flex;gap:8px;margin-top:12px">
+                <span style="font-size:15px;font-weight:600;padding:9px 16px;border-radius:10px;
+                  background:var(--accent-default);color:var(--on-fill)">Reset 41 settings</span>
+                <span style="font-size:15px;font-weight:600;padding:9px 16px;border-radius:10px;
+                  background:var(--surface-2);color:var(--text-secondary)">Cancel</span>
+              </div>
+            </div>
+            <p class="st-h">The button names the count. The confirmation exists because the undo does
+              not survive leaving the screen.</p>
+            <p class="st-alert">Cost: it makes four confirmed actions where every doc says four
+              already exist — but the fourth named is "abandoning a protocol", in another module. So
+              this would be a <b>fifth</b>, and the count is stated in three places.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>"Reset all settings" joins the confirmed set, with the count and the blast radius in the
+            dialog rather than in a toast that has already gone.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It contradicts a deliberate design position. <code>0010-undo-exemptions.md</code> and
+            Invariant 1 exist to keep the confirmation list short — "exactly four" — because a
+            confirmation on everything makes a confirmation mean nothing. This row spends one of the
+            app's four on an action the doc argues is reversible.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Three: Invariant 1's count, this doc's §Invariants ("exactly three in Settings"), and
+            §Behavior ("Only three actions in Settings show a confirmation dialog"). It is the only
+            row in this lab that changes a stated number.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Keep it unconfirmed, and <b>exclude the integrations</b>. Then write the
+            reversal down.</p>
+        <span class="vc-read">the count is right · the blast radius is not</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="st-note">
+              <p class="st-h" style="margin:0">The doc, corrected in three places:</p>
+              <p class="st-d" style="margin-top:8px"><b>1.</b> The reset covers <b>37</b> preference
+                keys. The four <code>integration.*</code> keys are not settings — each has its own
+                disconnect flow, and one of those is already confirmed because it is
+                irreversible.</p>
+              <p class="st-d"><b>2.</b> The reversal is stated as <b>toast-scoped</b>: it depends on
+                the toast, and it does not survive leaving Settings. That is a design position, not
+                an implementation detail.</p>
+              <p class="st-d"><b>3.</b> <b>Rebuild projections</b> gains a sentence: it replays the
+                log, so it makes an expired reset permanent. Two Advanced actions currently sit beside
+                each other with no stated relationship.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The confirmation count stays at three. What changes is what the reset <i>touches</i> —
+            preferences only — plus the two relationships the doc leaves implicit: the undo's
+            dependence on the toast, and the interaction with the rebuild that lives in the same
+            group.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Excluding integrations means "reset all settings" leaves four settings set, and the
+            user who wants a true clean slate has to find them. It also means the label is
+            approximate — which is the cost this row accepts in exchange for not spending a
+            confirmation.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether a five-second undo is an acceptable reversal for a 41-entry write. Every other
+            undoable action in the app changes <b>one</b> thing, so the toast has never had to carry
+            a batch — and the doc's own answer (no grouping ID, undo is the safety net) is coherent
+            only if the toast is treated as the transaction. Whether that is true of this app is a
+            product decision, and the lab can only show what it rests on.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the reset measures</h2>
+    <div class="measure" id="measure-reset">…</div>
+  </div>
+</section>
+
+<!-- ================================================================== DOORS -->
+<section class="screen" id="doors" hidden>
+  <div class="lede">
+    <h2 class="t-title-2">Two containers</h2>
+    <p class="lede-p">
+      <code>settings.md</code> §Behavior: <i>"Settings open as a <b>full-screen sheet</b> from the
+      command palette or as a <b>panel pushed</b> from the gear icon."</i>
+    </p>
+    <p class="lede-p">
+      One surface, two containers, chosen by which door the user came through. That alone would be
+      untidy rather than wrong — <code>app-shell.md</code> explicitly supports a sheet opening a
+      second one and returning. What makes it a defect is where the doc files things:
+      <code>surfaces.md</code> records the <b>Area list</b> as <i>"Screen (in Settings)"</i> — and a
+      Screen is layer 1 ("Screens, lists, the timeline") while a sheet is layer 4 (Transient).
+    </p>
+    <p class="lede-p">
+      So the same surface puts the same contents in a different layer depending on the door, and
+      the table it is being placed in <b>contradicts its own count</b>.
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The same surface, from both documented doors.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:0;position:relative">
+            <div style="position:absolute;inset:0;background:rgb(24 24 27 / .32)"></div>
+            <div style="position:absolute;left:0;right:0;top:0;bottom:0;background:var(--surface-1);
+              display:flex;flex-direction:column">
+              <div class="st-row" style="border-bottom:1px solid var(--border-subtle);
+                background:var(--surface-1)">
+                <span class="t-title-2">Settings</span>
+                <span class="st-v">full-screen sheet</span></div>
+              <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+                <p class="st-h" style="margin:0">From the command palette. A sheet, so
+                  <code>app-shell.md</code>'s one-sheet limit applies to everything below it.</p>
+                <div class="st-grp">
+                  <div class="st-row"><span class="st-l">Reset onboarding</span>
+                    <span class="st-v">opens a 7-screen flow</span></div>
+                  <div class="st-row"><span class="st-l">Delete account</span>
+                    <span class="st-v">confirmed</span></div>
+                  <div class="st-row"><span class="st-l">Areas</span>
+                    <span class="st-v">a Screen, per surfaces.md</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The sheet container from the palette, with three of its own contents
+            visible.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="doors-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One, and it is about layers rather than about one-sheet limits.
+            <code>app-shell.md</code> orders five layers back-to-front and says "Order is the
+            contract", with layer 1 holding <i>"Screens, lists, the timeline"</i> and layer 4 holding
+            <i>"Sheets, popovers, the palette, the date picker"</i>. On the gear's path this surface
+            <b>is</b> layer 4 while containing a layer-1 Screen, and the doc gives no rule for a thing
+            that spans two layers.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">One container: a <b>screen</b>, from both doors.</p>
+        <span class="vc-read">the rule that decided three other surfaces</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:0">
+            <div class="st-row" style="border-bottom:1px solid var(--border-subtle)">
+              <svg class="ic ic-md" style="color:var(--text-secondary)"><use href="#i-back"/></svg>
+              <span class="t-title-2" style="margin-left:8px">Settings</span>
+              <span class="st-v" style="margin-left:auto">screen</span></div>
+            <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+              <p class="st-h" style="margin:0">Same container, either entry. Back returns to where you
+                were. The Area list pushes on top of it like any screen.</p>
+              <div class="st-grp">
+                <div class="st-row"><span class="st-l">Areas</span>
+                  <svg class="ic ic-sm" style="color:var(--text-muted)"><use
+                    href="#i-search"/></svg></div>
+                <div class="st-row"><span class="st-l">Reset onboarding</span>
+                  <span class="st-v">pushes a flow</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Settings becomes a screen on both paths. Nothing else moves, and
+            <code>app-shell.md</code>'s one-sheet limit is never tested — the same resolution the
+            Event detail, New event and proposal surfaces reached.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The gear icon implies a lightweight panel over what you were looking at, and a screen
+            replaces it. The user who taps a gear while reading a day now loses the day, and the
+            sheet's half-height was doing that job — which is why the doc gave the gear a different
+            container in the first place.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: §Behavior specifies both containers. But note the honest limit of this argument
+            — <code>app-shell.md</code>'s own worked example is <i>"Swipe left on a task row → defer
+            sheet. Taps 'Pick a date…' → the sheet is replaced by the date picker. Esc at the picker →
+            the defer sheet returns, still open."</i> So a sheet <b>may</b> open a sheet and return,
+            and the case for a screen here rests on the layer mismatch rather than on the
+            one-sheet limit.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">Both are right — <b>because they serve different jobs</b>. Name the
+          jobs.</p>
+        <span class="vc-read">two doors, two intents · say which is which</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="st-2">
+              <div class="st-col">
+                <h4>Gear → sheet</h4>
+                <p class="st-d">You are mid-task and want <b>one</b> switch. The sheet covers part of
+                  the screen and returns you intact.</p>
+              </div>
+              <div class="st-col">
+                <h4>Palette → screen</h4>
+                <p class="st-d">You came to Settings <b>as a destination</b> — to browse, or to reach
+                  Areas or the audit list.</p>
+              </div>
+            </div>
+            <div class="st-note">
+              <p class="st-h" style="margin:0">The rule to write down: <b>a container may hold what
+                the user came for.</b> A one-switch visit fits a sheet; a destination visit that
+                reaches a Screen does not.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The doc states the intent behind each door instead of leaving two containers as a
+            coincidence: the sheet is for a single change, the screen is for the destination —
+            including the two contents that are not rows.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It makes the container depend on a user's *intent*, which the app cannot infer. Both
+            doors reach the same list, so a user who came through the gear to change "Theme" and then
+            taps "Areas" is in a sheet trying to host a screen — which is exactly the case the rule
+            fails to prevent.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: <code>app-shell.md</code> states a hard one-sheet limit, and this row leaves the
+            sheet reachable to a destination. Either the sheet's contents are restricted, or the
+            container follows the content rather than the door.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">The two non-row contents are the anomaly. <b>Move them out</b>, and the
+            container question disappears.</p>
+        <span class="vc-read">cut the tell · a config surface with a screen in it</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="st-note">
+              <p class="st-h" style="margin:0">If Settings contains only settings, both containers
+                work: a sheet can show rows, and the gear's half-height is honest.</p>
+              <div class="st-who" style="margin-top:8px"><span class="st-k">Areas</span>
+                <span class="st-d">promoted to the navigation it instantiates</span>
+                <span class="st-n">moves</span></div>
+              <div class="st-who"><span class="st-k">AI audit list</span>
+                <span class="st-d">becomes a surface of its own</span>
+                <span class="st-n">moves</span></div>
+            </div>
+            <p class="st-alert">Cost: the Area list is reached from Settings <i>because</i> Areas are
+              configuration. A user who has never opened Settings has never seen their Areas, and
+              promoting it to navigation adds a mode-level entry for something the app's own index
+              calls a Screen in Settings.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Settings holds settings. The Area list and the AI audit list become surfaces, so the
+            container is never asked to host something that is not a row.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It removes the two things in Settings that are <i>worth returning to</i>, and the app
+            gains two navigation entries it deliberately did not have — the doc says Settings has no
+            mode entry, and this adds two destinations that were previously reachable from one
+            gear.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two: <code>surfaces.md</code> files the Area list as "Screen (in Settings)", and §Notes
+            says the audit list appears in Settings. Both are deliberate placements, so this is a
+            relocation of two surfaces rather than a fix to one.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">The layer table is the defect, not the surface. Fix the <b>count</b>.</p>
+        <span class="vc-read">one surface, five layers, three of them floating</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="st-who"><span class="st-k">§Purpose</span>
+              <span class="st-d">“the <b>four</b> floating layers”</span>
+              <span class="st-n bad">four</span></div>
+            <div class="st-who"><span class="st-k">§Invariants</span>
+              <span class="st-d">“exactly one of the <b>four</b> layers below. A <b>fifth</b> layer
+                requires a change”</span><span class="st-n bad">four</span></div>
+            <div class="st-who"><span class="st-k">§The four layers</span>
+              <span class="st-d">the heading over the table</span>
+              <span class="st-n bad">four</span></div>
+            <div class="st-who"><span class="st-k">The table itself</span>
+              <span class="st-d">1 Content · 2 Sticky chrome · 3 Banners · 4 Transient ·
+                <b>5 Toasts</b></span><span class="st-n ok">five</span></div>
+            <div class="st-note">
+              <p class="st-h" style="margin:0">The count is <b>load-bearing</b>: the examples read
+                “defer sheet (<b>layer 4</b>)” and “Undo toast appears over it (<b>layer 5</b>)”. So
+                the numbering is in use and the invariant guarding the count is defeated by the table
+                it sits above. “Four floating layers” is wrong on either reading: the table has five
+                rows and only <b>three</b> of them float.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The doc says <b>five</b> wherever it says four, Toasts is named as a layer rather than
+            an accident, and the rule Settings actually needs is stated: <b>a container takes the
+            layer of its contents, not of its chrome</b> — so Settings is a screen on both paths
+            because it contains a Screen.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Correcting the count to five means the guard clause now protects a sixth, and the
+            Purpose sentence loses the shape it was giving the model. It is a fix to the app's most
+            foundational chrome doc, found only by asking where one surface sits — and it is the
+            second time this session that a denominator guarded by an invariant turned out not to
+            match what the invariant was guarding (see the SettingsKey union on the next
+            screen).</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether Toasts was <i>meant</i> to be a layer. It is in the table, numbered 5, and
+            referenced as layer 5 in a worked example — but the Purpose, the invariant and the
+            heading all say four, and the guard clause was written specifically to protect that
+            number. Either a layer was added without reading the clause, or the clause predates the
+            table. The lab can show the disagreement; only the author knows which came first.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the doors measure</h2>
+    <div class="measure" id="measure-doors">…</div>
+  </div>
+</section>
+
+<!-- =================================================================== KEYS -->
+<section class="screen" id="keys" hidden>
+  <div class="lede">
+    <h2 class="t-title-2">The key union</h2>
+    <p class="lede-p">
+      <code>settings.md</code> §Invariants: <i>"Every setting that stores a value has a
+      <code>SettingsKey</code> in <code>02-architecture/event-log.md</code>. Adding a key is a doc
+      change."</i> <code>event-log.md</code> holds the union — <b>28 entries</b>, two of them
+      templates that expand to twelve surfaces and three channels.
+    </p>
+    <p class="lede-p">
+      The invariant runs one way: a setting implies a key. It does not say a key implies a row. So the
+      union and the surface can drift, and they have — by exactly one key.
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">Every key in the union, against every row in the surface.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div id="key-rows"></div>
+            <div class="st-note">
+              <p class="st-h" style="margin:0">27 of 28 keys have a row in one of the twelve groups.
+                One does not.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The union as typed in <code>event-log.md</code>, mapped to the groups listed in
+            <code>settings.md</code>.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="keys-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One, by omission: the invariant is stated in one direction only, so a key with no row is
+            not a violation — which is why it survived. It is still a value the app can store that the
+            user cannot see, set, or unset.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">Make the invariant bidirectional, and checkable.</p>
+        <span class="vc-read">one set, one source · the union and the surface are the same list</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="st-note">
+              <p class="st-h" style="margin:0">Rewritten invariant:</p>
+              <p class="st-d" style="margin-top:8px">"The <code>SettingsKey</code> union and the rows
+                on this surface are <b>the same set</b>. A key with no row is a setting the user cannot
+                reach; a row with no key is a control that stores nothing. Both are errors, and a test
+                asserts the two lists are equal."</p>
+            </div>
+            <div class="st-who"><span class="st-k">Union</span>
+              <span class="st-d">28 entries</span><span class="st-n">28</span></div>
+            <div class="st-who"><span class="st-k">Rows</span>
+              <span class="st-d">expanding both templates</span><span class="st-n">28</span></div>
+            <div class="st-who"><span class="st-k">Difference</span>
+              <span class="st-d">asserted by a test</span><span class="st-n ok">0</span></div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The invariant becomes an equality between two lists, which makes it testable and makes
+            "adding a key is a doc change" mean both docs change.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Some keys legitimately have no row. <code>integration.calendar.enabled</code> may be
+            written by a connect flow rather than a toggle — a value the app sets on the user's
+            behalf, with no control. Making the sets equal forces a toggle for every such key, which
+            is how a settings screen acquires switches nobody wanted.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: the current invariant is deliberately one-directional, and the doc's phrasing
+            ("every setting that stores a value") suggests the author was thinking about the same
+            asymmetry. The row makes it strict; the honest version distinguishes <b>settable</b> keys
+            from <b>observed</b> ones.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">Classify the keys: <b>settable</b>, <b>observed</b>, <b>destructive</b>.</p>
+        <span class="vc-read">the union has no grouping and three readers need one</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="st-who"><span class="st-k">Settable</span>
+              <span class="st-d">has a row; the user can change it</span><span class="st-n">26</span></div>
+            <div class="st-who"><span class="st-k">Observed</span>
+              <span class="st-d">written by a flow, no row</span><span class="st-n">1</span></div>
+            <div class="st-who"><span class="st-k">Destructive</span>
+              <span class="st-d">a reset changes what the user authorised</span>
+              <span class="st-n bad">4</span></div>
+            <div class="st-note">
+              <p class="st-h" style="margin:0">Three readers need the classification and none can
+                derive it: the settings surface (which keys get rows), the reset (which keys are
+                preferences), and the confirmation rule (which changes need one). The union is today a
+                flat list of strings.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The keys gain a kind, so "which keys are integrations" — the question the reset screen
+            needs answered — is a property of the type rather than a list in a doc.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It puts UI taxonomy into the event log's type union, and the log is meant to describe
+            facts rather than surfaces. A "destructive" key is not a property of the value; it is a
+            property of what the app does with it, and encoding it in the payload couples the log to
+            a screen.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: <code>event-log.md</code> defines the union so "the settings surface and the log
+            stay in sync" — a sync concern, not a classification one. Widening it is a change to the
+            log's purpose, and the doc's own note says adding a key is a doc change rather than a
+            mechanism.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">Delete the orphan key. Weather has a location, not an enablement.</p>
+        <span class="vc-read">cut the tell · a key nothing writes</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="st-who"><span class="st-k">integration.weather.enabled</span>
+              <span class="st-d">no row, no flow, no reader</span>
+              <span class="st-n bad">remove</span></div>
+            <div class="st-who"><span class="st-k">integration.weather.home_location</span>
+              <span class="st-d">the Integrations row</span><span class="st-n ok">kept</span></div>
+            <div class="st-note">
+              <p class="st-h" style="margin:0">Weather is on when a location is set and off when it
+                is cleared, so enablement is <i>derived</i> — and a derived value stored as its own
+                key can disagree with the thing it is derived from.</p>
+              <p class="st-alert">Cost: the other three integrations each have an
+                <code>.enabled</code> key, so weather becomes the only one without — an asymmetry in
+                a union whose entire purpose is to keep two docs in step.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Removes one key from the union, leaving weather's enablement derived from its location
+            the way the doc's own Integrations group already presents it.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Three integrations with an <code>.enabled</code> key and one without is exactly the kind
+            of inconsistency that makes a union hard to reason about — and if weather later gains an
+            enable toggle of its own, the key comes back and the asymmetry reverses.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: removing a key is a doc change on both sides (§Invariants), and
+            <code>surfaces.md</code> / <code>integrations.md</code> may reference it. It is the
+            smallest of the repairs here and the only one that makes the two lists agree by
+            deletion.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Give the orphan a row. Weather is a switch like its three siblings.</p>
+        <span class="vc-read">prefer adding the missing control to removing the key</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="st-grp">
+              <div class="st-row"><span class="st-l">Calendar</span><span class="st-tg"></span></div>
+              <div class="st-row"><span class="st-l">Contacts</span><span class="st-tg"></span></div>
+              <div class="st-row"><span class="st-l">Health</span><span class="st-tg"></span></div>
+              <div class="st-row"><span class="st-l">Weather</span><span class="st-tg"></span></div>
+              <div class="st-row"><span class="st-l dim">Home location</span>
+                <span class="st-v">Home</span></div>
+            </div>
+            <div class="st-note">
+              <p class="st-h" style="margin:0">Four integrations, four switches, one shape — and the
+                Integrations group goes from five rows to six.</p>
+              <p class="st-d" style="margin-top:8px">The row count in this lab's first screen becomes
+                <b>50</b>, which is worth saying out loud because it is the number nobody had.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Weather gains an enable toggle, so the four integrations are symmetric and every key in
+            the union has a row. The doc gains the row count and the note that the two lists are meant
+            to be the same set.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It adds a switch for a feature whose on/off state the user expresses by setting a
+            location — so the app now has two ways to turn weather off that can disagree. And it makes
+            the union's shape the driver, which is the opposite of "every setting that stores a value
+            has a key".</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>What <code>integration.weather.enabled</code> was for. It is in the union, in the type
+            that exists to keep the log and this surface in sync, and it has no writer and no reader
+            in any doc — so either it was intended and forgotten, or it is a leftover. The lab can
+            show it has no home; only the doc's author knows which.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the union measures</h2>
+    <div class="measure" id="measure-keys">…</div>
+  </div>
+</section>
+
+</main>
+
+<script src="lab.js"></script>
+<script src="nav.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var screens = ['list', 'reset', 'doors', 'keys'];
+  var seen = {};
+  var tabs = document.getElementById('tabs');
+
+  tabs.addEventListener('click', function (e) {
+    var b = e.target.closest('.tab');
+    if (b && b.dataset.go) go(b.dataset.go);
+  });
+
+  function go(id) {
+    screens.forEach(function (s) {
+      var el = document.getElementById(s);
+      if (el) el.hidden = (s !== id);
+    });
+    Array.prototype.forEach.call(tabs.children, function (b) {
+      b.classList.toggle('on', b.dataset.go === id);
+    });
+    if (!seen[id]) {
+      seen[id] = true;
+      requestAnimationFrame(function () { MEASURE[id](); });
+    }
+  }
+
+  function px(name) {
+    return parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name));
+  }
+
+  // ------------------------------------------------------------ the groups
+  // Straight from settings.md §Groups. `rows` is the count of bullets; the two
+  // list-bearing entries are called out because their length is not fixed.
+  var GROUPS = [
+    ['Account', 4, ''],
+    ['Sync', 6, 'one row is conditional'],
+    ['Day', 3, ''],
+    ['Reviews', 4, ''],
+    ['Notifications and nudges', 6, '+ 12 surface toggles'],
+    ['AI', 5, ''],
+    ['Appearance', 4, ''],
+    ['Language', 1, ''],
+    ['Lapsed recovery', 1, ''],
+    ['Integrations', 5, ''],
+    ['Advanced', 4, ''],
+    ['About', 6, '']
+  ];
+
+  var MEASURE = {};
+
+  // -- list
+  MEASURE.list = function () {
+    var row = px('--row-compact');       // 44
+    var head = px('--type-title-3-line'); // 24
+    var gap = px('--space-8');            // 32
+
+    var rows = GROUPS.reduce(function (n, g) { return n + g[1]; }, 0);
+    var headers = GROUPS.length;
+    var gaps = GROUPS.length - 1;
+
+    var textH = rows * row;
+    var headH = headers * head;
+    var gapH = gaps * gap;
+    var total = textH + headH + gapH;
+
+    var viewport = 700;
+    var screensOf = total / viewport;
+
+    // The two groups whose length is not fixed.
+    var surfaceToggles = 12;
+
+    var host = document.getElementById('grp-1');
+    if (host) {
+      // Draw the group headers with their counts — the honest summary of 49 rows
+      // without rendering 2,800px of them inside a 700px frame.
+      host.innerHTML = GROUPS.map(function (g) {
+        return '<div class="st-row"><span class="st-l">' + g[0] + '</span>' +
+          '<span class="st-v">' + g[1] + (g[2] ? ' · ' + g[2] : '') + '</span></div>';
+      }).join('');
+    }
+
+    var table = [
+      ['Groups', 'surfaces.md · settings.md', headers + ''],
+      ['Rows', 'settings.md §Groups', '<b>' + rows + '</b>'],
+      ['Row height', 'row-compact', row + 'px'],
+      ['Header', 'type-title-3 line-height', head + 'px'],
+      ['Group separation', 'space-8', gap + 'px'],
+      ['Rows, total height', rows + ' × ' + row, textH + 'px'],
+      ['Headers, total', headers + ' × ' + head, headH + 'px'],
+      ['Separation, total', gaps + ' × ' + gap, gapH + 'px'],
+      ['Surface height', 'all three added', '<b>' + total + 'px</b>'],
+      ['On a 700px phone', total + ' ÷ 700', '<b>' + screensOf.toFixed(1) + ' screens</b>'],
+      ['Search', 'any doc', '<b>none</b>'],
+      ['Entry point', '§Purpose', 'the command palette'],
+      ['Per-surface toggles', 'not in the 49', '+' + surfaceToggles],
+      ['Lists inside Settings', 'not in the 49', '2 (Areas · audit)']
+    ];
+
+    document.getElementById('measure-list').innerHTML =
+      '<div class="rows">' + table.map(function (r) {
+        return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+          '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+      }).join('') + '</div>' +
+      '<p class="mf"><b>' + rows + ' rows</b> at <code>row-compact</code> ' + row + 'px, plus ' +
+      headers + ' headers and ' + gaps + ' group gaps, is <b>' + total + 'px</b> — ' +
+      screensOf.toFixed(1) + ' screens on the 700px phone every other lab measured. Add the ' +
+      surfaceToggles + ' per-surface toggles and the two nested lists and the real number is larger ' +
+      'still, which is why this doc never states it.</p>' +
+      '<p class="mf">The surface has <b>no search</b>, and the one entry point the doc names for it ' +
+      'is the command palette — a search field. Every other long list in the app has a filter or a ' +
+      'scope; this one is reached through a search UI and searched by scrolling. Note also that ' +
+      '<code>surfaces.md</code> bakes the group count into its index row ("Settings (<b>twelve ' +
+      'groups</b>)"), so the structure is pinned in a second doc.</p>';
+
+    document.getElementById('list-cost').innerHTML =
+      '<b>' + rows + ' rows</b> across ' + headers + ' groups is <b>' + total + 'px</b> — ' +
+      screensOf.toFixed(1) + ' screens, with <b>no search</b> and the command palette as the ' +
+      'documented entry point. Two of the twelve groups have lengths that change (' +
+      '<code>Sync</code> gains a row on a pending network error, and Notifications carries ' +
+      surfaceToggles + ' toggles), so the total is not even fixed.';
+  };
+
+  // -- reset
+  MEASURE.reset = function () {
+    // The union expands: 28 entries, two of them templates.
+    var unionEntries = 28;
+    var templates = 2;
+    var surfaceToggles = 12;   // nudge.surface.<12 surfaces>.enabled
+    var channels = 3;          // notification.channel.<3>.enabled
+    var concrete = unionEntries - templates + surfaceToggles + channels;
+    var toastSeconds = 5;
+
+    var integrationKeys = 4;   // calendar, contacts, health, weather.home_location
+    var preferenceKeys = concrete - integrationKeys;
+
+    var host = document.getElementById('batch-1');
+    if (host) {
+      // 41 marks is unreadable; 41 in a wrapped grid is the point being made.
+      host.innerHTML = new Array(concrete + 1).join('<i class="on"></i>');
+    }
+
+    var table = [
+      ['SettingsKey union', 'event-log.md', unionEntries + ' entries'],
+      ['Of those, templates', 'nudge.surface · notification.channel', templates + ''],
+      ['Expands to', surfaceToggles + ' surfaces + ' + channels + ' channels', surfaceToggles + channels + ''],
+      ['Concrete keys', unionEntries + ' − ' + templates + ' + ' + (surfaceToggles + channels),
+        '<b>' + concrete + '</b>'],
+      ['Entries per reset', 'one per key', '<b>' + concrete + '</b>'],
+      ['Appended as', '§Notes', 'one batch'],
+      ['Append batches per key', 'one per key, per the same sentence', '1'],
+      ['Grouping ID stored', '§Notes, explicitly', '<b>none</b>'],
+      ['Undo window', 'the standard toast', toastSeconds + 's'],
+      ['Other undoable actions', 'Invariant 1', '1 change each'],
+      ['Integration keys in the batch', 'integration.*', integrationKeys + ''],
+      ['Preference keys in the batch', 'the rest', preferenceKeys + ''],
+      ['Confirmed actions in Settings', '§Invariants', '3'],
+      ['Revoke calendar access', 'one of the three', 'confirmed'],
+      ['Reset all settings → calendar off', 'the same visible effect', 'unconfirmed']
+    ];
+
+    document.getElementById('measure-reset').innerHTML =
+      '<div class="rows">' + table.map(function (r) {
+        return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+          '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+      }).join('') + '</div>' +
+      '<p class="mf">One tap writes <b>' + concrete + ' entries</b>, and <code>settings.md</code> ' +
+      'records in the same paragraph that nothing connects them: <i>"no shared grouping ID is stored ' +
+      'in the log"</i>. So for <b>' + toastSeconds + ' seconds</b> the batch is one action, and after ' +
+      'that it is <b>' + concrete + ' separate settings changes</b> that no reader — including ' +
+      '<b>Rebuild projections</b> in the same group — can tell from deliberate edits.</p>' +
+      '<p class="mf">The invariant\u2019s size argument also does not hold: every other undoable ' +
+      'action in the app changes <b>one</b> thing, so the toast has never had to carry a batch. And ' +
+      '<b>' + integrationKeys + ' of the ' + concrete + '</b> keys are integrations rather than ' +
+      'preferences \u2014 resetting calendar to its default has the same visible effect as ' +
+      '<i>Revoke calendar access</i>, which is one of exactly <b>3</b> confirmed actions, while the ' +
+      'unconfirmed path reaches the same place.</p>';
+
+    document.getElementById('reset-cost').innerHTML =
+      '<b>' + concrete + ' entries</b> in one batch with <b>no grouping ID</b> and a <b>' +
+      toastSeconds + '-second</b> undo \u2014 and <b>' + integrationKeys + '</b> of the keys are not ' +
+      'preferences. Resetting calendar to its default is the unconfirmed route to what ' +
+      '<i>Revoke calendar access</i> does under confirmation.';
+  };
+
+  // -- doors
+  MEASURE.doors = function () {
+    var rows = [
+      ['Container from the palette', 'settings.md §Behavior', 'full-screen sheet'],
+      ['Container from the gear', 'the same sentence', 'pushed panel'],
+      ['Containers for one surface', 'the same sentence', '<b>2</b>'],
+      ['Contents that are not rows', 'surfaces.md · §Notes', '2'],
+      ['Area list, as filed', 'surfaces.md', 'Screen (in Settings)'],
+      ['A Screen belongs to', 'app-shell.md layer 1', 'Content'],
+      ['A sheet belongs to', 'app-shell.md layer 4', 'Transient'],
+      ['Layers the doc says', '§Purpose · §Invariants · the heading', '<b>four</b>'],
+      ['Layers the table lists', '1 Content … 5 Toasts', '<b>five</b>'],
+      ['Of those, floating', 'Content and Sticky chrome are not', 'three'],
+      ['\"four floating layers\"', '§Purpose, read literally', 'matches neither'],
+      ['Layer 5 referenced as', 'the undo-toast example', '\u201clayer 5\u201d'],
+      ['The guard clause', '\"a fifth layer requires a change to this doc\"',
+        'defeated by its own table'],
+      ['Sheets that open a sheet', 'app-shell.md\u2019s defer-sheet example', 'supported'],
+      ['The rule for spanning layers', 'any doc', '<b>none</b>']
+    ];
+
+    document.getElementById('measure-doors').innerHTML =
+      '<div class="rows">' + rows.map(function (r) {
+        return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+          '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+      }).join('') + '</div>' +
+      [
+        '<p class="mf">The count is stated <b>three</b> times and the table disagrees every time. This is not a tidiness defect: layer <b>5</b> is referenced by name in the defer example, and the invariant whose whole job is to protect the number — <i>"a fifth layer requires a change to this doc"</i> — sits two lines above a table that already has one. Either the clause predates Toasts or Toasts was added past it, and the doc reads as though nothing happened.</p>',
+        '<p class="mf">And <b>"four floating layers"</b> is wrong on either reading: the table has <b>five</b> rows and only <b>three</b> of them float, because Content and Sticky chrome are the shell itself. The phrase is doing real work — it is how the model is introduced — and no arrangement of the table makes it true.</p>',
+        '<p class="mf">The surface question that led here is smaller than it looked. A sheet opening a second sheet and returning is <b>supported</b> by this doc\u2019s own worked example, so Settings\u2019 two containers are not forbidden — they are just unplaced. What has no rule is a surface that <b>spans layers</b>: on one path Settings <i>is</i> layer 4 while containing a layer-1 Screen.</p>'
+      ].join('');
+
+    document.getElementById('doors-cost').innerHTML =
+      'The surface has <b>2</b> containers and its contents span layers: the <b>Area list</b> is a ' +
+      'layer-1 <b>Screen</b> inside a layer-4 sheet on the gear path. What makes that a defect ' +
+      'rather than a style is that <code>app-shell.md</code> orders the layers and says "Order is ' +
+      'the contract" \u2014 while saying <b>four</b> three times over a table of <b>five</b>, in the ' +
+      'very section that defines the only way to add a layer.';
+  };
+
+  // -- keys
+  MEASURE.keys = function () {
+    // The union, in order, with the group each key is written by on the surface.
+    var KEYS = [
+      ['quiet_hours.start', 'Notifications and nudges', true],
+      ['quiet_hours.end', 'Notifications and nudges', true],
+      ['nudge.frequency', 'Notifications and nudges', true],
+      ['nudge.surface.<12>.enabled', 'Notifications and nudges', true],
+      ['notification.channel.<3>.enabled', 'Notifications and nudges', true],
+      ['sync.enabled', 'Sync', true],
+      ['sync.sensitive_backup', 'Sync', true],
+      ['day.boundary_hour', 'Day', true],
+      ['day.week_starts_on', 'Day', true],
+      ['review.weekly_day', 'Reviews', true],
+      ['review.weekly_time', 'Reviews', true],
+      ['review.monthly_enabled', 'Reviews', true],
+      ['review.annual_enabled', 'Reviews', true],
+      ['theme', 'Appearance', true],
+      ['default_mode', 'Appearance', true],
+      ['haptics.enabled', 'Appearance', true],
+      ['auto_linking.enabled', 'Appearance', true],
+      ['lapse.threshold_days', 'Lapsed recovery', true],
+      ['locale.override', 'Language', true],
+      ['ai.on_device_only', 'AI', true],
+      ['ai.audit_mode', 'AI', true],
+      ['developer_mode', 'Advanced', true],
+      ['crash_reports.enabled', 'About', true],
+      ['integration.calendar.enabled', 'Integrations', true],
+      ['integration.contacts.enabled', 'Integrations', true],
+      ['integration.health.enabled', 'Integrations', true],
+      ['integration.weather.enabled', '—', false],
+      ['integration.weather.home_location', 'Integrations', true]
+    ];
+
+    var withRow = KEYS.filter(function (k) { return k[2]; }).length;
+    var orphans = KEYS.filter(function (k) { return !k[2]; });
+
+    var host = document.getElementById('key-rows');
+    if (host) {
+      host.innerHTML = KEYS.map(function (k) {
+        return '<div class="st-who"><span class="st-k">' + k[0] + '</span>' +
+          '<span class="st-d">' + k[1] + '</span>' +
+          '<span class="st-n' + (k[2] ? ' ok' : ' bad') + '">' +
+          (k[2] ? 'row' : 'no row') + '</span></div>';
+      }).join('');
+    }
+
+    var table = [
+      ['Union entries', 'event-log.md §The SettingsKey union', KEYS.length + ''],
+      ['With a row on the surface', 'settings.md §Groups', '<b>' + withRow + '</b>'],
+      ['Without a row', 'the difference', '<b>' + orphans.length + '</b>'],
+      ['The key', 'integration.weather.enabled', 'no row'],
+      ['Weather rows that exist', '§Groups → Integrations', '1: set home location'],
+      ['Other integration keys', 'calendar · contacts · health', '3'],
+      ['The invariant', 'settings.md §Invariants', 'setting → key'],
+      ['The reverse', 'key → row', '<b>not stated</b>'],
+      ['Concrete keys after expansion', '2 templates expand', '41'],
+      ['Union grouping', 'the type', 'flat: 28 strings'],
+      ['Readers needing a kind', 'surface · reset · confirmations', '3']
+    ];
+
+    document.getElementById('measure-keys').innerHTML =
+      '<div class="rows">' + table.map(function (r) {
+        return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+          '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+      }).join('') + '</div>' +
+      '<p class="mf"><b>' + withRow + ' of ' + KEYS.length + '</b> keys have a row. The odd one is ' +
+      '<code>integration.weather.enabled</code>: the Integrations group offers weather a single row ' +
+      '(<i>set home location</i>) while its three sibling integrations each have an enable key, so ' +
+      'the union can hold a value the surface never writes and the user never sees.</p>' +
+      '<p class="mf">The invariant runs one way and says so — "every setting that <b>stores a value</b> ' +
+      'has a <code>SettingsKey</code>" — which is why a key with no row is not a violation. That ' +
+      'asymmetry is deliberate and it is what let this survive. Making it an equality would catch ' +
+      'it, and would also force toggles for keys that are legitimately written by a flow rather ' +
+      'than a control.</p>';
+
+    document.getElementById('keys-cost').innerHTML =
+      '<b>' + orphans.length + ' of ' + KEYS.length + '</b> keys in the union has no row: ' +
+      '<code>integration.weather.enabled</code> is a value the app can store, the settings surface ' +
+      'cannot show, and no doc writes or reads. Its three siblings all have enable keys, so the ' +
+      'asymmetry is one key wide — inside a type whose stated purpose is keeping two docs in step.';
+  };
+
+  go('list');
+})();
+</script>
+</body>
+</html>
