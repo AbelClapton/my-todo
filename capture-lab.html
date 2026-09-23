@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="warm" data-mode="light" data-accent="teal"
+      data-semantics="vivid" data-type="system">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capture lab · Small Wins</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="lab.css">
+<style>
+/* the capture field */
+.cp-field{background:var(--surface-1);border:1px solid var(--border-strong);border-radius:12px;
+  padding:12px 14px}
+.cp-in{font-size:16px;line-height:24px;color:var(--text-primary);display:flex;align-items:center;
+  gap:8px}
+.cp-in .grow{flex:1}
+.cp-ph{color:var(--text-muted)}
+.cp-below{font-size:13px;line-height:18px;color:var(--text-tertiary);margin-top:6px}
+.cp-chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;line-height:18px;
+  padding:3px 9px;border-radius:7px;background:var(--success-subtle);color:var(--success-text)}
+.cp-chip.ask{background:var(--accent-subtle);color:var(--accent-text);font-weight:600}
+.cp-chip.raw{background:var(--surface-2);color:var(--text-tertiary)}
+.cp-btns{display:inline-flex;gap:6px;margin-top:8px}
+.cp-b{font-size:13px;line-height:18px;font-weight:600;padding:5px 12px;border-radius:8px}
+.cp-b.p{background:var(--accent-default);color:var(--on-fill)}
+.cp-b.s{background:var(--surface-2);color:var(--text-secondary)}
+.cp-note{border:1px solid var(--border-subtle);border-radius:12px;padding:14px}
+.cp-h{font-size:12px;line-height:16px;color:var(--text-muted);margin:2px 0 0}
+.cp-alert{font-size:13px;line-height:18px;color:var(--warning-text);margin-top:6px}
+.cp-who{display:grid;grid-template-columns:110px minmax(0,1fr) auto;gap:10px;
+  align-items:baseline;padding:7px 0;border-bottom:1px solid var(--border-subtle)}
+.cp-who:last-child{border-bottom:0}
+.cp-k{font-size:13px;line-height:18px;color:var(--text-tertiary)}
+.cp-d{font-size:13px;line-height:18px;color:var(--text-secondary)}
+.cp-n{font-size:13px;line-height:18px;font-variant-numeric:tabular-nums;font-weight:600;
+  color:var(--text-primary)}
+.cp-n.ok{color:var(--success-text)}
+.cp-n.bad{color:var(--warning-text)}
+.cp-2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.cp-col{border:1px solid var(--border-subtle);border-radius:10px;padding:10px 12px}
+.cp-col h4{margin:0 0 6px;font-size:12px;line-height:16px;color:var(--text-muted);
+  font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+
+/* the confidence axis */
+.cp-axis{position:relative;margin:18px 0 26px}
+.cp-track{height:26px;border-radius:6px;background:var(--surface-2);position:relative;
+  display:flex;overflow:hidden}
+.cp-band{height:100%;display:grid;place-items:center;font-size:12px;font-weight:600}
+.cp-band.low{background:var(--surface-3);color:var(--text-secondary)}
+.cp-band.mid{background:var(--accent-subtle);color:var(--accent-text)}
+.cp-band.high{background:var(--success-subtle);color:var(--success-text)}
+.cp-gap{position:absolute;top:-6px;bottom:-6px;width:3px;background:var(--warning-text);
+  left:84.5%}
+.cp-ticks{display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);
+  margin-top:4px;font-variant-numeric:tabular-nums}
+.cp-flag{position:absolute;left:84.5%;transform:translateX(-50%);top:100%;margin-top:14px;
+  font-size:12px;color:var(--warning-text);white-space:nowrap;font-weight:600}
+</style>
+</head>
+<body data-lab="capture">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol>
+  <symbol id="i-mode-tasks" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol>
+  <symbol id="i-mode-notes" viewBox="0 0 24 24"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></symbol>
+</svg>
+
+<header class="masthead">
+  <p class="eyebrow">Lab 11 · the first thing a user does</p>
+  <h1 class="t-title-1">Capture</h1>
+  <p class="lede-p">
+    <code>capture.md</code> opens with the app's most important sentence: <i>"capture is the first
+    thing a user does and the moment where the app either feels effortless or feels like data
+    entry."</i> The rule it derives is <b>capture without deciding</b>.
+  </p>
+  <p class="lede-p">
+    The flow is unusually well specified across two docs — <code>capture.md</code> and
+    <code>tier-1-parsing.md</code> state the same three confidence bands, the same thresholds, and
+    the same fallback. That agreement is why nobody noticed that <b>the three bands do not cover the
+    range</b>: there is a hole between 0.84 and 0.85, in both docs, in the one number that decides
+    whether a parse applies itself.
+  </p>
+</header>
+
+<div class="bar">
+  <nav class="tabs" id="tabs">
+    <button class="tab" data-go="doors">The four entry points</button>
+    <button class="tab" data-go="chip">The chip</button>
+    <button class="tab" data-go="bands">The bands</button>
+    <button class="tab" data-go="out">What capture creates</button>
+  </nav>
+</div>
+
+<main id="main">
+
+<!-- ================================================================== DOORS -->
+<section class="screen" id="doors">
+  <div class="lede">
+    <h2 class="t-title-2">The four entry points</h2>
+    <p class="lede-p">
+      <code>capture.md</code> §Invariants: <i>"Capture is available from <b>anywhere</b> via the
+      pull-down gesture."</i> §The four entry points: <i>"<b>Pull-down.</b> On any <b>scrollable
+      list</b>, pull down to reveal the capture field at the top."</i>
+    </p>
+    <p class="lede-p">
+      <code>gesture-vocabulary.md</code>'s matrix assigns the <b>Pull ↓</b> column to exactly five
+      surfaces — Task list, Habit list, Note list, People list, Inbox — and gives both Calendar rows
+      a dash. So "anywhere" is three modes and a filter, and the app's home surface has no capture
+      gesture at all.
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">Four paths to one pipeline, and where each one actually starts.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="cp-who"><span class="cp-k">Pull ↓</span>
+              <span class="cp-d">Task · Habit · Note · People lists, Inbox</span>
+              <span class="cp-n">5 surfaces</span></div>
+            <div class="cp-who"><span class="cp-k">Both Calendar rows</span>
+              <span class="cp-d">the matrix gives Pull ↓ a dash</span>
+              <span class="cp-n bad">0</span></div>
+            <div class="cp-who"><span class="cp-k">Palette</span>
+              <span class="cp-d">Cmd+K, then type — the field is a search field</span>
+              <span class="cp-n">2 steps</span></div>
+            <div class="cp-who"><span class="cp-k">Share sheet</span>
+              <span class="cp-d">from another app</span>
+              <span class="cp-n">leaves the app</span></div>
+            <div class="cp-who"><span class="cp-k">Voice</span>
+              <span class="cp-d">inside the field, or the palette</span>
+              <span class="cp-n">2 places</span></div>
+            <div class="cp-note">
+              <p class="cp-h" style="margin:0">All four feed one pipeline, and the invariant says
+                "anywhere". One of the four starts on a screen the invariant does not name, in the
+                mode the app's own Day view is built around.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The four entry points and the surfaces the gesture matrix grants them.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="doors-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: §Invariants says <b>"from anywhere"</b>, the spec narrows it to <b>"any scrollable
+            list"</b>, and the gesture matrix narrows it again to <b>five surfaces</b> — none of them
+            in the Calendar. Three documents, three scopes, and the widest one is the invariant.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">Make the invariant true: <b>the shell owns the gesture</b>, not the
+          lists.</p>
+        <span class="vc-read">one owner · a gesture that the frame provides</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="cp-note">
+              <p class="cp-h" style="margin:0">Pull ↓ belongs to the <b>shell</b>
+                (<code>app-shell.md</code>), not to each list. Any surface inside the shell exposes
+                it — including both Calendar views, Settings, and any detail screen — because the
+                gesture reveals a bar belonging to the chrome rather than to the content.</p>
+              <p class="cp-h" style="margin-top:8px"><code>gesture-vocabulary.md</code>'s matrix then
+                stops carrying a per-surface column for capture and points at the shell.</p>
+            </div>
+            <div class="cp-field" style="margin-top:4px">
+              <div class="cp-in"><span class="cp-ph grow">Capture…</span>
+                <span style="font-size:16px">🎤</span></div>
+              <div class="cp-below">→ task · area: Inbox · parsed</div>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Pull-down capture becomes a shell affordance available on every surface the shell
+            wraps, so "from anywhere" becomes true rather than aspirational, and the matrix loses a
+            column that was really a property of the frame.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The Calendar's Day view scrolls a timeline whose own pull-down gesture would now be
+            claimed, and the Month grid does not scroll at all — so "the shell exposes it" needs an
+            answer for surfaces with no scroll container. It also makes the gesture fire on surfaces
+            that have nothing to capture into, spending the invariant's promise on places it does not
+            help.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two: <code>app-shell.md</code> §Invariants says <i>"A mode may fill the header's slots;
+            it may not add chrome, a second bar, or a floating control"</i> — a shell-owned capture
+            bar is chrome. And the matrix is a specification of per-surface gestures, which this
+            removes a column from.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">Fix the <b>invariant's wording</b>. Five lists is a deliberate scope.</p>
+        <span class="vc-read">don't widen the surface · correct the claim</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="cp-note">
+              <p class="cp-h" style="margin:0">Rewritten invariant:</p>
+              <p class="cp-d" style="margin-top:8px">"Capture is reachable from <b>every list</b> by
+                pull-down, and from <b>any screen</b> by the command palette. It does not consume
+                attention budget."</p>
+              <p class="cp-h" style="margin-top:8px">Two doors with stated scopes instead of one
+                door claimed for everywhere. The Calendar keeps its gestures — its two rows in the
+                matrix are already the most crowded, and both use long-press.</p>
+            </div>
+            <div class="cp-who"><span class="cp-k">Claimed</span>
+              <span class="cp-d">"from anywhere"</span><span class="cp-n bad">false today</span></div>
+            <div class="cp-who"><span class="cp-k">Actual</span>
+              <span class="cp-d">5 lists + the palette, offline</span>
+              <span class="cp-n ok">true and checkable</span></div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The invariant states the two real scopes instead of one impossible one. No surface
+            changes, so nothing needs re-drawing and no gesture is claimed twice.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It concedes that the app's most-used flow is unavailable in a fifth of the app's
+            surfaces, and that the default mode needs two steps where another mode needs one. A user
+            who learns pull-down in Tasks and then cannot use it in the Calendar has learned a rule
+            that is false half the time.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: this is the invariant, and editing an invariant is an ADR-shaped change in this
+            repo. §The four entry points would then need its "On any scrollable list" narrowed to the
+            same five surfaces, which is the doc admitting the matrix was right.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">"Under two seconds" is the real invariant. Make the <b>palette</b> the
+            fast path.</p>
+        <span class="vc-read">cut the tell · measure the path, not the gesture</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="cp-who"><span class="cp-k">Pull-down</span>
+              <span class="cp-d">gesture → field → type → Enter</span>
+              <span class="cp-n">1 gesture</span></div>
+            <div class="cp-who"><span class="cp-k">Palette</span>
+              <span class="cp-d">Cmd+K → type → pick the result</span>
+              <span class="cp-n">1 keystroke + 1 pick</span></div>
+            <div class="cp-who"><span class="cp-k">The invariant</span>
+              <span class="cp-d">"under two seconds from gesture to input field"</span>
+              <span class="cp-n bad">names one path</span></div>
+            <div class="cp-note">
+              <p class="cp-h" style="margin:0">Of the four entry points, only <b>pull-down</b> has a
+                gesture to measure from. The invariant is scoped to one of them while reading as a
+                property of capture — and the palette, which works on every screen, has no
+                budget.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The invariant gains the thing it is actually about: <b>time to a field the user can
+            type into</b>, measured for the palette as well as for pull-down, since the palette is
+            the only path present on every surface.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A palette path is two steps by construction — open, then type — so stating a two-second
+            budget for it either fails or forces the palette open to be instant. And the palette is
+            <b>modal</b> (<code>app-shell.md</code>), so it cannot be the ambient path pull-down
+            is.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: §Invariants says "under two seconds <b>from gesture to input field</b>", which
+            presumes a gesture. Extending it to a keystroke path changes what the invariant measures
+            rather than how well the app does.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Correct the scope, and give the <b>Calendar</b> the one thing it lacks.</p>
+        <span class="vc-read">fix the claim, then close the largest gap</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="cp-note">
+              <p class="cp-h" style="margin:0"><b>1. The invariant says what is true:</b> pull-down
+                on every list; the palette on every screen; the share sheet from outside; voice
+                inside the field.</p>
+              <p class="cp-h" style="margin-top:8px;color:var(--text-secondary)"><b>2. The Calendar
+                gets the palette path named as its capture route</b>, because
+                <code>capture.md</code> only offers it as one of four for everyone — and the Day
+                view is where a user most often thinks of something.</p>
+            </div>
+            <div class="cp-note">
+              <p class="cp-h" style="margin:0">Nothing new is built. The gap is one of
+                <b>documentation</b>: three docs state three scopes, and the largest mode in the app
+                is covered by none of them.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The invariant and §The four entry points state the same scope as the gesture matrix, so
+            the three docs agree. The Calendar's route to capture is named rather than implied, and
+            the matrix keeps its dash — which is now a documented absence instead of a
+            contradiction.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It resolves the contradiction by narrowing the promise rather than widening the
+            surface, so the app still cannot capture from its home view with one gesture — and the
+            invariant that sold "effortless" now says "effortless, on five lists".</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether the Calendar should have pull-down capture. Its Day view is a timeline —
+            <b>a list</b>, per the Calendar lab — so it arguably <i>is</i> a scrollable list and the
+            matrix is what is wrong. That would make the invariant's "any scrollable list" correct and
+            the matrix's dash the error, which is the opposite repair. The lab can show the two
+            readings; which is right depends on whether pull-down on a timeline would fight the
+            timeline's own scroll.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the entry points measure</h2>
+    <div class="measure" id="measure-doors">…</div>
+  </div>
+</section>
+
+<!-- =================================================================== CHIP -->
+<section class="screen" id="chip">
+  <div class="lede">
+    <h2 class="t-title-2">The chip</h2>
+    <p class="lede-p">
+      One position, below the field, holds three different things depending on a number the user
+      never sees. <code>capture.md</code>'s ≥0.85 band shows a <b>"parsed" chip</b> and its example
+      draws it; its 0.60–0.84 band shows a <b>confirmation chip</b>; its &lt;0.60 band shows a
+      preview reading <b>"→ note · unparsed"</b>.
+    </p>
+    <p class="lede-p">
+      And the two docs that describe the middle one disagree about it. <code>capture.md</code>
+      §The capture field says the preview <i>"is informational, not a confirmation. The user
+      <b>does not have to act on it</b>."</i> <code>tier-1-parsing.md</code>'s chip has <i>"Two
+      buttons: 'Yes' and 'Edit.'"</i> — while <code>capture.md</code>'s pipeline says the user
+      <i>"can <b>tap the chip</b> to edit the parse."</i>
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">Both docs' versions of the same control, side by side.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="cp-col">
+              <h4>capture.md</h4>
+              <div class="cp-field">
+                <div class="cp-in"><span class="grow">Call dentist Tuesday</span>
+                  <span style="font-size:16px">🎤</span></div>
+                <div class="cp-below"><span class="cp-chip ask">Did you mean X?</span></div>
+              </div>
+              <p class="cp-h" style="margin-top:8px">"informational, not a confirmation. The user does
+                not have to act on it." — §The capture field</p>
+              <p class="cp-h">"The user can <b>tap the chip</b> to edit the parse, or ignore it." —
+                §The pipeline, step 4</p>
+            </div>
+            <div class="cp-col">
+              <h4>tier-1-parsing.md</h4>
+              <div class="cp-field">
+                <div class="cp-in"><span class="grow">Call dentist Tuesday</span></div>
+                <div class="cp-below"><span class="cp-chip ask">Did you mean: task · due Tue Sep
+                  29?</span></div>
+                <div class="cp-btns"><span class="cp-b p">Yes</span><span class="cp-b s">Edit</span></div>
+              </div>
+              <p class="cp-h" style="margin-top:8px">"Two buttons: 'Yes' and 'Edit.'"</p>
+              <p class="cp-h">"If the user does nothing, the parse is not applied."</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The same chip at the same confidence, as each doc specifies it.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="chip-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two. <code>capture.md</code> says the region is informational and the user need not act
+            — while its own pipeline makes non-action decide the outcome. And the two docs give the
+            chip <b>different controls</b>: one tappable chip versus two buttons, with no doc
+            reconciling them.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">Split the region. <b>Preview above, control below.</b></p>
+        <span class="vc-read">one job per element · informational and actionable never share a slot</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="cp-field">
+              <div class="cp-in"><span class="grow">Call dentist Tuesday</span>
+                <span style="font-size:16px">🎤</span></div>
+              <div class="cp-below">→ task · due Tue 29 Sep · <span class="cp-chip"
+                style="padding:1px 6px">read this</span></div>
+              <div class="cp-btns"><span class="cp-b p">Looks right</span>
+                <span class="cp-b s">Edit</span></div>
+            </div>
+            <div class="cp-note">
+              <p class="cp-h" style="margin:0">The <b>preview</b> is always present and always
+                informational — it says what was read. The <b>buttons</b> appear only in the middle
+                band, and they are unmistakably controls.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The preview becomes permanent and purely descriptive ("read this"), and the decision —
+            when one is needed — is always a pair of buttons rather than a chip that is sometimes
+            tappable. Both docs' behaviours survive; the ambiguity does not.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Two rows of chrome under a field the flow promises takes "under two seconds", on the
+            band that is already interrupting. And a permanent "read this" chip on every capture adds
+            a word to the place the doc wants to be invisible — the ≥0.85 band applies
+            <i>silently</i>, and this announces it.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: §The capture field specifies <b>one</b> line below the field and gives its example
+            as the bare preview. Two rows is a layout the doc does not have, and the ≥0.85 band's
+            "apply silently" is a rule about not calling attention to itself.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">Use <code>tier-1-parsing.md</code>'s version — it is the one with the
+          reasoning.</p>
+        <span class="vc-read">the doc that explains the constraint owns the control</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="cp-note">
+              <p class="cp-h" style="margin:0"><code>tier-1-parsing.md</code> is the better text and
+                says so itself:</p>
+              <p class="cp-d" style="margin-top:8px">"An unanswered confirmation never applies itself.
+                <b>A timer that turns silence into consent is a silent mutation, which is the one thing
+                Invariant 2 forbids.</b> Leaving it unanswered costs nothing: the input is preserved
+                verbatim in the inbox, and the parse remains on offer there."</p>
+              <p class="cp-h" style="margin-top:8px">Two buttons, an explicit non-answer path, and the
+                principle behind it. <code>capture.md</code> has the same behaviour with neither the
+                buttons nor the argument.</p>
+            </div>
+            <div class="cp-who"><span class="cp-k">Buttons</span>
+              <span class="cp-d">Yes · Edit</span><span class="cp-n ok">tier-1</span></div>
+            <div class="cp-who"><span class="cp-k">Non-answer stated</span>
+              <span class="cp-d">"the parse is not applied"</span>
+              <span class="cp-n ok">tier-1</span></div>
+            <div class="cp-who"><span class="cp-k">Why</span>
+              <span class="cp-d">Invariant 2, silent mutation</span>
+              <span class="cp-n ok">tier-1</span></div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd><code>capture.md</code>'s chip section is replaced by a reference to
+            <code>tier-1-parsing.md</code>, which owns the parsing contract — so the flow doc stops
+            restating a control and describes only where it appears.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It removes the two sentences that describe the chip's <i>appearance</i> from the doc
+            that describes the screen it appears on. The field's layout is capture's to own, and
+            delegating the control means a reader of <code>capture.md</code> has to follow a
+            reference to know what is drawn.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: <code>capture.md</code> §"What this doc must NOT do" already excludes the parsing
+            contract ("This doc does not define Tier 1's confidence thresholds") — so delegating more
+            is consistent, and keeping the chip's drawing here is consistent with the field being
+            here.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">Cut the middle band. <b>Two bands, one rule.</b></p>
+        <span class="vc-read">cut the tell · a band that asks is a band that failed</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="cp-who"><span class="cp-k">≥ 0.85</span>
+              <span class="cp-d">apply silently, chip says "parsed"</span>
+              <span class="cp-n ok">keep</span></div>
+            <div class="cp-who"><span class="cp-k">0.60 – 0.84</span>
+              <span class="cp-d">the band that asks</span>
+              <span class="cp-n bad">removed</span></div>
+            <div class="cp-who"><span class="cp-k">All 0.85 and below</span>
+              <span class="cp-d">raw text to the inbox, parse on offer</span>
+              <span class="cp-n ok">one rule</span></div>
+            <div class="cp-note">
+              <p class="cp-h" style="margin:0">The middle band's <i>unattended</i> outcome is
+                identical to the low band's — an unparsed inbox note with the parse still available.
+                So the band only exists to offer the correction <b>earlier</b>, at the cost of being
+                the only Tier 1 flow with a visible interruption.</p>
+              <p class="cp-alert">Cost: <code>tier-1-parsing.md</code> justifies the band
+                explicitly — "mid-confidence parses are more likely to be wrong, and a silent wrong
+                parse is worse than a brief interruption". Deleting it makes a 0.7 parse apply
+                silently or not at all, and the doc's argument picks "not at all".</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Confidence becomes a yes/no: ≥0.85 applies, everything else falls back to the inbox
+            with the parse on offer. The chip is never a control, so the two docs cannot disagree
+            about its buttons.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It gives up the only place the app asks the user a question at capture time — which is
+            also the only place it can <i>learn</i> from a correction at the moment the user still
+            remembers what they meant. And a 0.84 parse, which is usually right, would always land in
+            the inbox.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two: the three bands are in <i>both</i> docs, and <code>tier-1-parsing.md</code> states
+            the contract in one line ("high confidence is silent, medium asks, low falls back to
+            raw"). This rewrites the contract, not the control.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Keep both documents' behaviour, and let <b>one doc own the chip</b>.</p>
+        <span class="vc-read">reconcile the controls, keep the band, name the owner</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="cp-field">
+              <div class="cp-in"><span class="grow">Call dentist Tuesday</span>
+                <span style="font-size:16px">🎤</span></div>
+              <div class="cp-below">→ task · due Tue 29 Sep</div>
+              <div class="cp-btns"><span class="cp-b p">Yes</span><span class="cp-b s">Edit</span>
+                <span class="cp-h" style="align-self:center;margin-left:4px">or ignore it</span></div>
+            </div>
+            <div class="cp-note">
+              <p class="cp-h" style="margin:0"><b>capture.md keeps the layout and the field; tier-1
+                owns the chip's controls and its behaviour.</b> The preview line above the buttons is
+                what §The capture field is describing, and "the user does not have to act on it" is
+                true — the two buttons are how they may act if they want to.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Three reconciliations, no behaviour changes. <b>(1)</b> The region below the field holds
+            a <b>preview line</b> (informational, always) and, in the middle band only, a pair of
+            <b>buttons</b> owned by <code>tier-1-parsing.md</code>. <b>(2)</b> "The user does not have
+            to act on it" is qualified — not acting is supported, and its consequence is stated.
+            <b>(3)</b> <code>capture.md</code> stops describing the chip's controls and points at the
+            doc that owns them.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It keeps a two-element region under a one-line field on the flow whose invariant is
+            "under two seconds", and it splits ownership of one small piece of UI across two docs —
+            which is the condition that produced the disagreement in the first place.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether "the user does not have to act on it" can be said at all in the middle band.
+            Acting is optional; the <i>consequence</i> of not acting is not — an unparsed note instead
+            of a parsed task. The doc's own defence is that this "costs nothing" because the parse
+            stays on offer, and that is true of the data and false of the user's next twenty minutes.
+            The lab can show both halves; which one the sentence should describe is an editorial
+            choice about honesty.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the chip measures</h2>
+    <div class="measure" id="measure-chip">…</div>
+  </div>
+</section>
+
+<!-- ================================================================== BANDS -->
+<section class="screen" id="bands">
+  <div class="lede">
+    <h2 class="t-title-2">The bands</h2>
+    <p class="lede-p">
+      Both docs state the same three bands, in the same order, with the same thresholds:
+      <code>≥ 0.85</code> applies silently, <code>0.60 – 0.84</code> asks, <code>&lt; 0.60</code>
+      falls back to raw. Confidence is a float from 0.0 to 1.0.
+    </p>
+    <p class="lede-p">
+      The ranges do not meet. <b>0.84 to 0.85 is in no band</b> — and because both docs carry the
+      identical gap, comparing them confirms each other rather than exposing it.
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The three bands as written, drawn on the axis they divide.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="cp-axis">
+              <div class="cp-track">
+                <div class="cp-band low" style="width:60%">&lt; 0.60 · raw</div>
+                <div class="cp-band mid" style="width:24%">0.60–0.84 · asks</div>
+                <div class="cp-band high" style="width:15%">≥0.85 · silent</div>
+              </div>
+              <div class="cp-gap"></div>
+              <div class="cp-ticks"><span>0.0</span><span>0.5</span><span>1.0</span></div>
+              <div class="cp-flag">no band: 0.84 – 0.85</div>
+            </div>
+            <div class="cp-who" style="margin-top:12px"><span class="cp-k">Bands stated</span>
+              <span class="cp-d">capture.md · tier-1-parsing.md</span><span class="cp-n">3</span></div>
+            <div class="cp-who"><span class="cp-k">Range covered</span>
+              <span class="cp-d">0.00–0.84 and 0.85–1.00</span>
+              <span class="cp-n bad">0.99</span></div>
+            <div class="cp-who"><span class="cp-k">The hole</span>
+              <span class="cp-d">0.84 &lt; c &lt; 0.85</span>
+              <span class="cp-n bad">0.01 wide</span></div>
+            <div class="cp-who"><span class="cp-k">A value inside it</span>
+              <span class="cp-d">representable, and produced by any model</span>
+              <span class="cp-n bad">0.845</span></div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The bands as both docs write them, on the range they are supposed to
+            partition.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="bands-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One, and it is arithmetic rather than taste. §Invariants says "Nothing captured is
+            lost", and the gap is in the branch that decides <i>what happens to the capture</i> — so
+            the outcome for a mid-high parse is whatever the implementer guessed, in the app's
+            highest-traffic flow, under an invariant promising nothing is lost.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">Make the bands <b>half-open and adjacent</b>, and say so.</p>
+        <span class="vc-read">a partition must be total · one boundary, one owner</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="cp-axis">
+              <div class="cp-track">
+                <div class="cp-band low" style="width:60%">&lt; 0.60 · raw</div>
+                <div class="cp-band mid" style="width:25%">0.60 ≤ c &lt; 0.85 · asks</div>
+                <div class="cp-band high" style="width:15%">c ≥ 0.85 · silent</div>
+              </div>
+              <div class="cp-ticks"><span>0.0</span><span>0.5</span><span>1.0</span></div>
+            </div>
+            <div class="cp-col" style="margin-top:8px">
+              <h4>The contract, restated</h4>
+              <p class="cp-d">"Confidence is a number in [0, 1]. <b>c ≥ 0.85</b> applies silently.
+                <b>0.60 ≤ c &lt; 0.85</b> asks. <b>c &lt; 0.60</b> falls back to raw. Every value has
+                exactly one outcome."</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The bands become a total partition: the middle band's upper bound is now the high
+            band's lower bound, so <b>0.845</b> asks rather than falling through. The wording changes
+            from two closed ranges to two half-open ones.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It silently reclassifies every value between 0.84 and 0.85 — the app now <i>asks</i> at
+            0.845, which is an interruption that previously did not happen (or happened as whatever
+            the code did). Nothing in either doc says which side of the hole 0.845 was meant to be
+            on.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None — and it is the smallest possible repair: two characters of notation in two docs,
+            with no behaviour specified in either direction. The row is deliberately agnostic about
+            which band wins, because the docs are.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">The gap is a symptom. <b>Name the threshold once</b>, in one doc.</p>
+        <span class="vc-read">one owner per number · two copies cannot catch each other</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="cp-who"><span class="cp-k">Thresholds defined in</span>
+              <span class="cp-d">tier-1-parsing.md §Confidence thresholds</span>
+              <span class="cp-n ok">1</span></div>
+            <div class="cp-who"><span class="cp-k">Restated in</span>
+              <span class="cp-d">capture.md §The pipeline</span>
+              <span class="cp-n bad">1 more</span></div>
+            <div class="cp-who"><span class="cp-k">Test that catches drift</span>
+              <span class="cp-d">any doc, any test</span>
+              <span class="cp-n bad">none</span></div>
+            <div class="cp-who"><span class="cp-k">Tunable via</span>
+              <span class="cp-d">tier-1: "The thresholds are tunable via ADR"</span>
+              <span class="cp-n">ADR</span></div>
+            <div class="cp-note">
+              <p class="cp-h" style="margin:0"><code>tier-1-parsing.md</code> already claims the
+                thresholds — it says they are tunable via ADR, which only makes sense for the doc that
+                owns them. <b><code>capture.md</code> should cite the bands, not restate them.</b></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The bands live in one doc. <code>capture.md</code> says "three outcomes based on
+            confidence (<code>04-ai/tier-1-parsing.md</code>, Confidence thresholds)" and describes
+            only what each outcome <i>does on this screen</i>.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The flow doc becomes harder to read alone — a reader of <code>capture.md</code> can no
+            longer see the thresholds without following a reference, and the flow is the doc a
+            designer working on capture opens first. It also increases the chance the two drift
+            further, since only one now knows the numbers.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: <code>capture.md</code>'s §"What this doc must NOT do" says "This doc does not
+            define the parsing contract" — so it already concedes ownership while restating the
+            numbers, which is the shape of every duplicate-number defect in this review.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">Cut the bands to <b>one number</b>. Confidence is not the user's
+            business.</p>
+        <span class="vc-read">one threshold · three behaviours from one comparison</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="cp-axis">
+              <div class="cp-track">
+                <div class="cp-band low" style="width:85%">&lt; 0.85 · raw, parse on offer</div>
+                <div class="cp-band high" style="width:15%">≥ 0.85 · silent</div>
+              </div>
+              <div class="cp-ticks"><span>0.0</span><span>0.5</span><span>1.0</span></div>
+            </div>
+            <div class="cp-who"><span class="cp-k">Thresholds</span>
+              <span class="cp-d">0.85, alone</span><span class="cp-n ok">1</span></div>
+            <div class="cp-who"><span class="cp-k">No gap possible</span>
+              <span class="cp-d">one comparison partitions the range</span>
+              <span class="cp-n ok">by construction</span></div>
+            <div class="cp-note">
+              <p class="cp-h" style="margin:0">A single threshold is the only version that cannot have
+                a hole. It also removes the interruption entirely.</p>
+              <p class="cp-alert">Cost: it discards the doc's defence of the middle band — "mid-
+                confidence parses are more likely to be wrong, and a silent wrong parse is worse than
+                a brief interruption" — which is an argument for asking, made in the doc that owns the
+                contract.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>One threshold instead of two bands, which eliminates the hole by construction rather
+            than by notation, and removes the only Tier 1 confirmation.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It loses the ability to be <i>careful</i> differently from being <i>confident</i>, so a
+            0.7 parse lands in the inbox uncleaned. And it deletes a documented behaviour to fix a
+            typo — the largest cost of any row here for the smallest defect.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Three: both docs state three bands, <code>tier-1-parsing.md</code> states the contract
+            as "high is silent, medium asks, low falls back to raw", and the middle band is explicitly
+            justified. This is the wrong-sized repair and is included because the lab should show that
+            the smallest defect does not want the largest change.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Two characters of notation, in the doc that owns the number.</p>
+        <span class="vc-read">make it a partition · do not redesign it</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="cp-col">
+              <h4>tier-1-parsing.md §Confidence thresholds</h4>
+              <p class="cp-d"><b>c ≥ 0.85</b> — apply silently. Show a "parsed" chip.</p>
+              <p class="cp-d"><b>0.60 ≤ c &lt; 0.85</b> — show a confirmation chip.</p>
+              <p class="cp-d"><b>c &lt; 0.60</b> — do not apply. Keep the raw text as a note.</p>
+              <p class="cp-h" style="margin-top:8px">Every value in [0, 1] has exactly one outcome.
+                0.845 asks. Nothing changed except which side of a boundary it was always supposed to
+                be on.</p>
+            </div>
+            <div class="cp-col">
+              <h4>capture.md §The pipeline</h4>
+              <p class="cp-d">Cites the three outcomes and their thresholds by reference, and keeps
+                only what happens <i>here</i> — the chip, the inbox note, the "[unparsed]" prefix.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The bands become a total partition, half-open, in the doc that owns them — and
+            <code>capture.md</code> stops restating the numbers, which is what let the same gap exist
+            in two places without either catching it. Both changes are to wording; no behaviour is
+            specified differently in either direction, so no implementation changes.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Choosing <b>0.845 asks</b> picks the middle band, which means a value that previously
+            fell through to whatever the code did now produces a visible interruption. The lab cannot
+            prove that is right — only that the alternative (0.845 applies silently) is a decision the
+            docs also never made, and that leaving it undecided is the one option the invariant
+            forbids.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether the thresholds should be <b>numbers at all</b>. <code>tier-1-parsing.md</code>
+            says they are tunable via ADR, which is a strange thing to record for a constant that
+            decides whether the app speaks — it implies someone expects to move them. If confidence
+            calibration is unmeasured, both 0.85 and 0.60 are guesses with two digits of precision,
+            and a hole between them is the least of the problems. The lab can show the range is not
+            partitioned; it cannot show the numbers are right.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the bands measure</h2>
+    <div class="measure" id="measure-bands">…</div>
+  </div>
+</section>
+
+<!-- ==================================================================== OUT -->
+<section class="screen" id="out">
+  <div class="lede">
+    <h2 class="t-title-2">What capture creates</h2>
+    <p class="lede-p">
+      §The capture outcomes lists five results. The Notes lab already corrected two things about this
+      section — that <code>capture.md</code> attaches its notes to <b>today's Day</b> while
+      <code>notes.md</code> makes you pick a target first, and that it claims not to "use a
+      full-screen editor" while that is the only way to edit a note.
+    </p>
+    <p class="lede-p">
+      What is left is the list itself. Five outcomes, three of which are created by Tier 1's parse and
+      two of which are the fallbacks — and the fallbacks land in <b>the same place</b>, distinguished
+      only by a title prefix.
+    </p>
+  </div>
+
+  <div class="grid">
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The five outcomes, and where each one lands.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div id="out-rows"></div>
+            <div class="cp-note">
+              <p class="cp-h" style="margin:0">Four of the five are Things — task, event, habit, note.
+                The fifth is "the capture did not become a Thing", which is expressed by making it a
+                note with a prefix. So the fallback's <i>type</i> is note and its <i>state</i> is
+                "unparsed", and the state lives in the title.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The five outcomes and their destinations as specified.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="out-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None in this doc — and the interesting part is that
+            <code>tier-1-parsing.md</code> calls the prefix <i>"a display convention, not an entity
+            attribute"</i>, which is the honest description of a state the model does not
+            carry.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">The inbox is a <b>state</b>. Give it one, instead of a title
+          convention.</p>
+        <span class="vc-read">model the state · don't encode it in a string</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="cp-2">
+              <div class="cp-col">
+                <h4>Today</h4>
+                <p class="cp-d">Title: "[unparsed] The thing with the stuff"</p>
+                <p class="cp-h">The state is in the title. Renaming the note removes it; searching
+                  for the literal string finds every fallback.</p>
+              </div>
+              <div class="cp-col">
+                <h4>With a state</h4>
+                <p class="cp-d">Title: "The thing with the stuff"<br>Badge: Unparsed</p>
+                <p class="cp-h">The prefix stops being data, so the title is the user's text verbatim
+                  — which is what "nothing captured is lost" means.</p>
+              </div>
+            </div>
+            <div class="cp-who"><span class="cp-k">Tier 1 says</span>
+              <span class="cp-d">"a display convention, not an entity attribute"</span>
+              <span class="cp-n bad">no field</span></div>
+            <div class="cp-who"><span class="cp-k">The model has</span>
+              <span class="cp-d">note.created · note.edited · note.reattached</span>
+              <span class="cp-n bad">no unparsed</span></div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The unparsed state becomes a property of the note rather than eleven characters at the
+            front of its title, so the title is the user's text and the state is filterable, sortable
+            and clearable.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It adds a field to the Note atom — or a new event type — which `event-log.md` says needs
+            an ADR, for a state that is <i>always</i> temporary: every unparsed note either gets
+            classified or is deleted. Storing a transient is how a model accumulates fields nobody
+            uses.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: the Note atom's shape is set by <code>02-architecture/object-model.md</code> and
+            ADR 0016 established that it carries "exactly one non-derived field beyond its body and
+            attachment: <code>deleted</code>". This would be a second, and it is the kind of change
+            that ADR was written to resist.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">The prefix is fine. What's missing is the <b>count in the docs</b>.</p>
+        <span class="vc-read">leave the mechanism · name the volume</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="cp-who"><span class="cp-k">Bands that fall back</span>
+              <span class="cp-d">0.60–0.84 unanswered, and &lt; 0.60</span>
+              <span class="cp-n">2 of 3</span></div>
+            <div class="cp-who"><span class="cp-k">Inbox ritual fires at</span>
+              <span class="cp-d">capture.md §The inbox</span>
+              <span class="cp-n">10 captures</span></div>
+            <div class="cp-who"><span class="cp-k">Inbox holds</span>
+              <span class="cp-d">"unparsed notes and unclassified tasks"</span>
+              <span class="cp-n">2 kinds</span></div>
+            <div class="cp-who"><span class="cp-k">Notes mode shows unparsed</span>
+              <span class="cp-d">Recent and All, like any note</span>
+              <span class="cp-n">2 scopes</span></div>
+            <div class="cp-note">
+              <p class="cp-h" style="margin:0">An unparsed note is in <b>three lists at once</b>: the
+                inbox, the Notes mode's Recent, and whatever Day it attached to. Nothing in any doc
+                states what fraction of captures fall back — and the two docs that would know both
+                treat the fallback as an edge case.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>No mechanism changes. The docs gain a stated expectation for how often the fallback
+            happens, because two of three bands route into it and neither doc treats it as a
+            main path.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A rate nobody has measured would be invented to fill the sentence, and inventing it is
+            worse than the silence — the number would then be cited. Honest version: the docs say the
+            rate is unknown and that it decides whether the inbox is an edge case or the app's
+            default.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One: <code>tier-1-parsing.md</code> says the thresholds are tunable via ADR, which is a
+            statement about a number nobody has yet had reason to move — the same shape as a missing
+            calibration. Recording it as unknown is the smallest honest fix.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">Delete the <b>unparsed</b> state. The inbox already says it.</p>
+        <span class="vc-read">cut the tell · two markers for one fact</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="cp-note">
+              <p class="cp-h" style="margin:0">A note in the inbox <i>is</i> an unparsed note — that
+                is what the inbox is ("a list of unparsed notes and unclassified tasks"). So the
+                "[unparsed]" prefix restates the container, in the one place the user's own words
+                should be untouched.</p>
+              <p class="cp-d" style="margin-top:8px">Title: <b>The thing with the stuff</b><br>
+                In the inbox, under "Unparsed". Elsewhere — Recent, the Day, search — as itself.</p>
+            </div>
+            <div class="cp-alert">Cost: outside the inbox, an unparsed note is indistinguishable from
+              a deliberate one. A user scanning Recent cannot see which notes still need sorting, and
+              the prefix is the only thing that travels with the note to say so.</div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Deletes the "[unparsed]" prefix. The state is carried by containment — being in the
+            inbox — rather than by mutating the user's text.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It makes the inbox the <i>only</i> marker, so the state is invisible on the three other
+            surfaces the note appears on. The prefix is ugly and it travels; containment is clean and
+            it does not — which is the trade the current doc makes in the current direction.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two: §The capture outcomes specifies the prefix, and <code>tier-1-parsing.md</code>
+            explains it ("for identification in the inbox list"). Both docs wanted the marker to
+            travel, which this removes.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Keep the prefix. Add the one thing the five outcomes lack: <b>what
+            happens next</b>.</p>
+        <span class="vc-read">the outcomes are a list of arrivals, not of ends</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="cp-who"><span class="cp-k">Task</span>
+              <span class="cp-d">Today · Next · Someday · Inbox</span>
+              <span class="cp-n ok">has a next</span></div>
+            <div class="cp-who"><span class="cp-k">Event</span>
+              <span class="cp-d">the Calendar, at its time</span>
+              <span class="cp-n ok">has a next</span></div>
+            <div class="cp-who"><span class="cp-k">Habit</span>
+              <span class="cp-d">Habits → Today</span><span class="cp-n ok">has a next</span></div>
+            <div class="cp-who"><span class="cp-k">Note</span>
+              <span class="cp-d">today's Day, then Recent</span>
+              <span class="cp-n ok">has a next</span></div>
+            <div class="cp-who"><span class="cp-k">Unparsed</span>
+              <span class="cp-d">the inbox — and then?</span>
+              <span class="cp-n bad">no next</span></div>
+            <div class="cp-note">
+              <p class="cp-h" style="margin:0">§The inbox says the sort ritual "ends when the inbox
+                is empty or the user exits", and its swipe-down is "Remove" — takes it out of the
+                inbox. For four outcomes the doc says where the thing goes and what it becomes; for
+                the fifth it says where it waits. There are <b>three</b> ways out of the inbox
+                (classify, remove, or never open it) and the outcomes list does not name
+                any.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>§The capture outcomes gains a column for its fallbacks: what an unparsed note becomes.
+            Classified in the sort ritual (<code>task.created</code> or a re-parse), removed from the
+            inbox (and then <i>what</i> — is it still a note?), or left. The first two are specified
+            elsewhere; the third is not named at all.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Writing "or left" admits the app has a state with no exit, and §The inbox's ritual is
+            designed to empty it. And the swipe-down "Remove" is the ambiguous one: removing a
+            capture from the inbox is defined as "takes the capture out of the inbox", which says
+            nothing about whether the note survives, and the Notes lab showed a note cannot be
+            unattached.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>What "Remove" does to an unparsed note. `capture.md` says it "takes the capture out of
+            the inbox, reversibly"; `notes.md` says a note cannot be unattached and has no archival;
+            ADR 0016 says the note list's swipe down is disabled because notes have no removal state.
+            Three docs, and the inbox's Remove is on a note. Either the inbox's swipe has the same
+            problem ADR 0016 fixed, or removing from the inbox is a display state on the note — and
+            the lab can show that nothing currently says which.</dd></div>
+      </dl>
+    </article>
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the outcomes measure</h2>
+    <div class="measure" id="measure-out">…</div>
+  </div>
+</section>
+
+</main>
+
+<script src="lab.js"></script>
+<script src="nav.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var screens = ['doors', 'chip', 'bands', 'out'];
+  var seen = {};
+  var tabs = document.getElementById('tabs');
+
+  tabs.addEventListener('click', function (e) {
+    var b = e.target.closest('.tab');
+    if (b && b.dataset.go) go(b.dataset.go);
+  });
+
+  function go(id) {
+    screens.forEach(function (s) {
+      var el = document.getElementById(s);
+      if (el) el.hidden = (s !== id);
+    });
+    Array.prototype.forEach.call(tabs.children, function (b) {
+      b.classList.toggle('on', b.dataset.go === id);
+    });
+    if (!seen[id]) {
+      seen[id] = true;
+      requestAnimationFrame(function () {
+        MEASURE[id]();
+        // Mechanical: the content strings above were authored with \uXXXX escape
+        // sequences, which JS renders literally. Decode them once, on first render.
+        ['measure-' + id, id + '-cost', 'out-rows'].forEach(function (el) {
+          var node = document.getElementById(el);
+          if (node) node.innerHTML = unesc(node.innerHTML);
+        });
+      });
+    }
+  }
+
+  // The authored strings contain a literal backslash-backslash-u sequence; turn each
+  // into the character it names. Built from char codes so this file needs no escapes.
+  var BS = String.fromCharCode(92);
+  var SEQ = new RegExp(BS + BS + 'u([0-9a-fA-F]{4})', 'g');
+  function unesc(s) {
+    return String(s).replace(SEQ, function (m, h) {
+      return String.fromCharCode(parseInt(h, 16));
+    });
+  }
+
+  // Long strings are built as arrays joined, never as +-continued literals.
+  function paras(list) { return list.map(function (s) { return '<p class="mf">' + s + '</p>'; }).join(''); }
+  function table(rows) {
+    return '<div class="rows">' + rows.map(function (r) {
+      return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+        '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+    }).join('') + '</div>';
+  }
+
+  var MEASURE = {};
+
+  // -- doors
+  MEASURE.doors = function () {
+    var rows = [
+      ['Entry points', 'capture.md §The four entry points', '4'],
+      ['Pull-down scope, per the invariant', '§Invariants', '\\u201canywhere\\u201d'],
+      ['Pull-down scope, per the spec', 'the same section', '\\u201cany scrollable list\\u201d'],
+      ['Pull \\u2193 surfaces, per the matrix', 'gesture-vocabulary.md', '<b>5</b>'],
+      ['Of those, in the Calendar', 'both Calendar rows are a dash', '<b>0</b>'],
+      ['The app\\u2019s default mode', 'the Calendar, built on the Day view', 'no capture gesture'],
+      ['Palette steps', 'Cmd+K, then type, then pick', '2 + a pick'],
+      ['Palette is modal', 'app-shell.md', 'yes'],
+      ['Share sheet', 'registers for text and URLs only', 'leaves the app'],
+      ['The two-second invariant', '\\u201cfrom gesture to input field\\u201d', '1 of 4 paths'],
+      ['Docs stating a scope', 'capture.md \\u00d72, gesture-vocabulary.md', '3'],
+      ['Docs agreeing', 'none of them fully', '<b>0</b>']
+    ];
+
+    document.getElementById('measure-doors').innerHTML = table(rows) + paras([
+      'The invariant sells capture as available <b>from anywhere</b>; the spec narrows it to <b>any scrollable list</b>; the gesture matrix grants the gesture to <b>5 surfaces</b> and gives both Calendar rows a dash. Three documents, three scopes, and the largest one is the invariant \\u2014 which is where a reader starts.',
+      'Nothing here is wrong on its own. The Calendar\\u2019s two rows are already the most crowded in the matrix (long-press and pinch both taken), and its Day view is a timeline with its own scroll. What is wrong is that the promise is stated wider than all three of the documents that implement it.'
+    ]);
+
+    document.getElementById('doors-cost').innerHTML =
+      'Three docs, three scopes: <b>\\u201canywhere\\u201d</b>, <b>\\u201cany scrollable list\\u201d</b>, and <b>5 surfaces</b> \\u2014 with <b>0</b> in the Calendar, which is the app\\u2019s home. And the two-second invariant measures <b>1 of 4</b> entry points, because only pull-down has a gesture to start from.';
+  };
+
+  // -- chip
+  MEASURE.chip = function () {
+    var rows = [
+      ['Things below the field', '\\u22650.85 chip · 0.60\\u20130.84 chip · <0.60 preview', '<b>3</b>'],
+      ['capture.md calls it', '§The capture field', '\\u201cinformational, not a confirmation\\u201d'],
+      ['capture.md says the user', 'the same paragraph', '\\u201cdoes not have to act on it\\u201d'],
+      ['capture.md\\u2019s control', '§The pipeline, step 4', '\\u201ctap the chip\\u201d'],
+      ['tier-1\\u2019s control', '§The confirmation chip', 'two buttons: Yes · Edit'],
+      ['tier-1 states the consequence', 'the same section', '\\u201cthe parse is not applied\\u201d'],
+      ['Non-answer applies itself?', 'tier-1, with a reason', 'never'],
+      ['The reason given', 'tier-1', 'Invariant 2, silent mutation'],
+      ['Control sets for one chip', 'across the two docs', '<b>2</b>'],
+      ['Docs that own the thresholds', 'tier-1 (+ \\u201ctunable via ADR\\u201d)', '1'],
+      ['Docs that restate them', 'capture.md', '1']
+    ];
+
+    document.getElementById('measure-chip').innerHTML = table(rows) + paras([
+      'One position holds <b>3</b> different things, and the two docs that describe the middle one give it <b>2</b> different control sets: a chip you tap, and a pair of buttons. <code>tier-1-parsing.md</code> is the better text \\u2014 it has the buttons <i>and</i> the argument (<i>\\u201ca timer that turns silence into consent is a silent mutation\\u201d</i>) \\u2014 while <code>capture.md</code> has the behaviour without either.',
+      'The sharper problem is the sentence. <b>\\u201cThe user does not have to act on it\\u201d</b> is true of the user and false of the outcome: not acting is supported, and it turns a parsed task into an unparsed note. The doc defends this by saying it \\u201ccosts nothing\\u201d because the parse stays on offer \\u2014 which is true of the data and not of the user.']);
+
+    document.getElementById('chip-cost').innerHTML =
+      'The same chip is <b>informational</b> in one doc and a <b>two-button confirmation</b> in the other, and the flow doc tells the user they need not act on a control whose non-answer decides what they get. <b>2</b> control sets, one chip, no doc reconciling them.';
+  };
+
+  // -- bands
+  MEASURE.bands = function () {
+    var bands = [[0, 0.60], [0.60, 0.84], [0.85, 1.0]];
+    var covered = bands.reduce(function (n, b) { return n + (b[1] - b[0]); }, 0);
+    var hole = 1 - covered;
+    var sample = 0.845;
+
+    function bandFor(c) {
+      if (c >= 0.85) return 'applied silently';
+      if (c >= 0.60 && c <= 0.84) return 'shown a confirmation chip';
+      if (c < 0.60) return 'kept as raw text';
+      return 'in no band at all';
+    }
+
+    var rows = [
+      ['Bands defined', 'both docs, identically', '3'],
+      ['Band 1', 'c \\u2265 0.85', 'applies silently'],
+      ['Band 2', '0.60 \\u2013 0.84', 'shows a confirmation chip'],
+      ['Band 3', 'c < 0.60', 'raw text to the inbox'],
+      ['Covered by the three', '0.00\\u20130.84 + 0.85\\u20131.00', '<b>' + covered.toFixed(2) + '</b>'],
+      ['Uncovered', '1 \\u2212 covered', '<b>' + hole.toFixed(2) + '</b>'],
+      ['The hole', '0.84 < c < 0.85', '0.845 for example'],
+      ['Which band is 0.845 in?', 'the defined bands', '<b>' + bandFor(sample) + '</b>'],
+      ['Confidence is a', 'tier-1: \\u201cnumber, 0.0 \\u2013 1.0\\u201d', 'float'],
+      ['Thresholds owned by', 'tier-1 \\u2014 \\u201ctunable via ADR\\u201d', '1 doc'],
+      ['Restated by', 'capture.md', '1 doc'],
+      ['So the same gap', 'appears twice and agrees', 'with itself']
+    ];
+
+    document.getElementById('measure-bands').innerHTML = table(rows) + paras([
+      'Three bands cover <b>' + covered.toFixed(2) + '</b> of a range that is <b>1.00</b> wide. The missing <b>' + hole.toFixed(2) + '</b> is the interval <b>0.84 &lt; c &lt; 0.85</b>, and <b>0.845</b> \\u2014 a value any float model produces \\u2014 is in ' + '<b>' + bandFor(sample) + '</b>.',
+      'The reason nobody caught it is the shape of the defect: <code>capture.md</code> and <code>tier-1-parsing.md</code> state the bands <b>identically</b>, so comparing them confirms each other. A duplicated number is usually found by drift; here there was none, and the number is wrong in both copies the same way. <code>tier-1-parsing.md</code> even claims ownership \\u2014 it says the thresholds are <i>tunable via ADR</i>, which only makes sense for the doc that owns them \\u2014 while <code>capture.md</code> restates them anyway.'
+    ]);
+
+    document.getElementById('bands-cost').innerHTML =
+      'The bands cover <b>' + covered.toFixed(2) + '</b> of the range. <b>0.845</b> is <b>' + bandFor(sample) + '</b>, and the branch that decides whether a capture becomes a task or an inbox note does not say what happens to it \\u2014 in the flow whose invariant is <i>\\u201cnothing captured is lost\\u201d</i>. Same gap in both docs, so neither catches the other.';
+  };
+
+  // -- out
+  MEASURE.out = function () {
+    var OUTCOMES = [
+      ['Task', 'task.created', 'Today / Next / Someday / Inbox', 'a place in a list'],
+      ['Event', 'calendar.created', 'the Calendar, at its time', 'a place in time'],
+      ['Habit', 'habit.created', 'Habits \\u2192 Today', 'a place in a list'],
+      ['Note', 'note.created', "today's Day \\u2192 Recent", 'a place on a day'],
+      ['Unparsed', 'note.created', 'the inbox', '<b>no stated next</b>']
+    ];
+
+    var host = document.getElementById('out-rows');
+    if (host) {
+      host.innerHTML = OUTCOMES.map(function (o) {
+        return '<div class="cp-who"><span class="cp-k">' + o[0] + '</span>' +
+          '<span class="cp-d">' + o[2] + '</span>' +
+          '<span class="cp-n' + (o[0] === 'Unparsed' ? ' bad' : ' ok') + '">' +
+          (o[0] === 'Unparsed' ? 'waiting' : 'arrives') + '</span></div>';
+      }).join('');
+    }
+
+    var rows = [
+      ['Outcomes listed', '§The capture outcomes', '5'],
+      ['Created by Tier 1', 'a confident parse', '4'],
+      ['Fallbacks', 'mid unanswered · low', '2'],
+      ['Both fallbacks become', 'a note in the inbox', 'the same thing'],
+      ['Distinguished by', 'the "[unparsed]" prefix', 'a title convention'],
+      ['Tier 1 calls it', '§Fallback behavior', '\\u201cnot an entity attribute\\u201d'],
+      ['Inbox ritual fires at', '§The inbox', '10 captures'],
+      ['Inbox swipe-down', '§The inbox', '\\u201cRemove\\u201d, reversibly'],
+      ['Ways out of the inbox', 'classify · remove · leave it', '3'],
+      ['Named in the outcomes list', 'of those three', '<b>0</b>'],
+      ['Lists an unparsed note is in', 'inbox · Recent · its Day', '3'],
+      ['Surfaces that show it as unparsed', 'only where the prefix is read', '0 tagged']
+    ];
+
+    document.getElementById('measure-out').innerHTML = table(rows) + paras([
+      'Four outcomes arrive somewhere and become something; the fifth waits. <code>capture.md</code> says the ritual \\u201cends when the inbox is empty or the user exits\\u201d \\u2014 so one of the three ways out is <i>leaving</i>, which is the only one the docs never describe. An unparsed note is in <b>3</b> lists at once (the inbox, Recent, and the Day it attached to) and is only marked in one of them.',
+      'The mechanism is fine and honestly described: <code>tier-1-parsing.md</code> calls the prefix <i>\\u201ca display convention, not an entity attribute\\u201d</i>, which is exactly what it is. What is missing is the exit. <b>\\u201cRemove\\u201d</b> is the ambiguous one \\u2014 it \\u201ctakes the capture out of the inbox, reversibly\\u201d, and says nothing about whether the note survives, in a module where ADR 0016 established that a note has no removal state and its list gesture is disabled for that reason.']
+    );
+
+    document.getElementById('out-cost').innerHTML =
+      'Two of the three bands fall back to the same place, so the inbox is the destination for the majority of uncertain captures \\u2014 and <b>0</b> of the three ways out of it are named in the outcomes list. The one that matters is <b>\\u201cRemove\\u201d</b>: it takes a capture out of the inbox and no doc says what that does to the note underneath, in the module whose gesture was <i>disabled</i> for exactly that reason.';
+  };
+
+  go('doors');
+})();
+</script>
+</body>
+</html>
