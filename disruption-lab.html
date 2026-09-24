@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="warm" data-mode="light" data-accent="teal"
+      data-semantics="vivid" data-type="system">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Disruption &amp; Completion lab · Small Wins</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="lab.css">
+<style>
+.dp-r{display:grid;grid-template-columns:118px minmax(0,1fr) auto;gap:10px;align-items:baseline;
+  padding:7px 0;border-bottom:1px solid var(--border-subtle);font-size:13px;line-height:18px}
+.dp-r:last-child{border-bottom:0}
+.dp-k{color:var(--text-tertiary)}
+.dp-d{color:var(--text-secondary)}
+.dp-n{font-variant-numeric:tabular-nums;font-weight:600;color:var(--text-primary)}
+.dp-n.bad{color:var(--warning-text)}
+.dp-n.good{color:var(--success-text)}
+.dp-h{font-size:11px;line-height:15px;color:var(--text-muted);margin:11px 0 2px;
+  text-transform:uppercase;letter-spacing:.05em;font-weight:600;display:flex;align-items:center;gap:7px}
+.dp-h:first-child{margin-top:0}
+
+.dp-tag{display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:5px;
+  font-size:11px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;white-space:nowrap}
+.dp-tag.ok{background:var(--success-subtle);color:var(--success-text)}
+.dp-tag.no{background:var(--warning-subtle);color:var(--warning-text)}
+.dp-tag.nu{background:var(--surface-2);color:var(--text-secondary)}
+
+.dp-box{border:1px solid var(--border-subtle);border-radius:10px;padding:10px 12px}
+.dp-box.on{border-color:var(--accent-default)}
+.dp-box.bad{border-color:var(--warning-text)}
+.dp-box h4{margin:0 0 7px;font-size:11px;line-height:14px;color:var(--text-muted);font-weight:600;
+  text-transform:uppercase;letter-spacing:.05em;display:flex;align-items:center;gap:7px}
+.dp-box h4 svg{width:13px;height:13px;flex:none}
+.dp-box p{margin:0;font-size:12.5px;line-height:18px;color:var(--text-secondary)}
+.dp-box p + p{margin-top:6px}
+
+/* a bottom sheet, drawn to scale */
+.dp-sheet{border:1px solid var(--border-default);border-radius:14px 14px 0 0;background:var(--bg-raised);
+  padding:12px 13px 14px;box-shadow:0 -6px 20px rgba(0,0,0,.07)}
+.dp-sheet .grab{width:34px;height:4px;border-radius:99px;background:var(--border-strong);margin:0 auto 11px}
+.dp-sheet .q{font-size:13px;line-height:18px;color:var(--text-primary);font-weight:600;margin:0 0 9px}
+.dp-opt{display:flex;align-items:center;gap:9px;height:38px;padding:0 11px;border-radius:9px;
+  border:1px solid var(--border-subtle);font-size:13px;color:var(--text-primary);margin-bottom:7px}
+.dp-opt:last-child{margin-bottom:0}
+.dp-opt .ic{width:15px;height:15px;color:var(--text-muted);flex:none}
+.dp-opt i{margin-left:auto;font-style:normal;font-size:10.5px;color:var(--text-muted);
+  letter-spacing:.03em;text-transform:uppercase}
+.dp-opt.dead{color:var(--text-disabled);border-style:dashed}
+.dp-opt.dead .ic{color:var(--text-disabled)}
+
+/* a proportion strip: widths are the real numbers */
+.dp-seq{margin:9px 0 4px;position:relative;padding-bottom:26px}
+.dp-seq-bar{display:grid;height:30px;border-radius:8px;overflow:hidden;border:1px solid var(--border-subtle)}
+.dp-seq-bar i{display:flex;align-items:center;justify-content:center;font-style:normal;font-size:10.5px;
+  font-weight:600;color:var(--text-secondary);border-right:1px solid var(--border-subtle);
+  background:var(--surface-2);font-variant-numeric:tabular-nums}
+.dp-seq-bar i:last-child{border-right:0}
+.dp-seq-bar i.a{background:var(--accent-subtle);color:var(--accent-text)}
+.dp-seq-bar i.w{background:var(--warning-subtle);color:var(--warning-text)}
+.dp-seq-cap{position:absolute;top:-4px;bottom:22px;width:2px;background:var(--warning-text);border-radius:2px}
+.dp-seq-cap span{position:absolute;left:4px;top:-15px;white-space:nowrap;font-size:10px;font-weight:600;
+  color:var(--warning-text);letter-spacing:.02em}
+.dp-seq-cap.l span{left:auto;right:4px}
+.dp-seq-x{display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);
+  margin-top:5px;font-variant-numeric:tabular-nums}
+
+/* a fact list: what the app must remember */
+.dp-fact{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:baseline;
+  padding:7px 0;border-bottom:1px solid var(--border-subtle);font-size:12.5px;line-height:17px}
+.dp-fact:last-child{border-bottom:0}
+.dp-fact .f{color:var(--text-primary)}
+.dp-fact .w{grid-column:1;font-size:11px;color:var(--text-muted)}
+.dp-fact .v{grid-row:1 / span 2;grid-column:2;font-weight:600;font-variant-numeric:tabular-nums}
+.dp-fact .v.no{color:var(--warning-text)}
+.dp-fact .v.yes{color:var(--success-text)}
+
+.dp-code{font-family:var(--type-mono-family,ui-monospace,Menlo,monospace);font-size:10.5px;
+  line-height:16px;color:var(--text-secondary);white-space:pre-wrap;word-break:break-word;
+  background:var(--surface-2);border-radius:8px;padding:10px 11px}
+.dp-code .k{color:var(--text-primary);font-weight:600}
+.dp-code .bad{color:var(--warning-text);font-weight:600}
+.dp-code .ok{color:var(--success-text);font-weight:600}
+.dp-quote{font-size:12.5px;line-height:18px;color:var(--text-secondary);font-style:italic;
+  padding-left:11px;border-left:2px solid var(--border-subtle);margin:7px 0 0}
+.dp-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+</style>
+</head>
+<body data-lab="disruption">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+  <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol>
+  <symbol id="i-mode-tasks" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol>
+  <symbol id="i-mode-notes" viewBox="0 0 24 24"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></symbol>
+</svg>
+
+<header class="masthead">
+  <p class="eyebrow">Lab 17 · the three flow docs with no lab</p>
+  <h1 class="t-title-1">Disruption, Completion &amp; Doing the day</h1>
+  <p class="lede-p">
+    These are the flows that fire while the user is working. Every module is drawn; these three had
+    never been, and between them they hold the app's only published duration for a sequence, its only
+    automatic rescheduling, and two surprises it must keep quiet about.
+  </p>
+  <p class="lede-p">
+    All four findings below are the same shape as ones already fixed elsewhere in the set — a sheet
+    specified in the doc that disclaims it, a rule about one thing written as a rule about another,
+    and a durable fact with no log entry. That last one was ADR 0021, one lab ago.
+  </p>
+</header>
+
+<div class="bar">
+  <nav class="tabs" id="tabs">
+    <button class="tab" data-go="shove">The sheet, written twice</button>
+    <button class="tab" data-go="context">Nine hours it cannot fire in</button>
+    <button class="tab" data-go="timeline">750ms against a 400ms ceiling</button>
+    <button class="tab" data-go="unlogged">Two things the log cannot hold</button>
+  </nav>
+</div>
+
+<main id="main">
+
+<!-- ================================================================= SHOVE -->
+<section class="screen" id="shove">
+  <div class="lede">
+    <h2 class="t-title-2">The sheet, written twice</h2>
+    <p class="lede-p">
+      <code>disruption.md</code> closes with a "What this doc must NOT do" list whose first bullet is
+      <i>"This doc does not define the defer sheet. That is in <code>05-modules/tasks.md</code>."</i>
+      It then specifies the defer sheet twice — once in §The shove, once in its own example — and the
+      sheet it draws is not the one that doc defines.
+    </p>
+    <p class="lede-p">
+      Four options against four options, three of them the same. Which of the two is missing tells you
+      what went wrong: the stranger in the list is an option from a different surface, one the same doc
+      needs two sections later.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The owner's sheet. Four rows, and the doc that owns it says so plainly.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <p class="dp-h">tasks.md §Defer sheet — "a bottom sheet with four rows"</p>
+            <div class="dp-sheet">
+              <div class="grab"></div>
+              <p class="q">Buy groceries</p>
+              <div class="dp-opt"><svg class="ic"><use href="#i-arrow-right"/></svg>Tomorrow<i>defer</i></div>
+              <div class="dp-opt"><svg class="ic"><use href="#i-arrow-right"/></svg>Next week<i>defer</i></div>
+              <div class="dp-opt"><svg class="ic"><use href="#i-arrow-right"/></svg>Someday<i>state</i></div>
+              <div class="dp-opt"><svg class="ic"><use href="#i-arrow-right"/></svg>Pick a date…<i>defer</i></div>
+            </div>
+            <p class="dp-h">What the same doc says the sheet is for</p>
+            <div class="dp-r"><span class="dp-k">Defer</span>
+              <span class="dp-d">"when the task becomes visible"</span><span class="dp-n">visibility</span></div>
+            <div class="dp-r"><span class="dp-k">scheduled_day</span>
+              <span class="dp-d">"appears on this day's calendar"</span><span class="dp-n">the calendar</span></div>
+            <div class="dp-r"><span class="dp-k">due</span>
+              <span class="dp-d">"must be done by this day"</span><span class="dp-n">a deadline</span></div>
+            <div class="dp-box">
+              <h4><svg class="ic"><use href="#i-alert"/></svg>The sheet is right; the sentence about it is not</h4>
+              <p>The sheet sets <b>defer</b>. <code>disruption.md</code> calls the gesture
+                <i>"the primary rescheduling mechanism"</i> — and deferring is not rescheduling, which
+                is the next screen's problem.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. This is <code>tasks.md</code>'s §Defer sheet and §Examples, and
+            <code>gesture-vocabulary.md</code>'s two renderings of the same sheet, which agree with
+            each other on all four rows.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="shove-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. Three docs draw this sheet and three docs agree, which is the point: the fourth
+            doc that describes the same gesture is the one that disagrees, and it is the one that
+            says the sheet is not its business.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The stranger in the list</span>
+        <p class="vc-stance"><code>disruption.md</code>'s four. It drops "Next week" and adds a
+          "Keep today" that neither other doc has.</p>
+        <span class="vc-read">cut the reach · one doc stops drawing</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <p class="dp-h">disruption.md §The shove</p>
+            <div class="dp-code">"Move to tomorrow?
+[<span class="k">Tomorrow</span>]  [<span class="bad">Pick a date…</span>]  [<span class="k">Someday</span>]  [<span class="bad">Keep today</span>]"
+
+"Two taps, no full date picker unless
+ 'Pick a date…' is chosen. The default is
+ 'Tomorrow.'"</div>
+            <p class="dp-h">The four rows, diffed against the owner</p>
+            <div class="dp-r"><span class="dp-k">Tomorrow</span>
+              <span class="dp-d">in both sheets</span><span class="dp-tag ok">same</span></div>
+            <div class="dp-r"><span class="dp-k">Someday</span>
+              <span class="dp-d">in both sheets</span><span class="dp-tag ok">same</span></div>
+            <div class="dp-r"><span class="dp-k">Pick a date…</span>
+              <span class="dp-d">in both sheets</span><span class="dp-tag ok">same</span></div>
+            <div class="dp-r"><span class="dp-k">Next week</span>
+              <span class="dp-d">dropped here — the only row that is not a date picker</span>
+              <span class="dp-tag no">missing</span></div>
+            <div class="dp-r"><span class="dp-k">Keep today</span>
+              <span class="dp-d">added here — no log entry behind it, because nothing changes</span>
+              <span class="dp-tag no">invented</span></div>
+            <div class="dp-box bad">
+              <h4><svg class="ic"><use href="#i-alert"/></svg>An option that writes nothing</h4>
+              <p>The sheet opens on a task in the <b>Today</b> scope. "Keep today" would set
+                <code>defer</code> to today, which is what it already is — so the row is a button for
+                the state the user is already in, and no <code>event-log.md</code> type would record
+                it.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing — this is the doc as written. <code>disruption.md</code> renders the sheet in
+            §The shove <i>and</i> in its §Examples, so the two are consistent with each other and
+            both disagree with the two docs that agree with each other.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One sheet in the app and two in the docs, and the extra one carries a button that
+            cannot write. Anyone implementing this flow first builds four rows and the wrong
+            fourth.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Its own §"What this doc must NOT do", which names <code>tasks.md</code> as the sheet's
+            owner in the same file, and <code>gesture-vocabulary.md</code>'s per-surface table, which
+            grants the Task list "defer" and routes it to the sheet that doc does not draw.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The union</span>
+        <p class="vc-stance">Five rows, so both docs are satisfied and the sheet is a superset of
+          itself.</p>
+        <span class="vc-read">cut the reach · the two specs reconciled upwards</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <p class="dp-h">Five rows — every option either doc names</p>
+            <div class="dp-sheet">
+              <div class="grab"></div>
+              <p class="q">Buy groceries</p>
+              <div class="dp-opt"><svg class="ic"><use href="#i-arrow-right"/></svg>Tomorrow<i>both</i></div>
+              <div class="dp-opt"><svg class="ic"><use href="#i-arrow-right"/></svg>Next week<i>tasks.md</i></div>
+              <div class="dp-opt"><svg class="ic"><use href="#i-arrow-right"/></svg>Someday<i>both</i></div>
+              <div class="dp-opt"><svg class="ic"><use href="#i-arrow-right"/></svg>Pick a date…<i>both</i></div>
+              <div class="dp-opt dead"><svg class="ic"><use href="#i-arrow-right"/></svg>Keep today<i>disruption.md</i></div>
+            </div>
+            <p class="dp-h">What the union costs</p>
+            <div class="dp-r"><span class="dp-k">Rows</span>
+              <span class="dp-d">tasks.md says "a bottom sheet with four rows"</span>
+              <span class="dp-n bad">5</span></div>
+            <div class="dp-r"><span class="dp-k">Overlap</span>
+              <span class="dp-d">"Next week" and "Pick a date…" reach the same days</span>
+              <span class="dp-n bad">2 rows</span></div>
+            <div class="dp-r"><span class="dp-k">Rows with no entry</span>
+              <span class="dp-d">"Keep today" — the state it sets is the state it opened in</span>
+              <span class="dp-n bad">1</span></div>
+            <div class="dp-box bad">
+              <h4><svg class="ic"><use href="#i-alert"/></svg>Reconciling upwards keeps the defect</h4>
+              <p>A union satisfies both docs and answers neither: the sheet now contradicts its own
+                count, and the row that cannot work is still in it. The disagreement was the symptom;
+                the button is the disease.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The sheet gains a fifth row, and "pick a date" gains a synonym.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Five rows in a sheet the owner says has four, plus two rows that reach the same days.
+            The disagreement is papered over and the inert button is still in the sheet.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd><code>tasks.md</code>'s stated four rows, and the rule that a bottom sheet's rows are
+            mutually distinct — two rows that open the same picker are one row with a label that
+            lies about which one it is.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The owner speaks, and only the owner</span>
+        <p class="vc-stance">The sheet stays four rows. The second spec becomes a citation, and the
+          gesture gets one name.</p>
+        <span class="vc-read">cut the reach · one owner, cited</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <p class="dp-h">disruption.md §The shove, after</p>
+            <div class="dp-code">"The <span class="k">defer sheet</span> is the app's
+main way of moving something off today.
+It is reached from three places:
+
+  · a task row, by swiping left
+  · the task detail, by 'Reschedule'
+  · the calendar, by dragging a task
+    to another day
+
+The four options and their order are
+<span class="ok">tasks.md §Defer sheet</span>."</div>
+            <p class="dp-h">What the citation leaves behind</p>
+            <div class="dp-r"><span class="dp-k">Sheets specified</span>
+              <span class="dp-d">one, in the doc that owns it</span><span class="dp-n good">1</span></div>
+            <div class="dp-r"><span class="dp-k">Names for the act</span>
+              <span class="dp-d">"the shove" · "defer" · "reschedule"</span>
+              <span class="dp-n bad">3 → 1</span></div>
+            <div class="dp-r"><span class="dp-k">Doors kept</span>
+              <span class="dp-d">the three this doc found, which the owner does not list</span>
+              <span class="dp-n good">3</span></div>
+            <div class="dp-box on">
+              <h4><svg class="ic"><use href="#i-check"/></svg>The doc keeps what it is good for</h4>
+              <p>The three doors are real and belong here — <code>tasks.md</code> specifies the sheet's
+                contents and never says where it opens from. So the fix narrows the doc to the thing
+                it uniquely knows, which is also the thing its own "must not do" bullet asked for.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The four options and the "Move to tomorrow?" prompt are deleted from
+            <code>disruption.md</code> and replaced by a citation; the three doors stay and are
+            labelled as this doc's contribution.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd><code>disruption.md</code> loses the sheet, keeps the three doors, and drops the claim
+            to be the primary rescheduling mechanism — which was never true of defer anyway.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. It costs the doc its claim to be "the primary rescheduling mechanism", which is
+            not a loss: the sheet sets <code>defer</code>, and <code>tasks.md</code> defines that as
+            visibility rather than scheduling.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended — the stranger goes home</span>
+        <p class="vc-stance">The sheet is the owner's four rows, cited. "Keep today" is not deleted;
+          it is moved to the surface whose own language is "Keep as is".</p>
+        <span class="vc-read">the synthesis · a citation, and a button returned to its sheet</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <div class="dp-cols">
+              <div>
+                <p class="dp-h">The defer sheet — unchanged</p>
+                <div class="dp-sheet">
+                  <div class="grab"></div>
+                  <div class="dp-opt"><svg class="ic"><use href="#i-arrow-right"/></svg>Tomorrow</div>
+                  <div class="dp-opt"><svg class="ic"><use href="#i-arrow-right"/></svg>Next week</div>
+                  <div class="dp-opt"><svg class="ic"><use href="#i-arrow-right"/></svg>Someday</div>
+                  <div class="dp-opt"><svg class="ic"><use href="#i-arrow-right"/></svg>Pick a date…</div>
+                </div>
+              </div>
+              <div>
+                <p class="dp-h">The shift offer — borrowed back</p>
+                <div class="dp-sheet">
+                  <div class="grab"></div>
+                  <p class="q">Design review ran 22 min over.</p>
+                  <div class="dp-opt"><svg class="ic"><use href="#i-arrow-right"/></svg>Shift<i>writes</i></div>
+                  <div class="dp-opt"><svg class="ic"><use href="#i-arrow-right"/></svg>Keep as is<i>writes</i></div>
+                </div>
+              </div>
+            </div>
+            <p class="dp-h">Why "Keep today" belongs here and not there</p>
+            <div class="dp-r"><span class="dp-k">On the defer sheet</span>
+              <span class="dp-d">sets defer to what it already is — no state change, no entry</span>
+              <span class="dp-tag no">inert</span></div>
+            <div class="dp-r"><span class="dp-k">On the shift offer</span>
+              <span class="dp-d">declines a real proposal — the day stays as planned, and the
+                offer must not return</span><span class="dp-tag ok">meaningful</span></div>
+            <div class="dp-r"><span class="dp-k">Words already in the doc</span>
+              <span class="dp-d">"Keep as is" — and the refusal needs an entry, which is screen 4</span>
+              <span class="dp-n">2 refusals</span></div>
+            <div class="dp-box on">
+              <h4><svg class="ic"><use href="#i-check"/></svg>Two refusals, one of which is a hole</h4>
+              <p>The sheet gets one owner. The gesture gets one name — <b>defer</b>, which is what the
+                log records. And the two refusals both become entries, because a refusal that the app
+                must remember across a restart is not an absence of state.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The sheet is cited rather than redrawn; "Keep today" is deleted from it; the act is
+            called defer everywhere; and §The shove's "primary rescheduling mechanism" sentence is
+            replaced by the three doors, which is the part only this doc knows.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One row deleted, one name dropped, one sentence replaced. Nothing is added to the app,
+            and the doc that gains most is the one that stops drawing a sheet it says is not its
+            business.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. Nothing is added to the app: one row is removed from a sheet, one name is dropped
+            from a vocabulary, and the sentence that made defer mean scheduling is deleted.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the two sheets measure</h2>
+    <div class="measure" id="measure-shove">…</div>
+  </div>
+</section>
+
+<!-- =============================================================== CONTEXT -->
+<section class="screen" id="context">
+  <div class="lede">
+    <h2 class="t-title-2">Nine hours it cannot fire in</h2>
+    <p class="lede-p">
+      <code>attention-budget.md</code> names exactly three surfaces exempt from the budget and adds a
+      fourth requirement the lapse lab forced into the open:
+      <i>"A blocked firing preserves the trigger rather than consuming it."</i> The rule is written as a
+      property of the exemption, not of one flow — a surface whose trigger is a state must be able to
+      wait.
+    </p>
+    <p class="lede-p">
+      One of the three cannot. The "all three done" card is triggered by a fact about
+      <b>today</b>, and every rule that can block it pushes the firing to tomorrow, when the fact is
+      no longer true.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">Three exempt surfaces, all obeying all four rules — as written in both
+          docs.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <p class="dp-h">The three, and whether each can wait</p>
+            <div class="dp-r"><span class="dp-k">Local-only banner</span>
+              <span class="dp-d">once per lifetime — waiting changes nothing</span>
+              <span class="dp-tag ok">can wait</span></div>
+            <div class="dp-r"><span class="dp-k">Lapse card</span>
+              <span class="dp-d">once per lapse — the lapse persists until acted on</span>
+              <span class="dp-tag ok">can wait</span></div>
+            <div class="dp-r"><span class="dp-k">All three done</span>
+              <span class="dp-d">once per day — "today's top three" expires at midnight</span>
+              <span class="dp-tag no">dies waiting</span></div>
+            <p class="dp-h">When the block happens (default quiet hours)</p>
+            <div class="dp-seq">
+              <div class="dp-seq-bar" style="grid-template-columns:540fr 900fr">
+                <i class="w">quiet 540 min</i><i class="a">eligible 900 min</i>
+              </div>
+              <div class="dp-seq-cap" style="left:37.5%"><span>07:00</span></div>
+              <div class="dp-seq-x"><span>22:00</span><span>07:00</span><span>24:00</span></div>
+            </div>
+            <div class="dp-box bad">
+              <h4><svg class="ic"><use href="#i-moon"/></svg>The card is deleted, not delayed</h4>
+              <p>Complete the third item at 22:30 and the block lasts until 07:00 — at which point
+                "today's top three" is the new day's empty list. The fourth criterion says a blocked
+                firing preserves the trigger; this trigger is a <b>fact about a day</b>, and the block
+                is longer than the fact.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. Both docs as written: <code>completion.md</code> claims exemption and the
+            three-part criterion, <code>attention-budget.md</code> grants it and adds the fourth
+            requirement.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="context-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd><code>attention-budget.md</code>'s fourth requirement, which was written <i>because</i>
+            a one-shot surface was being silently deleted — and which holds for two of the three
+            exempt surfaces and not the third.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Exempt from the clock too</span>
+        <p class="vc-stance">The card fires when it is triggered, whenever that is. A reward for a
+          gesture is not an interruption of one.</p>
+        <span class="vc-read">cut the reach · the fourth rule gains an exception</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <p class="dp-h">Three rules the card would no longer obey</p>
+            <div class="dp-r"><span class="dp-k">Quiet hours</span>
+              <span class="dp-d">a card at 23:00 — but the user is awake and holding the phone</span>
+              <span class="dp-tag no">broken</span></div>
+            <div class="dp-r"><span class="dp-k">Focus mode</span>
+              <span class="dp-d">focus suppresses nudges; the user is mid-session by definition</span>
+              <span class="dp-tag no">broken</span></div>
+            <div class="dp-r"><span class="dp-k">In-event</span>
+              <span class="dp-d">completing a task during a meeting is normal</span>
+              <span class="dp-tag no">broken</span></div>
+            <p class="dp-h">What the exception would read as</p>
+            <div class="dp-quote">"Exempt surfaces obey quiet hours, focus mode and in-event
+              suppression — except those whose trigger is the user's own completed gesture, which are
+              the consequence of that gesture and not an interruption of anything."</div>
+            <div class="dp-box bad">
+              <h4><svg class="ic"><use href="#i-alert"/></svg>Right answer, wrong mechanism</h4>
+              <p>The exception is doing real work — it protects a surface that should fire — but it is
+                written as an exception to the exemption list, when the surface was never a nudge to
+                begin with. Four rules now carry a carve-out instead of one definition doing the
+                work.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The card fires on its trigger; the context rules gain a named exception for
+            consequence-surfaces.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The card fires at 23:00 in a room where the user is awake and holding the phone — but
+            four rules now carry a carve-out, and the carve-out covers one of the three exempt
+            surfaces.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd><code>attention-budget.md</code>'s "Still obey quiet hours, focus mode, and in-event
+            suppression", stated without exception in two places — and it is the surface the
+            <i>user</i> caused, so the carve-out is written where the reader is least likely to look
+            for it.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Queue it to the next eligible open</span>
+        <p class="vc-stance">The fourth criterion taken literally: the firing waits rather than being
+          consumed.</p>
+        <span class="vc-read">cut the reach · the rule applied as written</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <p class="dp-h">The card that arrives nine hours late</p>
+            <div class="dp-code">22:31  third of today's top three completed
+       → blocked: quiet hours
+
+07:00  next eligible open. Card fires:
+
+         "<span class="k">All three done. Nice.</span>"
+
+       Today's top three: <span class="bad">0 of 3 set</span>
+       Yesterday's top three: 3 of 3
+       Card's own trigger: <span class="bad">false</span></div>
+            <p class="dp-h">What the card is now describing</p>
+            <div class="dp-r"><span class="dp-k">Says</span>
+              <span class="dp-d">"All three done"</span><span class="dp-n">present tense</span></div>
+            <div class="dp-r"><span class="dp-k">Means</span>
+              <span class="dp-d">all three of yesterday's, which the user may have forgotten</span>
+              <span class="dp-n bad">8.5h ago</span></div>
+            <div class="dp-r"><span class="dp-k">Once per day</span>
+              <span class="dp-d">now satisfied on the wrong day</span>
+              <span class="dp-n bad">off by 1</span></div>
+            <div class="dp-box bad">
+              <h4><svg class="ic"><use href="#i-alert"/></svg>The criterion cannot be satisfied here</h4>
+              <p>The fourth rule was written for a trigger that is a <b>state</b> — a lapse, a
+                lifetime event. This surface's trigger is a <b>day</b>: it is a state, and the state
+                has an expiry the block can outlast. So the rule is not being disobeyed by the card;
+                the rule does not describe the card.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The card is queued rather than dropped, so the fourth criterion is honoured and the
+            surface still fires.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The card congratulates the user about yesterday. Honouring the rule literally turns a
+            reward into a confusing notification, which is the outcome the rule was written to
+            prevent.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Its own "once per day" and <code>completion.md</code>'s "does not fire a second time if
+            the user unchecks and rechecks" — a firing on the wrong day is a second firing by any
+            reading the user would recognise.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Stop being exempt, start paying</span>
+        <p class="vc-stance">The card registers in the catalog and takes the contextual slot like
+          everything else.</p>
+        <span class="vc-read">cut the reach · the exemption withdrawn</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <p class="dp-h">The day's three nudges, spent by finishing your list</p>
+            <div class="dp-r"><span class="dp-k">Nudge 1</span>
+              <span class="dp-d">prep card, 09:50 for the 10:00</span><span class="dp-n">used</span></div>
+            <div class="dp-r"><span class="dp-k">Nudge 2</span>
+              <span class="dp-d">your top three, 11:20</span><span class="dp-n bad">used</span></div>
+            <div class="dp-r"><span class="dp-k">Nudge 3</span>
+              <span class="dp-d">cancelled 14:00 — "Try 'Draft Q4 plan'?"</span>
+              <span class="dp-n bad">used</span></div>
+            <div class="dp-r"><span class="dp-k">Weekly review</span>
+              <span class="dp-d">due Sunday 18:00 — daily cap reached</span>
+              <span class="dp-n bad">silent</span></div>
+            <p class="dp-h">Why it was exempt in the first place</p>
+            <div class="dp-quote">"It does not compete with a scheduled surface for the hourly
+              budget." Putting it in the catalog is the one arrangement the criterion exists to
+              forbid.</div>
+            <div class="dp-box bad">
+              <h4><svg class="ic"><use href="#i-bell"/></svg>A reward that costs a nudge</h4>
+              <p>The user's own completed work would silence the weekly review. That is worse than
+                the bug it fixes, and it is the reason the exemption list exists — which means the
+                exemption list is not what is wrong here.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The exemption list drops to two and the card gains a <code>SurfaceId</code>, a catalog
+            row, a TTL and a settings toggle.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Finishing your own list spends one of the day's three nudges and can silence the
+            weekly review. The exemption existed because that is unacceptable, so this variant
+            trades a small bug for a larger one.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The exemption's third test, which the card currently passes and would now fail — and
+            <code>attention-budget.md</code>'s "Exactly three surfaces are exempt ... and no others",
+            which would need amending to two.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended — the definition was already enough</span>
+        <p class="vc-stance">The nudge test has three conditions and the card fails the third. It is a
+          consequence, not a nudge — so it needs no exemption and the clock never applies.</p>
+        <span class="vc-read">the synthesis · the definition does the work, one rule is withdrawn</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <p class="dp-h">"A nudge is any surface that..."</p>
+            <div class="dp-r"><span class="dp-k">1. Interrupts</span>
+              <span class="dp-d">banner, toast, badge, notification</span>
+              <span class="dp-tag ok">yes</span></div>
+            <div class="dp-r"><span class="dp-k">2. Wants a decision</span>
+              <span class="dp-d">the card carries one action, Dismiss</span>
+              <span class="dp-tag ok">yes</span></div>
+            <div class="dp-r"><span class="dp-k">3. Not user-initiated</span>
+              <span class="dp-d">it is the third completion, drawn as a consequence</span>
+              <span class="dp-tag no">fails</span></div>
+            <div class="dp-r"><span class="dp-k">So</span>
+              <span class="dp-d">not a nudge — no budget, no exemption, no clock</span>
+              <span class="dp-tag ok">out</span></div>
+            <p class="dp-h">The class the definition never named</p>
+            <div class="dp-r"><span class="dp-k">Undo toast</span>
+              <span class="dp-d">excluded by condition 3, and nobody ever wrote it down</span>
+              <span class="dp-n">1</span></div>
+            <div class="dp-r"><span class="dp-k">Completion note field</span>
+              <span class="dp-d">same class, same silence</span><span class="dp-n">2</span></div>
+            <div class="dp-r"><span class="dp-k">All three done</span>
+              <span class="dp-d">same class, and it is on the <i>exemption</i> list instead</span>
+              <span class="dp-n bad">3</span></div>
+            <div class="dp-box on">
+              <h4><svg class="ic"><use href="#i-check"/></svg>Exempt surfaces drop to two, and the class gets a name</h4>
+              <p>Condition 3 stops meaning "the user tapped something" and starts meaning "the user
+                tapped something <i>that caused this</i>". A <b>consequence surface</b> is exempt from
+                the budget and the clock by definition, which is the same rule for the toast, the note
+                field and the card — three surfaces that currently have three different answers.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd><code>attention-budget.md</code>'s three conditions gain a named third reading and a
+            fourth class of non-nudge; the exempt list drops from three to two; the fourth criterion
+            gains its boundary — a trigger with an expiry cannot be told to wait.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One definition gains a clause and the exempt list drops from three to two. The trade is
+            that a surface can now be outside the budget without appearing in the list of things
+            outside the budget — which is why the class gets a name.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. Nothing new is granted to the card: it stops being an exception and becomes an
+            instance of a rule the doc already had, written slightly more precisely.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the clock measures</h2>
+    <div class="measure" id="measure-context">…</div>
+  </div>
+</section>
+
+<!-- ============================================================== TIMELINE -->
+<section class="screen" id="timeline">
+  <div class="lede">
+    <h2 class="t-title-2">750ms against a 400ms ceiling</h2>
+    <p class="lede-p">
+      Completion is the app's most frequent positive moment and the only sequence whose duration the
+      docs publish. Two docs state the ceiling — <code>motion-vocabulary.md</code>'s
+      <i>"Motion is at or under 400ms in every case"</i> and <code>completion.md</code>'s own
+      invariant — and the sequence is built out of four transitions.
+    </p>
+    <p class="lede-p">
+      Laid end to end they are 750ms, or 800ms if you read the motion doc's own worked example. The
+      question the panel asks is not which number is right but which document is responsible for the
+      total: neither of them adds it up.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The five steps as specified, end to end, against the marker both docs
+          print.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <p class="dp-h">completion.md §The animation, in order</p>
+            <div class="dp-seq">
+              <div class="dp-seq-bar" style="grid-template-columns:150fr 400fr 200fr">
+                <i>fill 150</i><i class="a">scale 400</i><i>shift 200</i>
+              </div>
+              <div class="dp-seq-cap" style="left:53.333%"><span>400ms ceiling</span></div>
+              <div class="dp-seq-x"><span>0ms</span><span>750ms</span></div>
+            </div>
+            <div class="dp-r"><span class="dp-k">Invariant</span>
+              <span class="dp-d">"at or under 400ms" — completion.md §Invariants</span>
+              <span class="dp-n bad">400</span></div>
+            <div class="dp-r"><span class="dp-k">Sequence</span>
+              <span class="dp-d">150 + 400 + 200</span><span class="dp-n bad">750</span></div>
+            <div class="dp-r"><span class="dp-k">Motion doc's example</span>
+              <span class="dp-d">adds a 200ms hold before the scale</span>
+              <span class="dp-n bad">800</span></div>
+            <div class="dp-r"><span class="dp-k">Over the ceiling</span>
+              <span class="dp-d">750 / 400</span><span class="dp-n bad">1.88×</span></div>
+            <p class="dp-h">And one transition inside another</p>
+            <div class="dp-r"><span class="dp-k">Fill</span>
+              <span class="dp-d">150ms, on a checkbox in a row that is scaling to 0</span>
+              <span class="dp-n bad">invisible</span></div>
+            <div class="dp-box bad">
+              <h4><svg class="ic"><use href="#i-clock"/></svg>The ceiling is about a transition; the doc is about a moment</h4>
+              <p>"Motion is at or under 400ms in every case" is true of every token in the table and
+                false of the one sequence the table's own example describes. Two docs publish the
+                ceiling; neither publishes a total.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. <code>completion.md</code>'s five steps and its invariant, and
+            <code>motion-vocabulary.md</code>'s token table and worked example.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="timeline-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The invariant both docs state, and the silence about totalling: a ceiling that applies
+            to parts is not a ceiling on the thing the user experiences, and the docs are structured
+            so that nobody has to notice.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The ceiling taken literally</span>
+        <p class="vc-stance">One 400ms transition, with the reflow folded into it. The invariant
+          becomes true by construction.</p>
+        <span class="vc-read">cut the reach · a sequence budget of 400</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <p class="dp-h">400ms, divided</p>
+            <div class="dp-seq">
+              <div class="dp-seq-bar" style="grid-template-columns:60fr 160fr 180fr">
+                <i>fill 60</i><i class="a">scale 160</i><i class="a">shift 180</i>
+              </div>
+              <div class="dp-seq-cap l" style="left:100%"><span>400ms ceiling</span></div>
+              <div class="dp-seq-x"><span>0ms</span><span>400ms</span></div>
+            </div>
+            <div class="dp-r"><span class="dp-k">Total</span>
+              <span class="dp-d">unchanged outside, at budget inside</span>
+              <span class="dp-n good">400</span></div>
+            <div class="dp-r"><span class="dp-k">Fill</span>
+              <span class="dp-d">visible — the scale no longer swallows it</span>
+              <span class="dp-n good">60</span></div>
+            <div class="dp-r"><span class="dp-k">The list closes</span>
+              <span class="dp-d">by the time the row is gone, not 200ms after</span>
+              <span class="dp-n good">same beat</span></div>
+            <p class="dp-h">What it changes about the motion</p>
+            <div class="dp-quote">The completion currently reads as two beats: the row leaves, then
+              the list closes. One beat is faster and, because the reflow starts before the row has
+              finished fading, it is also the arrangement where the row's disappearance and the
+              closing of the gap are the same event rather than two.</div>
+            <div class="dp-box on">
+              <h4><svg class="ic"><use href="#i-check"/></svg>True, and it costs nothing</h4>
+              <p>The app loses no motion it promised: all four transitions survive, at shorter
+                durations, inside a total the docs already publish. What it loses is the claim that
+                four separately-timed animations are one animation.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The four durations become fractions of a stated total, and the note field's insertion
+            has to be made room for by the reflow rather than appearing after it.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The four durations stop being tokens and become fractions of a total. Any future tweak
+            to one of them has to be argued against the sequence, which is the point of publishing
+            it.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Nothing. It is the reading that makes both invariants true, and it is the only variant
+            here that does not need a doc changed to be honest.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Per-transition, as written</span>
+        <p class="vc-stance">Each animation is at or under 400ms, so the invariant is read as
+          satisfied and the sequence total stays unbounded.</p>
+        <span class="vc-read">cut the reach · the sentence left alone</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <p class="dp-h">What the reading lets through</p>
+            <div class="dp-r"><span class="dp-k">4 × 400ms</span>
+              <span class="dp-d">each transition at the ceiling, none over it</span>
+              <span class="dp-n bad">1.6s</span></div>
+            <div class="dp-r"><span class="dp-k">6 × 400ms</span>
+              <span class="dp-d">the sequence plus the two card fades, all compliant</span>
+              <span class="dp-n bad">2.4s</span></div>
+            <div class="dp-r"><span class="dp-k">Bounded by</span>
+              <span class="dp-d">searched the set for a total or a budget</span>
+              <span class="dp-n bad">0 docs</span></div>
+            <div class="dp-quote">"A satisfying animation" — <code>completion.md</code>'s Purpose. The
+              doc that describes the reward does not state how long it lasts, and the doc that states
+              a limit states it about parts.</div>
+            <div class="dp-box bad">
+              <h4><svg class="ic"><use href="#i-alert"/></svg>A limit nobody can violate</h4>
+              <p>If the ceiling is per transition, then "at or under 400ms" is satisfied by an app
+                whose every screen takes eleven seconds to settle. A constraint that cannot be
+                violated is not a constraint, and this one is quoted as a floor for the app's feel.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing in the docs; the sentence is simply left as the only thing it can be — a rule
+            about transitions — and the sequence is unspecified.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Nothing changes and nothing is bounded. The app can be slow in exactly the way the
+            invariant was quoted to prevent, and no doc in the set can prove that it is not.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The spirit of both invariants and <code>completion.md</code>'s "the moment most likely to
+            be ruined by a heavy-handed UI" — the failure mode is a slow animation, and this reading
+            cannot name one.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Catalog the missing transitions</span>
+        <p class="vc-stance">The list says "every transition in the app is one of these". Three of the
+          six in this sequence are not in it.</p>
+        <span class="vc-read">cut the reach · the closed list made honest</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <p class="dp-h">The six motions, against the catalog</p>
+            <div class="dp-r"><span class="dp-k">Checkbox fill</span>
+              <span class="dp-d">"State change — colour and opacity only"</span>
+              <span class="dp-tag ok">in</span></div>
+            <div class="dp-r"><span class="dp-k">Scale and fade</span>
+              <span class="dp-d">"Completion confirmation" — the entry exists for this</span>
+              <span class="dp-tag ok">in</span></div>
+            <div class="dp-r"><span class="dp-k">List reflow</span>
+              <span class="dp-d">200ms, named in two docs' examples, absent from the catalog</span>
+              <span class="dp-tag no">missing</span></div>
+            <div class="dp-r"><span class="dp-k">Card fades in</span>
+              <span class="dp-d">no scale, no slide — every catalogued fade rides another transform</span>
+              <span class="dp-tag no">missing</span></div>
+            <div class="dp-r"><span class="dp-k">Card fades out</span>
+              <span class="dp-d">150ms, and it is the only dismissal with a stated duration</span>
+              <span class="dp-tag no">missing</span></div>
+            <div class="dp-r"><span class="dp-k">Note field appears</span>
+              <span class="dp-d">"a small inline field appears" — no transition named at all</span>
+              <span class="dp-tag no">absent</span></div>
+            <div class="dp-box bad">
+              <h4><svg class="ic"><use href="#i-clock"/></svg>A closed list with four holes</h4>
+              <p>"Every transition in the app is one of these. No custom transitions." The sentence's
+                job is to make a new transition an ADR-shaped decision, and it stops working the
+                moment a flow doc can name one the list has never heard of — which is exactly what
+                the reflow is.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Three entries join the transition catalog: list reflow, in-place fade in, in-place fade
+            out. The note field's insertion stays unspecified as a fourth.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Three table rows, and two of them exist only because one flow already shipped them
+            without saying so. The catalog grows, and its job as a gate on new transitions is
+            restored rather than weakened.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None documented — a transition added to the catalog costs a table row and is only
+            ADR-shaped if it introduces behaviour rather than naming behaviour that already ships.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended — a sequence budget</span>
+        <p class="vc-stance">Completion publishes one total. The transitions inside it divide it, and
+          the list closing is part of the same beat as the row leaving.</p>
+        <span class="vc-read">the synthesis · the budget and the catalog together</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <p class="dp-h">One number, four divisions</p>
+            <div class="dp-seq">
+              <div class="dp-seq-bar" style="grid-template-columns:60fr 160fr 180fr">
+                <i>fill 60</i><i class="a">scale 160</i><i class="a">shift 180</i>
+              </div>
+              <div class="dp-seq-cap l" style="left:100%"><span>400ms — the sequence</span></div>
+              <div class="dp-seq-x"><span>0ms</span><span>400ms</span></div>
+            </div>
+            <div class="dp-r"><span class="dp-k">Undo toast</span>
+              <span class="dp-d">5s, starting at commit — overlaps the note field for 5s</span>
+              <span class="dp-n">5.0s</span></div>
+            <div class="dp-r"><span class="dp-k">Note field</span>
+              <span class="dp-d">auto-dismisses at 10s, in the space the reflow made</span>
+              <span class="dp-n">10.0s</span></div>
+            <div class="dp-r"><span class="dp-k">Both on screen</span>
+              <span class="dp-d">two surfaces, one of them dismissable, and no doc orders them</span>
+              <span class="dp-n bad">5.0s</span></div>
+            <div class="dp-r"><span class="dp-k">Card's 150ms pause</span>
+              <span class="dp-d">"after a 150ms pause" — after the commit, the haptic, or the row?</span>
+              <span class="dp-n bad">no origin</span></div>
+            <div class="dp-box on">
+              <h4><svg class="ic"><use href="#i-check"/></svg>Three fixes in one row</h4>
+              <p>The total is stated where the ceiling already is, so the invariant stops being about
+                parts. The reflow and the card's fades enter the catalog, so "every transition is one
+                of these" is true again. And the card's pause is given an origin, which is the same
+                edit as giving the sequence one — the sequence is what the pause is 150ms into.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd><code>motion-vocabulary.md</code> gains a sequence budget alongside its transition
+            table and three catalog entries; <code>completion.md</code>'s five steps become four
+            durations inside a stated total and its "150ms pause" names its origin.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One number published, three catalog rows added, one pause given an origin. Every
+            duration in the sequence gets shorter, so the recommendation is faster than the app is
+            today as well as more honest.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. Every duration in the sequence is shorter than the token it used to use, so
+            <code>duration-deliberate</code> goes back to being reserved — which its own doc asks for
+            and the current sequence ignores.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the sequence measures</h2>
+    <div class="measure" id="measure-timeline">…</div>
+  </div>
+</section>
+
+<!-- ============================================================== UNLOGGED -->
+<section class="screen" id="unlogged">
+  <div class="lede">
+    <h2 class="t-title-2">Two things the log cannot hold</h2>
+    <p class="lede-p">
+      <code>disruption.md</code> asks the app to remember two durable facts. The shift offer's refusal
+      is <i>"remembered ... for that day"</i> so it does not ask twice; the digest, once dismissed,
+      <i>"does not fire again that day"</i>. Both must survive a restart and both are decisions the
+      user made.
+    </p>
+    <p class="lede-p">
+      Neither has an entry. <code>event-log.md</code> lists <b>six</b> <code>system.*</code> types and
+      none of them is a refusal to a nudge. One lab ago, ADR 0021 added
+      <code>system.lapse_skipped</code> for precisely this shape, in a flow whose exits now number
+      three entries for three exits.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">Two durable facts, two sentences promising them, and no entry behind
+          either.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <p class="dp-h">What the app must remember</p>
+            <div class="dp-fact">
+              <span class="f">"Keep as is" on the shift offer</span>
+              <span class="w">flow: "the app remembers the choice for that day and does not ask again"</span>
+              <span class="v no">no entry</span></div>
+            <div class="dp-fact">
+              <span class="f">A dismissed what-slipped digest</span>
+              <span class="w">flow: "If dismissed, it does not fire again that day"</span>
+              <span class="v no">no entry</span></div>
+            <p class="dp-h">Every exit in the flow, and what it writes</p>
+            <div class="dp-r"><span class="dp-k">Shift</span>
+              <span class="dp-d"><code>calendar.updated</code> · <code>task.scheduled_to_day</code></span>
+              <span class="dp-tag ok">writes</span></div>
+            <div class="dp-r"><span class="dp-k">Keep as is</span>
+              <span class="dp-d">a decision that must survive a restart</span>
+              <span class="dp-tag no">silent</span></div>
+            <div class="dp-r"><span class="dp-k">Reschedule all</span>
+              <span class="dp-d"><code>task.scheduled_to_day</code> ×N, atomic per ADR 0010</span>
+              <span class="dp-tag ok">writes</span></div>
+            <div class="dp-r"><span class="dp-k">Review individually</span>
+              <span class="dp-d">opens a list; the list's own swipes write</span>
+              <span class="dp-tag nu">indirect</span></div>
+            <div class="dp-r"><span class="dp-k">Leave them</span>
+              <span class="dp-d">a decision that must survive a restart</span>
+              <span class="dp-tag no">silent</span></div>
+            <div class="dp-box bad">
+              <h4><svg class="ic"><use href="#i-database"/></svg>State the projections cannot compute</h4>
+              <p><code>object-model.md</code>'s first invariant is that every atom and layer is
+                derived from the log. A suppression that exists only in the client's diagnostics buffer
+                is not derived from anything — and <code>projections.md</code> says that buffer is
+                client-side and not synced.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The two sentences and the six <code>system.*</code> types as written.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="unlogged-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd><code>object-model.md</code>'s "Every atom and every layer is derived from the log" and
+            <code>event-log.md</code>'s rule that a new type needs an ADR — which is why this is a
+            decision rather than an edit.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Two more system types</span>
+        <p class="vc-stance">One entry per refusal, named for its flow — the shape ADR 0021 used one
+          lab ago.</p>
+        <span class="vc-read">cut the reach · the precedent applied twice</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <p class="dp-h">The additions</p>
+            <div class="dp-code"><span class="ok">system.shift_declined</span> — { day }
+<span class="ok">system.digest_dismissed</span> — { day }
+
+joining
+<span class="k">system.settings_changed</span>
+<span class="k">system.lapse_skipped</span>  ← ADR 0021, one lab ago
+<span class="k">system.fresh_start</span>
+<span class="k">system.catch_up</span>
+<span class="k">system.clock_corrected</span>
+<span class="k">system.auth_expired</span></div>
+            <p class="dp-h">What it costs</p>
+            <div class="dp-r"><span class="dp-k">Types</span>
+              <span class="dp-d">six → eight</span><span class="dp-n">+2</span></div>
+            <div class="dp-r"><span class="dp-k">ADRs</span>
+              <span class="dp-d">one, covering both</span><span class="dp-n">0023</span></div>
+            <div class="dp-r"><span class="dp-k">Precedent</span>
+              <span class="dp-d">ADR 0021: three exits, three entries</span>
+              <span class="dp-tag ok">exact</span></div>
+            <div class="dp-box">
+              <h4><svg class="ic"><use href="#i-database"/></svg>Correct, and it names the surfaces</h4>
+              <p>Both entries are per-flow, which is what ADR 0021 chose and for a stated reason: the
+                entry's name is what a reader greps for, and <code>shift_declined</code> tells them
+                which flow. The cost is that the next flow needing the same memory needs a third
+                type — and there is already a fourth case in this doc family.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Two types added to the log's type list, two worked examples added to its §Examples, and
+            both sentences become derived questions rather than stored intentions.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Two types, and a third whenever another flow needs the same memory. Worse, the two
+            cannot be written by one action, so a day that produces both has to fold two entries to
+            answer one question.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None — this is the precedent applied. Its only weakness is a shape question the ADR can
+            settle either way.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Ask every time, remember nothing</span>
+        <p class="vc-stance">Both sentences are deleted. The user answers the question when it comes.</p>
+        <span class="vc-read">cut the reach · the promises withdrawn</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <p class="dp-h">What the user experiences</p>
+            <div class="dp-code">11:00  "Design review ran 22 min over. Shift?"
+       → [Keep as is]
+       The day stays as planned.
+
+11:00  <span class="bad">calendar sync runs again.</span>
+       "Design review ran 22 min over. Shift?"
+       → the same question, 20 seconds later</div>
+            <p class="dp-h">The rules it breaks</p>
+            <div class="dp-r"><span class="dp-k">At most once</span>
+              <span class="dp-d">attention-budget: "one nudge per hour" caps it at hourly</span>
+              <span class="dp-n bad">re-asks</span></div>
+            <div class="dp-r"><span class="dp-k">Digest</span>
+              <span class="dp-d">"fires at most once per day" is its own invariant</span>
+              <span class="dp-n bad">§Invariants</span></div>
+            <div class="dp-r"><span class="dp-k">Options</span>
+              <span class="dp-d">"Keep as is" becomes a button that delays, not one that declines</span>
+              <span class="dp-n bad">relabelled</span></div>
+            <div class="dp-box bad">
+              <h4><svg class="ic"><use href="#i-alert"/></svg>The refusal stops meaning anything</h4>
+              <p>A button labelled "Keep as is" that is followed by the same offer is not a refusal —
+                and the flow's whole promise is that disruption handling is quiet. The alternative to
+                an entry is not "no state"; it is a surface that nags.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Two sentences deleted, no types added, no state anywhere.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Nothing added, and the refusal stops meaning anything: “Keep as is” becomes a button
+            that delays the same question by twenty minutes, in a flow whose promise is that the app
+            absorbs disruption quietly.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two invariants in the flow's own §Invariants, the hourly cap, and the honest reading of
+            a refusal — the one option that must not come back is the one the user chose to end it.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The diagnostics buffer remembers</span>
+        <p class="vc-stance">No new types; the client keeps the suppression where the queue's firing
+          history already lives.</p>
+        <span class="vc-read">cut the reach · the buffer widened</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <p class="dp-h">What the buffer is, per the docs that describe it</p>
+            <div class="dp-r"><span class="dp-k">Holds</span>
+              <span class="dp-d">times shown, times dismissed — for priority scoring</span>
+              <span class="dp-n">scores</span></div>
+            <div class="dp-r"><span class="dp-k">Syncs</span>
+              <span class="dp-d">projections.md: "a local diagnostics buffer, not synced"</span>
+              <span class="dp-n bad">no</span></div>
+            <div class="dp-r"><span class="dp-k">Lives</span>
+              <span class="dp-d">with the install, and dies with it</span>
+              <span class="dp-n bad">1 device</span></div>
+            <p class="dp-h">What breaks</p>
+            <div class="dp-r"><span class="dp-k">Reinstall</span>
+              <span class="dp-d">every refusal forgotten; the offers return</span>
+              <span class="dp-tag no">lost</span></div>
+            <div class="dp-r"><span class="dp-k">Second device</span>
+              <span class="dp-d">asked again on a phone the user answered on</span>
+              <span class="dp-tag no">lost</span></div>
+            <div class="dp-r"><span class="dp-k">Time machine</span>
+              <span class="dp-d">"what did I decide about today" has no answer</span>
+              <span class="dp-tag no">lost</span></div>
+            <div class="dp-box bad">
+              <h4><svg class="ic"><use href="#i-alert"/></svg>A dismissal is a decision, not a score</h4>
+              <p>The buffer exists to modulate a priority number, and losing it costs a slightly
+                different score. Losing a <b>refusal</b> costs the user's answer — and the app's own
+                dismissal-decay rules already treat the two as different things.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing in the log; the buffer's contract widens from scoring to suppression.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Nothing added to the log, and the answer dies with the install. A user who reinstalls
+            is asked again about a day they already answered for — on the same phone.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd><code>projections.md</code>'s description of what the buffer is for, and the reason
+            <code>system.lapse_skipped</code> was added rather than inferred — the same argument, one
+            screen away.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended — the two facts are one fact</span>
+        <p class="vc-stance">Neither is about the shift offer or the digest. Both are "this surface is
+          done for today", which the queue already has a concept for.</p>
+        <span class="vc-read">the synthesis · one type, per-day, over surface ids</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <p class="dp-h">The one addition</p>
+            <div class="dp-code"><span class="ok">system.nudges_silenced</span>
+  { day, surface_ids: SurfaceId[] }
+
+"Keep as is"    → { day, ['contextual'] }
+"Leave them"    → { day, ['what_slipped'] }
+both, same day  → { day, ['contextual', 'what_slipped'] }</div>
+            <p class="dp-h">Why one array and not one type per flow</p>
+            <div class="dp-r"><span class="dp-k">Same question</span>
+              <span class="dp-d">the queue asks each surface "am I silenced today?"</span>
+              <span class="dp-n">1 check</span></div>
+            <div class="dp-r"><span class="dp-k">Same scope</span>
+              <span class="dp-d">both flows say "for that day" / "again that day"</span>
+              <span class="dp-n">both</span></div>
+            <div class="dp-r"><span class="dp-k">Third case</span>
+              <span class="dp-d">a surface silenced for the day is also what resurfacing's exclusions need</span>
+              <span class="dp-n good">1</span></div>
+            <div class="dp-r"><span class="dp-k">Names already exist</span>
+              <span class="dp-d">SurfaceId — the union ADR 0013 already keeps in step</span>
+              <span class="dp-tag ok">reused</span></div>
+            <div class="dp-box on">
+              <h4><svg class="ic"><use href="#i-check"/></svg>The array is the part that matters</h4>
+              <p>Because the second refusal of a day has to <b>extend</b> the first rather than
+                replace it. Two per-flow types would each be right alone and would overwrite each
+                other the first time a day produced both — an off-by-one in the projection, found
+                before it is written.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>One type added; <code>disruption.md</code>'s two sentences become questions the queue
+            asks; <code>event-log.md</code> gains the type and one worked example; an ADR records
+            why the shape is a list rather than a name.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One type, and a projection that folds an array rather than reading a flag. Cheaper
+            than two types and slightly more work than either alone — the array is what stops the
+            second refusal of a day from erasing the first.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. It contradicts nothing, adds one entry where the alternative added two, and
+            reuses the <code>SurfaceId</code> union that ADR 0013 already requires to move as one
+            set.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the log measures</h2>
+    <div class="measure" id="measure-unlogged">…</div>
+  </div>
+</section>
+
+</main>
+
+<script src="lab.js"></script>
+<script src="nav.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var screens = ['shove', 'context', 'timeline', 'unlogged'];
+  var seen = {};
+  var tabs = document.getElementById('tabs');
+
+  tabs.addEventListener('click', function (e) {
+    var b = e.target.closest('.tab');
+    if (b && b.dataset.go) go(b.dataset.go);
+  });
+
+  function go(id) {
+    screens.forEach(function (s) {
+      var el = document.getElementById(s);
+      if (el) el.hidden = (s !== id);
+    });
+    Array.prototype.forEach.call(tabs.children, function (b) {
+      b.classList.toggle('on', b.dataset.go === id);
+    });
+    if (!seen[id]) {
+      seen[id] = true;
+      requestAnimationFrame(function () {
+        MEASURE[id]();
+        ['measure-' + id, id + '-cost'].forEach(function (el) {
+          var node = document.getElementById(el);
+          if (node) node.innerHTML = unesc(node.innerHTML);
+        });
+      });
+    }
+  }
+
+  // Turn a literal backslash-backslash-uXXXX into the character it names.
+  var BS = String.fromCharCode(92);
+  var SEQ = new RegExp(BS + BS + 'u([0-9a-fA-F]{4})', 'g');
+  function unesc(s) {
+    return String(s).replace(SEQ, function (m, h) {
+      return String.fromCharCode(parseInt(h, 16));
+    });
+  }
+
+  function paras(list) {
+    return list.map(function (s) { return '<p class="mf">' + s + '</p>'; }).join('');
+  }
+  function table(rows) {
+    return '<div class="rows">' + rows.map(function (r) {
+      return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+        '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+    }).join('') + '</div>';
+  }
+
+  var MEASURE = {};
+
+  // -- the defer sheet, written twice
+  MEASURE.shove = function () {
+    var rows = [
+      ['Docs drawing the sheet', 'tasks.md · gesture-vocabulary.md · disruption.md', '3'],
+      ['Docs that own it', 'tasks.md, by disruption.md\u2019s own "must not do" bullet', '1'],
+      ['Rows in tasks.md', 'Tomorrow · Next week · Someday · Pick a date…', '4'],
+      ['Rows in gesture-vocabulary.md', 'the same four, in the same order', '4'],
+      ['Rows in disruption.md', 'Tomorrow · Pick a date… · Someday · Keep today', '4'],
+      ['Rows all three share', 'Tomorrow · Someday · Pick a date…', '3'],
+      ['Rows only the owner has', 'Next week — the only row that is not a date picker', '1'],
+      ['Rows only disruption.md has', 'Keep today', '1'],
+      ['Union of the two sheets', 'and the sheet is stated to have four rows', '5'],
+      ['Rows with a log type behind them', 'Keep today sets defer to what it already is', '4 of 5'],
+      ['Doors disruption.md gives the act', 'row · detail · calendar drag', '3'],
+      ['Names for the act', '"the shove" · "defer" · "reschedule"', '3'],
+      ['Fields the act sets', 'defer — "when the task becomes visible"', '1'],
+      ['Fields the digest\u2019s action needs', 'scheduled_day — "appears on this day\u2019s calendar"', '1'],
+      ['Temporal fields the Task entity has', 'defer · due · scheduled_day', '3'],
+      ['Of those typed as a day', 'scheduled_day only — defer and due are ISO-8601 UTC', '1 of 3'],
+      ['day-as-unit.md\u2019s rule', '"A Day is a local-timezone date. It is not a UTC window."', '1']
+    ];
+
+    document.getElementById('measure-shove').innerHTML = table(rows) + paras([
+      'Three docs draw this sheet and two of them agree on all four rows. The third is the one whose own closing section says <i>"This doc does not define the defer sheet. That is in <code>05-modules/tasks.md</code>."</i> \u2014 and it draws it twice, in \u00a7The shove and again in \u00a7Examples, so it is consistent with itself and with nothing else.',
+      'The two rows that differ are not equally interesting. <b>Next week</b> is dropped, and it is the only option in the owner\u2019s sheet that is not a date picker. <b>Keep today</b> is added, and it cannot do anything: the sheet opens on a task in the Today scope, so setting <code>defer</code> to today sets it to what it already is. That is why no log type for it exists \u2014 and why it is not a mistake the author could have seen. It is an option from the shift offer two sections later, where <i>"Keep as is"</i> declines a real proposal, wandering into the sheet where the same words mean nothing.'
+    ]);
+
+    document.getElementById('shove-cost').innerHTML =
+      'The owner\u2019s sheet, in <b>4</b> rows, and <code>gesture-vocabulary.md</code> draws the same four. Nothing here is broken \u2014 which is the point of the control arm: the defect lives entirely in the <b>fourth</b> doc, the one that says the sheet is not its business.';
+  };
+
+  // -- nine hours it cannot fire in
+  MEASURE.context = function () {
+    var rows = [
+      ['Exempt surfaces', 'local-only banner · all three done · lapse card', '3'],
+      ['That are one-shot', 'once per lifetime · once per lapse', '2'],
+      ['That must repeat within a day', 'the all-three-done card, once per day', '1'],
+      ['Quiet hours, default', '22:00 \u2192 07:00', '540 min'],
+      ['A day', '1440 min', '1440'],
+      ['So quiet hours are', '540 / 1440', '37.5%'],
+      ['Eligible window', '07:00 \u2192 22:00', '900 min'],
+      ['Hourly slots in it', '900 / 60', '15'],
+      ['Daily cap', 'three nudges a day, excluding the now line and obligations', '3'],
+      ['Surfaces in the catalog', 'competing for those three', '12'],
+      ['The card\u2019s trigger lifetime', '"today\u2019s top three"', '1 day'],
+      ['Next eligible open after a 22:30 block', '07:00, and the trigger is gone', '+8.5h'],
+      ['Tests to be exempt', 'fires once \u00b7 permanent dismissal \u00b7 no competition', '3'],
+      ['Plus the fourth rule', '"a blocked firing preserves the trigger"', '4'],
+      ['Tests to count as a nudge', 'interrupts \u00b7 wants a decision \u00b7 not user-initiated', '3'],
+      ['Consequence surfaces excluded by test 3', 'undo toast \u00b7 note field \u00b7 the card', '3'],
+      ['Of those, filed as exempt', 'the card \u2014 the other two are filed nowhere', '1'],
+      ['Context rules the card is told to obey', 'quiet hours · focus · in-event', '3'],
+      ['Contextual triggers in attention-budget', 'gap · cancellation · calendar-shift', '3'],
+      ['Contextual triggers in doing-the-day', 'gap · cancellation · quick-task', '3'],
+      ['Shared by both', 'gap · cancellation', '2'],
+      ['Named only by attention-budget', 'the calendar-shift offer', '1'],
+      ['Named only by doing-the-day', 'the quick-task nudge', '1'],
+      ['Named by neither, in the catalog cell', '"a free slot" — a third vocabulary', '1'],
+      ['Places the set is written down', 'two flow docs and one catalog cell', '3'],
+      ['contextual TTL', 'the catalog', '30 min'],
+      ['Hourly cap', 'the same catalog', '60 min'],
+      ['So a blocked contextual nudge', 'expires 30 min before its slot opens', '<b>−30 min</b>'],
+      ['Where the TTL is measured from', 'searched both docs for a rule', '<b>0 docs</b>']
+    ];
+
+    document.getElementById('measure-context').innerHTML = table(rows) + paras([
+      'The fourth rule was added one lab ago for a specific failure: the lapse card read a gap that the same app open rewrote, so a blocked firing deleted the surface instead of delaying it. It is written as <i>"a property of the exemption, not of any one flow"</i> \u2014 <b>"any surface whose trigger is a state rather than a schedule must be able to wait."</b>',
+      'The all-three-done card\u2019s trigger <i>is</i> a state, and it is the wrong kind. A lapse persists for fourteen days; "today\u2019s top three" expires at midnight. Quiet hours are <b>540</b> of the day\u2019s <b>1440</b> minutes, so a third completion at 22:30 queues to 07:00 and fires about a list that is now empty. The card is on the exemption list and should not be: <code>attention-budget.md</code>\u2019s own test for what counts as a nudge requires that the surface <i>"is not user-initiated"</i>, and this one is the direct consequence of a gesture the user just made. The same test already excludes the undo toast and the completion note field without anyone ever writing down that it does.',
+      'The clock has a second fault, in the class the card is not in. <b><code>contextual</code> has a 30-minute TTL and the cap that can block it is 60 minutes</b>, so a contextual nudge blocked by the cap expires half an hour before the next slot opens and never fires at all — and no doc says which clock the countdown runs on. The same surface also has its four triggers named in three places: <code>attention-budget.md</code> lists the gap, a cancellation and the calendar-shift; <code>doing-the-day.md</code> lists the gap, a cancellation and a <b>quick-task</b> nudge; and the catalog\u2019s own cell says <i>"a gap, a cancellation, a free slot"</i>. Two flows each believed they had the complete set, shared two of three, and each held the one the other was missing. For the shift offer the arithmetic is not academic: a day whose previous hour produced any nudge at all silently loses its automatic reflow.'
+    ]);
+
+    document.getElementById('context-cost').innerHTML =
+      '<b>3</b> exempt surfaces, and the fourth rule holds for <b>2</b> of them \u2014 quiet hours are <b>540</b> of the day\u2019s <b>1440</b> minutes, <b>37.5%</b>, so a third completion after 22:00 is <b>deleted rather than delayed</b>. Underneath it the clock has a second fault: a <b>30-minute</b> TTL against a <b>60-minute</b> cap, and <b>4</b> contextual triggers named three different ways in three places.';
+  };
+
+  // -- 750ms against a 400ms ceiling
+  MEASURE.timeline = function () {
+    var rows = [
+      ['Docs stating the 400ms ceiling', 'motion-vocabulary.md \u00b7 completion.md \u00b7 twice', '2'],
+      ['Transitions in the catalog', '"every transition in the app is one of these"', '13'],
+      ['Duration tokens at or under 400ms', 'instant \u00b7 fast \u00b7 default \u00b7 slow \u00b7 deliberate \u00b7 longpress', '6'],
+      ['duration-deliberate', '"used sparingly\u2026 emphasis"', '400ms'],
+      ['Sequence, per completion.md', 'fill 150 + scale 400 + shift 200', '750ms'],
+      ['Sequence, per motion-vocabulary.md', 'holds 200, then 400, then shift 200', '800ms'],
+      ['Over the stated ceiling', '750 / 400', '1.88\u00d7'],
+      ['Docs stating a sequence total', 'searched the set for a budget or a total', '<b>0</b>'],
+      ['Motions in the sequence', 'fill \u00b7 scale \u00b7 reflow \u00b7 card in \u00b7 card out \u00b7 note field', '6'],
+      ['In the transition catalog', 'state change \u00b7 completion confirmation', '2'],
+      ['Absent from it', 'reflow \u00b7 card fades in \u00b7 card fades out', '3'],
+      ['Named in no catalog at all', 'the note field appears \u2014 no transition specified', '1'],
+      ['Fill visible before the row is gone', 'a checkbox inside a row scaling to 0', '<b>0ms</b>'],
+      ['Scale beats to read', 'row leaves, then list closes', '2'],
+      ['Undo toast', 'five seconds, from commit', '5.0s'],
+      ['Note field auto-dismiss', '"after 10 seconds if untouched"', '10.0s'],
+      ['Both on screen at once', 'and no doc orders the two', '5.0s'],
+      ['Timings with a stated origin', '"after a 150ms pause" \u2014 after what?', '5 of 6']
+    ];
+
+    document.getElementById('measure-timeline').innerHTML = table(rows) + paras([
+      'Two docs publish the ceiling and neither publishes a total, which is how a <b>400ms</b> limit and a <b>750ms</b> sequence coexist in the same set without either being wrong on its own terms. Read as a rule about a transition, "at or under 400ms" is satisfied by an app whose every screen takes eleven seconds to settle \u2014 a constraint that cannot be violated is not a constraint, and this one is quoted as the reason the app feels calm.',
+      'The catalog is the other half. <i>"Every transition in the app is one of these. No custom transitions."</i> The sequence uses six motions and the catalog holds two. The list reflow is the sharpest: it is named in <code>completion.md</code> step 5, named again in <code>motion-vocabulary.md</code>\u2019s own worked example, given a duration in both, and absent from the table those examples sit under. And the fill is a third of the sequence less <b>150ms</b> of visibility, because it is drawn on a checkbox inside a row that is scaling to zero.'
+    ]);
+
+    document.getElementById('timeline-cost').innerHTML =
+      '<b>750ms</b> end to end against a <b>400ms</b> ceiling stated in two docs \u2014 <b>1.88\u00d7</b> \u2014 and no doc publishes a total. <b>4</b> of the sequence\u2019s <b>6</b> motions are missing from a catalog that says every transition is in it, and <b>150ms</b> of the sequence is drawn inside a row that is scaling to zero.';
+  };
+
+  // -- two things the log cannot hold
+  MEASURE.unlogged = function () {
+    var rows = [
+      ['Durable facts disruption.md assumes', '"remembers the choice for that day" \u00b7 "does not fire again that day"', '2'],
+      ['Entries in the log for them', 'searched event-log.md and both flows', '<b>0</b>'],
+      ['system.* types', 'settings_changed \u00b7 lapse_skipped \u00b7 fresh_start \u00b7 catch_up \u00b7 clock_corrected \u00b7 auth_expired', '6'],
+      ['Of those recording a user decision', 'settings_changed \u00b7 lapse_skipped \u00b7 fresh_start \u00b7 catch_up', '4'],
+      ['Added one lab ago, for this exact shape', 'system.lapse_skipped \u2014 ADR 0021', '1'],
+      ['That flow\u2019s exits', 'Fresh start \u00b7 Catch up \u00b7 Skip', '3'],
+      ['That flow\u2019s exits that are entries', 'three exits, three entries', '3 of 3'],
+      ['This flow\u2019s exits', 'Shift \u00b7 Keep as is \u00b7 Reschedule all \u00b7 Review individually \u00b7 Leave them', '5'],
+      ['This flow\u2019s exits that are entries', 'Shift \u00b7 Reschedule all', '2 of 5'],
+      ['Exits that must survive a restart', 'Keep as is \u00b7 Leave them', '2'],
+      ['Of those with an entry', 'neither', '<b>0 of 2</b>'],
+      ['Where the firings go instead', 'the client diagnostics buffer', 'not synced'],
+      ['The buffer\u2019s lifetime', 'projections.md: "a local diagnostics buffer, not synced"', 'one install'],
+      ['What the buffer is for', '"times shown, times dismissed" \u2014 priority scoring', 'scores'],
+      ['The invariant it breaks', 'object-model.md: "Every atom and every layer is derived from the log."', '1'],
+      ['Adding a type requires', 'event-log.md \u00a7Invariants', 'an ADR'],
+      ['Types the recommended shape adds', 'one, over a SurfaceId array', '1'],
+      ['Next ADR', '\u2014', '0023']
+    ];
+
+    document.getElementById('measure-unlogged').innerHTML = table(rows) + paras([
+      'Two sentences in one flow promise the app will remember a refusal, and <b>0</b> entries carry either. The alternative the docs actually implement is the client diagnostics buffer, which <code>projections.md</code> describes as <i>"a local diagnostics buffer, not synced"</i> \u2014 so a reinstall or a second device forgets, and a user who answered the question once is asked it again on the phone they did not answer it on.',
+      'The sharpest argument for an entry is not in this lab. It is <code>system.lapse_skipped</code>, added one lab ago to the flow whose three exits now have three entries \u2014 the same shape, the same reason, and a precedent one file away. The recommended shape differs from it in only one way: the two facts here are the <i>same</i> fact about different surfaces, so a per-day entry carrying a <code>SurfaceId</code> array replaces two named types and, more importantly, lets the second refusal of a day <b>extend</b> the first instead of overwriting it.'
+    ]);
+
+    document.getElementById('unlogged-cost').innerHTML =
+      'Two durable facts, two sentences promising them, and <b>0</b> entries in a log with <b>6</b> <code>system.*</code> types \u2014 <b>4</b> of which already record a user decision. <code>system.lapse_skipped</code> was added for this exact shape <b>one lab ago</b>, so the argument is already won and the flow simply was not in the room.';
+  };
+
+  go('shove');
+})();
+</script>
+</body>
+</html>
