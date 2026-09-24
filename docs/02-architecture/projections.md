@@ -105,7 +105,8 @@ domain-based:
 | `habit.*` | `habit_compliance`, `habit_streak`, `day_view`, `weekly_review` |
 | `note.*` | `task_detail`, `search_results`, plus the projection for the attachment target |
 | `protocol.*` | `protocol_report`, `day_view`, `weekly_review` |
-| `area.*` / `goal.*` | `task_list` (by_area), `weekly_review` |
+| `area.*` | `task_list` (by_area), `weekly_review`, `area_list` |
+| `goal.*` | `goal_list`, `goal_detail`, `weekly_review` |
 | `person.*` | `search_results`, `task_list` (by_person) |
 | `day.*` | `day_view`, `now_line`, `weekly_review` |
 | `ai.*` | (no projection — AI entries affect state via their resulting entries) |

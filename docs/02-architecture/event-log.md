@@ -140,10 +140,12 @@ not appear in the type list below and are not synced.
 - `area.created` — { area_id, name }
 - `area.renamed` — { area_id, name }
 - `area.archived` — { area_id }
+- `area.unarchived` — { area_id }
 
 **Goal**
 - `goal.created` — { goal_id, name, area_id }
 - `goal.renamed` — { goal_id, name }
+- `goal.reassigned_area` — { goal_id, area_id }
 - `goal.achieved` — { goal_id }
 - `goal.abandoned` — { goal_id, reason? }
 - `goal.reopened` — { goal_id }

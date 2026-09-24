@@ -22,7 +22,7 @@ number. Two existing examples: ADR 0016 amends ADR 0011's note mapping,
 and ADR 0019 records a decision ADR 0005's shape would have used.
 
 **Numbering.** Sequential, four digits, never reused. The next one is
-**0022**.
+**0023**.
 
 ## The index
 
@@ -49,6 +49,7 @@ and ADR 0019 records a decision ADR 0005's shape would have used.
 | 0019 | **Waiting never animates.** No spinner, no shimmer, no indeterminate progress anywhere. Under 400ms shows nothing; past it, a static `surface-2` placeholder plus a line in `text-secondary`; countable waits show the count. A design that seems to need a spinner has a product problem. |
 | 0020 | **An update is never announced.** No toast, banner, dialog, badge, or "what's new" — a new build is picked up on the next cold launch and never takes over a live session. The obligation that follows: an old client must stay correct, so the log schema and sync protocol must tolerate a client several versions behind. |
 | 0021 | **The lapse skip is logged.** `system.lapse_skipped` added, so the flow's three exits are three entries and "once per lapse" is stated rather than inferred. The trigger becomes durable — the gap between the **last two** `day.opened` entries, not since the last one — so a firing blocked by quiet hours, focus mode or an event waits instead of being lost. No `system.lapse_shown`: firings go to the diagnostics buffer. The lapse card does not suppress the morning plan. |
+| 0022 | **Layers are restorable and moveable.** `area.unarchived` added, so "archival is reversible" is true of every type that has an archive event — the third instance of the defect ADR 0012 fixed twice. `goal.reassigned_area` added, retiring the archive-and-recreate workaround that left a Goal's protocols unreachable from the Goal in use. A Habit still cannot move. No `area.deleted` (0012's ruling stands) and no `glyph` field on Area (the four glyphs bind to ids, which is what makes a rename safe). |
 
 ## Decisions with no ADR
 

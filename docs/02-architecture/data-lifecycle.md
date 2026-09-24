@@ -108,6 +108,15 @@ and are findable. Their reports remain attached.
 `task_list({ by_person })` and resurfacing. Their linked tasks,
 events, and notes remain.
 
+**Areas.** Archived areas stop appearing as filters. Their tasks,
+habits, and goals remain, and the Area stays findable in settings.
+An archived Area is **restorable** — `area.unarchived`.
+
+**Goals.** Goals end rather than archive: `goal.achieved` or
+`goal.abandoned`. Either way the Goal leaves the active list and its
+protocols and reports remain in the log and are findable. A Goal is
+not archived and does not have an archived state.
+
 Archival is a UI affordance, not a data deletion. A "show archived"
 toggle reveals everything.
 

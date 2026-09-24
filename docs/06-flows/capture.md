@@ -97,8 +97,13 @@ The chip's controls and its exact thresholds are owned by
 
 ### The capture outcomes
 
-- **Task.** Created with `task.created`. Appears in Tasks → Today if
-  scheduled, or Next / Someday / Inbox otherwise.
+- **Task.** Created with `task.created`. The type is parsed; the
+  **Area is not**, and defaults to Inbox (§Area assignment,
+  `05-modules/areas-and-goals.md`). The task appears in Tasks → Today if
+  it carries a due date, and in Next, Someday, or All otherwise — those
+  four are the mode's scopes (`05-modules/tasks.md`). **Inbox is not one
+  of them.** It is the Area on the task, and it is where a capture lands
+  rather than where it is later found.
 - **Event.** Created with `calendar.created`. Appears in the
   Calendar. If the calendar integration is enabled, it syncs to the
   source.

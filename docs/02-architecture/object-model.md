@@ -106,18 +106,35 @@ logged. Only `done_full`, `done_minimum`, `done_repair`, and
 Layers classify atoms. They do not exist on their own; they are
 filters and groupings.
 
+**Two layers are a shape, and two are places.** An **Area** and a
+**Person** are classifications: nothing is done to them, and a surface
+that lists one is listing what was filed under it. A **Goal** and a
+**Protocol** accumulate a history — protocols, reports, metric series —
+and that history is what their screens are for. The distinction is not
+in this file's field sets; it shows up as `03-experience/surfaces.md`
+giving Goal a Screen and Area a Control, and it is why "layers are
+filters" was true of the first two and false of the second two.
+
 **Area** — a life domain. Field set:
 
     { id: ULID, name: string, state: 'active' | 'archived' }
 
-Examples: Health, Work, Home, Learning.
+Examples: Health, Work, Home, Learning — plus Inbox, created on first
+launch. The five built-ins are identified by **id**; `name` is
+user-editable, so three rules that depend on identity (Inbox cannot be
+archived, the four seeds draw a glyph, onboarding offers the four) key
+on the id. An Area has no glyph field: the four glyphs in
+`03-experience/components.md` bind to these ids.
 
 **Goal** — an outcome under an Area. Field set:
 
     { id: ULID, name: string, area_id: AreaId,
       state: 'active' | 'achieved' | 'abandoned' }
 
-Examples: Improve sleep, Ship v1.
+Examples: Improve sleep, Ship v1. `area_id` is set at creation and
+**rewritable** (`goal.reassigned_area`, ADR 0022) — the Area files the
+outcome, and re-filing does not change the outcome. A Goal's protocols
+belong to the Goal, not the Area, so they move with it.
 
 **Protocol** — a time-boxed experiment. Field set:
 
@@ -168,7 +185,7 @@ is computed.
 
 ### The eleven canonical edges
 
-    1.  Task → Area              (many-to-one, required)
+    1.  Task → Area              (many-to-one, required; rewritable)
     2.  Task → Person            (many-to-many, optional)
     3.  Task → Day               (many-to-one, optional; scheduling)
     4.  Task → Task              (many-to-one, optional; parent)
@@ -177,7 +194,7 @@ is computed.
     7.  Habit → Area             (many-to-one, required)
     8.  Habit → Protocol         (many-to-one, optional)
     9.  Protocol → Goal          (many-to-one, required)
-    10. Goal → Area              (many-to-one, required)
+    10. Goal → Area              (many-to-one, required; rewritable)
     11. Note → exactly one of {Task, Event, Habit, Protocol, Day, Person}
                                  (exactly one, required)
 

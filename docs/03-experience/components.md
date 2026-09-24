@@ -181,6 +181,21 @@ scale to user-created categories — four hues already collide, and a fifth
 through the tenth would not — so an Area without a glyph shows its name only.
 `05-modules/areas-and-goals.md` seeds Health, Work, Home, and Learning.
 
+**Two cases the four-glyph rule does not reach, and both are visible on
+the surfaces this file is drawn on.**
+
+- **Inbox has no glyph.** It is a built-in Area and it is not one of the
+  four, so it does not get one of these, and the set offers no thirteenth
+  candidate that would fit — an inbox is not a part of anyone's life. It
+  is the Area most tasks start in, which makes the glyphless case the
+  common case rather than the edge one.
+- **A rename does not move the glyph.** The four glyphs are bound to the
+  four areas' **ids**, not to their names. Renaming Work to "Studio"
+  keeps `briefcase`; renaming Home to "Work" does not take it. Renaming
+  is free (`02-architecture/data-lifecycle.md`), and so is the glyph's
+  attachment to it, which is the only arrangement where a rename cannot
+  silently reassign an icon.
+
 **The attachment chip carries an arrow, not a glyph.** `05-modules/notes.md`
 writes it as "→ Buy standing desk", "→ Sarah", "→ Today", "→ Sleep
 protocol" — one chip naming four different destinations. No single glyph

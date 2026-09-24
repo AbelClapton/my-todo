@@ -56,7 +56,8 @@
     { file: 'retrieval-lab.html',   name: 'Retrieval' },
     { file: 'morning-plan-lab.html', name: 'Morning plan' },
     { file: 'lapsed-lab.html',      name: 'Lapse' },
-    { file: 'tiers-lab.html',       name: 'AI tiers' }
+    { file: 'tiers-lab.html',       name: 'AI tiers' },
+    { file: 'areas-lab.html',       name: 'Areas & Goals' }
   ];
 
   var here = (location.pathname.split('/').pop() || 'index.html').toLowerCase();

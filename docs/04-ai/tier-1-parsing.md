@@ -105,6 +105,14 @@ learn Japanese" → marked someday.
 - **Health-adjacent claims.** Tier 1 does not parse "I should
   sleep more" into a protocol. Protocols are Tier 3 (see
   `04-ai/research-and-protocols.md`).
+- **Areas.** There is no Area prefix syntax. `05-modules/areas-and-goals.md`
+  previously said the parser "may infer an Area from the text (`work: file
+  taxes` → Work)"; that is withdrawn, and this doc is where the withdrawal
+  is binding, because this doc owns what Tier 1 recognises and it lists no
+  Area prefix. `area_id` defaults to Inbox on every capture
+  (`06-flows/capture.md`'s invariant is that the user picks neither a type
+  nor an Area nor a date at capture time), and the Area is set later from
+  the task detail via `task.reassigned_area`.
 
 ### The "parsed" chip
 

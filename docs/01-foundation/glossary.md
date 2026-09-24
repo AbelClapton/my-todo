@@ -60,15 +60,27 @@ completed once; it is complied-with repeatedly.
 
 Things that classify atoms, not things that exist on their own.
 
-**Area** — a life domain. Examples: Health, Work, Home, Learning.
-Areas are top-level classification. Every Task, Habit, Goal, and
-Protocol belongs to exactly one Area. Areas do not have their own
-detail screens; they are filters.
+**Two of the four accumulate a history and two do not.** Area and
+Person are classifications — nothing is done to them, and the surface
+that lists one is listing what was filed under it. Goal and Protocol
+accumulate protocols, reports, and metric series, and that history is
+what their screens are for. All four are still layers: none of them is
+the subject of a Day.
+
+**Area** — a life domain. Examples: Health, Work, Home, Learning —
+plus Inbox, one of the five created on first launch. Areas are
+top-level classification. Every Task, Habit, Goal, and Protocol
+belongs to exactly one Area. Areas do not have their own detail
+screens; they are filters.
 
 **Goal** — an outcome under an Area. Examples: Improve sleep
 (Health), Ship v1 (Work). Goals are the parent of Protocols. A Goal
-does not have a completion state; it is achieved or abandoned, but
-this is a narrative state, not a boolean.
+has a `state` — `active`, `achieved`, or `abandoned` — and it is a
+narrative state rather than a boolean, because `abandoned` is not
+`not-yet-achieved`: abandoning is a decision with an optional reason,
+and `goal.reopened` reverses either ending. **A Goal has a detail
+screen**, and it is the app's only layer that does: protocols, reports,
+and the follow-up action all live there.
 
 **Protocol** — a time-boxed experiment with a hypothesis, a set of
 Habits, a metric, a baseline, and a review date. A Protocol belongs

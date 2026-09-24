@@ -53,8 +53,12 @@ due within N days, by completion date (for the completed log).
 - **Checkbox.** Tap completes. Swipe right also completes.
 - **Title.** `type-body`. Tap opens detail.
 - **Metadata line.** `type-footnote`, `text-secondary`. **Identity only:**
-  Area name, note count, person links, parent task indicator. Where an
-  Area is present it leads with the Area's glyph (`icon-xs`).
+  Area name, note count, person links, parent task indicator. Where the
+  Area **has** a glyph, the glyph sits in this line immediately before
+  the Area's name (`icon-xs`, `text-muted`) — not at the head of the
+  row, which `03-experience/components.md` forbids because it breaks the
+  checkbox column and repeats a word already on the line. Only the four
+  seeded Areas have one; Inbox and every user-created Area are name-only.
 - **Priority indicator.** `priority: now` shows a small dot in
   `accent-default`. `next` and `later` have no indicator (their
   absence is the signal).

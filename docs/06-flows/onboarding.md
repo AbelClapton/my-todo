@@ -77,9 +77,14 @@ costs.
     Action: "Next."
 
 The four defaults seed the Areas layer
-(`05-modules/areas-and-goals.md`). Each chip carries the same glyph the task row
-uses for that Area (`03-experience/components.md`), so the iconography is learnt
-here rather than met for the first time in a list.
+(`05-modules/areas-and-goals.md`). Each of the four carries the glyph the task
+row shows for that Area (`03-experience/components.md`), so the iconography is
+learnt here rather than met for the first time in a list.
+
+**The Inbox chip is drawn without a glyph, on purpose.** It sits in the same
+row as the four and it is the one chip that is not a part of anyone's life, so
+the missing glyph is consistent with the rule rather than a gap in it — and the
+row is the first place the difference between the four and the fifth is visible.
 
 **The "Inbox" Area is shown, not silent.** It is created on this screen and
 cannot be deselected, so it appears as a dashed chip reading "Inbox · always on"
