@@ -437,6 +437,44 @@ body {
 .measure .n { font-family: var(--font-mono); font-size: var(--type-title-3-size); }
 .measure .l { font-size: var(--type-caption-size); letter-spacing: var(--type-caption-track); text-transform: uppercase; color: var(--text-muted); }
 
+/* The readout the labs actually emit.
+   `paras()` and `table()` in every lab write `.mf`, `.rows`, `.rl`, `.rk`,
+   `.rd`, `.rv`. Until now none of the five had a rule, so they fell through to
+   `.measure div` — a column flex — and every panel rendered as three
+   undifferentiated lines of body text: the label, the note and the number all
+   at the same size, weight and colour. The whitespace `.n` and `.l` above are
+   kept because they are the readout `lab.css` documented; these are the one in
+   use. `div.rows` / `div.rl` are spelled with the element so they outrank
+   `.measure div` (equal specificity, later source) and so they work in the few
+   labs that write a `.rows` block outside a `.measure`. */
+div.rows { display: block; flex: 1 1 100%; }
+div.rl {
+  display: grid;
+  grid-template-columns: minmax(140px, 250px) minmax(0, 1fr) minmax(80px, max-content);
+  gap: var(--space-5);
+  align-items: baseline;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+div.rl:first-child { padding-top: 0; }
+div.rl:last-child { border-bottom: 0; padding-bottom: 0; }
+.rk { font-size: var(--type-subhead-size); line-height: var(--type-subhead-line); color: var(--text-primary); }
+.rd { font-size: var(--type-footnote-size); line-height: var(--type-footnote-line); color: var(--text-secondary); }
+.rv {
+  font-size: var(--type-subhead-size); line-height: var(--type-subhead-line);
+  color: var(--text-primary); font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  justify-self: start;
+}
+.mf {
+  flex: 1 1 100%; margin: 0 0 var(--space-4);
+  font-size: var(--type-footnote-size); line-height: var(--type-footnote-line);
+  color: var(--text-secondary); max-width: 78ch;
+}
+.mf:last-child { margin-bottom: 0; }
+.mf b { color: var(--text-primary); }
+.mf code { font-family: var(--font-mono); font-size: .95em; }
+
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
