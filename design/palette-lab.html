@@ -888,9 +888,23 @@ body.no-annot .tok { display: none; }
 }
 .panel .list { border: 0; border-radius: 0; }
 
-/* Swipe reveals, held mid-gesture so the treatment can be judged. The reveal
-   sits behind the row; the row has slid past the 40% threshold. */
-.sw { position: relative; height: var(--row-rich); overflow: hidden; border-bottom: 1px solid var(--border-subtle); }
+/* Swipe reveals, held past the 40% threshold so the treatment can be judged.
+   Phone width, not panel width: 42% only means "past the threshold" if it is 42% of a
+   390px row. Of a 1166px panel it is a 490px slide, and a left swipe then carries the
+   row's own text off the left edge — the row and its label read as two unrelated
+   things, several hundred pixels apart.
+   The row's identifying text sits in a caption above each mock rather than inside it,
+   for the same reason: at the commit point a left swipe has already pushed anything
+   written on the row out of view, so the label and the reveal cannot both be read. */
+.sw-grid { display: grid; gap: var(--space-8) var(--space-7);
+  grid-template-columns: repeat(auto-fit, minmax(392px, 1fr)); }
+.sw-cell { min-width: 0; }
+.sw-cap { margin: 0 0 var(--space-3); display: flex; align-items: baseline;
+  gap: var(--space-3); flex-wrap: wrap; }
+.sw-cap b { font-size: var(--type-subhead-size); color: var(--text-primary); }
+.sw { position: relative; width: 390px; max-width: 100%;
+  height: var(--row-rich); overflow: hidden;
+  border: 1px solid var(--border-default); border-radius: var(--radius-md); }
 .sw .behind {
   position: absolute; inset: 0;
   display: flex; align-items: center; gap: var(--space-4);
@@ -904,14 +918,20 @@ body.no-annot .tok { display: none; }
 .sw .front {
   position: absolute; inset: 0;
   background: var(--surface-1);
-  border-bottom: 1px solid var(--border-subtle);
   display: flex; align-items: center; gap: var(--space-5);
-  padding: 0 var(--space-6);
+  padding: 0 var(--space-5);
 }
 .sw .move-lead { transform: translateX(42%); }
 .sw .move-trail { transform: translateX(-42%); }
-.sw .move-up { transform: translateY(-38%); }
-.sw .move-down { transform: translateY(38%); }
+.sw .move-up { transform: translateY(-42%); }
+.sw .move-down { transform: translateY(42%); }
+/* A horizontal swipe slides the row off to one side, so the reveal fills the full
+   height and a centred label is visible. A vertical swipe only exposes a *band* of
+   the row — 42% of 72px, about 30px — so a centred label sits at ~36px, behind the
+   row, and reads as nothing at all. These sit the label in the part actually shown:
+   at the top when the row slides down, at the bottom when it slides up. */
+.sw .behind.v-top { align-items: flex-start; padding-block: 3px; }
+.sw .behind.v-bottom { align-items: flex-end; padding-block: 3px; }
 
 /* Detail view metadata */
 .dd { display: grid; grid-template-columns: 96px 1fr; gap: var(--space-3) var(--space-5); }
@@ -2725,34 +2745,55 @@ body.no-annot .tok { display: none; }
       destructive (ADR 0011) — the only irreversible-feeling action in the mode is
       flagged in words, not in red.
     </p>
+    <p class="sec-note" style="margin-top: var(--space-3);">
+      Each mock is drawn at 390px, so the travel is the travel the app has. The vertical
+      pair exposes a band rather than a side, so their labels are aligned to the edge
+      that opens: `Someday` to the top when the row slides down, `Attach` to the bottom
+      when it slides up. And each row's own text is a caption above its mock rather than
+      written on the row, because at the commit point a left swipe has already carried
+      the row's text out of view — the reveal and the row cannot both be read at once,
+      and the reveal is the thing this section is here to judge.
+    </p>
     <div class="panel">
-      <div class="list">
-        <div class="sw">
-          <div class="behind lead tint"><svg class="ic ic-md"><use href="#i-check"/></svg><span class="t-subhead">Complete</span></div>
-          <div class="front move-lead">
-            <span class="check"></span>
-            <div class="r-main"><span class="t-body r-title">Swipe right</span><span class="r-meta-mono">accent-subtle · the row holds 200ms, then leaves</span></div>
+      <div class="sw-grid">
+        <div class="sw-cell">
+          <p class="sw-cap"><b>Swipe right</b><span class="r-meta-mono">accent-subtle · the row holds 200ms, then leaves</span></p>
+          <div class="sw">
+            <div class="behind lead tint"><svg class="ic ic-md"><use href="#i-check"/></svg><span class="t-subhead">Complete</span></div>
+            <div class="front move-lead">
+              <span class="check"></span>
+              <div class="r-main"><span class="t-body r-title">Draft Q4 plan</span><span class="r-meta-mono">Work · due Tue</span></div>
+            </div>
           </div>
         </div>
-        <div class="sw">
-          <div class="behind trail grey"><span class="t-subhead">Defer</span></div>
-          <div class="front move-trail">
-            <span class="check"></span>
-            <div class="r-main"><span class="t-body r-title">Swipe left</span><span class="r-meta-mono">surface-3 · opens the defer sheet, changes nothing yet</span></div>
+        <div class="sw-cell">
+          <p class="sw-cap"><b>Swipe left</b><span class="r-meta-mono">surface-3 · opens the defer sheet, changes nothing yet</span></p>
+          <div class="sw">
+            <div class="behind trail grey"><span class="t-subhead">Defer</span></div>
+            <div class="front move-trail">
+              <span class="check"></span>
+              <div class="r-main"><span class="t-body r-title">Call contractor</span><span class="r-meta-mono">Home · @Mark</span></div>
+            </div>
           </div>
         </div>
-        <div class="sw">
-          <div class="behind lead grey"><span class="t-subhead">Attach</span></div>
-          <div class="front move-down">
-            <span class="check"></span>
-            <div class="r-main"><span class="t-body r-title">Swipe up</span><span class="r-meta-mono">surface-3 · opens the attachment picker</span></div>
+        <div class="sw-cell">
+          <p class="sw-cap"><b>Swipe up</b><span class="r-meta-mono">surface-3 · opens the attachment picker</span></p>
+          <div class="sw">
+            <div class="behind lead grey v-bottom"><span class="t-subhead">Attach</span></div>
+            <div class="front move-up">
+              <span class="check"></span>
+              <div class="r-main"><span class="t-body r-title">File Q4 taxes</span><span class="r-meta-mono">Home · due Fri</span></div>
+            </div>
           </div>
         </div>
-        <div class="sw">
-          <div class="behind trail grey"><span class="t-subhead">Someday</span></div>
-          <div class="front move-down">
-            <span class="check"></span>
-            <div class="r-main"><span class="t-body r-title">Swipe down</span><span class="r-meta-mono">surface-3 · moves it out of the list, reversibly</span></div>
+        <div class="sw-cell">
+          <p class="sw-cap"><b>Swipe down</b><span class="r-meta-mono">surface-3 · moves it out of the list, reversibly</span></p>
+          <div class="sw">
+            <div class="behind trail grey v-top"><span class="t-subhead">Someday</span></div>
+            <div class="front move-down">
+              <span class="check"></span>
+              <div class="r-main"><span class="t-body r-title">Buy groceries</span><span class="r-meta-mono">Home · due Sun</span></div>
+            </div>
           </div>
         </div>
       </div>
