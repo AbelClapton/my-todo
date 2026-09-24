@@ -38,7 +38,12 @@ and nothing in the surface asked about it directly.
 - The shell animates only through the transitions in
   `03-experience/motion-vocabulary.md`. It introduces no motion of its
   own.
-- Nothing in the shell is a nudge. Banners inform; they do not ask
+- Nothing in the shell is a nudge. **A status banner** informs; it does not
+  ask. A **repair banner** carries the one action that ends the failure it
+  names — which is not the shell asking for attention, it is the failure
+  offering its own fix, and it is why a repair banner is outside the
+  attention budget by definition rather than by exemption
+  (`03-experience/attention-budget.md`, ADR 0023).
   (`03-experience/attention-budget.md`).
 
 ## Specification
@@ -91,9 +96,27 @@ how it is signalled.
 |---|---|---|
 | 1. Content | Screens, lists, the timeline | `elevation-0` |
 | 2. Sticky chrome | Header, mode navigation, now line | `elevation-0`, `border-subtle` |
-| 3. Banners | Offline, stale calendar, local-only warning | `elevation-2` |
+| 3. Banners | The four below — two status, two repair | `elevation-2` |
 | 4. Transient | Sheets, popovers, the palette, the date picker | `elevation-2` (popover) or `elevation-3` (sheet, modal) |
 | 5. Toasts | The undo toast, confirmations | `elevation-4` |
+
+**Layer 3 holds two kinds of banner, and the distinction is what its invariant
+is about.** This table is the complete list — a banner added anywhere else is a
+change to this doc, not a local decision, because the layer owns the ordering
+rule and cannot order a tenant it has not heard of.
+
+| Banner | Kind | Carries | Owner |
+|---|---|---|---|
+| Stale calendar | Repair | `[Retry]` | `05-modules/calendar.md` |
+| Offline | Status | nothing | `10-engineering/error-handling.md` |
+| Local-only warning | Status | `[OK]` | `06-flows/onboarding.md` |
+| Server error (5xx) | Repair | `[Retry]` | `07-infrastructure/sync-engine.md` |
+
+A **status banner reports a fact** and carries no control that changes state. A
+**repair banner names one failing thing and carries exactly one action, which
+retries it.** Both are one line, neither is dismissable by swiping, and both
+are one-shot: a repair banner disappears when the thing it names recovers, not
+when the user taps.
 
 Full-screen states — onboarding, the morning plan, shutdown, lapse
 recovery, any error boundary — replace the shell entirely rather than
@@ -108,7 +131,17 @@ floating over it. That is why they are not a layer.
 - **Popovers do not stack.** Opening one closes any other.
 - **Banners never stack.** If two want to show, the higher-priority one
   wins and the other waits; the order is stale-calendar, offline,
-  local-only.
+  local-only, server-error, and it applies across both kinds, because the
+  layer holds one banner at a time however many want it.
+- **A blocked banner preserves its turn.** The local-only warning is one of
+  the two surfaces exempt from the attention budget
+  (`03-experience/attention-budget.md`), so it fires on the second open and
+  cannot be lost by waiting. It is ranked **last** of the four, which means
+  the user who has never reached the server — the one whose notes really do
+  live only on that device — is the user most likely to see it late. That is
+  deliberate for the calendar and reason to re-read the order for this one:
+  the local-only warning is about the device the user is holding, and
+  "offline" is usually what is true at the same moment.
 - **Toasts are above everything** and are never covered by a sheet,
   because a covered undo is a broken undo (Invariant 1).
 - **The palette is modal.** It takes a backdrop (`bg-overlay`), and

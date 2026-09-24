@@ -224,6 +224,48 @@ connection resumes from the last received `server_seq`.
 The client does not poll on a timer of its own. It reacts to local
 writes, lifecycle events, and the foreground pull cadence above.
 
+### The sync indicator
+
+Three docs already attribute this surface to this file — `10-engineering/error-handling.md`
+for the threshold, `03-experience/components.md` for its contents and
+`03-experience/surfaces.md` for its row — and until now this file did not
+contain it. It is specified here because this is where it was already said to
+live, not because it was designed here.
+
+**One surface, in the header's trailing slot, with three states:**
+
+| State | Shows |
+|---|---|
+| Synced | Nothing. The indicator is absent, not quiet |
+| Pending | The count: "4 pending" |
+| Failing | The failure and its action: "Can't reach the server" with a Retry |
+
+**It is passive state, not a nudge** (`03-experience/attention-budget.md`). It
+reports; it never asks for attention, and it consumes no budget. The Retry in
+its third state is the failure offering its own fix, which is the same kind of
+thing as a repair banner and is outside the budget for the same reason
+(`03-experience/app-shell.md`).
+
+**The 1-hour threshold.** A failed background cycle is invisible for **one
+hour of continuous failure**. Past it, the indicator turns and Settings → Sync
+gains its Retry. The clock measures an **unbroken streak**: any successful
+cycle resets it to zero, so a device that fails for fifty minutes and then
+syncs is not four-fifths of the way to a warning. This is the number
+`error-handling.md` cites for when a background failure starts reporting, and
+this paragraph is its owner.
+
+**Two retries do not both exist.** `error-handling.md` describes a
+"Retry network now" action for a pending network error and a settings Retry
+for a persistent sync failure, and a network error is what causes a sync
+failure, so the two could appear together. There is **one** action: the
+indicator's third state carries it, and Settings → Sync shows the same
+projection rather than a second control of its own.
+
+**The pending count is the indicator's second state, not a settings row.**
+"N entries pending" is the same number in both places, and the count is the
+one thing about sync a banner cannot say — which is why the surface exists
+next to the banner rather than being replaced by it.
+
 ### Notifications
 
 The server notifies other devices of new entries via:
@@ -238,14 +280,16 @@ latency.
 ### Error handling
 
 - **Network error.** Retry with exponential backoff (2s, 4s, 8s, up
-  to 60s). Continue trying in the background.
+to 60s). Continue trying in the background. **A background cycle has no
+total: it retries indefinitely** — it is a state rather than a wait, so
+there is nothing for a person to watch and no 400ms rule to obey
+(`10-engineering/error-handling.md` §Retry policy). A user-initiated
+call is the other kind and does have a total, stated there.
 - **Auth error (401).** Prompt the user to re-authenticate. Sync
-  pauses.
-- **Server error (5xx).** Retry with backoff. Surface a subtle
-  banner if it persists.
-- **Malformed entry rejection.** Log and skip. Do not retry.
-- **Partial pull.** Resume from the last received `server_seq`.
-
+pauses.
+- **Server error (5xx).** Retry with backoff. From 1 hour of continuous
+failure, the sync indicator turns; if it persists past that, the
+repair banner fires (`03-experience/app-shell.md` layer 3).
 Sync failures are logged to a **client-side diagnostics buffer**,
 not the event log. They are operational telemetry, not domain
 events. They are never synced. The buffer is bounded (last 500

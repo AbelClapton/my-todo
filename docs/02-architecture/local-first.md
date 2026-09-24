@@ -169,7 +169,11 @@ it cannot parse:
 - It stores the entry as-is (opaque).
 - It does not project the entry.
 - It logs a warning.
-- It prompts the user to update.
+- It prompts the user to update — **an overlay, not a banner**, and it is
+  one of the four messages outside `10-engineering/error-handling.md`'s
+  failure taxonomy: the app cannot recover this one, because the recovery
+  is a new build. The prompt states which version is needed and never
+  blocks the app, since every entry the client *can* read keeps working.
 
 New clients must never write an entry that old clients cannot
 ignore gracefully.

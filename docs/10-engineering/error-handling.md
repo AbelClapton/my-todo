@@ -23,16 +23,27 @@ surfaced, logged, or retried silently.
 - User-facing error copy is calm and neutral
   (`01-foundation/identity.md`). No "Oops!", no "Uh oh!", no
   exclamation marks.
-- No error blocks the UI. The user can always keep working.
+- No error blocks the UI. The user can always keep working — **with one
+  exception, and it is named below rather than implied: the app-root error
+  boundary replaces the shell, so it blocks everything.** A mode-root or
+  surface-root boundary blocks only its own subtree, which is what the
+  invariant is about. An unexpected error at the root is the one state in
+  the app where no work is possible, and it is also the state with the fewest
+  recovery paths.
 - Error boundaries catch unexpected errors; expected errors return
   Results.
 
 ## Specification
 
-### The error taxonomy
+### The failure taxonomy
 
-Every error falls into one of these categories. Each has a defined
-response.
+Every **failure** falls into one of these categories, and each has a
+**recovery the app performs** — a retry, a disable, a surface, a
+reload. That is the test that bounds the list: a message answered by
+something outside the app (the clock, the user's wallet, a future
+build) is not a failure and belongs to the owner of the state it
+reports. Four such messages exist and are indexed in §Messages
+outside this taxonomy below.
 
 **1. Validation errors.** User input that fails Zod validation.
 
@@ -43,11 +54,12 @@ response.
 
 **2. Network errors.** A request failed due to connectivity.
 
-- **Surfaced:** nothing while it is transient. One neutral line
-  appears once the failure is persistent — after the retry ladder
-  is exhausted for a user-initiated call, or after the sync
-  indicator's 1-hour threshold for a background cycle (see "Retry
-  policy"). It reports; it is not an error state.
+- **Surfaced:** nothing for the first 400ms, then
+  `03-experience/states.md`'s Waiting form — a static `surface-2`
+  placeholder, plus one line once the failure is persistent. **A wait a
+  user is in always obeys the 400ms threshold**; the silent period below
+  is only for a background cycle, which is not a wait (see "Retry
+  policy").
 - **Recoverable:** yes, retry with backoff.
 - **Copy:** "Offline. Retrying." or "Can't reach the server."
 - **Logged:** yes, in the client console. Not to the log.
@@ -153,14 +165,21 @@ equivalent) if the user has enabled crash reporting
 
 - **Network errors (user-initiated):** retry with exponential
   backoff — 2s, 4s, 8s, 16s, 32s. Five attempts, then surface the
-  error.
+  error. **The ladder is 62 seconds end to end**, and every second of
+  it past 400ms shows `03-experience/states.md`'s Waiting form: a
+  static placeholder at the surface's own size, and one line of copy
+  once the failure is clearly persistent. The attempts themselves stay
+  invisible when they succeed — the placeholder resolves into content
+  with no cross-fade (ADR 0019).
 - **Network errors (background sync):** retry indefinitely, with
   the interval capped at 60s. The sync engine does not surface
   these as errors until the failure passes the sync indicator's
   1-hour threshold (`07-infrastructure/sync-engine.md`) — which is
-  also when the settings retry button appears.
+  also when the indicator's Retry appears.
 - **Sync errors:** retry on the next sync cycle. No user-facing
-  retry button unless the failure persists > 1 hour.
+  retry control unless the failure persists > 1 hour — and there is
+  **one** such control, in the indicator, which Settings → Sync
+  points at rather than duplicating.
 - **AI errors:** retry once automatically. If it fails again,
   surface the error and let the user decide.
 - **Integration errors:** retry on the next scheduled sync. Surface
@@ -168,6 +187,16 @@ equivalent) if the user has enabled crash reporting
 
 Retries are invisible when they succeed. They only surface when
 they fail repeatedly.
+
+**A wait and a state are two different things, and this section used one
+rule for both.** A **wait** is a person looking at a surface with a result on
+the way: the 400ms threshold applies, the placeholder is drawn, and the app
+nearly always owes them something on screen. A **state** is the device being
+behind — a background cycle failing, a mirror growing stale — and nobody is
+waiting in it. States report through the indicator and the banner and obey no
+400ms rule, because there is no surface to change at 400ms. The
+user-initiated ladder is the first kind and was being described as the second;
+the 62-second silence was the result.
 
 ### Offline behavior
 
@@ -186,6 +215,30 @@ table below, and only once the failure is persistent: "Offline.
 Changes will sync when you reconnect." It reports; it does not
 alarm; it never blocks.
 
+### Messages outside this taxonomy
+
+Four messages in the app carry a defined UI, a stated string and a stated
+duration, and none is a failure in any of the eight senses above. Each is
+ownered by the doc that specifies it; this is an index, not a second copy of
+their copy.
+
+| Message | Owner | Recovery is |
+|---|---|---|
+| Quota exhausted | `07-infrastructure/cost-model.md` | the reset date, or upgrading |
+| Rate limited | `07-infrastructure/cost-model.md` | a stated wait, and explicitly *not* a retry |
+| Deliberate fallback (Tier 3 → simple) | `07-infrastructure/cost-model.md` | the reset date |
+| Client too old for an entry | `02-architecture/local-first.md` | the user updating the app |
+
+**What they have in common is the reason they are not failures: none of them
+is answered by an action the app takes.** The taxonomy above is a table of
+recoveries, and every entry in it names something this app does — retry,
+disable, surface, reload. These four are answered by the clock, by the user's
+wallet, or by a future build, which is a different kind of thing and belongs
+with the state it reports.
+
+`05-modules/settings.md` was not the only doc that had them; it was the only
+doc that had two messages about *retrying* without saying how they differ.
+
 ### User-facing copy
 
 All error copy follows these rules:
@@ -199,7 +252,7 @@ Examples:
 
 | Situation | Copy |
 |---|---|
-| Offline, transient | (no message) |
+| Offline, waiting on a call | `states.md`'s Waiting placeholder, then one line |
 | Offline, persistent | "Offline. Changes will sync when you reconnect." |
 | Sync failed | "Last sync: 2 hours ago. [Retry]" |
 | AI unavailable | "Assistant needs a connection." |
@@ -209,6 +262,10 @@ Examples:
 | Invalid input | "Title is required." |
 | Domain rule | "Metric can't change during an active protocol." |
 | Unexpected | "Something went wrong. [Reload] [Report]" |
+
+The table covers this doc's eight categories and nothing else. The four
+messages in §Messages outside this taxonomy carry copy too, and it stays in
+their owners' files — a string restated here is a string that will drift.
 
 ### Logging
 
@@ -232,9 +289,11 @@ person names). Error logs for AI calls contain the call's
 Each category has a defined recovery:
 
 - **Validation:** fix the input.
-- **Network:** automatic retry; the user can force a retry via
-  Settings → Sync → "Retry network now," which appears only when a
-  network error is pending.
+- **Network:** automatic retry; the user can force a retry from the sync
+  indicator's third state, which Settings → Sync points at. The earlier
+  wording named a second settings-only action ("Retry network now") with its
+  own condition, and a network error is what causes a sync failure, so the
+  two would always have appeared together.
 - **Sync:** automatic on next cycle; user can force sync from
   settings.
 - **AI:** retry the action; the AI's proposal is preserved.

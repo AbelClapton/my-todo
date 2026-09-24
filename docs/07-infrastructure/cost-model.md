@@ -89,11 +89,13 @@ month. Resets Oct 1."
 When the quota is exhausted:
 
     "Monthly research limit reached. Resets Oct 1."
-    [Upgrade]  [OK]
+    [OK]
 
-The "Upgrade" path is out of scope for v1: there is no billing, so
-Pro cannot be bought and the button is a placeholder with no
-destination.
+**There is no [Upgrade] button in v1.** An earlier draft paired it with
+[OK], and the [Upgrade] path is out of scope: there is no billing, so Pro
+cannot be bought and the button had no destination. A control that offers a
+path the app cannot take is worse than its absence, and the sentence already
+names the part the user can act on — the reset date.
 
 **Pro is specified, not purchasable.** Pro appears in this doc as an
 engineering target, not as a shipped gate. No feature is restricted
@@ -158,9 +160,31 @@ and a note. The user is not charged for a failed call.
   quota).
 - If a user exceeds the rate limit, cloud features are disabled
   for 1 hour with a message: "Too many requests. Try again in an
-  hour."
+  hour." **Inline, in the surface that made the call** — not a
+  banner, because it is about this call rather than about the app —
+  and **explicitly not retried.** `10-engineering/error-handling.md`'s
+  network category retries, and this is the one message that must not:
+  the retry is what the limit is counting.
 - Anomalous patterns (e.g., 100 research calls in 10 minutes)
   trigger a manual review.
+
+### Messages this module owns
+
+Three messages belong to metering rather than to failure, and
+`10-engineering/error-handling.md` indexes them rather than specifying
+them, because none is answered by an action the app takes:
+
+| Message | Container | Recovery is |
+|---|---|---|
+| "Monthly research limit reached. Resets Oct 1." | Modal, with [OK] | the reset date |
+| "Too many requests. Try again in an hour." | Inline, in the calling surface | a stated wait |
+| "Complex queries used up. Falling back to simple mode until Oct 1." | A notice on the AI surface | the reset date |
+
+**The quota modal's [Upgrade] has no destination.** Pro is specified but not
+purchasable (ADR 0014 below), so the button is a placeholder — and a button
+that promises a path the app cannot take is worse than no button. Until
+billing exists, the modal carries **[OK] alone**, and the sentence names the
+reset date, which is the part the user can act on.
 
 ### Free tier
 
@@ -261,7 +285,7 @@ Dashboards are internal. Users see only their own usage.
 
     User attempts research.
     App: "Monthly research limit reached. Resets Oct 1."
-    [Upgrade]  [OK]
+    [OK]
     User taps OK.
     Research is disabled for the month.
 

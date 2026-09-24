@@ -62,12 +62,18 @@ list of 28 strings.
 
 - Sync enabled (on/off)
 - Cloud backup for sensitive categories (on/off)
-- Last sync time (informational)
+- Sync status (informational; **the same projection as the sync
+  indicator** in the header, so the two can never disagree)
 - Force sync now (action)
-- Retry network now (action; appears only when a network error is
-  pending)
 - Sign out all devices (confirmed; affects devices the user is not
   holding)
+
+**There is no "Retry network now" row.** An earlier draft had one, appearing
+only when a network error was pending — but a network error is what causes a
+sync failure, so that condition and the sync indicator's coincide, and this
+screen would have shown two retry controls at once. There is **one**, in the
+indicator; this screen points at it
+(`07-infrastructure/sync-engine.md` §The sync indicator).
 
 **Day.**
 
@@ -261,12 +267,17 @@ Areas; does not delete anything.
 - The list uses `row-compact` (44px) rows, grouped by section with
   a `type-title-3` header and `space-8` separation between groups.
 
-**The list is the app's longest, and its size is derivable.** 49 rows at
+**The list is the app's longest, and its size is derivable.** 48 rows at
 `row-compact` 44px, 12 `type-title-3` headers at 24px, and 11 × 32px of
-`space-8` separation come to **2,796px** — **four screens** on the 700px
-phone the other specs are drawn against. Two groups are not even fixed:
-`Sync` gains a row when a network error is pending, and Notifications
-carries one toggle per attention-catalog surface (12 today).
+`space-8` separation come to **2,752px** — **four screens** on the 700px
+phone the other specs are drawn against. One group is not a fixed length:
+Notifications carries one toggle per attention-catalog surface (12 today).
+
+The count was **49** until the duplicate retry control was removed from
+`Sync`. Both the row and its condition were real, and the condition was the
+reason it should not have existed: "appears when a network error is pending"
+is the same moment the sync indicator's Retry appears, because a network
+error is what causes a sync failure.
 
 **It has no search, and its documented entry point is a search field.**
 Every other long list in the app has a scope or a filter; this one is

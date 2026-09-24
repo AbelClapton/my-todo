@@ -39,6 +39,12 @@ that is "not built in v1 (no billing yet)", while
 `05-modules/settings.md` states as an invariant that "No setting is
 hidden behind a premium tier in v1."
 
+> **Amended 2026-09-24.** The "Upgrade" path is now removed from the quota
+> message rather than described as unbuilt: the modal carries **[OK]** alone.
+> This ADR's own rule — *no feature sits behind a tier the user cannot buy* —
+> is about features, and the button was worse than that, because it offered an
+> action with no destination. Nothing in this ADR's decision changes.
+
 ## Decision
 
 **`07-infrastructure/cost-model.md` is authoritative** for metering,

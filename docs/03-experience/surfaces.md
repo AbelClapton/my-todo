@@ -175,21 +175,34 @@ and the contributors are named in the defining doc's specification.
 | Forgotten / low-energy / people / `streak_repair` | Card | `06-flows/resurfacing.md` |
 | "All three done" card | Card (exempt) | `06-flows/completion.md` |
 | What-slipped digest | Card | `06-flows/disruption.md` |
-| Onboarding local-only banner | Card (exempt) | `06-flows/onboarding.md` |
+| Onboarding local-only banner | Banner (status, exempt) | `06-flows/onboarding.md` |
 | Undo toast | Overlay | `01-foundation/principles.md` |
 | Tier 2 contextual menu | Overlay | `04-ai/tier-2-contextual.md` |
 | Tier 3 assistant sheet | Overlay | `04-ai/tier-3-assistant.md` |
 
 ### Cross-cutting: system states
 
+Six of these are banners or indicators that belong to no mode, which is why
+they were the last surfaces in the app to be enumerated. **The banner layer
+holds four and shows one at a time** (`03-experience/app-shell.md`).
+
 | Surface | Kind | Defined in |
 |---|---|---|
 | Settings (twelve groups) | Surface | `05-modules/settings.md` |
-| Offline banner | Card | `10-engineering/error-handling.md` |
-| Sync indicator | Ambient | `07-infrastructure/sync-engine.md` |
-| Stale-calendar banner | Card | `05-modules/calendar.md` |
-| Quota-exceeded message | Overlay | `07-infrastructure/cost-model.md` |
+| Offline banner | Banner (status) | `10-engineering/error-handling.md` |
+| Stale-calendar banner | Banner (repair) | `05-modules/calendar.md` |
+| Server-error banner | Banner (repair) | `07-infrastructure/sync-engine.md` |
+| Sync indicator | Indicator (passive) | `07-infrastructure/sync-engine.md` |
+| Waiting placeholder | State | `03-experience/states.md` |
 | Error boundary (app, mode, surface) | Overlay | `10-engineering/error-handling.md` |
+| Quota-exceeded message | Overlay | `07-infrastructure/cost-model.md` |
+| Rate-limit message | Control | `07-infrastructure/cost-model.md` |
+| Tier 3 fallback notice | State | `07-infrastructure/cost-model.md` |
+| Client-too-old prompt | Overlay | `02-architecture/local-first.md` |
+
+The last four are **not failures** and are not in
+`10-engineering/error-handling.md`'s taxonomy; that doc indexes them and
+states why the line falls where it does.
 
 ### States every surface must be designed in
 

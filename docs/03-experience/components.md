@@ -55,7 +55,7 @@ Four row heights exist and every list uses one of them
 | Daily obligations card | `03-experience/attention-budget.md` | Habit checkboxes plus the metric row |
 | "All three done" card | `06-flows/completion.md` | `type-title-3`, `space-7` padding, `radius-lg`; exempt surface |
 | Nudge banner | `06-flows/doing-the-day.md` | The container for contextual and gap nudges |
-| System banner | `10-engineering/error-handling.md`, `05-modules/calendar.md` | Offline, stale calendar, local-only warning |
+| System banner | `03-experience/app-shell.md` | Layer 3. Two kinds: **status** (offline, local-only) reports a fact, **repair** (stale calendar, server error) names one failing thing and carries its single action |
 
 ### Controls
 
@@ -120,7 +120,7 @@ meaning, so neither has to be learned alone.
 |---|---|---|
 | Now line | `06-flows/doing-the-day.md` | One line, persistent, never a nudge |
 | Freshness annotation | `02-architecture/data-lifecycle.md` | "as of 2 hours ago"; `type-footnote`, `stale-bg`/`stale-text` |
-| Sync indicator | `07-infrastructure/sync-engine.md` | Includes the pending counter |
+| Sync indicator | `07-infrastructure/sync-engine.md` | Passive state, not a notification: three states, the second being the pending counter |
 | Compliance chart | `05-modules/habits.md` | 28-day strip: full, minimum, skip, missed, repair |
 | Protocol report body | `04-ai/research-and-protocols.md` | Tables with evidence labels |
 | Usage and quota rows | `05-modules/settings.md` | Informational, not actions |
@@ -238,7 +238,7 @@ decision, not a per-screen preference.
 | **Sheet** | Slides up from the bottom edge; dismissed by drag or backdrop | A short set of options or a small form — the default overlay on every platform |
 | **Popover** | Anchored to the element that opened it; `elevation-2` | A menu on tablet and desktop, where the anchor is stable |
 | **Modal** | Centred, with a backdrop; `elevation-3` | Reserved for the four confirmed actions (`01-foundation/principles.md`) |
-| **Banner** | A full-width line in the shell's banner layer | System status: offline, stale calendar, local-only warning |
+| **Banner** | A full-width line in the shell's banner layer | System status. Four tenants, one at a time: status banners report (offline, local-only warning), repair banners name a failure and carry its action (stale calendar, server error). The layer and its order are `03-experience/app-shell.md` |
 | **Card** | Content in a stream that is not a screen | Nudges, summaries, previews |
 | **Chip** | A small label attached to a row or field | State belonging to one item |
 | **Toast** | Slides up from the bottom edge, `elevation-4` | An undo window, or a confirmation with no other home |

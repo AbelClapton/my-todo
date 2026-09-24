@@ -46,9 +46,9 @@ shows it.
 | **Waiting** | Work is in flight | Nothing for the first 400ms. Then a static placeholder block in `surface-2` (`radius-md`), plus one line in `text-secondary` when the wait is countable |
 | **Stale** | Data is older than its threshold | The freshness annotation: "as of 2 hours ago", `type-footnote`, `stale-bg` / `stale-text`. Data stays visible |
 | **Partial** | Some data arrived, some did not | The arrived data renders normally; the missing part carries its own waiting or stale treatment. Never a blank screen |
-| **Error** | A defined failure | Per `10-engineering/error-handling.md`: inline for validation, a banner for persistent network and sync failures, an error boundary for unexpected |
+| **Error** | A defined failure | Per `10-engineering/error-handling.md`: inline for validation; a repair banner for persistent network, sync and integration failures; an indicator for sync; a prompt for auth; a disabled control with a tooltip for a domain rule; a full-screen boundary for unexpected. **Eight categories, eight containers** — and four messages in the app that are not failures at all are indexed there rather than here |
 | **Disabled** | The action has no meaning here | Unchanged appearance, plus the warning haptic on attempt; a tooltip where the reason is not obvious (`03-experience/gesture-vocabulary.md`) |
-| **Offline** | No connectivity | **No state at all.** Reads and writes work; synced data shows its last retrieval time. The only addition is the persistent-failure banner |
+| **Offline** | No connectivity | **No state of its own.** Reads and writes work and synced data shows its last retrieval time, so there is nothing to draw: the addition is the status banner, which reports the connection rather than the app's condition (`03-experience/app-shell.md`, `10-engineering/error-handling.md`) |
 | **First-run** | The user has no data yet | The empty state, plus whatever the flow adds — onboarding's seven screens, or the seeded Areas |
 
 ### Why waiting does not animate
