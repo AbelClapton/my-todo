@@ -1,0 +1,1640 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="warm" data-mode="light" data-accent="teal"
+      data-semantics="vivid" data-type="system">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lapsed recovery lab · Small Wins</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="lab.css">
+<style>
+/* tabular readouts */
+.lr-r{display:grid;grid-template-columns:132px minmax(0,1fr) auto;gap:10px;align-items:baseline;
+  padding:8px 0;border-bottom:1px solid var(--border-subtle);font-size:13px;line-height:18px}
+.lr-r:last-child{border-bottom:0}
+.lr-k{color:var(--text-tertiary)}
+.lr-d{color:var(--text-secondary)}
+.lr-n{font-variant-numeric:tabular-nums;font-weight:600;color:var(--text-primary)}
+.lr-n.good{color:var(--success-text)}
+.lr-n.bad{color:var(--warning-text)}
+.lr-h{font-size:11px;line-height:15px;color:var(--text-muted);margin:10px 0 2px;
+  text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.lr-h:first-child{margin-top:0}
+
+/* tags */
+.lr-tag{display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:5px;
+  font-size:11px;letter-spacing:.04em;text-transform:uppercase;font-weight:600}
+.lr-tag.ok{background:var(--success-subtle);color:var(--success-text)}
+.lr-tag.no{background:var(--warning-subtle);color:var(--warning-text)}
+.lr-tag.nu{background:var(--surface-2);color:var(--text-secondary)}
+
+/* boxes */
+.lr-box{border:1px solid var(--border-subtle);border-radius:10px;padding:10px 12px}
+.lr-box.on{border-color:var(--accent-default)}
+.lr-box.bad{border-color:var(--warning-text)}
+.lr-box h4{margin:0 0 7px;font-size:11px;line-height:14px;color:var(--text-muted);font-weight:600;
+  text-transform:uppercase;letter-spacing:.05em;display:flex;align-items:center;gap:7px}
+.lr-box p{margin:0;font-size:12.5px;line-height:18px;color:var(--text-secondary)}
+.lr-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.lr-quote{font-size:12.5px;line-height:18px;color:var(--text-secondary);font-style:italic;
+  padding-left:11px;border-left:2px solid var(--border-subtle);margin:6px 0 0}
+
+/* the day, with the quiet band */
+.lr-axis{position:relative;margin:16px 0 30px}
+.lr-track{height:28px;border-radius:6px;background:var(--surface-2);position:relative;overflow:hidden}
+.lr-seg{position:absolute;top:0;bottom:0;display:grid;place-items:center;font-size:10.5px;
+  font-weight:600;letter-spacing:.03em}
+.lr-seg.quiet{background:var(--surface-3);color:var(--text-muted)}
+.lr-seg.open{background:var(--success-subtle);color:var(--success-text)}
+.lr-ticks{display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);
+  margin-top:4px;font-variant-numeric:tabular-nums}
+.lr-flag{position:absolute;left:18.75%;transform:translateX(-50%);top:100%;margin-top:20px;
+  font-size:11.5px;color:var(--warning-text);white-space:nowrap;font-weight:600}
+
+/* the welcome card */
+.lr-card{border:1px solid var(--border-strong);border-radius:12px;background:var(--bg-raised);
+  padding:14px}
+.lr-card .big{font-size:17px;line-height:24px;color:var(--text-primary);font-weight:600}
+.lr-card .sub{font-size:13.5px;line-height:20px;color:var(--text-secondary);margin-top:3px}
+.lr-doors{display:grid;gap:8px;margin-top:12px}
+.lr-door{border:1px solid var(--border-strong);border-radius:10px;padding:9px 11px}
+.lr-door .t{font-size:13.5px;line-height:19px;color:var(--text-primary);font-weight:600}
+.lr-door .d{font-size:12px;line-height:17px;color:var(--text-muted);margin-top:2px}
+.lr-skip{font-size:12px;color:var(--text-muted);text-align:right;margin-top:9px}
+
+/* nudge card */
+.lr-nudge{border:1px solid var(--border-subtle);border-radius:12px;background:var(--bg-raised);
+  padding:11px 12px}
+.lr-nudge .t{font-size:13.5px;line-height:19px;color:var(--text-primary)}
+.lr-nudge .actions{display:flex;gap:7px;margin-top:9px}
+.lr-b{font-size:12px;line-height:17px;font-weight:600;padding:5px 10px;border-radius:7px;
+  background:var(--surface-2);color:var(--text-secondary)}
+.lr-b.p{background:var(--accent-default);color:var(--on-fill)}
+
+/* list rows */
+.lr-list{display:grid;gap:0}
+.lr-li{display:flex;align-items:baseline;gap:9px;padding:7px 0;font-size:13px;line-height:18px;
+  color:var(--text-secondary);border-bottom:1px solid var(--border-subtle)}
+.lr-li:last-child{border-bottom:0}
+.lr-li .when{margin-left:auto;font-size:11.5px;color:var(--text-muted);
+  font-variant-numeric:tabular-nums}
+.lr-li.collapse{color:var(--warning-text);font-weight:600}
+
+/* gesture comparison */
+.lr-sw{display:grid;gap:6px}
+.lr-sw-r{display:grid;grid-template-columns:96px repeat(4,minmax(0,1fr));gap:7px;
+  font-size:11.5px;line-height:17px;padding:6px 0;border-bottom:1px solid var(--border-subtle)}
+.lr-sw-r:last-child{border-bottom:0}
+.lr-sw-r .src{color:var(--text-muted);font-weight:600}
+.lr-sw-r .a{color:var(--text-secondary)}
+.lr-sw-r .b{color:var(--warning-text);font-weight:600}
+.lr-sw-h{display:grid;grid-template-columns:96px repeat(4,minmax(0,1fr));gap:7px;
+  font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--text-muted);
+  font-weight:600;padding-bottom:3px}
+
+/* source preview */
+.lr-code{font-family:var(--type-mono-family,ui-monospace,Menlo,monospace);font-size:11px;
+  line-height:17px;color:var(--text-secondary);white-space:pre-wrap;word-break:break-word;
+  background:var(--surface-2);border-radius:8px;padding:10px 12px}
+.lr-code .bad{color:var(--warning-text);font-weight:600}
+</style>
+</head>
+<body data-lab="lapsed">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+  <symbol id="i-archive" viewBox="0 0 24 24"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol>
+  <symbol id="i-mode-tasks" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol>
+  <symbol id="i-mode-notes" viewBox="0 0 24 24"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></symbol>
+</svg>
+
+<header class="masthead">
+  <p class="eyebrow">Lab 14 · coming back, and being reminded</p>
+  <h1 class="t-title-1">Lapsed recovery &amp; resurfacing</h1>
+  <p class="lede-p">
+    <code>lapsed-recovery.md</code> states its rule in four words: <i>"<b>two doors, no guilt</b>.
+    The app never dumps the backlog on someone who is already struggling."</i> It is the most
+    explicitly humane doc in the set, and it is the one that measures worst.
+  </p>
+  <p class="lede-p">
+    Because <code>resurfacing.md</code> is the doc that lists what the user has neglected — and
+    its thresholds are built from the same numbers as the lapse, so its material is
+    <b>guaranteed</b> to exist on the day the user comes back. Neither doc mentions the other.
+    A second defect sits under the first: the lapse card's trigger is a state that the app
+    destroys while it is deciding.
+  </p>
+</header>
+
+<div class="bar">
+  <nav class="tabs" id="tabs">
+    <button class="tab" data-go="doors">When it fires</button>
+    <button class="tab" data-go="guilt">No guilt</button>
+    <button class="tab" data-go="swipes">The swipes</button>
+    <button class="tab" data-go="counts">The numbers</button>
+  </nav>
+</div>
+
+<main id="main">
+
+<!-- ================================================================= DOORS -->
+<section class="screen" id="doors">
+  <div class="lede">
+    <h2 class="t-title-2">When it fires</h2>
+    <p class="lede-p">
+      §The trigger is two lines: <i>"Lapse is defined as ≥ 14 days since the last
+      <code>day.opened</code>"</i>, and the threshold is configurable. §The screen says the card
+      fires once per lapse and is exempt from the attention budget.
+    </p>
+    <p class="lede-p">
+      Both are true, and they destroy each other. An exempt surface <i>"still obeys quiet hours,
+      focus mode, and in-event suppression"</i> — and the entry the trigger counts is written by
+      rollover, which is not budget-governed. So the open that reveals the lapse is also the open
+      that erases it.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">Two doors, equal weight, no default, and a skip link that logs
+          nothing.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="lr-card">
+              <div class="big">Welcome back.</div>
+              <div class="sub">It&rsquo;s been 23 days.</div>
+              <div class="lr-doors">
+                <div class="lr-door">
+                  <div class="t">Start fresh</div>
+                  <div class="d">Pick a new baseline. We&rsquo;ll set aside what didn&rsquo;t get
+                    done.</div>
+                </div>
+                <div class="lr-door">
+                  <div class="t">Catch up</div>
+                  <div class="d">Review what&rsquo;s still open. Keep what matters.</div>
+                </div>
+              </div>
+              <div class="lr-skip">Skip</div>
+            </div>
+            <div class="lr-box">
+              <h4>Both doors log</h4>
+              <p><code>system.fresh_start { lapsed_days, archived_tasks, archived_protocols }</code>
+                and <code>system.catch_up { lapsed_days }</code>.</p>
+            </div>
+            <div class="lr-box bad">
+              <h4>The skip does not &mdash; by design</h4>
+              <p><i>&ldquo;Does not log anything.&rdquo;</i> So nothing in the log records that the
+                card was ever seen, and the once-per-lapse guarantee has to come from somewhere
+                else.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. §The trigger, §The screen, both doors, and the skip link.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="doors-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Nothing here is wrong. Every sentence is true; the defect is what they say when read
+            in one order rather than another.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The open that erases the lapse</span>
+        <p class="vc-stance">The trigger counts <code>day.opened</code> entries. Rollover writes one
+          on the same open that evaluates it.</p>
+        <span class="vc-read">cut the race · key the trigger on a durable fact</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="lr-h">The sequence, in order</p>
+            <div class="lr-r"><span class="lr-k">1 · Open</span>
+              <span class="lr-d">first app open in 23 days, 06:40</span>
+              <span class="lr-tag nu">start</span></div>
+            <div class="lr-r"><span class="lr-k">2 · Rollover</span>
+              <span class="lr-d">writes <code>day.opened</code> for today &mdash; not
+                budget-governed</span>
+              <span class="lr-tag no">gap &rarr; 0</span></div>
+            <div class="lr-r"><span class="lr-k">3 · Evaluate</span>
+              <span class="lr-d">&ge;14 days since the last <code>day.opened</code>?</span>
+              <span class="lr-tag no">false</span></div>
+            <div class="lr-r"><span class="lr-k">And if step 2 had been gated</span>
+              <span class="lr-d">06:40 is inside quiet hours, so the card could not show
+                anyway</span>
+              <span class="lr-tag no">blocked</span></div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <svg class="ic"><use href="#i-clock"/></svg>
+              <svg class="ic"><use href="#i-moon"/></svg>
+              <p class="lr-h" style="margin:0">The day, and the band the card cannot use</p>
+            </div>
+            <div class="lr-axis">
+              <div class="lr-track">
+                <div class="lr-seg quiet" style="left:0;width:29.167%">quiet 00&ndash;07</div>
+                <div class="lr-seg open" style="left:29.167%;width:62.5%">eligible 07&ndash;22</div>
+                <div class="lr-seg quiet" style="left:91.667%;width:8.333%">quiet</div>
+              </div>
+              <div class="lr-ticks"><span>00</span><span>04</span><span>08</span><span>12</span>
+                <span>16</span><span>20</span><span>24</span></div>
+              <div class="lr-flag">9 of 24 hours the card cannot appear in</div>
+            </div>
+            <div class="lr-box bad">
+              <h4>So there are two ways to lose the card</h4>
+              <p>Open during quiet hours and the gap resets before the rule is checked. Open
+                during a meeting or a focus session and the same. Either way the lapse is consumed
+                and the card never appears &mdash; and the user cannot tell it happened.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The trigger keys on a durable fact rather than on the open that discovers it: the
+            <b>last <code>day.opened</code> before today</b> and the today entry's own timestamp.
+            The flow also logs that it was shown &mdash; <code>system.lapse_shown</code> &mdash;
+            so the once-per-lapse guarantee is recorded instead of inferred.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One field on one entry, and the skip stops being free: it writes
+            <code>system.lapse_skipped</code>. That is a small price for a card whose whole
+            purpose is the one moment it has to get right.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The budget is explicit that exemption is from the <b>hourly slot</b> and not from
+            context: <i>&ldquo;Still obey quiet hours, focus mode, and in-event suppression.&rdquo;</i>
+            The flow restates the exemption and drops all three of those rules, which is how the
+            race stays invisible.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">"Replaces the morning plan"</span>
+        <p class="vc-stance">One sentence says the flow replaces the plan. Four others run the
+          plan anyway.</p>
+        <span class="vc-read">cut the sentence · it is a sequence, not a substitution</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="lr-box bad">
+              <h4><svg class="ic"><use href="#i-alert"/></svg>§The trigger, last line</h4>
+              <p><i>&ldquo;The flow replaces the morning plan on that day.&rdquo;</i></p>
+            </div>
+            <p class="lr-h">And everywhere else</p>
+            <div class="lr-r"><span class="lr-k">Start fresh, step 6</span>
+              <span class="lr-d">&ldquo;Runs the morning plan for today, as if starting
+                new.&rdquo;</span>
+              <span class="lr-tag no">runs</span></div>
+            <div class="lr-r"><span class="lr-k">§Skipping</span>
+              <span class="lr-d">&ldquo;Runs the morning plan normally.&rdquo;</span>
+              <span class="lr-tag no">runs</span></div>
+            <div class="lr-r"><span class="lr-k">§Post-recovery state</span>
+              <span class="lr-d">&ldquo;The morning plan runs.&rdquo;</span>
+              <span class="lr-tag no">runs</span></div>
+            <div class="lr-r"><span class="lr-k">&sect;Examples, skip</span>
+              <span class="lr-d">&ldquo;Morning plan runs normally.&rdquo;</span>
+              <span class="lr-tag no">runs</span></div>
+            <div class="lr-box on">
+              <h4>What actually happens</h4>
+              <p>The card comes <b>first</b> and the plan comes <b>after</b>. The plan's own doc
+                now states a first-open order for three surfaces; this makes a fourth, and the
+                sequence in <code>morning-plan.md</code> does not mention it.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The sentence becomes <i>&ldquo;The flow takes the day's first position, ahead of the
+            morning plan,&rdquo;</i> and the four places that run the plan keep doing so. The plan
+            doc's sequence gains the card as step 0.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One sentence in each of two docs. The alternative is that a reader implements
+            suppression and the plan never runs on a return day &mdash; the day the user most
+            needs a plan.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The plan's §Trigger is a list of conditions, and none of them fails on a return day,
+            so the plan <i>is</i> eligible. &ldquo;Replaces&rdquo; is the only sentence that says a
+            different surface should be suppressed, and it says it in the doc that does not own
+            that surface.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The exempt list is right</span>
+        <p class="vc-stance">Three surfaces, and the flow cites the right one. What it drops is the
+          part about hours.</p>
+        <span class="vc-read">keep the count · restore the qualifiers</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="lr-h">The three, per attention-budget.md</p>
+            <div class="lr-r"><span class="lr-k">Onboarding banner</span>
+              <span class="lr-d">once per lifetime</span>
+              <span class="lr-tag ok">exempt</span></div>
+            <div class="lr-r"><span class="lr-k">"All three done" card</span>
+              <span class="lr-d">once per day</span>
+              <span class="lr-tag ok">exempt</span></div>
+            <div class="lr-r"><span class="lr-k">Lapse-recovery card</span>
+              <span class="lr-d">once per lapse</span>
+              <span class="lr-tag ok">exempt</span></div>
+            <p class="lr-h">And the three tests, restated per flow</p>
+            <div class="lr-sw">
+              <div class="lr-sw-h"><span class="src">Flow</span><span class="a">once</span>
+                <span class="a">permanent</span><span class="a">no slot</span>
+                <span class="a">context</span></div>
+              <div class="lr-sw-r"><span class="src">lapsed-recovery</span>
+                <span class="a">&check;</span><span class="a">&check;</span>
+                <span class="a">&check;</span><span class="b">&mdash;</span></div>
+              <div class="lr-sw-r"><span class="src">attention-budget</span>
+                <span class="a">&check;</span><span class="a">&check;</span>
+                <span class="a">&check;</span><span class="a">&check;</span></div>
+            </div>
+            <div class="lr-box bad">
+              <h4>&ldquo;Permanent for that lapse&rdquo; is inferred, not recorded</h4>
+              <p>Permanence rests on the gap resetting at step 2 of the previous screen. It is
+                true, it is undocumented, and it is the same mechanism that loses the card.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The flow's exemption paragraph gains the fourth rule it is missing:
+            <i>&ldquo;Like the other two, it obeys quiet hours, focus mode, and in-event
+            suppression &mdash; and because its trigger is a one-shot state, a blocked firing must
+            preserve the state rather than consume it.&rdquo;</i></dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One sentence. It is the difference between a card that is exempt from the queue and a
+            card that is exempt from the clock.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The budget's three tests are stated once and then restated by three flows; this is
+            the third restatement to lose a rule. (The morning plan dropped the in-event
+            precedence; the obligations card dropped in-event suppression entirely.) A rule
+            restated three times loses something three times.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">A durable trigger, a recorded showing, the three context rules, and the
+          right position in the day.</p>
+        <span class="vc-read">synthesis · make the one-shot state survive its own evaluation</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="lr-h">The trigger, corrected</p>
+            <div class="lr-r"><span class="lr-k">Condition</span>
+              <span class="lr-d">&ge;14 days between the last two <code>day.opened</code>
+                entries</span>
+              <span class="lr-tag ok">durable</span></div>
+            <div class="lr-r"><span class="lr-k">Not yet resolved</span>
+              <span class="lr-d">no <code>system.lapse_shown</code> or
+                <code>system.lapse_skipped</code> for this lapse</span>
+              <span class="lr-tag ok">recorded</span></div>
+            <div class="lr-r"><span class="lr-k">Context</span>
+              <span class="lr-d">quiet hours, focus, in-event &mdash; a blocked firing waits</span>
+              <span class="lr-tag ok">3 rules</span></div>
+            <div class="lr-r"><span class="lr-k">Position</span>
+              <span class="lr-d">first, ahead of the morning plan, which then runs</span>
+              <span class="lr-tag ok">step 0</span></div>
+            <div class="lr-r"><span class="lr-k">Skip</span>
+              <span class="lr-d">logs <code>system.lapse_skipped</code>, so permanence is a fact</span>
+              <span class="lr-tag ok">logged</span></div>
+            <div class="lr-box on">
+              <h4>And the copy stops over-promising</h4>
+              <p>&ldquo;We'll set aside what didn't get done&rdquo; becomes specific about the
+                archive horizon, so a user who lapsed 15 days does not expect the last week's
+                backlog to vanish.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Two log entries, one extra condition, one sentence of context rules, one sentence of
+            position, and one clarification of copy. No new surface, no new gesture, no new
+            threshold.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Two entries in the log and a skip that is no longer silent. The flow is the app's
+            most consequential one &mdash; it decides whether the user stays &mdash; and it was
+            the only flow in the set whose dismissals left no trace.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. Every change makes an existing claim observable rather than inferred.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the trigger measures</h2>
+    <div class="measure" id="measure-doors">…</div>
+  </div>
+</section>
+
+<!-- ================================================================= GUILT -->
+<section class="screen" id="guilt">
+  <div class="lede">
+    <h2 class="t-title-2">No guilt</h2>
+    <p class="lede-p">
+      The promise is the strongest in the app: <i>"The app never dumps the backlog on someone who
+      is already struggling."</i> Five separate lines in the flow say what it will not do, and
+      <code>identity.md</code> is cited for the tone.
+    </p>
+    <p class="lede-p">
+      Then <code>resurfacing.md</code> fires. Its forgotten surface lists exactly the backlog —
+      captures never acted on, tasks never scheduled, unparsed notes — and its thresholds are
+      21 and 14 days against a 14-day lapse, so the pile is <b>guaranteed</b> to be non-empty on
+      the day the user returns. Neither doc mentions the other.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">What the app says it will not do, on the day it says it.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="lr-h">§What the app does not do</p>
+            <div class="lr-r"><span class="lr-k">Overdue counts</span>
+              <span class="lr-d">&ldquo;Does not show 'you have 47 overdue tasks.'&rdquo;</span>
+              <span class="lr-tag ok">none</span></div>
+            <div class="lr-r"><span class="lr-k">Guilt email/push</span>
+              <span class="lr-d">&ldquo;Does not email or push 'we miss you' messages&hellip;&rdquo;</span>
+              <span class="lr-tag ok">none</span></div>
+            <div class="lr-r"><span class="lr-k">Habit reset</span>
+              <span class="lr-d">&ldquo;Does not reset habits or compliance.&rdquo;</span>
+              <span class="lr-tag ok">none</span></div>
+            <div class="lr-r"><span class="lr-k">Congratulation</span>
+              <span class="lr-d">&ldquo;Does not congratulate the user for returning.&rdquo;</span>
+              <span class="lr-tag ok">none</span></div>
+            <div class="lr-r"><span class="lr-k">Returns tracked as a metric</span>
+              <span class="lr-d">&ldquo;Does not track 'returns'&hellip;&rdquo;</span>
+              <span class="lr-tag ok">none</span></div>
+            <p class="lr-h">And what the other flow does</p>
+            <div class="lr-nudge">
+              <div class="t">&ldquo;5 things you captured but never acted on.&rdquo;</div>
+              <div class="actions"><span class="lr-b p">Review</span>
+                <span class="lr-b">Dismiss for 30 days</span></div>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. §What the app does not do, verbatim, and the forgotten surface's card as
+            <code>resurfacing.md</code> draws it.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="guilt-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The five refusals are all about <b>copy</b>: no counts, no guilt tone, no
+            congratulation. None of them is about <b>content</b>. So a card that lists the backlog
+            in neutral language breaks none of them, which is exactly why the flow never noticed
+            it could happen.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The pile is guaranteed</span>
+        <p class="vc-stance">Every forgotten-surface threshold is ≤ the lapse threshold, so a
+          qualifying lapse always produces a populated card.</p>
+        <span class="vc-read">order the two flows · one line each</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="lr-h">Thresholds, side by side</p>
+            <div class="lr-r"><span class="lr-k">Lapse</span>
+              <span class="lr-d">gap since the last <code>day.opened</code>, default</span>
+              <span class="lr-n">14 days</span></div>
+            <div class="lr-r"><span class="lr-k">Forgotten · notes</span>
+              <span class="lr-d">an "[unparsed]" note older than</span>
+              <span class="lr-n">14 days</span></div>
+            <div class="lr-r"><span class="lr-k">Forgotten · tasks</span>
+              <span class="lr-d">never scheduled, deferred or completed, older than</span>
+              <span class="lr-n">21 days</span></div>
+            <div class="lr-r"><span class="lr-k">Archive horizon</span>
+              <span class="lr-d">the freshness cutoff the docs already own</span>
+              <span class="lr-n">21 days</span></div>
+            <div class="lr-box bad">
+              <h4>Read the first two lines together</h4>
+              <p>The unloved notes appear at the moment of the lapse threshold, so the user and
+                the card arrive on the same day. And the never-scheduled tasks are older than the
+                first open by at least a week.</p>
+            </div>
+            <div class="lr-r" style="border-top:1px solid var(--border-subtle)">
+              <span class="lr-k">Forgotten frequency</span>
+              <span class="lr-d">weekly, first firing at the next eligible slot</span>
+              <span class="lr-n bad">within 7 days</span></div>
+            <div class="lr-r"><span class="lr-k">Ordering rule</span>
+              <span class="lr-d">either doc, for the other</span>
+              <span class="lr-n bad">0</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Two lines, one in each doc. <code>lapsed-recovery.md</code>: resurfacing is
+            suppressed for the remainder of the return day and until the user has either chosen a
+            door or skipped. <code>resurfacing.md</code>: a lapse of any length is a suppression
+            window, because its own forgotten surface is the definition of the backlog the lapse
+            flow refuses to dump.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The user loses one nudge on one day, and gains the app keeping the promise it leads
+            with. Nothing else about resurfacing changes.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The budget would normally order these two by priority, and it cannot: the lapse card
+            is <b>exempt</b> and therefore outside the queue that does the ordering. Two surfaces
+            on the same open, one of them invisible to the mechanism that resolves the other.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">"Once, at a reduced priority"</span>
+        <p class="vc-stance">The lapse doc grants a cap resurfacing does not have, at a priority the
+          queue does not have.</p>
+        <span class="vc-read">cut the invented mechanism · say what is meant</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="lr-box">
+              <h4>lapsed-recovery.md</h4>
+              <p><i>&ldquo;Resurfacing may fire <b>once at a reduced priority</b> to welcome the
+                user back.&rdquo;</i></p>
+            </div>
+            <p class="lr-h">What the queue actually has</p>
+            <div class="lr-r"><span class="lr-k">Priority</span>
+              <span class="lr-d">a score per nudge, used to pick the highest eligible one</span>
+              <span class="lr-tag nu">a score</span></div>
+            <div class="lr-r"><span class="lr-k">"Reduced priority"</span>
+              <span class="lr-d">a way to fire <i>later</i>, not sooner &mdash; so it cannot mean
+                a welcome</span>
+              <span class="lr-tag no">unusable</span></div>
+            <div class="lr-r"><span class="lr-k">"Once"</span>
+              <span class="lr-d">resurfacing's own table: weekly &middot; twice weekly &middot;
+                weekly &middot; per break</span>
+              <span class="lr-tag no">4 frequencies</span></div>
+            <div class="lr-r"><span class="lr-k">Welcome-back resurfacing</span>
+              <span class="lr-d">a cap and a priority that only this doc knows about</span>
+              <span class="lr-tag no">1 doc</span></div>
+            <div class="lr-box bad">
+              <h4>And a welcome is the wrong card to want</h4>
+              <p>Reducing a nudge's priority moves it down the queue. A welcome that arrives
+                after everything else is a welcome that arrives late, which is the opposite of
+                what the sentence is reaching for.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The sentence is deleted and replaced by the suppression rule from the previous
+            screen. If a welcome-back nudge is genuinely wanted, it belongs in
+            <code>resurfacing.md</code> as a fifth surface with its own copy, frequency and
+            suppression &mdash; not as a modifier invented in a flow that does not own the
+            queue.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One sentence removed. Nothing downstream reads it.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The budget's rule is that <i>&ldquo;every nudge registers with the queue&rdquo;</i>
+            and the queue has four fields (score, surface type, TTL, history). No field expresses
+            &ldquo;reduced&rdquo;, so a builder implementing this sentence has to invent one.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Two mechanisms, one backlog</span>
+        <p class="vc-stance">The inbox sorts by item count; resurfacing sorts by age. Both watch
+          the same notes.</p>
+        <span class="vc-read">separate the triggers explicitly</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="lr-cols">
+              <div class="lr-box">
+                <h4>capture.md · the sort ritual</h4>
+                <p>Fires when the inbox holds <b>more than 10 captures</b>.</p>
+                <p style="margin-top:6px">Counts <i>items</i>.</p>
+              </div>
+              <div class="lr-box">
+                <h4>resurfacing.md · forgotten</h4>
+                <p>Fires <b>weekly</b> for notes older than <b>14 days</b>.</p>
+                <p style="margin-top:6px">Counts <i>age</i>.</p>
+              </div>
+            </div>
+            <p class="lr-h">The same unparsed note, in both</p>
+            <div class="lr-r"><span class="lr-k">In the inbox</span>
+              <span class="lr-d">[unparsed] prefix, sorted with the rest</span>
+              <span class="lr-tag nu">counted</span></div>
+            <div class="lr-r"><span class="lr-k">In resurfacing</span>
+              <span class="lr-d">"5 things you captured but never acted on"</span>
+              <span class="lr-tag nu">aged</span></div>
+            <div class="lr-r"><span class="lr-k">In Recent</span>
+              <span class="lr-d">it is a note, so it ages out after 14 days</span>
+              <span class="lr-tag nu">3rd list</span></div>
+            <div class="lr-box bad">
+              <h4>Neither doc says which mechanism owns a 12-item inbox</h4>
+              <p>Under 10 items with everything 15 days old, the ritual is silent and resurfacing
+                is not. Over 10 items, both are eligible in the same hour &mdash; and the ritual
+                is not budget-governed while resurfacing is.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>One sentence in <code>resurfacing.md</code>: the forgotten surface excludes anything
+            the sort ritual is already eligible to handle, because a user with 12 old captures
+            should be offered the ritual and not a card describing the ritual's contents.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Resurfacing's forgotten surface fires less often for exactly the users who need it
+            most. The alternative is two surfaces describing one pile in the same hour, one of
+            them exempt from the budget.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Resurfacing's own §What does not resurface excludes five things for exactly this
+            reason — completed tasks, archived entities, protocols, slipped tasks, overdue tasks
+            — each because another surface owns it. The inbox is a sixth case of the same kind and
+            is missing from the list.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">A suppression window, no invented modifier, and a sixth line in the
+          "does not resurface" list.</p>
+        <span class="vc-read">synthesis · one owner per pile</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="lr-h">The two lines that fix it</p>
+            <div class="lr-box on">
+              <h4>resurfacing.md</h4>
+              <p><i>A lapse is a suppression window. No resurfacing surface fires on the return
+                day or until the lapse flow is resolved &mdash; its own forgotten surface
+                describes the backlog that flow exists not to dump.</i></p>
+            </div>
+            <div class="lr-box on">
+              <h4>lapsed-recovery.md</h4>
+              <p><i>Resurfacing resumes the following day. "Once at a reduced priority" is
+                deleted: the queue has a score, not a modifier, and lowering a nudge moves it
+                later rather than sooner.</i></p>
+            </div>
+            <p class="lr-h">And the list that was one short</p>
+            <div class="lr-r"><span class="lr-k">Does not resurface</span>
+              <span class="lr-d">completed · archived · protocols · slipped · overdue ·
+                <b>inbox items the sort ritual can handle</b></span>
+              <span class="lr-n">6</span></div>
+            <div class="lr-box">
+              <h4>The test this passes</h4>
+              <p>A user who returns after 23 days sees two doors, a morning plan, and an
+                obligations card. Not one of those surfaces tells them what they failed to
+                do.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Three sentences and one list item, across two docs that never referenced each
+            other.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One day of resurfacing per return. That is the smallest possible payment against the
+            flow's founding promise.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. The suppression is stated in both docs so neither has to be read to find
+            it.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the no-guilt promise measures</h2>
+    <div class="measure" id="measure-guilt">…</div>
+  </div>
+</section>
+
+<!-- ================================================================ SWIPES -->
+<section class="screen" id="swipes">
+  <div class="lede">
+    <h2 class="t-title-2">The swipes</h2>
+    <p class="lede-p">
+      Two of these flows reuse the sort ritual's gestures on a list, which is a sensible
+      economy — the user has already learnt four swipes and there is no reason to teach four more.
+      Both docs say so in the same words: <i>"the sort-ritual gestures."</i>
+    </p>
+    <p class="lede-p">
+      But a sort ritual is a list of <b>inbox captures</b>, and these lists contain <b>tasks</b>.
+      That distinction is the whole content of the matrix's two rows, and the morning-plan lab
+      spent a screen on it. The same defect is here, on four more surfaces — two of which cite
+      the ritual as their authority while stating a mapping the ritual does not use.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">Four lists, each described as using gestures it describes
+          differently.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="lr-h">What each doc says the four swipes do</p>
+            <div class="lr-sw">
+              <div class="lr-sw-h"><span class="src">Source</span><span class="a">right</span>
+                <span class="a">left</span><span class="a">up</span><span class="a">down</span></div>
+              <div class="lr-sw-r"><span class="src">capture.md</span>
+                <span class="a">today</span><span class="a">someday</span>
+                <span class="a">attach</span><span class="a">remove</span></div>
+              <div class="lr-sw-r"><span class="src">lapse &middot; catch-up</span>
+                <span class="a">keep</span><span class="b">defer</span>
+                <span class="a">attach</span><span class="a">remove</span></div>
+              <div class="lr-sw-r"><span class="src">resurfacing &middot; review</span>
+                <span class="a">schedule today</span><span class="a">someday</span>
+                <span class="a">attach</span><span class="a">remove</span></div>
+              <div class="lr-sw-r"><span class="src">matrix &middot; task row</span>
+                <span class="b">complete</span><span class="b">defer</span>
+                <span class="a">attach</span><span class="b">someday</span></div>
+              <div class="lr-sw-r"><span class="src">matrix &middot; inbox row</span>
+                <span class="a">today</span><span class="a">someday</span>
+                <span class="a">attach</span><span class="a">remove</span></div>
+            </div>
+            <div class="lr-box bad">
+              <h4>Three of the five rows disagree with the matrix</h4>
+              <p>Both flows adopting the ritual reproduce its <b>inbox</b> mapping, which is
+                correct for captures and wrong for the tasks they also list. And
+                <code>lapsed-recovery</code> differs from the ritual it cites on swipe left.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The four mappings as each doc states them, and the matrix's two rows for the
+            same two row types.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="swipes-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The invariant is <i>"Each gesture means the same thing everywhere it is available
+            &hellip; If a gesture is not available on a surface, it is disabled &hellip; — not
+            repurposed."</i> Swipe left is <b>defer</b> on a task row and <b>someday</b> on a
+            capture, and these flows list both types in one list.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The catch-up list's left swipe</span>
+        <p class="vc-stance">It cites the ritual and states a mapping the ritual does not have.</p>
+        <span class="vc-read">align or carve out · one of the two</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="lr-cols">
+              <div class="lr-box">
+                <h4>capture.md · the ritual</h4>
+                <p><b>Swipe left.</b> <i>"Someday."</i> Marks the capture as someday.</p>
+                <p style="margin-top:6px">One meaning, no sheet.</p>
+              </div>
+              <div class="lr-box bad">
+                <h4>lapsed-recovery.md</h4>
+                <p><i>&ldquo;The list supports the sort-ritual gestures (swipe right to keep,
+                  <b>left to defer</b>, up to attach, down to remove&hellip;)&rdquo;</i></p>
+                <p style="margin-top:6px">Defer opens a sheet. Someday does not.</p>
+              </div>
+            </div>
+            <p class="lr-h">And the list's own example disagrees again</p>
+            <div class="lr-code">Task: Buy standing desk    Sep 5
+  <span class="bad">&rarr; someday</span>
+    &hellip;
+    <span class="bad">Call contractor &rarr; removed (archived)</span></div>
+            <div class="lr-box bad">
+              <h4>Three mappings in one doc and one example</h4>
+              <p>The prose says left = defer. The example says down = archived. The matrix says a
+                task row's down = someday. Nothing here agrees with anything else here.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The catch-up list states its mapping per row type instead of borrowing a name: both
+            types get <b>today / someday / attach / remove</b>, matching the ritual exactly, and
+            the example's archived becomes someday.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The list loses "defer" as a swipe and the example loses "archived". A user who wants
+            a task archived opens it and archives it, which is where the affordance lives — the
+            same resolution the morning-plan lab reached for its two ritual surfaces.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>A "defer" on a task row <i>opens</i> a surface, and this list is defined as a fast
+            pass over a backlog: <i>"The user processes at their own pace."</i> A sheet that
+            interrupts every second swipe is the opposite of a pace the user set.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Down means three things</span>
+        <p class="vc-stance">Someday, remove, archived. The rule says the entity type decides, and
+          these two flows let the surface decide instead.</p>
+        <span class="vc-read">restore the single meaning</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="lr-box">
+              <h4>The rule</h4>
+              <p><i>&ldquo;Swipe down always means 'take it out of this list,' and it is never
+                destructive. <b>The entity type decides what &lsquo;out&rsquo; means</b>; the
+                meaning of the gesture does not change.&rdquo;</i></p>
+            </div>
+            <p class="lr-h">What "out" is, per surface</p>
+            <div class="lr-r"><span class="lr-k">Task list</span>
+              <span class="lr-d">someday — still open, not now</span>
+              <span class="lr-tag ok">1</span></div>
+            <div class="lr-r"><span class="lr-k">Catch-up list</span>
+              <span class="lr-d">removed (archived), per its own example</span>
+              <span class="lr-tag no">2</span></div>
+            <div class="lr-r"><span class="lr-k">Forgotten review</span>
+              <span class="lr-d">remove, with the ritual's "reversibly, never a delete"</span>
+              <span class="lr-tag no">3</span></div>
+            <div class="lr-r"><span class="lr-k">Morning plan</span>
+              <span class="lr-d">someday, fixed by the previous lab</span>
+              <span class="lr-tag ok">1</span></div>
+            <div class="lr-box bad">
+              <h4>Archived and someday are not the same "out"</h4>
+              <p>Someday keeps the task open and out of the way. Archiving takes it out of the
+                working set entirely. Both are reversible, so the "never destructive"
+                reassurance covers both — which is why the difference has never had to be
+                decided.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Both lists use <b>someday</b>, and the catch-up example's "removed (archived)"
+            becomes "someday". A surfaced task should stay visible to the user who just looked at
+            it; archiving it at that moment hides the thing they were deciding about.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A user clearing a backlog of 47 tasks ends with 47 someday tasks rather than 47
+            archived ones, which is a real difference in the Task list. That is the honest
+            consequence of the rule, and the rule is worth more than the convenience.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Both flows add <i>"never delete"</i> to their swipe description, which suggests the
+            author was thinking about destruction and not about destinations. The reassurance is
+            correct in every case; it is also not the part that was in doubt.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Four surfaces outside the vocabulary</span>
+        <p class="vc-stance">After the last lab the matrix has 15 rows. The catch-up list and the
+          forgotten review are not two of them.</p>
+        <span class="vc-read">add the rows · the matrix is the vocabulary</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="lr-h">Surfaces that put swipes on a list, and whether the matrix has them</p>
+            <div class="lr-r"><span class="lr-k">Task list</span>
+              <span class="lr-d">row 1 of the matrix</span>
+              <span class="lr-tag ok">listed</span></div>
+            <div class="lr-r"><span class="lr-k">Inbox</span>
+              <span class="lr-d">its own row, with the capture mapping</span>
+              <span class="lr-tag ok">listed</span></div>
+            <div class="lr-r"><span class="lr-k">Morning plan</span>
+              <span class="lr-d">added by the previous lab</span>
+              <span class="lr-tag ok">listed</span></div>
+            <div class="lr-r"><span class="lr-k">Shutdown</span>
+              <span class="lr-d">added by the previous lab</span>
+              <span class="lr-tag ok">listed</span></div>
+            <div class="lr-r"><span class="lr-k">Catch-up list</span>
+              <span class="lr-d">4 swipes, described in prose</span>
+              <span class="lr-tag no">missing</span></div>
+            <div class="lr-r"><span class="lr-k">Forgotten review</span>
+              <span class="lr-d">4 swipes, described in prose</span>
+              <span class="lr-tag no">missing</span></div>
+            <p class="lr-h">And the fallbacks</p>
+            <div class="lr-r"><span class="lr-k">Non-gesture fallback</span>
+              <span class="lr-d">stated for either list</span>
+              <span class="lr-n bad">0 of 2</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Two more matrix rows and a stated fallback for each list. The pattern is now: every
+            surface that carries a list of a known row type is a row in the matrix, including the
+            ones that arrive mid-flow.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The matrix reaches 17 rows, which is more surface than vocabulary. It stays useful
+            because the columns are the same four gestures and the cells are the same
+            meanings.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The doc says <i>"There are exactly eight gestures. No screen may define a ninth."</i>
+            Nobody added a ninth. What happened is that six screens decided for themselves what
+            the first four mean — and the matrix is the only artefact that could have caught
+            it.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Six list surfaces, one mapping each, all visible in one table.</p>
+        <span class="vc-read">synthesis · state the meaning, then let surfaces opt in</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="lr-h">The two new rows</p>
+            <div class="lr-sw">
+              <div class="lr-sw-h"><span class="src">Surface</span><span class="a">right</span>
+                <span class="a">left</span><span class="a">up</span><span class="a">down</span></div>
+              <div class="lr-sw-r"><span class="src">Catch-up list</span>
+                <span class="a">today</span><span class="a">someday</span>
+                <span class="a">attach</span><span class="a">someday</span></div>
+              <div class="lr-sw-r"><span class="src">Forgotten review</span>
+                <span class="a">today</span><span class="a">someday</span>
+                <span class="a">attach</span><span class="a">remove</span></div>
+            </div>
+            <div class="lr-box on">
+              <h4>And a line in the definition</h4>
+              <p><i>A list that mixes row types uses the row's own meanings, not the list's. If a
+                surface needs a different meaning for a gesture it already has, the gesture is
+                disabled there.</i></p>
+            </div>
+            <div class="lr-box">
+              <h4>The test this passes</h4>
+              <p>A user who learnt four swipes on the Task list can predict all four on every
+                surface that has them — and can name the surfaces that do not.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Two rows, one clause, one example corrected in each flow. The rules are unchanged
+            everywhere else.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Two gestures change meaning on two surfaces: they converge on the task row instead
+            of on the list. That is a change to the flows, not to the vocabulary.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. The invariant was never "every list uses the same mapping" — it was "each
+            gesture means the same thing everywhere", which is a claim about the row the finger
+            lands on.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the swipes measure</h2>
+    <div class="measure" id="measure-swipes">…</div>
+  </div>
+</section>
+
+<!-- ================================================================ COUNTS -->
+<section class="screen" id="counts">
+  <div class="lede">
+    <h2 class="t-title-2">The numbers</h2>
+    <p class="lede-p">
+      §Catch up promises <i>"There is no counter, no pressure."</i> The same section describes a
+      row that reads <i>"47 more"</i>, and the example draws two more counts. And the flow's
+      identity is built on not telling the user how much they owe.
+    </p>
+    <p class="lede-p">
+      The two flows also share five thresholds — 7, 14, 21, 30, 60 — and three of those numbers
+      carry two different meanings each. That is not a defect on its own; it is the sort of thing
+      that becomes one at the first edit.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">"No counter" and the numbers the flow prints in the same section.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="lr-box">
+              <h4>§Catch up, step 4</h4>
+              <p><i>&ldquo;The user processes at their own pace. <b>There is no counter, no
+                pressure.</b>&rdquo;</i></p>
+            </div>
+            <p class="lr-h">The list, as the example draws it</p>
+            <div class="lr-list">
+              <div class="lr-li"><span>File Q4 taxes</span><span class="when">Sep 1</span></div>
+              <div class="lr-li"><span>Call contractor</span><span class="when">Sep 2</span></div>
+              <div class="lr-li"><span>Buy standing desk</span><span class="when">Sep 5</span></div>
+              <div class="lr-li"><span>Review pricing page</span><span class="when">Sep 8</span></div>
+              <div class="lr-li"><span>... (23 more)</span></div>
+              <div class="lr-li collapse"><span>+ 47 more [Review] [Archive all]</span></div>
+            </div>
+            <div class="lr-r" style="border-top:1px solid var(--border-subtle)">
+              <span class="lr-k">Counts on screen</span>
+              <span class="lr-d">23 more &middot; 47 more</span>
+              <span class="lr-n bad">2</span></div>
+              <div class="lr-r"><span class="lr-k">Relationship between them</span>
+              <span class="lr-d">70 items? two overlapping sets? neither is stated</span>
+              <span class="lr-n bad">undefined</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. §Catch up's "no counter", §Catch up's collapse row, and the example's
+            list.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="counts-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>§What the app does not do forbids <i>"'you have 47 overdue tasks'"</i> — a count.
+            The collapse row prints the same number in a friendlier voice. The flow's objection is
+            to the <b>tone of the count</b>, and it wrote the rule as if it were about counts.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Five numbers, three of them doing two jobs</span>
+        <p class="vc-stance">7, 14, 21, 30, 60. Three carry two meanings, and no doc says whether
+          they are the same constant.</p>
+        <span class="vc-read">name the constants · one doc each</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="lr-h">Every threshold in the two flows</p>
+            <div class="lr-r"><span class="lr-k">7</span>
+              <span class="lr-d">the lowest configurable lapse threshold</span>
+              <span class="lr-tag ok">1 job</span></div>
+            <div class="lr-r"><span class="lr-k">14</span>
+              <span class="lr-d">the default lapse threshold <b>and</b> an [unparsed] note's age</span>
+              <span class="lr-tag no">2 jobs</span></div>
+            <div class="lr-r"><span class="lr-k">21</span>
+              <span class="lr-d">the archive horizon <b>and</b> a never-scheduled task's age</span>
+              <span class="lr-tag no">2 jobs</span></div>
+            <div class="lr-r"><span class="lr-k">30</span>
+              <span class="lr-d">people quiet &middot; snooze &middot; suppression &middot; re-lapse
+                window</span>
+              <span class="lr-tag no">4 jobs</span></div>
+            <div class="lr-r"><span class="lr-k">60</span>
+              <span class="lr-d">the catch-up bound <b>and</b> people post-task suppression</span>
+              <span class="lr-tag no">2 jobs</span></div>
+            <div class="lr-r"><span class="lr-k">Docs stating they are one constant</span>
+              <span class="lr-d">a change to either meaning changes the other</span>
+              <span class="lr-n bad">0</span></div>
+            <div class="lr-box bad">
+              <h4>The 14</h4>
+              <p>An [unparsed] note surfaces at the same age the user is declared to have lapsed.
+                Read together: the notes-that-nobody-acted-on card and the welcome-back card come
+                due on the same day, by construction rather than by design.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Each number is named where it is owned — <code>lapse.threshold</code>,
+            <code>lapse.archive_horizon</code>, <code>resurfacing.*</code> — so the two meanings of
+            14 and 21 can move independently. Nothing is renumbered.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Five names in the settings/constants surface, and the settings doc already lists the
+            configurable lapse threshold. The rest are constants, not settings.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The flow is careful in exactly this direction in one place — §Start fresh explains
+            why the horizon is larger than the lapse threshold — and that explanation is
+            <i>"the horizon is deliberately larger"</i>, which is the argument for the two being
+            related, not for their sharing a literal.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">"We'll set aside what didn't get done"</span>
+        <p class="vc-stance">A lapse is 14 days and the horizon is 21, so a week of the backlog
+          stays exactly where it was.</p>
+        <span class="vc-read">say the horizon in the copy</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="lr-box">
+              <h4>The copy</h4>
+              <p><i>&ldquo;Pick a new baseline. <b>We&rsquo;ll set aside what didn&rsquo;t get
+                done</b>.&rdquo;</i></p>
+            </div>
+            <p class="lr-h">What the rule archives</p>
+            <div class="lr-r"><span class="lr-k">Covers</span>
+              <span class="lr-d">open tasks <b>scheduled but not completed</b> and older than
+                21 days</span>
+              <span class="lr-tag nu">narrow</span></div>
+            <div class="lr-r"><span class="lr-k">Leaves alone</span>
+              <span class="lr-d">never-scheduled tasks, at any age</span>
+              <span class="lr-tag no">untouched</span></div>
+            <div class="lr-r"><span class="lr-k">Leaves alone</span>
+              <span class="lr-d">scheduled tasks in the 14&ndash;21 day band</span>
+              <span class="lr-tag no">untouched</span></div>
+            <div class="lr-r"><span class="lr-k">Band that survives</span>
+              <span class="lr-d">horizon 21 &minus; threshold 14</span>
+              <span class="lr-n bad">7 days</span></div>
+            <div class="lr-box on">
+              <h4>Both omissions are defensible, and neither is stated</h4>
+              <p>Keeping the most recent backlog is arguably right — it is the part still worth
+                doing. Keeping never-scheduled tasks is arguably right — they were never committed
+                to. But the user is told the backlog will be set aside, and then finds it is
+                still there, and nothing in the flow set that expectation.</p>
+            </div>
+            <div class="lr-box">
+              <h4>And the never-scheduled pile comes back anyway</h4>
+              <p>The forgotten surface lists exactly those tasks, 21 days after they were created
+                — so &ldquo;Start fresh&rdquo; leaves them and resurfacing re-surfaces them a week
+                later.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The door's copy becomes specific: <i>"Set aside tasks scheduled more than three weeks
+            ago that you never finished. Recent ones stay."</i> One sentence, and it makes the
+            confirmation's numbers predictable.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A longer button caption. The door is one of two with equal visual weight, so the
+            description line is the right place for it rather than the label.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>§Start fresh already explains the horizon to the <b>reader</b> — <i>"the horizon is
+            deliberately larger than the lapse threshold"</i> — and says nothing to the
+            <b>user</b>. The explanation exists; it is on the wrong side of the screen.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Archive all, in one tap</span>
+        <p class="vc-stance">The largest single mutation in the app, one tap deep, with a five-second
+          window.</p>
+        <span class="vc-read">state the count and the undo · both are already there</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="lr-box bad">
+              <h4><svg class="ic"><use href="#i-archive"/></svg>&ldquo;Archive all&rdquo;</h4>
+              <p><i>Anything older than 60 days collapses into a single row: &ldquo;47 more
+                [Review] [Archive all].&rdquo; The user can choose to review or archive in one
+                tap.</i></p>
+            </div>
+            <div class="lr-r"><span class="lr-k">Tasks archived</span>
+              <span class="lr-d">up to the whole 60-day collapse, in one action</span>
+              <span class="lr-n">47 in the example</span></div>
+            <div class="lr-r"><span class="lr-k">Undo</span>
+              <span class="lr-d">stated in §Start fresh, for that batch</span>
+              <span class="lr-tag no">not here</span></div>
+            <div class="lr-r"><span class="lr-k">Undo</span>
+              <span class="lr-d">stated in §Catch up, for this batch</span>
+              <span class="lr-tag no">silent</span></div>
+            <div class="lr-box bad">
+              <h4><svg class="ic"><use href="#i-undo"/></svg>The flow documents undo for the batch it computes and not the one it doesn't</h4>
+              <p>§Start fresh's archive has a toast, an atomicity claim, compensation entries and
+                an expiry rule. &ldquo;Archive all&rdquo; is the same kind of batch and gets one
+                sentence, in the collapse row, with no undo at all.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>&ldquo;Archive all&rdquo; inherits §Start fresh's undo paragraph by reference rather
+            than by copy, and the row states its count before the tap rather than after
+            it.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One cross-reference and one number. The alternative is the app's biggest destructive
+            batch being the one with no stated way back — in the flow whose invariant is
+            <i>"does not auto-delete anything"</i>.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Invariant 1 requires every mutating action to be undoable, and ADR 0010 fixes the
+            mechanism. Nothing exempts this one, so the undo exists; the doc is silent, which is
+            the same defect the morning-plan lab found in a smaller batch.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">One count in one place, five named constants, honest copy, and undo
+          wherever a batch is.</p>
+        <span class="vc-read">synthesis · name what you print and print what you mean</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="lr-h">The collapse row</p>
+            <div class="lr-list">
+              <div class="lr-li collapse"><span>47 more [Review] [Archive all]</span></div>
+            </div>
+            <div class="lr-box on">
+              <h4>And "no counter" gets a definition</h4>
+              <p><i>&ldquo;There is no progress counter — nothing shows how many remain as you
+                work. A collapsed group states its own size, because hiding it would make the
+                Archive all button a surprise.&rdquo;</i></p>
+            </div>
+            <p class="lr-h">The rest, briefly</p>
+            <div class="lr-r"><span class="lr-k">Constants named</span>
+              <span class="lr-d">5 numbers, 12 meanings, each with one owner</span>
+              <span class="lr-n good">12 named</span></div>
+            <div class="lr-r"><span class="lr-k">The door's copy</span>
+              <span class="lr-d">states the horizon in weeks</span>
+              <span class="lr-tag ok">honest</span></div>
+            <div class="lr-r"><span class="lr-k">Batches with undo stated</span>
+              <span class="lr-d">Start fresh &middot; Archive all &middot; the sort ritual</span>
+              <span class="lr-n good">3 of 3</span></div>
+            <div class="lr-box">
+              <h4>The test this passes</h4>
+              <p>A user can say, before they tap, roughly how many things will move and roughly
+                how far back it reaches.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>One definition, five names, one reworded copy line, one cross-reference. The
+            numbers themselves do not move.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The user is told one number where they were told three. That is the direction the
+            flow's identity already points.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. The flow gets to keep "no counter" by defining what it meant, which is the
+            resolution every contradiction in this lab reached: the sentence was about tone and
+            was written as if it were about arithmetic.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the numbers measure</h2>
+    <div class="measure" id="measure-counts">…</div>
+  </div>
+</section>
+
+</main>
+
+<script src="lab.js"></script>
+<script src="nav.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var screens = ['doors', 'guilt', 'swipes', 'counts'];
+  var seen = {};
+  var tabs = document.getElementById('tabs');
+
+  tabs.addEventListener('click', function (e) {
+    var b = e.target.closest('.tab');
+    if (b && b.dataset.go) go(b.dataset.go);
+  });
+
+  function go(id) {
+    screens.forEach(function (s) {
+      var el = document.getElementById(s);
+      if (el) el.hidden = (s !== id);
+    });
+    Array.prototype.forEach.call(tabs.children, function (b) {
+      b.classList.toggle('on', b.dataset.go === id);
+    });
+    if (!seen[id]) {
+      seen[id] = true;
+      requestAnimationFrame(function () {
+        MEASURE[id]();
+        ['measure-' + id, id + '-cost'].forEach(function (el) {
+          var node = document.getElementById(el);
+          if (node) node.innerHTML = unesc(node.innerHTML);
+        });
+      });
+    }
+  }
+
+  // Turn a literal backslash-backslash-uXXXX into the character it names.
+  var BS = String.fromCharCode(92);
+  var SEQ = new RegExp(BS + BS + 'u([0-9a-fA-F]{4})', 'g');
+  function unesc(s) {
+    return String(s).replace(SEQ, function (m, h) {
+      return String.fromCharCode(parseInt(h, 16));
+    });
+  }
+
+  function paras(list) {
+    return list.map(function (s) { return '<p class="mf">' + s + '</p>'; }).join('');
+  }
+  function table(rows) {
+    return '<div class="rows">' + rows.map(function (r) {
+      return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+        '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+    }).join('') + '</div>';
+  }
+
+  var MEASURE = {};
+
+  // -- doors
+  MEASURE.doors = function () {
+    var rows = [
+      ['Trigger state', 'gap since the last day.opened', 'a one-shot fact'],
+      ['Threshold', 'configurable: 7 \\u00b7 14 \\u00b7 21 \\u00b7 30', 'default 14'],
+      ['What the first open does', 'rollover writes day.opened \\u2014 not budget-gated', 'gap \\u2192 0'],
+      ['Exempt surfaces', 'attention-budget.md \\u00a7Exempt surfaces', '3'],
+      ['The flow\\u2019s count', '\\u00a7The screen', '3 \\u2014 correct'],
+      ['Tests an exempt surface must pass', 'once \\u00b7 permanent \\u00b7 no slot', '3'],
+      ['Rules the flow restates', 'of those three', '3'],
+      ['Rules it omits', 'quiet hours \\u00b7 focus mode \\u00b7 in-event', '<b>all 3</b>'],
+      ['Quiet hours', '10pm \\u2013 7am', '9h of 24'],
+      ['Share of the day the card cannot use', 'before in-event and focus mode are counted', '<b>37.5%</b>'],
+      ['Log entries the two doors write', 'fresh_start \\u00b7 catch_up', '2'],
+      ['Log entries the skip writes', '\\u00a7Skipping: "does not log anything"', '<b>0</b>'],
+      ['Places that say the plan still runs', '\\u00a7Start fresh 6, \\u00a7Skipping, \\u00a7Post-recovery, example', '<b>4</b>'],
+      ['Places that say the flow replaces it', '\\u00a7The trigger, last line', '<b>1</b>']
+    ];
+
+    document.getElementById('measure-doors').innerHTML = table(rows) + paras([
+      'The card is exempt from the <b>hourly slot</b>, and the budget is careful to say that exemption is not from <b>context</b>: <i>"Still obey quiet hours, focus mode, and in-event suppression."</i> So there are <b>9 of 24 hours</b> — plus any meeting or focus session — in which the card must wait. And the state it is waiting on is written by rollover, which is not budget-governed: <b>the open that evaluates the trigger also destroys it</b>. A user who comes back at 06:40 sees nothing, and can never see it, because the gap is now zero.',
+      'The flow is silent about all of it. It restates the <b>three</b> tests exactly (once, permanent, no slot) and drops the fourth rule, which is the one with a clock in it. And the permanence it claims is inferred rather than recorded: nothing logs that the card was shown or skipped, so "dismissal is permanent for that lapse" is true only as a side effect of the same gap reset.'
+    ]);
+
+    document.getElementById('doors-cost').innerHTML =
+      'The trigger counts the gap between <code>day.opened</code> entries, and the open that evaluates it <b>writes one</b> \\u2014 so a return at 06:40, inside quiet hours, silently consumes the lapse and the card never appears. <b>9 of 24 hours</b> are blocked before meetings and focus mode are counted, and the flow\\u2019s restatement of the exempt-surface rules drops all <b>3</b> context rules.';
+  };
+
+  // -- guilt
+  MEASURE.guilt = function () {
+    var rows = [
+      ['"No guilt" claims', 'invariants \\u00b7 \\u00a7What the app does not do \\u00b7 identity.md', '3 places'],
+      ['Refusals about copy', 'no counts \\u00b7 no guilt tone \\u00b7 no congratulation', '5'],
+      ['Refusals about content', 'searched the list', '<b>0</b>'],
+      ['Lapse threshold', 'lapsed-recovery.md', '14 days'],
+      ['Forgotten \\u00b7 unparsed notes', 'resurfacing.md', '14 days'],
+      ['Forgotten \\u00b7 never-scheduled tasks', 'resurfacing.md', '21 days'],
+      ['So a qualifying lapse has material', 'every threshold is \\u2264 the lapse', '<b>always</b>'],
+      ['Forgotten frequency', 'weekly, first eligible slot', 'within 7 days'],
+      ['Ordering rule between the two flows', 'either doc, for the other', '<b>0</b>'],
+      ['Lapse\\u2019s rule for resurfacing', '\\u00a7Post-recovery', '1 sentence'],
+      ['What that sentence invents', '"reduced priority"', 'not a queue field'],
+      ['Queue fields', 'score \\u00b7 surface type \\u00b7 TTL \\u00b7 history', '4'],
+      ['Resurfacing\\u2019s own frequencies', 'weekly \\u00b7 2/week \\u00b7 weekly \\u00b7 per break', '4'],
+      ['"Once" as a cap', 'in resurfacing.md', 'absent'],
+      ['Inbox trigger', 'capture.md \\u00a7The sort ritual', '>10 items'],
+      ['Forgotten trigger over the same notes', 'resurfacing.md', '14 days old'],
+      ['Doc saying which owns a 12-item inbox', 'searched both', '<b>0</b>']
+    ];
+
+    document.getElementById('measure-guilt').innerHTML = table(rows) + paras([
+      'The refusals are all about <b>copy</b> \\u2014 no counts, no guilt tone, no congratulation \\u2014 and none is about <b>content</b>. That is why the collision went unnoticed: a card that lists the backlog in neutral, factual language breaks none of the five rules while doing the one thing the rule above them forbids. And the arithmetic makes it certain rather than possible: an [unparsed] note surfaces at <b>14 days</b>, the lapse threshold is <b>14 days</b>, so the neglect card and the welcome-back card come due on the same day by construction.',
+      'The one sentence that tries to address it invents a mechanism. <i>"May fire once at a reduced priority"</i> adds a cap resurfacing does not have and a priority modifier the queue does not have \\u2014 and lowering a nudge\\u2019s score moves it <b>later</b> in the queue, which is the opposite of a welcome. Separately, the inbox and the forgotten surface both watch the same notes on different triggers (<b>>10 items</b> vs <b>14 days</b>) and neither doc says which owns a 12-item inbox where everything is 15 days old.'
+    ]);
+
+    document.getElementById('guilt-cost').innerHTML =
+      'Every forgotten-surface threshold is \\u2264 the lapse threshold, so a qualifying lapse <b>always</b> produces a populated "things you captured but never acted on" card \\u2014 within <b>7 days</b> of the return, and <b>0</b> docs order the two flows. The sentence that reaches for it grants a cap resurfacing lacks and a priority the queue cannot express.';
+  };
+
+  // -- swipes
+  MEASURE.swipes = function () {
+    var rows = [
+      ['Lists described as reusing the sort ritual', 'catch-up, forgotten review', '2'],
+      ['Row types in the catch-up list', 'tasks \\u00b7 events \\u00b7 protocols \\u00b7 inbox captures', '4'],
+      ['Row types in the forgotten review', 'inbox notes \\u00b7 never-scheduled tasks \\u00b7 [unparsed] notes', '3'],
+      ['Row types in the ritual itself', 'unparsed notes \\u00b7 unclassified tasks', '2'],
+      ['The ritual\\u2019s mapping', 'today \\u00b7 someday \\u00b7 attach \\u00b7 remove', '4'],
+      ['Catch-up\\u2019s stated mapping', 'keep \\u00b7 <b>defer</b> \\u00b7 attach \\u00b7 remove', '<b>1 differs</b>'],
+      ['Forgotten\\u2019s stated mapping', 'today \\u00b7 someday \\u00b7 attach \\u00b7 remove', 'matches the ritual'],
+      ['Matrix, task row', 'complete \\u00b7 defer \\u00b7 attach \\u00b7 someday', 'the row type in both lists'],
+      ['Matrix, inbox row', 'today \\u00b7 someday \\u00b7 attach \\u00b7 remove', 'the mapping in both lists'],
+      ['List surfaces applying a mapping', 'task list, inbox, plan, shutdown, catch-up, review', '6'],
+      ['Matrix rows after the last lab', 'gesture-vocabulary.md', '15'],
+      ['Lists still outside it', 'catch-up \\u00b7 forgotten review', '<b>2</b>'],
+      ['Down\\u2019s destinations across the set', 'someday \\u00b7 remove \\u00b7 archived', '<b>3</b>'],
+      ['Destination the rule allows on a task row', '"the entity type decides"', '<b>1</b>'],
+      ['Non-gesture fallbacks stated in these flows', 'either list', '<b>0 of 2</b>']
+    ];
+
+    document.getElementById('measure-swipes').innerHTML = table(rows) + paras([
+      'Two flows borrow a vocabulary and each states a different version of it. <code>capture.md</code> gives left <b>someday</b>; the catch-up list gives left <b>defer</b>, which is a sheet rather than a destination \\u2014 and its own example then walks swipe down to <b>archived</b>, which is a third answer the rule does not offer. The matrix, meanwhile, fixes a task row\\u2019s four meanings: <b>complete \\u00b7 defer \\u00b7 attach \\u00b7 someday</b>. Both lists contain task rows and both use the inbox mapping, which is right for captures and wrong for tasks.',
+      'Across the whole set there are now <b>6</b> list surfaces applying a swipe mapping, <b>3</b> destinations for swipe down where the rule allows one per entity type, and <b>2</b> lists still absent from the matrix the previous lab brought up to 15 rows. The invariant is not "every list uses the same mapping" \\u2014 it is that a gesture means one thing on the row the finger lands on, and none of these six surfaces agrees with it or with each other.'
+    ]);
+
+    document.getElementById('swipes-cost').innerHTML =
+      '<b>2</b> lists borrow the sort ritual and state <b>2</b> different mappings; the catch-up list differs from the ritual it cites on swipe left, and its example walks swipe down to <b>archived</b> where the matrix fixes a task row at <b>someday</b>. Swipe down now carries <b>3</b> destinations across the set, and <b>2</b> of the lists are still not in the matrix.';
+  };
+
+  // -- counts
+  MEASURE.counts = function () {
+    var rows = [
+      ['"There is no counter, no pressure"', 'lapsed-recovery.md \\u00a7Catch up, step 4', '1 claim'],
+      ['Counts in the same section', 'the collapse row\'s "47 more"', '1'],
+      ['Counts in the example', '"(23 more)" and "+ 47 more"', '2'],
+      ['Relationship stated', '70 items, or two overlapping sets?', '<b>undefined</b>'],
+      ['Refusal in \\u00a7What the app does not do', '"you have 47 overdue tasks"', 'a count'],
+      ['Distinct thresholds across the two flows', '7 \\u00b7 14 \\u00b7 21 \\u00b7 30 \\u00b7 60', '5'],
+      ['Numbers carrying two or more meanings', '14 \\u00b7 21 \\u00b7 30 \\u00b7 60', '<b>4</b>'],
+      ['Meanings in total', 'widest is 30, with four', '12'],
+      ['Docs stating they are one constant', 'searched both', '<b>0</b>'],
+      ['Backlog band that survives "Start fresh"', 'horizon 21 \\u2212 threshold 14', '<b>7 days</b>'],
+      ['Never-scheduled tasks archived', 'the rule needs "scheduled"', '<b>0</b>'],
+      ['Where that pile goes instead', 'resurfacing, 21 days after creation', 'back to the user'],
+      ['Batches in the flow', 'Start fresh \\u00b7 Archive all', '2'],
+      ['Batches with undo stated', '\\u00a7Start fresh: toast, atomicity, compensation', '<b>1 of 2</b>'],
+      ['"Archive all" size in the example', 'one tap', '47 tasks']
+    ];
+
+    document.getElementById('measure-counts').innerHTML = table(rows) + paras([
+      'The flow refuses <i>"you have 47 overdue tasks"</i> and then prints <b>"47 more"</b> in its own collapse row \\u2014 the same number, in a friendlier voice. So the rule was about <b>tone</b> and was written as if it were about <b>counts</b>, which is why the example grew three of them. "No progress counter" survives easily; "no counts at all" is contradicted by the button the flow needs to exist.',
+      'Two things then follow from the numbers being unowned. The <b>14&ndash;21 day band</b> is a week of backlog that a lapse of 15 days does not set aside, while the door\\u2019s copy promises to <i>"set aside what didn\\u2019t get done"</i>. And <b>"Archive all"</b> \\u2014 up to 47 tasks in one tap, the largest batch in the app \\u2014 states no undo, in the flow whose §Start fresh spends a paragraph on undo for a smaller batch and whose invariant is <i>"does not auto-delete anything."</i>'
+    ]);
+
+    document.getElementById('counts-cost').innerHTML =
+      'The flow forbids a count and prints <b>3</b> of them, including the same <b>47</b>. Its <b>5</b> thresholds carry <b>12</b> meanings with <b>0</b> docs saying which share a constant, leaving a <b>7-day</b> band of backlog that "Start fresh" leaves in place. And of its <b>2</b> batches, the smaller one documents an undo and the 47-task one does not.';
+  };
+
+  go('doors');
+})();
+</script>
+</body>
+</html>
