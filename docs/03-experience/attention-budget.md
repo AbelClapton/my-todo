@@ -244,11 +244,19 @@ Once per day, at a time based on the user's typical first open
 - Today's habit checkboxes (full/minimum toggles).
 - Today's protocol metric log (if a protocol is active).
 
+**This is the card's only trigger.** Flows that describe the card as
+surfacing "after" one of their rituals are describing **order**, not
+timing — the trigger above decides *whether*, and
+`06-flows/morning-plan.md` owns the sequence when more than one
+surface wants the same first open.
+
 This card:
 
 - Does not consume nudge budget.
 - Does not repeat if dismissed.
-- Does not fire a notification during quiet hours or focus mode.
+- **Obeys the same three context rules as everything else** — no
+  surface, no notification during quiet hours, focus mode, or an
+  in-event. It surfaces on the next eligible open instead.
 - Is the only thing the app requires the user to interact with
   daily.
 

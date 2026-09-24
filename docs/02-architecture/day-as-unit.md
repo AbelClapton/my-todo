@@ -137,12 +137,23 @@ The top three for a Day are set by `day.planned`. This event is
 emitted by:
 
 - The morning plan flow, after the user picks three
-  (`06-flows/morning-plan.md`).
+  (`06-flows/morning-plan.md`) — `source: 'morning'`, a
+  **commitment**.
 - The shutdown flow, for the *next* Day
-  (`06-flows/shutdown.md`).
+  (`06-flows/shutdown.md`) — `source: 'shutdown'`, a **draft** the
+  user set up the night before.
 
-A Day may have multiple `day.planned` entries (the user re-plans).
-The projection uses the latest one.
+**The two are not equivalent, and the projection must not treat them
+as such.** A Day may have multiple `day.planned` entries (the user
+re-plans) and the projection uses the latest one for `top_three` — but
+the morning plan's trigger reads `source` to decide whether the user
+has already *confirmed* a plan for today. Without the field, the draft
+the shutdown wrote last night is indistinguishable from a choice made
+this morning, and the trigger suppresses the very ritual that would
+confirm it.
+
+`day.plan_skipped` carries the same discriminator as `kind`, for the
+same reason: two rituals write it.
 
 ### Day rollover
 
@@ -194,10 +205,12 @@ time machine or the calendar.
 
     Morning plan commits:
       day.planned  { day: "2026-09-22",
-                     top_three: [T1, T2, T3] }
+                     top_three: [T1, T2, T3],
+                     source: "morning" }
     Shutdown commits for tomorrow:
       day.planned  { day: "2026-09-23",
-                     top_three: [T4, T5, T6] }
+                     top_three: [T4, T5, T6],
+                     source: "shutdown" }
 
 **Editing at the boundary.**
 

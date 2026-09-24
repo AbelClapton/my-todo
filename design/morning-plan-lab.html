@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="warm" data-mode="light" data-accent="teal"
+      data-semantics="vivid" data-type="system">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Morning plan lab · Small Wins</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="lab.css">
+<style>
+/* tabular readouts */
+.mp-r{display:grid;grid-template-columns:132px minmax(0,1fr) auto;gap:10px;align-items:baseline;
+  padding:8px 0;border-bottom:1px solid var(--border-subtle);font-size:13px;line-height:18px}
+.mp-r:last-child{border-bottom:0}
+.mp-k{color:var(--text-tertiary)}
+.mp-d{color:var(--text-secondary)}
+.mp-n{font-variant-numeric:tabular-nums;font-weight:600;color:var(--text-primary)}
+.mp-n.good{color:var(--success-text)}
+.mp-n.bad{color:var(--warning-text)}
+.mp-h{font-size:11px;line-height:15px;color:var(--text-muted);margin:10px 0 2px;
+  text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.mp-h:first-child{margin-top:0}
+
+/* tags */
+.mp-tag{display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:5px;
+  font-size:11px;letter-spacing:.04em;text-transform:uppercase;font-weight:600}
+.mp-tag.ok{background:var(--success-subtle);color:var(--success-text)}
+.mp-tag.no{background:var(--warning-subtle);color:var(--warning-text)}
+.mp-tag.nu{background:var(--surface-2);color:var(--text-secondary)}
+
+/* boxes */
+.mp-box{border:1px solid var(--border-subtle);border-radius:10px;padding:10px 12px}
+.mp-box.on{border-color:var(--accent-default)}
+.mp-box.bad{border-color:var(--warning-text)}
+.mp-box h4{margin:0 0 7px;font-size:11px;line-height:14px;color:var(--text-muted);font-weight:600;
+  text-transform:uppercase;letter-spacing:.05em}
+.mp-box p{margin:0;font-size:12.5px;line-height:18px;color:var(--text-secondary)}
+.mp-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.mp-cols3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.mp-quote{font-size:12.5px;line-height:18px;color:var(--text-secondary);font-style:italic;
+  padding-left:11px;border-left:2px solid var(--border-subtle);margin:6px 0 0}
+
+/* the 24-hour axis: window against quiet hours */
+.mp-axis{position:relative;margin:16px 0 30px}
+.mp-track{height:28px;border-radius:6px;background:var(--surface-2);position:relative;overflow:hidden}
+.mp-seg{position:absolute;top:0;bottom:0;display:grid;place-items:center;font-size:10.5px;
+  font-weight:600;letter-spacing:.03em}
+.mp-seg.quiet{background:var(--surface-3);color:var(--text-muted)}
+.mp-seg.win{background:var(--accent-subtle);color:var(--accent-text)}
+.mp-seg.over{background:var(--warning-subtle);color:var(--warning-text);
+  border-left:1px solid var(--warning-text);border-right:1px solid var(--warning-text)}
+.mp-rule{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--text-muted)}
+.mp-ticks{display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);
+  margin-top:4px;font-variant-numeric:tabular-nums}
+.mp-flag{position:absolute;left:20.833%;transform:translateX(-50%);top:100%;margin-top:20px;
+  font-size:11.5px;color:var(--warning-text);white-space:nowrap;font-weight:600}
+
+/* the plan card */
+.mp-card{border:1px solid var(--border-strong);border-radius:12px;background:var(--bg-raised);
+  padding:13px 14px}
+.mp-card .greet{font-size:15px;line-height:21px;color:var(--text-primary);font-weight:600}
+.mp-step{font-size:11px;line-height:15px;color:var(--text-muted);text-transform:uppercase;
+  letter-spacing:.05em;font-weight:600;margin:11px 0 5px}
+.mp-task{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13.5px;line-height:19px;
+  color:var(--text-secondary);border-bottom:1px solid var(--border-subtle)}
+.mp-task:last-child{border-bottom:0}
+.mp-task .meta{margin-left:auto;font-size:11.5px;color:var(--text-muted)}
+.mp-task .bx{width:15px;height:15px;border:1.5px solid var(--border-strong);border-radius:4px;
+  flex:none}
+.mp-task .bx.on{background:var(--accent-default);border-color:var(--accent-default)}
+.mp-task.pick .bx{background:var(--accent-default);border-color:var(--accent-default)}
+.mp-tl{display:grid;gap:5px;margin:4px 0}
+.mp-tl div{display:flex;gap:9px;font-size:13px;line-height:18px;color:var(--text-secondary);
+  font-variant-numeric:tabular-nums}
+.mp-tl div span:first-child{width:44px;color:var(--text-muted)}
+.mp-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:11px}
+.mp-b{font-size:13px;line-height:18px;font-weight:600;padding:6px 13px;border-radius:8px}
+.mp-b.p{background:var(--accent-default);color:var(--on-fill)}
+.mp-b.s{background:var(--surface-2);color:var(--text-secondary)}
+
+/* gesture rows */
+.mp-sw{display:grid;gap:8px}
+.mp-sw-r{display:grid;grid-template-columns:112px minmax(0,1fr) minmax(0,1fr);gap:9px;
+  align-items:baseline;font-size:12.5px;line-height:18px;padding:7px 0;
+  border-bottom:1px solid var(--border-subtle)}
+.mp-sw-r:last-child{border-bottom:0}
+.mp-sw-r .g{color:var(--text-muted);font-weight:600}
+.mp-sw-r .a{color:var(--text-secondary)}
+.mp-sw-r .b{color:var(--warning-text)}
+
+/* source preview */
+.mp-code{font-family:var(--type-mono-family,ui-monospace,Menlo,monospace);font-size:11px;
+  line-height:17px;color:var(--text-secondary);white-space:pre-wrap;word-break:break-word;
+  background:var(--surface-2);border-radius:8px;padding:10px 12px}
+.mp-code .bad{color:var(--warning-text);font-weight:600}
+.mp-code .dim{color:var(--text-muted)}
+</style>
+</head>
+<body data-lab="morning-plan">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-sunrise" viewBox="0 0 24 24"><path d="M12 2v8"/><path d="m4.93 10.93 1.41 1.41"/><path d="M2 18h2"/><path d="M20 18h2"/><path d="m19.07 10.93-1.41 1.41"/><path d="M22 22H2"/><path d="m8 6 4-4 4 4"/><path d="M16 18a4 4 0 0 0-8 0"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol>
+  <symbol id="i-mode-tasks" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol>
+  <symbol id="i-mode-notes" viewBox="0 0 24 24"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></symbol>
+</svg>
+
+<header class="masthead">
+  <p class="eyebrow">Lab 13 · the two rituals that bookend a day</p>
+  <h1 class="t-title-1">Morning plan &amp; shutdown</h1>
+  <p class="lede-p">
+    <code>shutdown.md</code> says of itself: <i>"The shutdown is the <b>mirror</b> of the morning
+    plan. The morning plan commits; the shutdown reviews and pre-commits."</i> Two docs, one pair,
+    and each is specified as if the other were not there.
+  </p>
+  <p class="lede-p">
+    That is where the defects are. The shutdown's commit writes a plan for <b>tomorrow</b>, and the
+    morning plan's trigger refuses to fire on a day that is <b>already planned</b>. Together they
+    cancel: the nights the user shuts down are the mornings the plan does not appear. Everything
+    else in the lab follows from reading the two docs against each other rather than one at a
+    time.
+  </p>
+</header>
+
+<div class="bar">
+  <nav class="tabs" id="tabs">
+    <button class="tab" data-go="trigger">Does it fire</button>
+    <button class="tab" data-go="commit">What it commits</button>
+    <button class="tab" data-go="swipes">The swipes</button>
+    <button class="tab" data-go="mirror">The pair</button>
+  </nav>
+</div>
+
+<main id="main">
+
+<!-- ================================================================ TRIGGER -->
+<section class="screen" id="trigger">
+  <div class="lede">
+    <h2 class="t-title-2">Does it fire</h2>
+    <p class="lede-p">
+      <code>morning-plan.md</code> §The trigger lists four conditions, each a gate. The invariant
+      above them says it <i>"surfaces once per day, in the first app open after the day
+      boundary"</i>, and spec adds a window — <i>"the morning window (default 5am–11am
+      local)"</i>.
+    </p>
+    <p class="lede-p">
+      Two things outside this doc decide the answer. The shutdown flow writes a plan for tomorrow,
+      and one of the four conditions is <i>"the user has not already planned that day"</i>. And the
+      attention budget owns the hours, not this doc — which quietly removes the window's first two.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">Four conditions, one window, and the hours the budget already
+          claimed.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="mp-card">
+              <div style="display:flex;align-items:center;gap:9px">
+                <svg class="ic"><use href="#i-sunrise"/></svg>
+                <span class="greet">Good morning.</span></div>
+              <p class="mp-step">What carried over</p>
+              <div class="mp-task"><span class="bx"></span>Draft Q4 plan
+                <span class="meta">Work · due today</span></div>
+              <div class="mp-task"><span class="bx"></span>File Q4 taxes
+                <span class="meta">Home · due Fri</span></div>
+              <p class="mp-step">Today</p>
+              <div class="mp-tl">
+                <div><span>09:00</span><span>Standup</span></div>
+                <div><span>11:00</span><span>Design review</span></div>
+              </div>
+              <p class="mp-step">Pick three</p>
+              <div class="mp-task pick"><span class="bx on"></span>Draft Q4 plan</div>
+              <div class="mp-task pick"><span class="bx on"></span>Call contractor</div>
+              <div class="mp-task"><span class="bx"></span>File Q4 taxes</div>
+              <div class="mp-btns"><span class="mp-b s">Skip</span>
+                <span class="mp-b p">Done</span></div>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. §The trigger's four conditions, §The 60-second structure's three steps, and
+            the morning window.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="trigger-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Condition 2 is <i>"the user has not already planned that day"</i> and condition 3 is
+            <i>"the user has not skipped it that day"</i>. Both are written as facts about the
+            <b>day</b>, and one of them is written by the other flow.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Last night cancels this morning</span>
+        <p class="vc-stance">The shutdown pre-plans tomorrow. The plan refuses to fire on a day
+          that is already planned.</p>
+        <span class="vc-read">cut the collision · the log already knows how</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="mp-h">Tuesday 21:00 · shutdown commits</p>
+            <div class="mp-code">day.planned  { day: <span class="bad">"2026-09-23"</span>,
+               top_three: [T4, T5, T6] }</div>
+            <p class="mp-h">Wednesday 07:30 · morning plan evaluates</p>
+            <div class="mp-r"><span class="mp-k">day.opened</span>
+              <span class="mp-d">rollover ran at first open</span>
+              <span class="mp-tag ok">pass</span></div>
+            <div class="mp-r"><span class="mp-k">Not already planned</span>
+              <span class="mp-d">a <code>day.planned</code> for Sep 23 exists</span>
+              <span class="mp-tag no">fail</span></div>
+            <div class="mp-r"><span class="mp-k">Verdict</span>
+              <span class="mp-d">the plan does not surface</span>
+              <span class="mp-n bad">0 of 1</span></div>
+            <div class="mp-box bad">
+              <h4>The asymmetry in the log</h4>
+              <p><code>day.plan_skipped</code> carries <code>kind: 'morning' | 'shutdown'</code>,
+                because two rituals can skip. <code>day.planned</code> carries no such field,
+                because two rituals can also plan — and nothing separates them.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd><code>day.planned</code> gains the discriminator its sibling already has —
+            <code>source: 'morning' | 'shutdown'</code> — and the trigger's second condition reads
+            <i>"the user has not confirmed a plan for that day"</i>, so a shutdown draft is a
+            starting point rather than a reason to stay silent.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One field, one reworded condition. The projection already takes the latest
+            <code>day.planned</code>, so a morning confirmation simply supersedes the draft —
+            which is the behaviour a user would assume today.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Neither doc is wrong alone. <code>shutdown.md</code> means to save the next morning
+            work; <code>morning-plan.md</code> means to plan a day that has not been planned. Both
+            are drawn faithfully, and together they mean the <b>paired</b> user never sees the
+            morning ritual — while a user who <i>skips</i> shutdown does, because
+            §Closing a day late says <i>"The morning plan surfaces first."</i></dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The window is two hours too wide</span>
+        <p class="vc-stance">5am–11am against quiet hours of 10pm–7am. Everything before 7 is
+          claimed by the budget.</p>
+        <span class="vc-read">draw the axis · read the overlap</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div style="display:flex;align-items:center;gap:8px">
+              <svg class="ic"><use href="#i-clock"/></svg>
+              <p class="mp-h" style="margin:0">24 hours, local</p>
+            </div>
+            <div class="mp-axis">              <div class="mp-track">
+                <div class="mp-seg quiet" style="left:0;width:29.167%">quiet 00–07</div>
+                <div class="mp-seg win" style="left:20.833%;width:25%">morning window 05–11</div>
+                <div class="mp-seg over" style="left:20.833%;width:8.333%"></div>
+                <div class="mp-seg quiet" style="left:91.667%;width:8.333%">quiet</div>
+                <div class="mp-rule" style="left:16.667%"></div>
+              </div>
+              <div class="mp-ticks"><span>00</span><span>04</span><span>08</span><span>12</span>
+                <span>16</span><span>20</span><span>24</span></div>
+              <div class="mp-flag">05:00–07:00 · 2h claimed by both</div>
+            </div>
+            <div class="mp-r"><span class="mp-k">Window, as written</span>
+              <span class="mp-d">5am – 11am</span>
+              <span class="mp-n">6h</span></div>
+            <div class="mp-r"><span class="mp-k">Blocked by quiet hours</span>
+              <span class="mp-d">5am – 7am is inside 10pm–7am</span>
+              <span class="mp-n bad">2h</span></div>
+            <div class="mp-r"><span class="mp-k">Window that works</span>
+              <span class="mp-d">7am – 11am, once the budget is applied</span>
+              <span class="mp-n bad">4h</span></div>
+            <div class="mp-r"><span class="mp-k">Day boundary</span>
+              <span class="mp-d">4am — the window opens one hour later</span>
+              <span class="mp-n">1h</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The window is stated as <b>7am–11am</b>, or the plan is named as one of the surfaces
+            quiet hours do not apply to — a decision, not a default, and one that belongs to the
+            budget doc.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Naming it explicitly is one clause. The alternative keeps a window a third of whose
+            length cannot be used, in the one flow whose whole premise is that the morning is where
+            the day gets decided.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd><code>morning-plan.md</code> says <i>"It is budget-governed all the same"</i>, and
+            <code>attention-budget.md</code> says <i>"Nothing fires outside quiet hours (default
+            10pm–7am)."</i> So the plan cannot fire at 6am — and 6am is inside its own stated
+            window. The earlier a user rises, the more the invitation disappears.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The busy-day example breaks two invariants</span>
+        <p class="vc-stance">The example fires the plan during a calendar event. Two docs forbid
+          exactly that, and neither carves out an exemption.</p>
+        <span class="vc-read">state the precedence · or the example is the exception</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="mp-box bad">
+              <h4 style="display:flex;align-items:center;gap:7px">
+                <svg class="ic"><use href="#i-alert"/></svg>The example</h4>
+              <p><i>"User opens the app at 9:15am, already late for a 9:00 event. The plan surfaces
+                anyway."</i></p>
+            </div>
+            <div class="mp-box">
+              <h4>morning-plan.md §Invariants</h4>
+              <p><i>"It does not fire during focus mode, during an event, or during quiet
+                hours."</i></p>
+            </div>
+            <div class="mp-box">
+              <h4>attention-budget.md §Invariants</h4>
+              <p><i>"Nothing fires during focus mode or during a calendar event."</i></p>
+            </div>
+            <div class="mp-box">
+              <h4>attention-budget.md, on exemptions</h4>
+              <p><i>"Still obey quiet hours, focus mode, and in-event suppression."</i></p>
+            </div>
+            <div class="mp-r" style="border-top:1px solid var(--border-subtle)">
+              <span class="mp-k">Rules the example breaks</span>
+              <span class="mp-d">one per document</span>
+              <span class="mp-n bad">2</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>One of the two wins, and the doc says which. The natural reading is that the
+            <b>invariant wins</b>: the plan waits for the event to end and fires then, and
+            <i>"even 10 seconds of commitment is better than none"</i> is about a short
+            <i>gap</i>, not about talking over a meeting.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Under that reading the plan appears after the event — a plan at 10:00 for a day
+            already an hour old. That is the same trade the budget already makes everywhere else,
+            and it is why the compressed view exists.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The doc holds both <i>"does not fire during an event"</i> and <i>"It surfaces even
+            on busy days"</i>, which is coherent only if "busy day" means a day with many events
+            and "during an event" means inside one. The example picks the wrong one of those two
+            and is the flow's most quotable scenario.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Five conditions, one of which names the shutdown; a window the budget
+          can actually honour; and a precedence rule for the event case.</p>
+        <span class="vc-read">synthesis · make the gates total, then order them</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="mp-h">The trigger, corrected</p>
+            <div class="mp-r"><span class="mp-k">1 · Day open</span>
+              <span class="mp-d"><code>day.opened</code> exists for today</span>
+              <span class="mp-tag ok">keep</span></div>
+            <div class="mp-r"><span class="mp-k">2 · Not confirmed</span>
+              <span class="mp-d"><b>no</b> <code>day.planned</code> with
+                <code>source: 'morning'</code> for today</span>
+              <span class="mp-tag ok">reword</span></div>
+            <div class="mp-r"><span class="mp-k">3 · Not skipped</span>
+              <span class="mp-d">no <code>day.plan_skipped</code> with
+                <code>kind: 'morning'</code></span>
+              <span class="mp-tag ok">name the kind</span></div>
+            <div class="mp-r"><span class="mp-k">4 · Onboarded</span>
+              <span class="mp-d">not the day onboarding finished</span>
+              <span class="mp-tag ok">keep</span></div>
+            <div class="mp-r"><span class="mp-k">5 · Eligible hour</span>
+              <span class="mp-d">07:00–11:00, after quiet hours end</span>
+              <span class="mp-tag ok">add</span></div>
+            <div class="mp-r"><span class="mp-k">Precedence</span>
+              <span class="mp-d">in-event suppression wins; the plan fires after the event</span>
+              <span class="mp-n">stated</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>One added condition, two clarified, one precedence rule. And the pair becomes what
+            the shutdown doc already claims: last night's plan arrives this morning as a
+            <b>draft</b>, and the morning ritual confirms it.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The plan now fires on days the user shut down — which is the intent, and it means the
+            ritual is no longer implicitly opt-out for the users who use the app most.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. Every condition names an entry that either exists or does not, so all five are
+            checkable, and the hour gate cites the budget doc rather than paraphrasing it.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the trigger measures</h2>
+    <div class="measure" id="measure-trigger">…</div>
+  </div>
+</section>
+
+<!-- ================================================================= COMMIT -->
+<section class="screen" id="commit">
+  <div class="lede">
+    <h2 class="t-title-2">What it commits</h2>
+    <p class="lede-p">
+      The ritual's entire claim is a number. §Purpose: <i>"It has one job: <b>commit to three
+      things</b>."</i> §The 60-second structure: <i>"<b>Three steps, each optional</b>."</i>
+      §The commit logs <i>"<code>day.planned</code> with the top three."</i>
+    </p>
+    <p class="lede-p">
+      And the commit writes two log types. The shutdown — its declared mirror — writes those two
+      plus three more, and declares a five-second atomic undo. The morning plan writes the same
+      events on a smaller scale and says nothing about undoing them.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">Two writes, a picker, and a landing on the Calendar.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="mp-h">§The commit</p>
+            <div class="mp-r"><span class="mp-k">Step 1</span>
+              <span class="mp-d"><code>task.scheduled_to_day</code>, one per kept task</span>
+              <span class="mp-n">N</span></div>
+            <div class="mp-r"><span class="mp-k">Step 2</span>
+              <span class="mp-d"><code>day.planned</code> with the top three</span>
+              <span class="mp-n">1</span></div>
+            <div class="mp-r"><span class="mp-k">Step 3</span>
+              <span class="mp-d">dismiss</span>
+              <span class="mp-n">—</span></div>
+            <p class="mp-h">Then</p>
+            <div class="mp-box">
+              <h4>Landing</h4>
+              <p>The user lands on the Calendar day view. The plan is not a mode, so there is
+                nothing to leave behind — it was a card over the top of where they already
+                were.</p>
+            </div>
+            <div class="mp-box">
+              <h4>What is not written</h4>
+              <p>No <code>day.opened</code> and no <code>day.closed</code>. The doc is explicit:
+                rollover already ran, and the plan does not own the boundary.</p>
+            </div>
+            <div class="mp-box bad">
+              <h4>What is also not written</h4>
+              <p>Nothing about undo. The pair of writes is a batch over serveral tasks, and
+                Invariant 1's default is a five-second toast.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. §The commit's three steps and §The 60-second structure's picker.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="commit-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Invariant 1 says every state-changing action is undoable, and ADR 0010 fixes the
+            default as the five-second toast. The morning plan mutates N tasks and the day's plan
+            and never mentions the mechanism — while the shutdown, writing strictly more, names it
+            in an invariant.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Three is not a number here</span>
+        <p class="vc-stance">Two docs require exactly three and two allow zero, with no rule
+          choosing between them.</p>
+        <span class="vc-read">cut the contradiction · say what "three" is for</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="mp-cols">
+              <div class="mp-box">
+                <h4>Three is required</h4>
+                <p>§Purpose: <i>"one job: commit to three things."</i></p>
+                <p style="margin-top:6px">§The commit: <i>"<code>day.planned</code> with the top
+                  three."</i></p>
+              </div>
+              <div class="mp-box">
+                <h4>Three is optional</h4>
+                <p>§The 60-second structure: <i>"Three steps, <b>each optional</b>."</i></p>
+                <p style="margin-top:6px"><code>object-model.md</code>:
+                  <code>top_three: TaskId[]</code> — <i>"optional"</i>.</p>
+              </div>
+            </div>
+            <div class="mp-box">
+              <h4>And the busy-day invariant sides with zero</h4>
+              <p><i>"It surfaces even on busy days. Even 10 seconds of commitment is better than
+                none."</i> A commitment smaller than three is the whole point of the compressed
+                view — and nothing says how small it may be.</p>
+            </div>
+            <p class="mp-h">The picker's instruction</p>
+            <div class="mp-code">"The picker shows candidates as a scrollable list with
+ checkboxes. The user taps <span class="bad">three</span>. A "Done" button commits."</div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The doc picks one and says why. The defensible reading is <b>up to three, and one is
+            a plan</b>: three is a target the picker encourages, and the invariant that values ten
+            seconds of commitment is the one that describes the failure the design cares
+            about.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Choosing "up to three" means the schema keeps <code>optional</code> and the picker
+            needs a stated minimum — probably one, since a plan with none is a skip and the flow
+            already has a button for that.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>"Each optional" is about the three <i>steps</i>, and the doc never says whether the
+            third step being optional means the <i>commitment</i> is optional. So the contradiction
+            is a category error as well as a numbers disagreement: one sentence is about the
+            ritual's length and the other about its output.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The mirror is not mirrored</span>
+        <p class="vc-stance">Same two event types. One ritual declares a five-second atomic undo;
+          the other is silent.</p>
+        <span class="vc-read">add the clause · the default already applies</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="mp-h">What each commit writes</p>
+            <div class="mp-r"><span class="mp-k">Morning plan</span>
+              <span class="mp-d"><code>task.scheduled_to_day</code> ×N · <code>day.planned</code></span>
+              <span class="mp-n">2 types</span></div>
+            <div class="mp-r"><span class="mp-k">Shutdown</span>
+              <span class="mp-d">those 2 · <code>day.closed</code> · Daily Note append</span>
+              <span class="mp-n">5 steps</span></div>
+            <p class="mp-h">And what each says about reversing it</p>
+            <div class="mp-r"><span class="mp-k">Morning plan</span>
+              <span class="mp-d">the word "undo" does not appear in the doc</span>
+              <span class="mp-n bad">0 mentions</span></div>
+            <div class="mp-r"><span class="mp-k">Shutdown</span>
+              <span class="mp-d"><i>"undoable for five seconds after commit … the entire shutdown
+                as one atomic batch"</i></span>
+              <span class="mp-n good">1 invariant</span></div>
+            <div class="mp-r"><span class="mp-k">ADR 0010's default</span>
+              <span class="mp-d">a five-second toast, unless on the closed toggle list</span>
+              <span class="mp-tag nu">unclaimed</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The morning plan gains the sentence its mirror already has: the commit is one atomic
+            batch, undoable for five seconds. Nothing new is decided — ADR 0010's default is
+            already this — so the doc only stops being silent.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One clause, and one toast after the plan. Skipping the toast would need an ADR,
+            because ADR 0010 closes the exempt set at three <code>habit.*</code> types.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>A mis-tap in Step 3 schedules the wrong task for the day, and the day's top three is
+            the projection the Calendar and the obligations card both read. Those are exactly the
+            stakes the shutdown names and the plan does not.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">One event, two meanings</span>
+        <p class="vc-stance">"This day was planned" and "this day is already planned for you" are
+          the same entry.</p>
+        <span class="vc-read">state the source · the projection already handles the rest</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="mp-cols">
+              <div class="mp-box">
+                <h4>Morning · confirmed</h4>
+                <p><code>day.planned { day: today, top_three: [T1,T2,T3] }</code></p>
+                <p style="margin-top:6px">The user chose these.</p>
+              </div>
+              <div class="mp-box">
+                <h4>Shutdown · proposed</h4>
+                <p><code>day.planned { day: tomorrow, top_three: [T4,T5,T6] }</code></p>
+                <p style="margin-top:6px">Tier 3 guessed these.</p>
+              </div>
+            </div>
+            <div class="mp-box bad">
+              <h4>Indistinguishable</h4>
+              <p>Same type, same shape, same projection rule — <i>"a Day may have multiple
+                <code>day.planned</code> entries; the projection uses the latest one."</i> Nothing
+                downstream can tell a commitment from a suggestion.</p>
+            </div>
+            <div class="mp-box">
+              <h4>The sibling that got it right</h4>
+              <p><code>day.plan_skipped</code> is <code>{ day, kind: 'morning' | 'shutdown' }</code>
+                — the log discriminates the rituals that <i>skip</i> and not the ones that
+                <i>plan</i>.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd><code>day.planned</code> gains <code>source: 'morning' | 'shutdown'</code>. That one
+            field fixes the trigger (screen 1), lets the Calendar mark a draft as unconfirmed, and
+            makes "re-plan" distinguishable from "pre-plan".</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One field on one event type, and the projection keeps its existing rule. Nothing that
+            reads <code>top_three</code> has to change.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd><code>object-model.md</code> calls <code>top_three</code> <i>"the logged state"</i>
+            and says only three <code>day.*</code> events write it. A state that two flows write
+            with different authority, and no way to tell them apart, is not a logged state — it is
+            a value with a provenance nobody recorded.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Three fixed as a target, undo stated, and the plan labelled with who
+          made it.</p>
+        <span class="vc-read">synthesis · the commit becomes reversible and attributable</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="mp-h">The commit, corrected</p>
+            <div class="mp-r"><span class="mp-k">Writes</span>
+              <span class="mp-d"><code>task.scheduled_to_day</code> ×N ·
+                <code>day.planned { source: 'morning' }</code></span>
+              <span class="mp-n">2 types</span></div>
+            <div class="mp-r"><span class="mp-k">How many</span>
+              <span class="mp-d">one to three; three is the target, one is a plan</span>
+              <span class="mp-n">1–3</span></div>
+            <div class="mp-r"><span class="mp-k">Undo</span>
+              <span class="mp-d">five seconds, the batch, per ADR 0010's default</span>
+              <span class="mp-tag ok">stated</span></div>
+            <div class="mp-r"><span class="mp-k">A shutdown draft</span>
+              <span class="mp-d">arrives as the picker's pre-selection, still editable</span>
+              <span class="mp-tag ok">draft</span></div>
+            <div class="mp-r"><span class="mp-k">Re-planning</span>
+              <span class="mp-d">a second <code>source: 'morning'</code> entry supersedes the
+                first</span>
+              <span class="mp-tag ok">stated</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Four clauses in one doc and one field in another. The pair finally behaves as
+            described: the shutdown proposes, the morning confirms, and both are reversible.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The picker gains a pre-selection rule and the screen gains a toast. Both are smaller
+            than the alternative — a ritual that fires once, on the first day the user ever uses
+            it.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. Each change gives an existing mechanism a name it was already missing, rather
+            than adding a mechanism.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the commit measures</h2>
+    <div class="measure" id="measure-commit">…</div>
+  </div>
+</section>
+
+<!-- ================================================================= SWIPES -->
+<section class="screen" id="swipes">
+  <div class="lede">
+    <h2 class="t-title-2">The swipes</h2>
+    <p class="lede-p">
+      Both rituals put three swipes on a list of task rows: right to keep, left to defer, down to
+      remove. <code>gesture-vocabulary.md</code> is blunt about that kind of thing: <i>"Each gesture
+      means the same thing everywhere it is available. If a gesture is not available on a surface,
+      it is disabled … — not repurposed."</i>
+    </p>
+    <p class="lede-p">
+      That doc's matrix has thirteen rows. Neither ritual is one of them. So the two surfaces that
+      invent a task-row vocabulary are the two the vocabulary's own table does not list.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">Three swipes on a task row, in the ritual's own words.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="mp-card">
+              <p class="mp-step">What carried over</p>
+              <div class="mp-task"><span class="bx"></span>Draft Q4 plan
+                <span class="meta">Work · due today</span></div>
+              <div class="mp-task"><span class="bx"></span>File Q4 taxes
+                <span class="meta">Home · due Fri</span></div>
+              <div class="mp-task"><span class="bx"></span>Buy standing desk
+                <span class="meta">Home</span></div>
+              <p style="font-size:12.5px;line-height:18px;color:var(--text-muted);margin:8px 0 0">
+                Swipe right to keep, left to defer, down to remove.</p>
+            </div>
+            <div class="mp-box">
+              <h4>Both rituals use the same three</h4>
+              <p>Morning Step 1 and shutdown Prompt 2 are the same sentence with different verbs:
+                keep/keep, defer/defer, remove/remove.</p>
+            </div>
+            <div class="mp-box bad">
+              <h4>And neither is in the matrix</h4>
+              <p>13 rows: Task list, Task detail, Habit list, Note list, Note editor, Calendar day,
+                Calendar month, Date picker, People list, Protocol report, Inbox, Search results,
+                Nudge. The plan card and the shutdown are absent.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. §The 60-second structure's swipe list and the shutdown's Prompt 2.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="swipes-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The matrix's own note says <i>"A dash means the gesture is disabled on that
+            surface."</i> These surfaces are not dashed — they are unlisted, which reads as
+            nothing rather than as a decision.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Right on a task row</span>
+        <p class="vc-stance">Complete in the matrix, keep here. The gesture doc's own definition
+          names the object, not the surface.</p>
+        <span class="vc-read">one object, two meanings · the rule forbids this</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="mp-h">Swipe right, per surface</p>
+            <div class="mp-sw">
+              <div class="mp-sw-r"><span class="g">Task list</span>
+                <span class="a">completes the task</span>
+                <span class="b"></span></div>
+              <div class="mp-sw-r"><span class="g">Habit list</span>
+                <span class="a">checks the habit</span>
+                <span class="b"></span></div>
+              <div class="mp-sw-r"><span class="g">Inbox</span>
+                <span class="a">routes to "today"</span>
+                <span class="b"></span></div>
+              <div class="mp-sw-r"><span class="g">Morning plan</span>
+                <span class="a">the row is a task</span>
+                <span class="b">schedules it for today</span></div>
+              <div class="mp-sw-r"><span class="g">Shutdown</span>
+                <span class="a">the row is a task</span>
+                <span class="b">keeps it for tomorrow</span></div>
+            </div>
+            <div class="mp-quote">"On a task row: completes the task. … Right swipe always means
+              'yes / done / accept.'"</div>
+            <div class="mp-box bad">
+              <h4>Two of those three words fail</h4>
+              <p>Keeping a task is not completing it, and it is not "done". Only "accept" survives —
+                and accepting is what a proposal does, not what a task row does.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Either the ritual uses a checkbox and an overflow menu — the non-gesture fallback the
+            doc already requires of every gesture — or the gesture's definition is widened from
+            "on a task row" to "on a task row in a list", with the rituals named as the
+            exception.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Dropping the swipe costs the ritual its speed, which is what it is for. Widening the
+            rule costs the invariant its edge: "each gesture means the same thing everywhere" stops
+            being a testable claim.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The invariant's second sentence exists precisely for this case — <i>"If a gesture is
+            not available on a surface, it is disabled … not repurposed."</i> A swipe that means
+            keep-here and complete-there is the definition of repurposed, and the note list is
+            cited in the same doc as the example of doing it correctly.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Down on a task row</span>
+        <p class="vc-stance">The rule gives one destination and says the entity decides it. The
+          rituals offer a choice.</p>
+        <span class="vc-read">restore the single meaning</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="mp-box">
+              <h4>The rule</h4>
+              <p><i>"On a task row: marks it someday. … Swipe down always means 'take it out of
+                this list,' and it is never destructive. <b>The entity type decides what 'out'
+                means</b>; the meaning of the gesture does not change."</i></p>
+            </div>
+            <div class="mp-cols">
+              <div class="mp-box on">
+                <h4>Matrix</h4>
+                <p>Task row → down → <b>someday</b></p>
+                <p style="margin-top:6px">One destination, decided by the type.</p>
+              </div>
+              <div class="mp-box bad">
+                <h4>Both rituals</h4>
+                <p>Task row → down → <b>someday or archive</b></p>
+                <p style="margin-top:6px">Two destinations, decided by the user mid-swipe.</p>
+              </div>
+            </div>
+            <div class="mp-box">
+              <h4>Which means a swipe needs a second input</h4>
+              <p>A choice between two outcomes is a menu, a sheet or a confirm — so the gesture
+                that "always means" one thing now opens something. Nothing in either doc says
+                what that surface is.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The rituals use <b>someday</b>, or the "or archive" branch is described as a
+            follow-up surface with a name. The first is the smaller change and keeps the rule
+            intact; the second needs a sheet that no doc has.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Restricting to someday means a user who wants a task archived does it from the Task
+            list, one screen away. That is where the affordance already is.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Both docs also write <i>"Never a delete"</i> in the same breath, which is the rule
+            they are actually protecting — and someday is already non-destructive, so the
+            reassurance and the branch are not solving the same problem. The reassurance is
+            right; the branch is the part that needs a surface.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Nowhere for the eyes to go</span>
+        <p class="vc-stance">Every gesture needs a non-gesture fallback. Neither ritual offers
+          one, and the matrix cannot record one.</p>
+        <span class="vc-read">add the buttons · then add the rows</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="mp-h">The invariant</p>
+            <div class="mp-quote">"Every gesture has a non-gesture fallback (a button, a menu item,
+              or a keyboard shortcut). Gestures are accelerators, not the only path."</div>
+            <p class="mp-h">What the rituals offer</p>
+            <div class="mp-r"><span class="mp-k">Keep</span>
+              <span class="mp-d">swipe right only</span>
+              <span class="mp-tag no">no button</span></div>
+            <div class="mp-r"><span class="mp-k">Defer</span>
+              <span class="mp-d">swipe left only — though it opens the defer sheet</span>
+              <span class="mp-tag nu">partly</span></div>
+            <div class="mp-r"><span class="mp-k">Remove</span>
+              <span class="mp-d">swipe down only, and it branches</span>
+              <span class="mp-tag no">no button</span></div>
+            <div class="mp-r"><span class="mp-k">Keyboard on a plan row</span>
+              <span class="mp-d">the key map has no row for these surfaces either</span>
+              <span class="mp-tag no">0 rows</span></div>
+            <div class="mp-box bad">
+              <h4>The one case the invariant exists for</h4>
+              <p>A user on a phone, in the ritual that is supposed to take ten seconds, with no
+                pointer and no keys — the surface where gestures matter most is the one with no
+                documented alternative.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Each row in both rituals gets the controls the Task list already has — a checkbox for
+            keep, an overflow for defer and remove — and the matrix gains two rows so the mapping
+            is written down once.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Two rows of chrome per line in a card whose stated budget is sixty seconds. The
+            overflow can be revealed on long-press, which is the same pattern the Task list
+            uses.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The keyboard table in the same doc is titled <i>"Keyboard equivalents"</i> and
+            promises one per gesture. Adding the rituals to the matrix without adding their keys
+            moves the gap rather than closing it.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Two new matrix rows, the task-row meanings they actually use, and a
+          button beside each swipe.</p>
+        <span class="vc-read">synthesis · write the vocabulary down where it is defined</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="mp-h">Two rows added to the matrix</p>
+            <div class="mp-sw">
+              <div class="mp-sw-r"><span class="g">Morning plan row</span>
+                <span class="a">→ keep for today · ← defer</span>
+                <span class="b">↓ someday · ↑ —</span></div>
+              <div class="mp-sw-r"><span class="g">Shutdown row</span>
+                <span class="a">→ keep for tomorrow · ← defer</span>
+                <span class="b">↓ someday · ↑ —</span></div>
+            </div>
+            <div class="mp-box on">
+              <h4>And the definition gains one clause</h4>
+              <p><i>"Right swipe always means yes. On a task row outside a list — inside a ritual —
+                'yes' is <b>keep it for the day in question</b>, because completion is not a choice
+                a plan makes."</i></p>
+            </div>
+            <div class="mp-box">
+              <h4>Each swipe gets a control</h4>
+              <p>Checkbox = keep. Overflow = defer, remove, open. Long-press reveals it, the same
+                way the Task list does.</p>
+            </div>
+            <div class="mp-r" style="border-top:1px solid var(--border-subtle)">
+              <span class="mp-k">Rows added</span>
+              <span class="mp-d">matrix 13 → 15 · key map gains 2 bindings</span>
+              <span class="mp-n">+2</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Two matrix rows, one clause in the gesture definition, and an overflow affordance.
+            The rituals keep their speed and stop being the only surfaces outside the
+            vocabulary.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The matrix grows to fifteen rows and the gesture's meanings go from four to five.
+            Both are the honest count of what the app already asks users to remember.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. The rule that a gesture is disabled rather than repurposed survives because
+            "keep" is now the same gesture's meaning in the same kind of row, stated once.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the swipes measure</h2>
+    <div class="measure" id="measure-swipes">…</div>
+  </div>
+</section>
+
+<!-- ================================================================= MIRROR -->
+<section class="screen" id="mirror">
+  <div class="lede">
+    <h2 class="t-title-2">The pair</h2>
+    <p class="lede-p">
+      The two docs say they mirror each other. Their triggers are written separately, their
+      suppression rules separately, and the card that follows one of them separately again — in a
+      third doc that owns the budget they all share.
+    </p>
+    <p class="lede-p">
+      And the plan's second step makes a claim about the now line that the now line's own doc
+      contradicts by construction: the line has six sources, none of which is "the first event of
+      the day", and the one that could be carries a two-hour window.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">What each surface suppresses, and what each doc says about it.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div style="display:flex;align-items:center;gap:8px">
+              <svg class="ic"><use href="#i-sunrise"/></svg>
+              <svg class="ic"><use href="#i-moon"/></svg>
+              <p class="mp-h" style="margin:0">Three surfaces, three lists</p>
+            </div>
+            <div class="mp-cols3">
+              <div class="mp-box">
+                <h4>Morning plan</h4>
+                <p>focus</p><p>in-event</p><p>quiet hours</p>
+                <p style="margin-top:6px"><b>3</b></p>
+              </div>
+              <div class="mp-box">
+                <h4>Shutdown</h4>
+                <p>focus</p><p>in-event</p><p>quiet hours</p>
+                <p style="margin-top:6px"><b>3</b></p>
+              </div>
+              <div class="mp-box on">
+                <h4>Obligations</h4>
+                <p>quiet hours</p><p>focus</p><p style="visibility:hidden">.</p>
+                <p style="margin-top:6px"><b>2</b></p>
+              </div>
+            </div>
+            <div class="mp-box bad">
+              <h4>One surface of the three is missing a rule</h4>
+              <p>The card's list is <i>"during quiet hours or focus mode"</i> — no in-event. So a
+                meeting suppresses the plan and not the card, and the two can fire in the same
+                open.</p>
+            </div>
+            <div class="mp-r" style="border-top:1px solid var(--border-subtle)">
+              <span class="mp-k">Rules one doc owns</span>
+              <span class="mp-d">the budget lists them once, for everything</span>
+              <span class="mp-n bad">3 surfaces, 3 lists</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The three suppression lists as each doc writes them.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="mirror-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd><code>attention-budget.md</code> owns the context rules and states them three times
+            — once as an invariant, once for the queue's scheduler, once for exemptions. Three
+            flows then restate them, and one restatement dropped a rule.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The card has two triggers</span>
+        <p class="vc-stance">A learned first-open time in the budget doc, "after the plan" in the
+          flow.</p>
+        <span class="vc-read">one owner · the budget's rule or the flow's</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="mp-cols">
+              <div class="mp-box">
+                <h4>attention-budget.md</h4>
+                <p><i>"Once per day, <b>at a time based on the user's typical first open
+                  (learned)</b>, a single card surfaces."</i></p>
+              </div>
+              <div class="mp-box">
+                <h4>morning-plan.md</h4>
+                <p><i>"If the user has habits due or a protocol metric, the daily obligations card
+                  surfaces <b>after the plan</b>."</i></p>
+              </div>
+            </div>
+            <p class="mp-h">Three cases the two rules answer differently</p>
+            <div class="mp-r"><span class="mp-k">Plan fires at 07:30</span>
+              <span class="mp-d">learned time 07:20 — the card was already due</span>
+              <span class="mp-tag nu">unclear</span></div>
+            <div class="mp-r"><span class="mp-k">Plan skipped</span>
+              <span class="mp-d">"after the plan" has no antecedent</span>
+              <span class="mp-tag no">unstated</span></div>
+            <div class="mp-r"><span class="mp-k">Plan suppressed in-event</span>
+              <span class="mp-d">does the card wait for it?</span>
+              <span class="mp-tag no">unstated</span></div>
+            <div class="mp-r"><span class="mp-k">Opens after 11am, no plan</span>
+              <span class="mp-d">the learned time has passed; the card still owes a fire</span>
+              <span class="mp-tag nu">by the budget</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The card's trigger is stated once, in the doc that owns it, as <b>"on the first open
+            at or after the learned time, ordered after any ritual that is also firing."</b> The
+            flow then references it instead of asserting a second rule.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One sentence, and the flow loses a claim it should not have been making. The
+            ordering rule it does own — that two full-screen surfaces must not fight — stays.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The card is <i>"the only thing the app requires the user to interact with
+            daily"</i>, which makes its trigger the one that most needs to be unambiguous. Two docs
+            giving it two triggers is the failure mode of a rule stated in the wrong place.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The now line's seventh source</span>
+        <p class="vc-stance">Step 2 claims the now line "shows the first event". Its own doc gives
+          six sources and a two-hour window.</p>
+        <span class="vc-read">cite the rule · or add the source</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="mp-h">doing-the-day.md — sources, in order</p>
+            <div class="mp-r"><span class="mp-k">1–2</span>
+              <span class="mp-d">focus session · current event</span>
+              <span class="mp-tag nu">now</span></div>
+            <div class="mp-r"><span class="mp-k">3</span>
+              <span class="mp-d">the next event today, <b>if one is within 2 hours</b></span>
+              <span class="mp-tag nu">2h</span></div>
+            <div class="mp-r"><span class="mp-k">4–5</span>
+              <span class="mp-d">the next scheduled task · the top-priority open task</span>
+              <span class="mp-tag nu">tasks</span></div>
+            <div class="mp-r"><span class="mp-k">6</span>
+              <span class="mp-d">"Nothing scheduled — [Capture]"</span>
+              <span class="mp-tag nu">empty</span></div>
+            <p class="mp-h">morning-plan.md, Step 2</p>
+            <div class="mp-code">"The user just sees the shape of the day.
+ The now line <span class="bad">shows the first event</span>."</div>
+            <div class="mp-r" style="border-top:1px solid var(--border-subtle)">
+              <span class="mp-k">Source that does this</span>
+              <span class="mp-d">none — source 3 is nearest-first, gated at 2h</span>
+              <span class="mp-n bad">0 of 6</span></div>
+            <div class="mp-r"><span class="mp-k">At 07:30, first event 09:00</span>
+              <span class="mp-d">1h30m out — inside the gate, so it holds</span>
+              <span class="mp-tag ok">true</span></div>
+            <div class="mp-r"><span class="mp-k">At 06:00, first event 09:00</span>
+              <span class="mp-d">3h out — source 3 does not fire</span>
+              <span class="mp-tag no">false</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Step 2 cites <code>doing-the-day.md</code> instead of describing the line, or the
+            plan's own timeline carries the first event and the now line keeps its six
+            sources.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The second option is better and costs nothing: the plan already draws a timeline, and
+            a timeline states the first event far more clearly than one line of chrome can.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The now line's meaning is <i>"what is current in this view"</i> — the phrase the time
+            machine relies on to carry a date. A line that sometimes shows a future event stops
+            being the answer to "what is current", which is the one thing all its six sources
+            agree on.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Three surfaces, one open</span>
+        <p class="vc-stance">A plan, a card, and a prompt for yesterday — all on the same first
+          open, and no rule for the order.</p>
+        <span class="vc-read">order them explicitly</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="mp-h">First open after an unclosed yesterday</p>
+            <div class="mp-r"><span class="mp-k">1</span>
+              <span class="mp-d">the morning plan surfaces first (<code>shutdown.md</code>)</span>
+              <span class="mp-tag ok">ordered</span></div>
+            <div class="mp-r"><span class="mp-k">2</span>
+              <span class="mp-d">the obligations card — "after the plan"</span>
+              <span class="mp-tag ok">ordered</span></div>
+            <div class="mp-r"><span class="mp-k">3</span>
+              <span class="mp-d">"Yesterday wasn't closed. Close it now?"</span>
+              <span class="mp-tag no">unordered</span></div>
+            <p class="mp-h">And when the plan is suppressed</p>
+            <div class="mp-r"><span class="mp-k">Plan skipped</span>
+              <span class="mp-d">the card's "after the plan" has no referent</span>
+              <span class="mp-tag no">unstated</span></div>
+            <div class="mp-r"><span class="mp-k">Plan suppressed</span>
+              <span class="mp-d">still 2 surfaces waiting on the same open</span>
+              <span class="mp-tag no">unstated</span></div>
+            <div class="mp-box bad">
+              <h4>Three full-screen surfaces, no sequence</h4>
+              <p>Only one of the three orderings is written down, and it is written in the doc
+                that is <i>closing</i> yesterday rather than in the flow that opens today.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The first open's sequence is stated once, in the morning plan — the flow that owns
+            that moment: <b>plan, then yesterday's prompt, then the card</b>. Yesterday's prompt
+            before the card because the card is the only one of the three that recurs
+            daily.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One paragraph. It also resolves the skipped-plan case by naming the card as the
+            fallback: with no plan, the card leads.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd><code>attention-budget.md</code>'s merge rule exists for this shape — <i>"surfaces
+            with overlapping TTLs may be merged at fire time"</i> — and none of the three is
+            mergeable, because all three are full-screen. The budget has a mechanism for
+            competing surfaces and these three sit outside it.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">One suppression list, one card trigger, one first-open sequence, and a
+          now line that means what it means.</p>
+        <span class="vc-read">synthesis · the budget owns the rules, the flows own the order</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="mp-h">Ownership</p>
+            <div class="mp-r"><span class="mp-k">Context rules</span>
+              <span class="mp-d">focus · in-event · quiet hours — <code>attention-budget.md</code>,
+                applied to all three surfaces</span>
+              <span class="mp-tag ok">1 list</span></div>
+            <div class="mp-r"><span class="mp-k">Card trigger</span>
+              <span class="mp-d">first open at or after the learned time — the budget doc</span>
+              <span class="mp-tag ok">1 rule</span></div>
+            <div class="mp-r"><span class="mp-k">First-open order</span>
+              <span class="mp-d">plan → yesterday's prompt → card — <code>morning-plan.md</code></span>
+              <span class="mp-tag ok">1 sequence</span></div>
+            <div class="mp-r"><span class="mp-k">Now line</span>
+              <span class="mp-d">six sources, unchanged; the plan's timeline shows the first
+                event</span>
+              <span class="mp-tag ok">1 meaning</span></div>
+            <div class="mp-box on">
+              <h4>The test this passes</h4>
+              <p>A user who shuts down every night and an early riser both get the same ritual, and
+                a reader can answer "what fires at 6am?" from one doc.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Three docs, four sentences. The suppression list collapses to one, the card's trigger
+            to one, the sequence becomes explicit, and the plan stops describing the now
+            line.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Two flows lose a restated rule each. That is the point: the budget already said
+            it.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. The three flows keep what they own — when their ritual fires, in what order,
+            and what it writes — and give back what they had borrowed.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the pair measures</h2>
+    <div class="measure" id="measure-mirror">…</div>
+  </div>
+</section>
+
+</main>
+
+<script src="lab.js"></script>
+<script src="nav.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var screens = ['trigger', 'commit', 'swipes', 'mirror'];
+  var seen = {};
+  var tabs = document.getElementById('tabs');
+
+  tabs.addEventListener('click', function (e) {
+    var b = e.target.closest('.tab');
+    if (b && b.dataset.go) go(b.dataset.go);
+  });
+
+  function go(id) {
+    screens.forEach(function (s) {
+      var el = document.getElementById(s);
+      if (el) el.hidden = (s !== id);
+    });
+    Array.prototype.forEach.call(tabs.children, function (b) {
+      b.classList.toggle('on', b.dataset.go === id);
+    });
+    if (!seen[id]) {
+      seen[id] = true;
+      requestAnimationFrame(function () {
+        MEASURE[id]();
+        // Mechanical: content strings authored with \uXXXX arrive as a literal
+        // backslash-u sequence. Decode once, on first render.
+        ['measure-' + id, id + '-cost'].forEach(function (el) {
+          var node = document.getElementById(el);
+          if (node) node.innerHTML = unesc(node.innerHTML);
+        });
+      });
+    }
+  }
+
+  // Turn a literal backslash-backslash-uXXXX into the character it names.
+  // Built from char codes so this file needs no escapes of its own.
+  var BS = String.fromCharCode(92);
+  var SEQ = new RegExp(BS + BS + 'u([0-9a-fA-F]{4})', 'g');
+  function unesc(s) {
+    return String(s).replace(SEQ, function (m, h) {
+      return String.fromCharCode(parseInt(h, 16));
+    });
+  }
+
+  // Long strings are built as arrays joined, never as +-continued literals.
+  function paras(list) {
+    return list.map(function (s) { return '<p class="mf">' + s + '</p>'; }).join('');
+  }
+  function table(rows) {
+    return '<div class="rows">' + rows.map(function (r) {
+      return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+        '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+    }).join('') + '</div>';
+  }
+
+  var MEASURE = {};
+
+  // -- trigger
+  MEASURE.trigger = function () {
+    var rows = [
+      ['Conditions in the trigger', 'morning-plan.md \u00a7The trigger', '4'],
+      ['Conditions a shutdown defeats', '"the user has not already planned that day"', '<b>1 of 4</b>'],
+      ['Days the plan can fire, shutdown having run', 'the normal path for a paired user', '<b>0</b>'],
+      ['Days it fires when the user skips shutdown', 'shutdown.md \u00a7Closing a day late', 'the next one'],
+      ['Morning window', '5am \u2013 11am local', '6h'],
+      ['Quiet hours', 'attention-budget.md', '10pm \u2013 7am'],
+      ['Overlap', '5am \u2013 7am, claimed by both', '<b>2h</b>'],
+      ['Window that survives the budget', '7am \u2013 11am', '<b>4h</b>'],
+      ['Day boundary', 'day-as-unit.md', '4am'],
+      ['Hours from boundary to window', 'the hour after rollover', '1'],
+      ['Invariants forbidding in-event firing', 'morning-plan.md + attention-budget.md', '<b>2</b>'],
+      ['Examples that fire during an event', '\u00a7Examples, "A busy day"', '<b>1</b>'],
+      ['day.plan_skipped discriminator', 'event-log.md', "kind: 'morning' | 'shutdown'"],
+      ['day.planned discriminator', 'the same table, one line above', '<b>none</b>'],
+      ['Flow docs naming the kind they write', 'morning-plan.md, shutdown.md', '<b>0 of 2</b>']
+    ];
+
+    document.getElementById('measure-trigger').innerHTML = table(rows) + paras([
+      'Four conditions, and the one the other flow writes is the one that closes the door. <code>shutdown.md</code> commits <code>day.planned { day: tomorrow }</code>; <code>morning-plan.md</code> refuses to fire when <i>"the user has not already planned that day"</i> is false. A user who shuts down every night gets the morning ritual <b>zero</b> times after the first; a user who skips shutdown gets it the next morning, because that is the path \u00a7Closing a day late describes.',
+      'The window is a second, quieter gate. It runs 5am\u201311am and quiet hours run 10pm\u20137am, so the first two hours of every morning window are claimed by the budget \u2014 and the plan says so itself: <i>"It is budget-governed all the same."</i> Six hours written, four available, and the two that are lost are the earliest ones. <b>The log already knows how to fix the first problem</b>: its sibling event carries <code>kind</code>, because the log\u2019s author noticed that two rituals can skip. They can also plan.'
+    ]);
+
+    document.getElementById('trigger-cost').innerHTML =
+      'A prior shutdown sets <code>day.planned</code> for tomorrow, and the morning plan declines to fire on a day <b>already planned</b> \u2014 so the nights the user shuts down are the mornings the ritual disappears. The window loses a further <b>2 of its 6 hours</b> to quiet hours, and the flow\u2019s own busy-day example fires during a calendar event that <b>2</b> invariants forbid.';
+  };
+
+  // -- commit
+  MEASURE.commit = function () {
+    var rows = [
+      ['Steps in the ritual', 'morning-plan.md \u00a7The 60-second structure', '3'],
+      ['Steps that are optional', 'the same sentence', '<b>3</b>'],
+      ['"Three" required by', '\u00a7Purpose, \u00a7The commit', '<b>2</b>'],
+      ['Zero allowed by', '\u00a7The structure, object-model.md', '<b>2</b>'],
+      ['top_three type', 'TaskId[], marked optional', 'optional'],
+      ['The picker says', '"The user taps three"', 'exactly three'],
+      ['Busy-day invariant', '"even 10 seconds of commitment"', 'fewer than three'],
+      ['Candidates in Step 3', 'kept \u00b7 priority:now \u00b7 due:today \u00b7 search', '4 sources'],
+      ['Event types the commit writes', 'task.scheduled_to_day \u00b7 day.planned', '2'],
+      ['Steps the shutdown commit writes', 'shutdown.md \u00a7The commit', '5'],
+      ['"Undo" in morning-plan.md', 'the whole doc, searched', '<b>0 mentions</b>'],
+      ['Shutdown\u2019s undo', '\u00a7Invariants', '5 seconds, one atomic batch'],
+      ['ADR 0010\u2019s default', 'a five-second toast', 'applies'],
+      ['Exempt types per ADR 0010', 'habit.checked \u00b7 habit.unchecked \u00b7 habit.skipped', '3, closed set'],
+      ['Emitters of day.planned', 'morning plan, shutdown', '2'],
+      ['Authority recorded on it', 'nothing distinguishes them', '<b>0</b>']
+    ];
+
+    document.getElementById('measure-commit').innerHTML = table(rows) + paras([
+      'The number in the title is not settled. <b>Two</b> places require exactly three and <b>two</b> allow none, and the disagreement is a category error as well as a count: <i>"three steps, each optional"</i> is about the ritual\u2019s length and <i>"commit to three things"</i> is about its output. The invariant that values ten seconds of commitment is the tiebreaker, and it points at <b>fewer than three</b>, not at zero.',
+      'The other half is the mirror. Both rituals write <code>task.scheduled_to_day</code> and <code>day.planned</code>; the shutdown writes three more things and declares its five-second undo as an invariant; the morning plan never uses the word. ADR 0010 makes the toast the default and closes the exemption set at three <code>habit.*</code> types, so the plan is <b>already</b> undoable \u2014 the doc simply does not say so, and a mis-tap in Step 3 sets the day\u2019s top three with no stated way back.'
+    ]);
+
+    document.getElementById('commit-cost').innerHTML =
+      'The ritual\u2019s one-sentence purpose is <b>"commit to three things"</b> and the same doc calls all three steps optional, with the schema marking <code>top_three</code> optional too \u2014 so <b>2</b> places require three and <b>2</b> allow none. The commit writes the same 2 event types as its declared mirror and declares <b>0</b> of the mirror\u2019s undo, on a batch that sets the day\u2019s top three.';
+  };
+
+  // -- swipes
+  MEASURE.swipes = function () {
+    var MATRIX = ['Task list', 'Task detail', 'Habit list', 'Note list', 'Note editor',
+      'Calendar (day)', 'Calendar (month)', 'Date picker', 'People list', 'Protocol report',
+      'Inbox', 'Search results', 'Nudge'];
+
+    var rows = [
+      ['Rows in the gesture matrix', 'gesture-vocabulary.md', '<b>' + MATRIX.length + '</b>'],
+      ['Rows for the morning plan card', 'searched the list above', '<b>0</b>'],
+      ['Rows for the shutdown', 'the same', '<b>0</b>'],
+      ['Swipes the plan puts on a task row', 'right keep \u00b7 left defer \u00b7 down remove', '3'],
+      ['Swipes the shutdown puts on one', 'right keep \u00b7 left defer \u00b7 down remove', '3'],
+      ['Task row, swipe right, per the matrix', '"completes the task"', 'complete'],
+      ['Task row, swipe right, in the plan', '\u00a7The 60-second structure', 'keep'],
+      ['Task row, swipe right, in the shutdown', '\u00a7Prompt 2', 'keep for tomorrow'],
+      ['Right-swipe meanings on a task row', 'the one object', '<b>2</b>'],
+      ['Task row, swipe down, per the matrix', 'one destination: someday', 'someday'],
+      ['Task row, swipe down, in both rituals', '"someday <b>or</b> archive"', '<b>2 destinations</b>'],
+      ['Surfaces where down needs a second input', 'a menu nobody has specified', '2'],
+      ['Gestures the doc says exist', '\u00a7Invariants', '8'],
+      ['Gestures with a fallback stated here', 'button, menu item or key', '<b>0</b>'],
+      ['Keyboard rows for these surfaces', 'gesture-vocabulary.md', '<b>0</b>']
+    ];
+
+    document.getElementById('measure-swipes').innerHTML = table(rows) + paras([
+      'The matrix has <b>13</b> rows and neither ritual is among them, so the two surfaces that invent a task-row vocabulary are the two the vocabulary does not list. The invariants are explicit about what should have happened instead: <i>"If a gesture is not available on a surface, it is disabled \u2026 <b>not repurposed</b>."</i> On a task row in the Task list, swipe right <b>completes</b>; in the plan it <b>keeps</b>, and in the shutdown it keeps <i>for tomorrow</i>. That is two meanings on one object, which the rule names as the thing not to do.',
+      'Swipe down is the quieter one. The doc fixes its destination \u2014 <i>"On a task row: marks it someday \u2026 the entity type decides what \u2018out\u2019 means"</i> \u2014 and both rituals write <i>"someday <b>or</b> archive"</i>, which is a choice rather than a meaning. A choice needs a surface, and neither doc names one. Every gesture is also supposed to have a non-gesture fallback; both rituals offer <b>0</b>, so the ten-second ritual is the surface with the least alternative input in the app.'
+    ]);
+
+    document.getElementById('swipes-cost').innerHTML =
+      '<b>13</b> matrix rows, <b>0</b> for the two rituals \u2014 and they put <b>3</b> swipes each on a task row, giving swipe right <b>2</b> meanings on one object and swipe down <b>2</b> destinations where the rule fixes it at one. No non-gesture fallback is stated for any of the six, in the flow whose whole premise is ten seconds.';
+  };
+
+  // -- mirror
+  MEASURE.mirror = function () {
+    var rows = [
+      ['Suppression rules in the budget', 'focus \u00b7 in-event \u00b7 quiet hours', '3'],
+      ['Morning plan\u2019s list', 'morning-plan.md \u00a7Invariants', '3'],
+      ['Shutdown\u2019s list', 'shutdown.md \u00a7Invariants', '3'],
+      ['Obligations card\u2019s list', 'attention-budget.md', '<b>2</b>'],
+      ['Rule the card is missing', 'in-event suppression', '1'],
+      ['Docs restating the budget\u2019s rules', 'the three flows', '3'],
+      ['Card trigger, per the budget', '"the user\u2019s typical first open (learned)"', 'learned time'],
+      ['Card trigger, per the flow', '"surfaces after the plan"', 'after a ritual'],
+      ['Triggers stated for one card', 'in two docs', '<b>2</b>'],
+      ['Card behaviour when the plan is skipped', 'searched both docs', '<b>unstated</b>'],
+      ['Now line sources', 'doing-the-day.md', '6'],
+      ['Sources that show "the first event"', 'searched the list of six', '<b>0</b>'],
+      ['Window on source 3', '"the next event today, if within 2 hours"', '2h'],
+      ['Plan\u2019s claim about the now line', '\u00a7Step 2', '"shows the first event"'],
+      ['Surfaces contending for one open', 'plan \u00b7 card \u00b7 yesterday\u2019s prompt', '<b>3</b>'],
+      ['Orderings written down', 'shutdown.md, on closing late', '<b>1</b>']
+    ];
+
+    document.getElementById('measure-mirror').innerHTML = table(rows) + paras([
+      'Three surfaces can fire on the same first open and only <b>one</b> ordering is written down \u2014 in <code>shutdown.md</code>, the doc about <i>closing</i> yesterday. The budget owns the rules that govern all three, states them <b>3</b> times, and then three flows restate them; one restatement dropped in-event suppression, so a meeting silences the plan and not the card.',
+      'The now line is the sharper one. <code>doing-the-day.md</code> gives it <b>6</b> sources in a fixed order and none is <i>"the first event of the day"</i>; the nearest, source 3, is gated at <b>2 hours</b>. So \u00a7Step 2\u2019s sentence is true at 07:30 with a 09:00 event and false at 06:00 with the same event \u2014 a claim that holds or fails depending on the hour, in the flow whose content is the shape of the day. The line\u2019s meaning is <i>"what is current in this view"</i>, which is what the time machine leans on to carry a date.'
+    ]);
+
+    document.getElementById('mirror-cost').innerHTML =
+      'One card, <b>2</b> triggers, in two docs; one context rule, restated <b>3</b> times, with the card\u2019s copy missing in-event suppression; <b>3</b> surfaces competing for one first open with <b>1</b> ordering; and a now line with <b>6</b> sources, <b>0</b> of which shows the day\u2019s first event, described by a flow that says it does.';
+  };
+
+  go('trigger');
+})();
+</script>
+</body>
+</html>

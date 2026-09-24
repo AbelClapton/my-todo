@@ -166,8 +166,16 @@ not appear in the type list below and are not synced.
 
 **Day**
 - `day.opened` — { day, tz_offset_minutes }
-- `day.planned` — { day, top_three: TaskId[] }
+- `day.planned` — { day, top_three: TaskId[], source: 'morning' | 'shutdown' }
 - `day.plan_skipped` — { day, kind: 'morning' | 'shutdown' }
+
+**Both events carry the ritual that wrote them, and both must.** Two
+flows emit each — the morning plan and the shutdown — and for each
+pair the entry means something different depending on which one
+emitted it: a `day.planned { source: 'morning' }` is a commitment the
+user made, while `day.planned { source: 'shutdown' }` is a
+tomorrow-plan they set up the night before. Neither the trigger nor
+the Calendar can tell those apart from `day` and `top_three` alone.
 - `day.closed` — { day }
 - `day.note_created` — { note_id, day }
 
@@ -285,7 +293,8 @@ union.
     // day.planned
     {
       day: "2026-09-22",
-      top_three: ["01HX...", "01HX...", "01HX..."]
+      top_three: ["01HX...", "01HX...", "01HX..."],
+      source: "morning" | "shutdown"
     }
 
     // day.plan_skipped
@@ -411,15 +420,17 @@ completed=true.
 
     1. day.opened  { day: "2026-09-22", tz_offset_minutes: -300 }
     2. day.planned  { day: "2026-09-22",
-                      top_three: [T1, T2, T3] }
+                      top_three: [T1, T2, T3],
+                      source: "morning" }
 
-The day is now open, with a top three.
+The day is now open, with a top three the user chose.
 
 **Closing a day (shutdown).**
 
     Yesterday: the shutdown flow ran.
     1. day.planned  { day: "2026-09-23",
-                      top_three: [T4, T5, T6] }
+                      top_three: [T4, T5, T6],
+                      source: "shutdown" }
     2. day.closed  { day: "2026-09-22" }
 
 The shutdown sets tomorrow's top three (via `day.planned`) and closes

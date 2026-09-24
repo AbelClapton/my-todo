@@ -53,12 +53,18 @@ Three prompts, each optional, plus a preview.
 Free text. Logged as part of the Daily Note.
 
 **Prompt 2 — What's unfinished.** A short list of today's
-incomplete tasks. The user swipes:
+incomplete tasks. Each row carries a **checkbox** (keep) and an
+**overflow menu** (defer, someday, open), so the ritual is usable
+without gestures. The user can also swipe:
 
 - Right → keep for tomorrow.
 - Left → defer.
-- Down → remove (someday or archive). Never a delete
+- Down → someday. Never a delete
   (`03-experience/gesture-vocabulary.md`).
+
+Swipe down has **one** destination on a task row, decided by the task
+type and not by the user mid-gesture. A user who wants the task
+archived does that from the Task list, where the affordance lives.
 
 **Prompt 3 — Tomorrow's top three.** A picker of candidates:
 
@@ -67,7 +73,7 @@ incomplete tasks. The user swipes:
 - Tasks scheduled for tomorrow.
 - Anything the user searches for.
 
-The user picks three. Optionally, they tap "Draft-day" to have
+The user picks up to three. Optionally, they tap "Draft-day" to have
 Tier 3 propose a schedule for tomorrow
 (`06-flows/morning-plan.md`).
 
@@ -79,7 +85,10 @@ edits.
 
 Tapping "Close day":
 
-1. Logs `day.planned` with tomorrow's top three.
+1. Logs `day.planned` with tomorrow's top three and
+   `source: 'shutdown'`. This is a **draft**, not a confirmed plan:
+   tomorrow's morning plan still fires and opens its picker with these
+   three pre-selected (`06-flows/morning-plan.md`).
 2. Logs `day.closed` for today.
 3. Appends the "what went well" line to today's Daily Note.
 4. Logs `task.scheduled_to_day` for each kept task.
@@ -119,7 +128,9 @@ It is read-only. The morning plan is where edits happen.
 A "Skip" button. Tapping:
 
 - Dismisses shutdown.
-- Logs `day.plan_skipped` for the shutdown.
+- Logs `day.plan_skipped` with `kind: 'shutdown'` for the shutdown.
+  The `kind` matters: the morning plan writes the same event type for
+  the same day, and the two must not suppress each other.
 - Does not fire again today.
 
 The user can access shutdown via the command palette at any time.

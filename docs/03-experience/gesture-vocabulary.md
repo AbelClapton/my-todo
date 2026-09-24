@@ -29,10 +29,14 @@ memory, and the app feels unpredictable.
 
 **1. Swipe right — complete / confirm.**
 
-On a task row: completes the task.
+On a task row in a list: completes the task.
 On a habit row: checks the habit (full version).
 On a nudge: marks it actioned.
 On an inbox capture: routes to "today."
+**On a task row inside a ritual** (the morning plan, the shutdown):
+keeps it for the day the ritual is about. Completion is not a choice a
+plan makes — the task is being committed to, not finished — so "yes"
+takes its other meaning, *accept*.
 
 Right swipe always means "yes / done / accept."
 
@@ -128,9 +132,19 @@ not a general gesture.
 | Protocol report | — | — | — | — | — | — | back | zoom |
 | Inbox | today | someday | attach | remove | AI menu | capture | back | — |
 | Search results | — | — | attach | — | AI menu | capture | back | — |
+| Morning plan row | keep for today | defer | — | someday | — | — | back | — |
+| Shutdown row | keep for tomorrow | defer | — | someday | — | — | back | — |
 | Nudge | action | dismiss | — | — | — | — | — | — |
 
 A dash means the gesture is disabled on that surface.
+
+**The two ritual rows are the only ones whose fallbacks are buttons
+rather than keys.** A plan row carries a checkbox for keep and an
+overflow menu for defer, someday and open — a long-press reveals the
+menu, the same pattern the Task list uses. They have no keyboard
+binding because they exist in a 60-second, one-handed moment; the
+invariant asks every gesture for *a button, a menu item, or a
+shortcut*, and these take the first two.
 
 **The Habit list row does not match this matrix.** Two disagreements,
 both unresolved:

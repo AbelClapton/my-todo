@@ -158,7 +158,7 @@ The Day is the atomic product unit. Field set:
       habits_due: HabitId[],      // derived
       protocol_metrics_due: ProtocolId[],  // derived
       daily_note_id: NoteId,      // auto-created
-      top_three: TaskId[]         // set by day.planned, optional
+      top_three: TaskId[]         // set by day.planned; source says who set it
     }
 
 The Day is a projection (`02-architecture/projections.md`), not

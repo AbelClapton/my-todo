@@ -259,6 +259,27 @@
       <span class="go">Open the retrieval lab →</span>
     </a>
 
+    <a class="lab" href="morning-plan-lab.html">
+      <h3 class="t-title-3">Morning plan &amp; shutdown lab</h3>
+      <p>
+        The two rituals that bookend a day, and the doc that calls them mirrors — <i>"The morning
+        plan commits; the shutdown reviews and pre-commits."</i> Specified as one pair for the
+        first time here.
+      </p>
+      <p>
+        <b>Settled:</b> the pair cancels. The shutdown commits <code>day.planned</code> for
+        <b>tomorrow</b>; the morning plan refuses to fire on a day that is <b>already planned</b>
+        — so the nights the user shuts down are the mornings the ritual does not appear, and the
+        <code>day.plan_skipped</code> sibling carries the <code>kind</code> discriminator that
+        <code>day.planned</code> lacks. The window has a second gate: <b>5am–11am</b> against quiet
+        hours of <b>10pm–7am</b> loses <b>2 of its 6 hours</b>. "Three" is required in <b>2</b>
+        places and optional in <b>2</b>. The commit writes the same two event types as its mirror
+        and declares <b>0</b> of its undo. And neither ritual is a row in the gesture matrix —
+        <b>13</b> rows, the two that invent a task-row vocabulary absent.
+      </p>
+      <span class="go">Open the morning plan lab →</span>
+    </a>
+
   </div>
 
   <section class="lede">
@@ -314,7 +335,11 @@
       <span class="s-done">why this matched · measured</span>
       <span class="s-done">keyboard map · measured</span>
       <span class="s-done">offline behaviour · measured</span>
-      <span class="s-todo">morning plan · shutdown</span>
+      <span class="s-done">morning plan trigger · measured</span>
+      <span class="s-done">morning plan commit · measured</span>
+      <span class="s-done">ritual swipes · measured</span>
+      <span class="s-done">morning plan / shutdown pair · measured</span>
+      <span class="s-todo">lapsed recovery · resurfacing</span>
       <span class="s-todo">Tier 2 · Tier 3 surfaces</span>
     </div>
   </section>
