@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="warm" data-mode="light" data-accent="teal"
+      data-semantics="vivid" data-type="system">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Areas &amp; Goals lab · Small Wins</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="lab.css">
+<style>
+.ag-r{display:grid;grid-template-columns:132px minmax(0,1fr) auto;gap:10px;align-items:baseline;
+  padding:8px 0;border-bottom:1px solid var(--border-subtle);font-size:13px;line-height:18px}
+.ag-r:last-child{border-bottom:0}
+.ag-k{color:var(--text-tertiary)}
+.ag-d{color:var(--text-secondary)}
+.ag-n{font-variant-numeric:tabular-nums;font-weight:600;color:var(--text-primary)}
+.ag-n.good{color:var(--success-text)}
+.ag-n.bad{color:var(--warning-text)}
+.ag-h{font-size:11px;line-height:15px;color:var(--text-muted);margin:10px 0 2px;
+  text-transform:uppercase;letter-spacing:.05em;font-weight:600;display:flex;align-items:center;
+  gap:7px}
+.ag-h:first-child{margin-top:0}
+
+.ag-tag{display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:5px;
+  font-size:11px;letter-spacing:.04em;text-transform:uppercase;font-weight:600}
+.ag-tag.ok{background:var(--success-subtle);color:var(--success-text)}
+.ag-tag.no{background:var(--warning-subtle);color:var(--warning-text)}
+.ag-tag.nu{background:var(--surface-2);color:var(--text-secondary)}
+
+.ag-box{border:1px solid var(--border-subtle);border-radius:10px;padding:10px 12px}
+.ag-box.on{border-color:var(--accent-default)}
+.ag-box.bad{border-color:var(--warning-text)}
+.ag-box h4{margin:0 0 7px;font-size:11px;line-height:14px;color:var(--text-muted);font-weight:600;
+  text-transform:uppercase;letter-spacing:.05em;display:flex;align-items:center;gap:7px}
+.ag-box p{margin:0;font-size:12.5px;line-height:18px;color:var(--text-secondary)}
+.ag-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.ag-quote{font-size:12.5px;line-height:18px;color:var(--text-secondary);font-style:italic;
+  padding-left:11px;border-left:2px solid var(--border-subtle);margin:6px 0 0}
+
+/* the glyph inventory */
+.ag-gl{display:grid;gap:6px}
+.ag-gl-r{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:9px;align-items:center;
+  padding:6px 0;border-bottom:1px solid var(--border-subtle);font-size:12.5px;line-height:18px}
+.ag-gl-r:last-child{border-bottom:0}
+.ag-gl-r .n{color:var(--text-secondary)}
+.ag-gl-r .s{font-size:11px;color:var(--text-muted)}
+.ag-gl-r .no{color:var(--warning-text);font-weight:600}
+
+/* the three meanings */
+.ag-mean{border-left:3px solid var(--border-subtle);padding:2px 0 2px 11px;margin:9px 0}
+.ag-mean .w{font-size:12.5px;line-height:18px;color:var(--text-primary);font-weight:600}
+.ag-mean .m{font-size:12px;line-height:17px;color:var(--text-secondary);margin-top:2px}
+
+.ag-code{font-family:var(--type-mono-family,ui-monospace,Menlo,monospace);font-size:10.5px;
+  line-height:16px;color:var(--text-secondary);white-space:pre-wrap;word-break:break-word;
+  background:var(--surface-2);border-radius:8px;padding:10px 11px}
+.ag-code .k{color:var(--text-primary);font-weight:600}
+.ag-code .bad{color:var(--warning-text);font-weight:600}
+
+/* goal + protocol timeline */
+.ag-tl{border-left:2px solid var(--border-subtle);margin:6px 0 0 6px;padding-left:12px}
+.ag-tl .p{font-size:12.5px;line-height:18px;color:var(--text-secondary);margin:0 0 7px}
+.ag-tl .p b{color:var(--text-primary)}
+.ag-tl .p .d{font-variant-numeric:tabular-nums;color:var(--text-muted)}
+</style>
+</head>
+<body data-lab="areas">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-briefcase" viewBox="0 0 24 24"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></symbol>
+  <symbol id="i-house" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+  <symbol id="i-heart-pulse" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></symbol>
+  <symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+  <symbol id="i-inbox" viewBox="0 0 24 24"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></symbol>
+  <symbol id="i-archive" viewBox="0 0 24 24"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol>
+  <symbol id="i-mode-tasks" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol>
+  <symbol id="i-mode-notes" viewBox="0 0 24 24"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></symbol>
+</svg>
+
+<header class="masthead">
+  <p class="eyebrow">Lab 16 · the module the last thirteen labs skipped</p>
+  <h1 class="t-title-1">Areas &amp; Goals</h1>
+  <p class="lede-p">
+    <code>areas-and-goals.md</code> is the only module doc with no lab, and the gap shows in what it
+    contains: a layer the app seeds on day one and never draws again, and a screen that is empty for
+    a fortnight by design.
+  </p>
+  <p class="lede-p">
+    Its own thesis is that Areas and Goals are <i>"not destinations"</i> — filters and parents. That
+    holds for Areas, which have no detail screen anywhere in the set. It does not hold for Goals, and
+    the two counts that decide the module are both wrong in the same direction: too small.
+  </p>
+</header>
+
+<div class="bar">
+  <nav class="tabs" id="tabs">
+    <button class="tab" data-go="doors">Where they appear</button>
+    <button class="tab" data-go="glyphs">The glyph with no field</button>
+    <button class="tab" data-go="inbox">One word, three things</button>
+    <button class="tab" data-go="reversible">Reversible, except here</button>
+  </nav>
+</div>
+
+<main id="main">
+
+<!-- ================================================================= DOORS -->
+<section class="screen" id="doors">
+  <div class="lede">
+    <h2 class="t-title-2">Where they appear</h2>
+    <p class="lede-p">
+      §Surfaces lists five, and <code>surfaces.md</code> files five. The disagreement is not in the
+      list but in the reach: §Surfaces says the Area filter is <i>"In the Tasks and Habits
+      modes"</i>, and §Filters — four paragraphs later, in the same doc — gives it four places.
+    </p>
+    <p class="lede-p">
+      Checking the four against the modules is the interesting part. Two are real, one is grouping
+      being described as filtering, and one is claimed here and specified nowhere.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">Five surfaces, two entry counts, and one invariant about not being a
+          destination.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="ag-h">§Surfaces, and where each one is reachable from</p>
+            <div class="ag-r"><span class="ag-k">Area filter</span>
+              <span class="ag-d">Tasks · Habits — <b>per this section</b></span>
+              <span class="ag-tag no">2</span></div>
+            <div class="ag-r"><span class="ag-k">Area filter</span>
+              <span class="ag-d">Tasks · Habits · Notes · Search — <b>per §Filters</b></span>
+              <span class="ag-tag no">4</span></div>
+            <div class="ag-r"><span class="ag-k">Area list</span>
+              <span class="ag-d">Settings</span>
+              <span class="ag-tag nu">1 door</span></div>
+            <div class="ag-r"><span class="ag-k">Goal list</span>
+              <span class="ag-d">Settings · palette ("Show goals") · any protocol detail</span>
+              <span class="ag-tag ok">3 doors</span></div>
+            <div class="ag-r"><span class="ag-k">Goal detail</span>
+              <span class="ag-d">Tapping a row in the Goal list</span>
+              <span class="ag-tag nu">1 door</span></div>
+            <div class="ag-r"><span class="ag-k">Goal creation</span>
+              <span class="ag-d">The Protocol proposal flow, or the Goal list</span>
+              <span class="ag-tag nu">2 doors</span></div>
+            <div class="ag-box bad">
+              <h4><svg class="ic"><use href="#i-alert"/></svg>The invariant and the table disagree</h4>
+              <p><i>"Areas and Goals do not appear in any mode's navigation. They are filters and
+                parents, not destinations."</i> The Goal list has <b>three</b> doors, the Goal detail
+                is a screen carrying an action, and Goal creation has two. An Area, meanwhile, has
+                no detail screen at all.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. §Surfaces, §Filters, and the invariant, all from the same doc.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="doors-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The invariant's second sentence is doing two jobs: <b>not in the mode navigation</b>
+            (true of both) and <b>not a destination</b> (true of Areas, false of Goals). The doc then
+            builds a Goal detail, which a non-destination does not have.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Four claimed, two evidenced</span>
+        <p class="vc-stance">§Filters lists Tasks, Habits, Notes and Search. Check each against the
+          module that owns it.</p>
+        <span class="vc-read">cut the reach · or specify the two that are missing</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="ag-h">§Filters, one row per claim</p>
+            <div class="ag-r"><span class="ag-k">Tasks</span>
+              <span class="ag-d">tasks.md: "Filters (via <code>Cmd+F</code> or a filter button): by
+                Area, by Person…"</span>
+              <span class="ag-tag ok">real</span></div>
+            <div class="ag-r"><span class="ag-k">Notes</span>
+              <span class="ag-d">notes.md: "All notes, filterable by attachment type, by Area…"</span>
+              <span class="ag-tag ok">real</span></div>
+            <div class="ag-r"><span class="ag-k">Habits</span>
+              <span class="ag-d">habits.md: "All. All active habits, <b>grouped by Area</b>."</span>
+              <span class="ag-tag no">grouping</span></div>
+            <div class="ag-r"><span class="ag-k">Search</span>
+              <span class="ag-d">retrieval.md's search screen: groups by atom type; no Area filter</span>
+              <span class="ag-tag no">unstated</span></div>
+            <div class="ag-box">
+              <h4>Grouping is not filtering, and the difference is the recovery</h4>
+              <p>A group header organises what is already in the list. A filter removes rows and
+                needs a way back — <code>tasks.md</code> gives it one: an empty filtered list reads
+                <i>"Area: Work · due within 7 days"</i> with a <b>Clear filters</b> action. The
+                Habits mode has no such state, because nothing was ever removed.</p>
+            </div>
+            <div class="ag-box bad">
+              <h4>And the fourth has no home at all</h4>
+              <p><code>retrieval.md</code> owns the search screen and gives it one grouping rule and
+                an empty state. Nothing there mentions an Area, so an Area filter on search is
+                specified only by the doc that is claiming it.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>§Filters and §Surfaces agree on one number, and it is <b>three</b>: Tasks, Notes and
+            Search. Habits keeps the grouping it actually has. Search gains its Area filter in
+            <code>retrieval.md</code>, where the screen lives, or loses the claim here.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One row leaves, one row is added to another doc. The module doc stops being the only
+            place that knows search can be filtered by Area.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd><code>surfaces.md</code> files exactly one "Area filter" row, as a <b>Control</b> —
+            but a filter on four surfaces is four controls, and the row's kind is the row inside the
+            sheet rather than the affordance. <code>tasks.md</code> calls the container a
+            <b>Filter sheet</b> and already has its own surface row.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">A goal with no plan is the normal case</span>
+        <p class="vc-stance">The Goal list is empty on day one and stays short for a fortnight. That
+          is stated, and it has a consequence the doc does not draw.</p>
+        <span class="vc-read">draw the empty state · it is the first one a user sees</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="ag-box">
+              <h4>The doc's own arithmetic</h4>
+              <p><i>"Nothing creates a Goal automatically… a protocol needs two weeks of data before
+                it can be proposed at all, so this list stays short for a fortnight."</i></p>
+            </div>
+            <p class="ag-h">The empty state it specifies</p>
+            <div class="mp-card" style="border:1px solid var(--border-strong);border-radius:12px;
+                 background:var(--bg-raised);padding:14px">
+              <div style="display:flex;align-items:center;gap:9px">
+                <svg class="ic ic-lg"><use href="#i-target"/></svg>
+                <span style="font-size:15px;line-height:21px;font-weight:600;
+                  color:var(--text-primary)">Nothing to aim at.</span>
+              </div>
+              <p style="font-size:12.5px;line-height:18px;color:var(--text-secondary);margin:7px 0 0">
+                A Goal is an outcome under an Area — the thing a protocol is run against.</p>
+              <div style="margin-top:11px"><span style="font-size:12.5px;line-height:18px;
+                font-weight:600;padding:5px 11px;border-radius:7px;background:var(--accent-default);
+                color:var(--on-fill)">New goal</span></div>
+            </div>
+            <div class="ag-box bad">
+              <h4>The action needs a parent the flow may not have made yet</h4>
+              <p>A Goal belongs to one Area, and §Area assignment says an Area is inherited
+                <i>"if created from a Goal or Protocol"</i>. From the Goal list, there is nothing to
+                inherit from — so the <b>New goal</b> action opens the Goal creation sheet, which
+                must ask for an Area. The empty state's single action is therefore a form, not a
+                decision.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The empty state's detail line names the Area step: <i>"A Goal is an outcome under an
+            Area. Pick the Area it belongs to."</i> One clause, and the action stops being a
+            surprise.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Nothing. The secondary line exists for exactly this.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd><code>states.md</code>'s form requires the action to <b>repair the cause</b>. Here the
+            cause is "no Goal exists", and the repair is a three-field sheet the user has not been
+            told about. The doc even says the Area list's empty state reads differently
+            <i>"because the user emptied it"</i> — so it is thinking about what the action implies,
+            for the other row.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The Goal detail is where the payoff lives</span>
+        <p class="vc-stance">It is the only surface in the app that shows a finished experiment
+          next to its outcome.</p>
+        <span class="vc-read">keep this · it is the module's strongest invention</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="ag-box">
+              <h4>Goal detail, with history</h4>
+              <div class="ag-tl">
+                <p><b>Learn Japanese</b> · Area: Learning · active</p>
+                <p>Vocabulary app <span class="d">14+28 days</span> · delta
+                  <b>+0.8</b> — completed</p>
+                <p>Listening practice <span class="d">14+28 days</span> · delta
+                  <b>+0.2</b> — abandoned</p>
+                <p style="margin-bottom:0"><span style="font-size:12px;padding:4px 9px;
+                  border-radius:7px;background:var(--accent-default);color:var(--on-fill);
+                  font-weight:600">Propose a protocol</span></p>
+              </div>
+            </div>
+            <div class="ag-box on">
+              <h4>What only this surface can say</h4>
+              <p><i>"The Goal detail is where 'test one variable' lives: after a protocol completes
+                with a clear positive delta, the Goal detail shows the option to run a follow-up
+                protocol."</i></p>
+              <p style="margin-top:7px">That sentence is the reason Goals exist as a layer rather
+                than as a tag. A protocol report can only compare itself; a Goal can compare
+                <b>two protocols</b> — and the delta column above is the only place in the app where
+                a second experiment makes the first one mean something.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The Goal detail's contents, its delta column and its follow-up action, as
+            §Goals and protocols specifies them.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>None. This is the module's strongest paragraph, and it is also the reason the next
+            screen's problem is expensive.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>One, and it is in <code>protocols.md</code>: "Propose a protocol" from here
+            <i>"opens a Tier 3 flow"</i> with <b>1–2 clarifying questions</b>. Tier 3's own doc says
+            it is reached from the palette and that <i>"a clarification and its response are one
+            invocation"</i> — a two-question exchange is not one, and a button on a screen is not
+            a palette door.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Three filter surfaces, one door count per surface, and a Goal named as
+          what it is.</p>
+        <span class="vc-read">synthesis · say which layer is a destination</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="ag-h">The corrected inventory</p>
+            <div class="ag-r"><span class="ag-k">Area filter</span>
+              <span class="ag-d">Tasks · Notes · Search — one Control, in each mode's sheet</span>
+              <span class="ag-tag ok">3</span></div>
+            <div class="ag-r"><span class="ag-k">Area grouping</span>
+              <span class="ag-d">Habits — All, grouped by Area. Not a filter</span>
+              <span class="ag-tag ok">named</span></div>
+            <div class="ag-r"><span class="ag-k">Area list</span>
+              <span class="ag-d">Settings, and a palette command, so the two doors match</span>
+              <span class="ag-tag ok">2</span></div>
+            <div class="ag-r"><span class="ag-k">Goal list</span>
+              <span class="ag-d">Palette · protocol detail · the Area list's row</span>
+              <span class="ag-tag ok">3</span></div>
+            <div class="ag-r"><span class="ag-k">Goal detail</span>
+              <span class="ag-d">A screen, because it holds history and an action</span>
+              <span class="ag-tag ok">destination</span></div>
+            <div class="ag-box on">
+              <h4>And the invariant splits in two</h4>
+              <p><i>"Neither appears in any mode's navigation. <b>An Area is a filter; a Goal is a
+                screen</b> — a Goal holds a history that a filter cannot."</i></p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>One sentence in the invariant, one number in §Surfaces, one row in §Filters, and one
+            row in <code>retrieval.md</code> for the search filter.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Search gains a control it may not want — a text search with an Area filter is two
+            questions at once. The alternative is deleting the claim, which is one edit instead of
+            two.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. The Goal's status as a screen is the doc's own behaviour, finally written in
+            its invariant.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the inventory measures</h2>
+    <div class="measure" id="measure-doors">…</div>
+  </div>
+</section>
+
+<!-- ================================================================ GLYPHS -->
+<section class="screen" id="glyphs">
+  <div class="lede">
+    <h2 class="t-title-2">The glyph with no field</h2>
+    <p class="lede-p">
+      <code>components.md</code> holds a <b>closed</b> inventory of thirteen glyphs and states the
+      rule: <i>"Nothing outside this table is drawn, and no surface adds one locally."</i> Four of
+      the thirteen mark Areas, and they are exactly the four seeded on first launch.
+    </p>
+    <p class="lede-p">
+      Three docs then say a task row <b>leads</b> with its Area's glyph. The Area entity is
+      <code>{ id, name, state }</code> — there is no glyph to lead with, and the inventory forbids
+      inventing one. So the rule holds for four Areas out of every Area the app can have.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">Thirteen glyphs, four for Areas, four seeded Areas, and no field.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="ag-h">The four, as components.md draws them</p>
+            <div class="ag-gl">
+              <div class="ag-gl-r"><svg class="ic"><use href="#i-briefcase"/></svg>
+                <span class="n">The Work area</span><span class="s">briefcase</span></div>
+              <div class="ag-gl-r"><svg class="ic"><use href="#i-house"/></svg>
+                <span class="n">The Home area</span><span class="s">house</span></div>
+              <div class="ag-gl-r"><svg class="ic"><use href="#i-heart-pulse"/></svg>
+                <span class="n">The Health area</span><span class="s">heart-pulse</span></div>
+              <div class="ag-gl-r"><svg class="ic"><use href="#i-book-open"/></svg>
+                <span class="n">The Learning area</span><span class="s">book-open</span></div>
+            </div>
+            <div class="ag-code"><span class="k">object-model.md · Area</span>
+{ id: ULID, name: string,
+  state: <span class="bad">'active' | 'archived'</span> }</div>
+            <div class="ag-box bad">
+              <h4><svg class="ic"><use href="#i-alert"/></svg>Three docs assert it, one field would hold it</h4>
+              <p><code>tasks.md</code>: <i>"Where an Area is present it <b>leads</b> with the Area's
+                glyph (<code>icon-xs</code>)."</i> <code>onboarding.md</code>: each chip
+                <i>"carries the same glyph the task row uses for that Area."</i>
+                <code>components.md</code>: the glyph <i>"Marks: The Work area"</i> — a
+                <b>name</b>, not a field.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The closed inventory, the four Area glyphs, the Area field set, and the three
+            sentences that assume a glyph.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="glyphs-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The inventory's rule is the strictest in the set — <i>"nothing outside this table is
+            drawn"</i> — and it is written to stop a surface inventing an icon. Read against the
+            Area, it stops the <b>user</b> having one instead.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Who has no glyph</span>
+        <p class="vc-stance">Four of the five default Areas, and every Area the user adds.</p>
+        <span class="vc-read">state the fallback · there is no fifth glyph to add</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="ag-h">Every Area the app can have</p>
+            <div class="ag-r"><span class="ag-k">Health · Work</span>
+              <span class="ag-d">seeded, in the inventory</span>
+              <span class="ag-tag ok">4 glyphs</span></div>
+            <div class="ag-r"><span class="ag-k">Home · Learning</span>
+              <span class="ag-d">seeded, in the inventory</span>
+              <span class="ag-tag ok">4 glyphs</span></div>
+            <div class="ag-r"><span class="ag-k">Inbox</span>
+              <span class="ag-d">built in, cannot be archived, <b>not in the thirteen</b></span>
+              <span class="ag-tag no">none</span></div>
+            <div class="ag-r"><span class="ag-k">Any Area the user adds</span>
+              <span class="ag-d">"The user can rename, archive, or add."</span>
+              <span class="ag-tag no">none</span></div>
+            <div class="ag-r"><span class="ag-k">Work, renamed to "Job"</span>
+              <span class="ag-d">the glyph is keyed to the name "Work area"</span>
+              <span class="ag-tag no">unresolved</span></div>
+            <div class="ag-box bad">
+              <h4>Inbox is the default, so this is the common case</h4>
+              <p>Capture puts an uncategorised task in Inbox. <code>tasks.md</code> says the row
+                leads with the Area's glyph. So a newly captured task's row and a task filed under
+                Work have <b>different shapes</b> — and the one with no glyph is the one the app
+                creates for you.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The rule is stated with its fallback: <b>an Area with no glyph draws no glyph, and
+            the row closes up</b> — which the row grid can already do, since it is a grid. Plus a
+            decision on the renamed case: the glyph is stored, not looked up.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Storing it means one field on the Area and one more thing the creation sheet asks —
+            or a default glyph per new Area, which is a thirteenth-and-a-half the inventory does not
+            have. Drawing nothing costs no field and no sheet row.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The two rules above the table are <i>"an icon belongs where a word belongs, not where
+            the row begins"</i> and <i>"a glyph either replaces a word or marks a slot"</i>. An Area
+            glyph marks a slot and replaces nothing — so it is legal, and its absence is an absence
+            of <b>mark</b> rather than of word: the row is not less readable, it is less
+            scannable.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The Inbox is not in the inventory either</span>
+        <p class="vc-stance">Onboarding shows five Areas and says each chip carries the row's glyph.
+          Only four have one.</p>
+        <span class="vc-read">reconcile onboarding with the table</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="ag-box">
+              <h4>onboarding.md, screen 2</h4>
+              <p><i>"Four preselected, each with its Area glyph: Health, Work, Home, Learning…
+                Each chip carries the same glyph the task row uses for that Area, so the
+                iconography is learnt here."</i></p>
+            </div>
+            <div class="ag-box">
+              <h4>And then</h4>
+              <p><i>"<b>The "Inbox" Area is shown, not silent.</b> It is created on this screen and
+                … one of them is being chosen for them."</i></p>
+            </div>
+            <div class="ag-box bad">
+              <h4>The screen that teaches the iconography has five chips and four glyphs</h4>
+              <p>Onboarding's claim is that the pattern is <i>learnt</i> on this screen. The fifth
+                chip teaches that the pattern does not always hold — which is either the most useful
+                thing on the screen or the thing that makes the other four unreliable, and the doc
+                does not say which.</p>
+            </div>
+            <div class="ag-box on">
+              <h4>What it could say</h4>
+              <p>If Inbox draws no glyph <b>and the doc says so</b>, the screen teaches the real
+                rule in the only place a rule can be taught: <i>an Area can have a glyph; Inbox is
+                where anything goes, so it has none.</i></p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>One clause in <code>onboarding.md</code>: the fifth chip is drawn without a glyph
+            <b>on purpose</b>, and the copy says why. That turns a gap into the screen's one
+            honest sentence about how Areas work.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Half a line of copy on a screen that already carries the Inbox explanation — the doc
+            says Inbox "is shown, not silent", so a sentence is already being spent there.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd><code>components.md</code>'s inventory is <b>closed at thirteen</b>, so adding a
+            fourteenth glyph for Inbox needs the inventory edited, not a surface adding one. The doc
+            that owns the inventory is the doc that should decide.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">A glyph that follows a rename</span>
+        <p class="vc-stance">Areas are renamable by design. If the glyph is keyed to the name, a
+          rename silently changes the icon or loses it.</p>
+        <span class="vc-read">store it · renames are free and already logged</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="ag-code"><span class="k">data-lifecycle.md · renames</span>
+"<span class="bad">Area / goal renames.</span> Free to change. Renames
+ are logged and…"</div>
+            <div class="ag-r"><span class="ag-k">Before</span>
+              <span class="ag-d">Work · briefcase — the name and the glyph agree</span>
+              <span class="ag-tag ok">fine</span></div>
+            <div class="ag-r"><span class="ag-k">Rename to "Job"</span>
+              <span class="ag-d">nothing in the log records a glyph, and
+                <code>area.renamed</code> carries only <code>{ area_id, name }</code></span>
+              <span class="ag-tag no">keyed to a name</span></div>
+            <div class="ag-r"><span class="ag-k">Rename to "Work stuff"</span>
+              <span class="ag-d">does it still match "The Work area"? By prefix? By nothing?</span>
+              <span class="ag-tag no">undefined</span></div>
+            <div class="ag-box bad">
+              <h4>Renames are explicitly free, and the glyph is the only thing that cannot follow</h4>
+              <p><code>data-lifecycle.md</code> says a rename is <i>"free to change"</i> — it is a
+                label, not an identity. Keying a visual mark to the label makes one of the two
+                things that can change without cost the one that costs something.</p>
+            </div>
+            <div class="ag-box on">
+              <h4>And the log cannot express the fix</h4>
+              <p>Storing the glyph means <code>area.created</code> and <code>area.renamed</code>
+                carry it, which means <b>two payload changes</b> to existing types. The set's rule is
+                that adding a <i>type</i> needs an ADR; changing a payload is the grey area ADR 0012
+                occupied — and it made exactly this kind of call, adding fields to
+                <code>task.created</code>'s neighbours while deliberately <i>not</i> extending
+                <code>task.created.source</code>.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Either the glyph is <b>stored</b> on the Area and the two payloads gain a field, or the
+            four seeded Areas keep a permanent <code>glyph</code> by id and a rename cannot touch it
+            — which needs no payload change at all, because the glyph is a property of the
+            <b>seed</b> rather than of the Area.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The id-keyed version is free and needs one sentence; it also means a user-created Area
+            can never gain a glyph, which is the previous screen's decision restated.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd><code>object-model.md</code> is the entity authority and gives three fields. Adding a
+            fourth is an object-model edit, not a components edit — so whichever way this goes, the
+            change belongs in the doc that owns the shape.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Four glyphs, keyed to the four seeds, with the absence stated where it
+          is learnt.</p>
+        <span class="vc-read">synthesis · the inventory stays closed at thirteen</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="ag-h">The rule, stated once</p>
+            <div class="ag-box on">
+              <h4>components.md</h4>
+              <p><i>The four seeded Areas carry a glyph. <b>Inbox does not, and neither does an Area
+                the user adds</b> — a row with no glyph closes up, because the grid already has a
+                column for it. A rename does not move a glyph: the mark belongs to the seeded Area,
+                not to its name.</i></p>
+            </div>
+            <p class="ag-h">And the consequence, drawn</p>
+            <div class="ag-gl">
+              <div class="ag-gl-r"><svg class="ic"><use href="#i-briefcase"/></svg>
+                <span class="n">Draft Q4 plan</span><span class="s">Work · due today</span></div>
+              <div class="ag-gl-r"><svg class="ic"><use href="#i-inbox"/></svg>
+                <span class="n" style="color:var(--text-muted)">Call contractor</span>
+                <span class="s">Inbox — no glyph, row closes up</span></div>
+            </div>
+            <div class="ag-box">
+              <h4>The test this passes</h4>
+              <p>A designer can answer "what does a task row look like" for every task, in both
+                columns — and knows which absence is a decision.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>One paragraph in <code>components.md</code>, one clause in <code>tasks.md</code>
+            ("where an Area has one"), one clause in <code>onboarding.md</code>. No new glyph, no
+            new field, no ADR.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A user-created Area never gains an icon. If the app wants one, it needs a
+            <code>glyph</code> field, two payload changes and an object-model edit — which is a
+            decision, and the set already has a place to record one.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. The inventory's closing rule is preserved, and the fallback is the row's own
+            grid rather than a fourteenth symbol.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the glyph measures</h2>
+    <div class="measure" id="measure-glyphs">…</div>
+  </div>
+</section>
+
+<!-- ================================================================= INBOX -->
+<section class="screen" id="inbox">
+  <div class="lede">
+    <h2 class="t-title-2">One word, three things</h2>
+    <p class="lede-p">
+      "Inbox" is an <b>Area</b> here: <i>"There is a built-in 'Inbox' Area for uncategorized
+      tasks. It cannot be archived."</i> It is a <b>destination</b> in <code>capture.md</code>:
+      a task appears <i>"in Tasks → Today if scheduled, or Next / Someday / Inbox otherwise."</i>
+      And it is the <b>parser's outcome</b>: <code>tier-1-parsing.md</code>'s example ends
+      <i>"area Inbox"</i>.
+    </p>
+    <p class="lede-p">
+      The middle one is the problem. <code>tasks.md</code> has four scopes — Today, Next, Someday,
+      All — and none of them is Inbox. So a reader of the capture flow goes looking for a scope that
+      the Tasks mode does not have.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The three uses, in the three docs that make them.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="ag-mean">
+              <div class="w">An Area</div>
+              <div class="m">areas-and-goals.md · <i>"a built-in 'Inbox' Area for uncategorized
+                tasks. It cannot be archived."</i></div>
+            </div>
+            <div class="ag-mean">
+              <div class="w">A destination</div>
+              <div class="m">capture.md · <i>"Appears in Tasks → Today if scheduled, or Next /
+                Someday / <b>Inbox</b> otherwise."</i></div>
+            </div>
+            <div class="ag-mean">
+              <div class="w">The parser's default</div>
+              <div class="m">tier-1-parsing.md · <i>"→ task · due Tue Sep 29 · area Inbox."</i></div>
+            </div>
+            <div class="ag-box bad">
+              <h4><svg class="ic"><use href="#i-alert"/></svg>And the scope it names does not exist</h4>
+              <p><code>tasks.md</code> §Scopes: <b>Today · Next · Someday · All</b>. Four, and Inbox
+                is not one of them. The Tasks mode's segmented control has no fifth position, and
+                the Filter sheet filters by Area — which is how "Inbox" is reachable, as a
+                <i>filter value</i> rather than a scope.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The three uses, in the three docs.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="inbox-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Two of the three uses are correct and consistent: a task with no Area goes in the
+            Inbox Area, and Area is what the parser sets. The third is a <b>scope</b> in a mode
+            whose scope list is fixed at four, written beside two real scopes so it reads as one.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">A built-in with no field behind it</span>
+        <p class="vc-stance">"It cannot be archived" and "four are seeded" are rules the entity
+          cannot express.</p>
+        <span class="vc-read">mark the seed · or accept that the rule is a convention</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="ag-h">The rules about Areas</p>
+            <div class="ag-r"><span class="ag-k">Cannot be archived</span>
+              <span class="ag-d">Inbox only — and <code>area.archived</code> takes any
+                <code>area_id</code></span>
+              <span class="ag-tag no">no guard</span></div>
+            <div class="ag-r"><span class="ag-k">Four seeded on first launch</span>
+              <span class="ag-d">Health, Work, Home, Learning</span>
+              <span class="ag-tag no">no marker</span></div>
+            <div class="ag-r"><span class="ag-k">Belongs to exactly one Area</span>
+              <span class="ag-d"><code>area_id</code> is required on Task, Habit, Goal</span>
+              <span class="ag-tag ok">a field</span></div>
+            <div class="ag-code" style="margin-top:6px"><span class="k">object-model.md · Area</span>
+{ id, name, state: 'active' | 'archived' }
+<span class="bad">// nothing marks a built-in, a seed, or a glyph</span></div>
+            <div class="ag-box bad">
+              <h4>The projection's job, and it is doing three</h4>
+              <p>Enforcing "Inbox cannot be archived", knowing which four are seeds, and which mark
+                each one draws are all derivable from <code>area_id</code> <b>if the ids are
+                known</b>. Nothing in the set says they are: the seeded Areas are named, never
+                identified, while every other rule in the app is enforced against the log.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>One sentence naming the five built-in Areas as <b>fixed ids</b>, so "cannot be
+            archived", "is a seed" and "draws the briefcase" are three reads of one fact rather
+            than three conventions. It also answers the previous screen without a new field.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Five ids become part of the contract, which means they can never be reused and a
+            fresh install must mint the same ones. That is a real constraint, and the alternative —
+            matching on name — breaks on rename.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd><code>projections.md</code> recomputes state from the log. A projection that enforces
+            the Inbox rule must decide what "is Inbox" means, and the log says only
+            <code>area.created { area_id, name }</code> — so today it has to decide by name, which
+            is the one thing <code>data-lifecycle.md</code> says is free to change.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The parser feature that is not in the parser doc</span>
+        <p class="vc-stance">"work: file taxes" → Work. Tier 1's own doc describes no such prefix.</p>
+        <span class="vc-read">move it to the doc that owns parsing</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="ag-box bad">
+              <h4>areas-and-goals.md §Area assignment</h4>
+              <p><i>"If created via capture, the parser <b>may infer an Area from the text</b>
+                ('work: file taxes' → Work). If unsure, Inbox."</i></p>
+            </div>
+            <p class="ag-h">What the parser doc says about Areas</p>
+            <div class="ag-r"><span class="ag-k">Mentions of "Area"</span>
+              <span class="ag-d">one — in an example's output line</span>
+              <span class="ag-n bad">1</span></div>
+            <div class="ag-r"><span class="ag-k">A prefix syntax</span>
+              <span class="ag-d">searched for <code>work:</code>, "infer", "area from the text"</span>
+              <span class="ag-n bad">0</span></div>
+            <div class="ag-r"><span class="ag-k">What it can parse</span>
+              <span class="ag-d">tasks, events, habits, notes, dates, people</span>
+              <span class="ag-n">6 kinds</span></div>
+            <div class="ag-box">
+              <h4>Three docs now describe what Tier 1 parses</h4>
+              <p><code>tier-1-parsing.md</code> owns "what Tier 1 can parse";
+                <code>capture.md</code> owns the outcomes and the confidence bands;
+                <code>areas-and-goals.md</code> owns a fourth thing — a syntax. The capture lab
+                already moved the bands back to the parser doc for this exact reason.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The syntax moves to <code>tier-1-parsing.md</code> §What Tier 1 can parse, beside the
+            other four things it recognises, and this doc cites it. Either that, or the feature is
+            dropped — which is the smaller change and the one to prefer if no parser has been
+            specified to build it.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A prefix syntax is a fifth thing for the parser to get right, and one more way for a
+            capture to be filed somewhere the user did not expect. "If unsure, Inbox" is already a
+            good default, and it needs no syntax.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd><code>capture.md</code>'s invariant is that the user <i>"does not pick a type, an Area,
+            a date, or a project"</i> at capture time. A <code>work:</code> prefix is the user
+            picking an Area, in the field whose whole design is that they do not have to — so the
+            feature is not just unspecified, it is in tension with the flow it claims to serve.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The Inbox is not a backlog</span>
+        <p class="vc-stance">A task in Inbox is uncategorised, not unsorted. The app has two other
+          things called an inbox and neither is this.</p>
+        <span class="vc-read">name the two inboxes apart</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="ag-h">Two surfaces with "inbox" in their job description</p>
+            <div class="ag-r"><span class="ag-k">The Inbox Area</span>
+              <span class="ag-d">a place a Task lives. Terminal — nothing waits to be sorted</span>
+              <span class="ag-tag nu">a home</span></div>
+            <div class="ag-r"><span class="ag-k">The inbox list</span>
+              <span class="ag-d">capture.md: unparsed notes + unclassified tasks, with a ritual</span>
+              <span class="ag-tag nu">a queue</span></div>
+            <div class="ag-r"><span class="ag-k">Overlap</span>
+              <span class="ag-d">a task with no Area <b>and</b> no scheduling is in both</span>
+              <span class="ag-n bad">both</span></div>
+            <div class="ag-box bad">
+              <h4>And the ritual has nothing to do with the Area</h4>
+              <p>The sort ritual's four gestures are today / someday / attach / remove. Three of
+                them are about <b>when</b> and <b>what with</b>, not about <b>which Area</b>. So the
+                ritual that lives in the inbox cannot clear the Inbox Area — a user can empty the
+                inbox list and still have every task filed under Inbox.</p>
+            </div>
+            <div class="ag-box on">
+              <h4>Which is fine, and unnamed</h4>
+              <p>The two are doing different jobs: the Area is a default, the list is a queue. One
+                sentence in <code>areas-and-goals.md</code> — <i>"the Inbox Area is not the inbox
+                list; a task can leave the list without leaving the Area"</i> — is the whole
+                fix.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>One sentence in this doc and one clause in <code>capture.md</code>, so a reader knows
+            there are two things named inbox and which one each gesture touches.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>None. The capture lab already established that Inbox is a built-in Area; this only
+            says it is not the list the ritual empties.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd><code>capture.md</code> describes the inbox as <i>"unparsed notes and unclassified
+            tasks"</i> — <b>unclassified</b> means no type, and the app's word for no Area is
+            <b>uncategorized</b>, in this doc. Two words an edit apart, naming two different
+            unset things, on two surfaces whose names are the same.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">The Area keeps its name, the scope language goes, and the two inboxes
+          are distinguished once.</p>
+        <span class="vc-read">synthesis · one word, one meaning, per doc</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="ag-box on">
+              <h4>capture.md, corrected</h4>
+              <p><i>"Appears in Tasks → Today if scheduled, otherwise in Next or Someday, and filed
+                under the <b>Inbox Area</b> until the user gives it one."</i></p>
+              <p style="margin-top:7px">The destination is stated as an Area, and the scopes it
+                lists are the four that exist.</p>
+            </div>
+            <div class="ag-box on">
+              <h4>areas-and-goals.md, corrected</h4>
+              <p><i>"The Inbox Area is not the inbox list. A Task leaves the list when it is
+                classified; it leaves the Area when it is given one."</i></p>
+            </div>
+            <div class="ag-box">
+              <h4>And the five built-ins are named as ids</h4>
+              <p>So &ldquo;cannot be archived&rdquo; is enforced against an id rather than matched against
+                a name that the user may rename.</p>
+            </div>
+            <div class="ag-box">
+              <h4>The test this passes</h4>
+              <p>A reader can say where a captured task goes, what would move it, and why emptying
+                the inbox list leaves its Area alone.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Two sentences and one phrase. The Inbox Area survives as the default and stops being
+            referred to as a place a task can be "in" in the same breath as a scope.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The <code>work:</code> syntax is dropped rather than documented, which costs a feature
+            the parser doc never claimed.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. Nothing here adds a surface, an event or a field; it removes an ambiguity and a
+            claim.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the Inbox measures</h2>
+    <div class="measure" id="measure-inbox">…</div>
+  </div>
+</section>
+
+<!-- ============================================================ REVERSIBLE -->
+<section class="screen" id="reversible">
+  <div class="lede">
+    <h2 class="t-title-2">Reversible, except here</h2>
+    <p class="lede-p">
+      <code>data-lifecycle.md</code> states it as an invariant: <i>"Archival is reversible."</i> Its
+      §Archival then works through the entity types — Tasks, Notes, Events, Habits, Protocols,
+      People — and stops.
+    </p>
+    <p class="lede-p">
+      Areas are archivable. Goals have three states with a reversal entry. Neither appears in
+      §Archival, and the log has <code>area.archived</code> with no
+      <code>area.unarchived</code> — the third time this set has found a reversible action with no
+      way to reverse it.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">An invariant, a list of six entity types, and two absent from it.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="ag-quote">"Archival is reversible. Nothing is silently removed from the…"</div>
+            <p class="ag-h">§Archival's list</p>
+            <div class="ag-r"><span class="ag-k">Tasks</span>
+              <span class="ag-d">hidden from <code>task_list</code> after 30 days</span>
+              <span class="ag-tag ok">listed</span></div>
+            <div class="ag-r"><span class="ag-k">Notes · Events</span>
+              <span class="ag-d">never auto-archived · the 90-day mirror</span>
+              <span class="ag-tag ok">listed</span></div>
+            <div class="ag-r"><span class="ag-k">Habits · People</span>
+              <span class="ag-d">both stop appearing, both keep their links</span>
+              <span class="ag-tag ok">listed</span></div>
+            <div class="ag-r"><span class="ag-k">Protocols</span>
+              <span class="ag-d">completed and abandoned remain, reports attached</span>
+              <span class="ag-tag ok">listed</span></div>
+            <div class="ag-r"><span class="ag-k">Areas</span>
+              <span class="ag-d">archivable, and absent from this list</span>
+              <span class="ag-tag no">0 mentions</span></div>
+            <div class="ag-r"><span class="ag-k">Goals</span>
+              <span class="ag-d">achieved / abandoned / reopened, and absent</span>
+              <span class="ag-tag no">0 mentions</span></div>
+            <div class="ag-box bad">
+              <h4><svg class="ic"><use href="#i-archive"/></svg>And the log has no way back</h4>
+              <div class="ag-code" style="margin-top:6px">task.archived    →  task.<span class="k">unarchived</span>
+habit.archived   →  habit.<span class="k">unarchived</span>
+person.archived  →  person.<span class="k">unarchived</span>
+area.archived    →  <span class="bad">— nothing —</span></div>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The invariant, §Archival's six, and the log's four archived types.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="reversible-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>§Archival is the doc that says <i>where archived things go</i> and how they come back.
+            An archivable type that is not in the list has no answer, and the invariant above the
+            list says the answer exists.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The third time</span>
+        <p class="vc-stance">ADR 0012 added two <code>unarchived</code> types for exactly this, and
+            considered the Area namespace while doing it.</p>
+        <span class="vc-read">finish the pattern ADR 0012 started</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="ag-box">
+              <h4>ADR 0012's context</h4>
+              <p><i>"The user can re-activate an archived habit at any time." There is no
+                <code>habit.unarchived</code>… "The user can re-activate at any time." There is no
+                <code>person.unarchived</code>.</i></p>
+            </div>
+            <div class="ag-box">
+              <h4>And its Area decision, in the same ADR</h4>
+              <p><i>"<b>Do not add <code>area.deleted</code>.</b>
+                <code>05-modules/areas-and-goals.md</code> offers 'rename, archive, and delete'
+                actions for Areas, but no area-deletion…"</i></p>
+            </div>
+            <div class="ag-box bad">
+              <h4>So the namespace was open and the question was asked</h4>
+              <p>The ADR ruled on deletion and did not rule on unarchiving — while adding
+                <b>two</b> sibling types to other domains in the same decision. The doc's delete
+                action has since gone; the archived action remains, with no inverse.</p>
+            </div>
+            <div class="ag-box on">
+              <h4>What the fix costs</h4>
+              <p>One event type, <code>area.unarchived { area_id }</code>, matching
+                <code>person.unarchived</code>'s shape exactly. Per the log's own rule that is an
+                ADR — and ADR 0021 is the precedent for how small one can be when the class already
+                exists.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd><code>area.unarchived</code> is added by a new ADR, §Archival gains the Areas and Goals
+            paragraphs, and this doc's §Archival says an archived Area is restorable — which is
+            what "Are findable in settings" was reaching for.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One type, one ADR, one paragraph in two docs. <b>Next ADR is 0022</b>, and this is the
+            smallest instance the set has produced.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The alternative is that archiving an Area is the only irreversible act in an app whose
+            first invariant is reversibility — and it is reachable from a list where the other
+            action is a rename, so the two sit one row apart.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">A Goal cannot move, so it must be replaced</span>
+        <p class="vc-stance">Tasks move between Areas. Habits and Goals cannot, and the workaround
+          splits the history the Goal exists to hold.</p>
+        <span class="vc-read">allow the move · the log already has the shape</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="ag-h">Moving an entity between Areas</p>
+            <div class="ag-r"><span class="ag-k">Task</span>
+              <span class="ag-d"><code>task.reassigned_area</code> — "It is undoable."</span>
+              <span class="ag-tag ok">can move</span></div>
+            <div class="ag-r"><span class="ag-k">Habit</span>
+              <span class="ag-d">"assigned an Area once at creation and cannot be moved"</span>
+              <span class="ag-tag no">cannot</span></div>
+            <div class="ag-r"><span class="ag-k">Goal</span>
+              <span class="ag-d">"to change their Area, archive and recreate them"</span>
+              <span class="ag-tag no">cannot</span></div>
+            <p class="ag-h">What "archive and recreate" does to a Goal</p>
+            <div class="ag-tl">
+              <div class="ag-code">Before:  Learn Japanese · Learning
+         ├ Vocabulary app   delta +0.8  completed
+         └ Listening         delta +0.2  abandoned
+
+After:   Learn Japanese · Learning   <span class="bad">abandoned…</span>
+         ├ Vocabulary app   delta +0.8
+         └ Listening         delta +0.2
+         <span class="bad">(history stays here)</span>
+
+         Learn Japanese · Work       <span class="bad">new, empty</span></div>
+            </div>
+            <div class="ag-box bad">
+              <h4>The Goal's whole value is the delta column, and the workaround splits it</h4>
+              <p>§Archival says the abandoned Goal <i>"keep[s] its protocols and reports"</i> — so
+                the history is preserved and <b>unreachable from the Goal the user now uses</b>.
+                The next protocol's report compares itself against nothing, which is exactly what
+                the goal layer exists to prevent.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Goals gain the move Tasks already have — <code>goal.reassigned_area</code>, the exact
+            shape of <code>task.reassigned_area</code>, undoable. A Goal is a <b>layer</b> like an
+            Area: its identity is the outcome, and the Area is a filing decision about it.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A second new event type, so this and the previous screen are one ADR rather than two.
+            And a Goal that moves takes its protocols with it, which is the point — but it means an
+            Area's protocol count changes without a protocol changing, so anything reading per-Area
+            totals needs the Goal's current Area rather than its creation Area.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The doc's reason for immutability is stated for Habits only — <i>"the habit's cadence
+            and minimum are baked into it"</i> is nowhere said, but the grouping sentence in
+            §Invariants is <i>"A Task, Habit, or Goal belongs to exactly one Area"</i>, which a move
+            does not violate. Reassigning is not belonging to two.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Achieved and abandoned reopen the same way</span>
+        <p class="vc-stance">One reversal entry for two opposite endings, and the reason is
+          recorded on only one of them.</p>
+        <span class="vc-read">fine · but say what reopening an achieved Goal means</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="ag-code"><span class="k">event-log.md · Goal</span>
+goal.created    { goal_id, name, area_id }
+goal.renamed    { goal_id, name }
+goal.achieved   { goal_id }
+goal.abandoned  { goal_id, <span class="k">reason?</span> }
+goal.reopened   { goal_id }</div>
+            <div class="ag-r"><span class="ag-k">Endings</span>
+              <span class="ag-d">achieved · abandoned</span>
+              <span class="ag-n">2</span></div>
+            <div class="ag-r"><span class="ag-k">Reversals</span>
+              <span class="ag-d"><code>goal.reopened</code> — for either</span>
+              <span class="ag-n">1</span></div>
+            <div class="ag-r"><span class="ag-k">Reason recorded on</span>
+              <span class="ag-d">abandoned only</span>
+              <span class="ag-tag nu">1 of 2</span></div>
+            <div class="ag-box">
+              <h4>The asymmetry is right, and it makes one thing unsayable</h4>
+              <p>"Achieved" needs no reason — the protocol's delta is the reason. But a reopened
+                Goal returns to <code>active</code> from either state, and the Goal detail's
+                <b>follow-up action</b> is conditioned on <i>"a protocol completes with a clear
+                positive delta"</i>. Reopening an abandoned Goal whose delta was never positive
+                offers the same action as reopening an achieved one.</p>
+            </div>
+            <div class="ag-box on">
+              <h4>One clause, no new entry</h4>
+              <p>The follow-up action is offered when <b>the most recent completed protocol's delta
+                is positive</b> — a read over reports the Goal already lists — rather than when the
+                Goal is active. That is what the sentence means, stated as the condition it
+                is.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>One clause in §Goals and protocols. The entry types are untouched — a Goal's
+            <i>state</i> is not what entitles it to a follow-up; its <i>evidence</i> is.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>None measurable. The Goal detail already draws the delta column, so the condition is
+            a read of what is on screen.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>§Goals says a Goal <i>"is achieved (or abandoned) by user action, not by completion of
+            its protocols"</i> — which is the right rule and the reason this is a one-clause fix
+            rather than a state change. The status is the user's; the follow-up offer is the
+            data's.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Two event types, four paragraphs, one ADR.</p>
+        <span class="vc-read">synthesis · finish the reversibility the set already promises</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="ag-h">One ADR, two entries</p>
+            <div class="ag-code"><span class="k">ADR 0022 — layers are restorable and moveable</span>
+area.unarchived       { area_id }
+goal.reassigned_area  { goal_id, area_id }</div>
+            <p class="ag-h">And what each doc gains</p>
+            <div class="ag-r"><span class="ag-k">data-lifecycle.md</span>
+              <span class="ag-d">Areas and Goals join §Archival's list</span>
+              <span class="ag-tag ok">2 paras</span></div>
+            <div class="ag-r"><span class="ag-k">areas-and-goals.md</span>
+              <span class="ag-d">an archived Area is restorable; a Goal can change Area</span>
+              <span class="ag-tag ok">2 paras</span></div>
+            <div class="ag-r"><span class="ag-k">event-log.md</span>
+              <span class="ag-d">two types and two worked examples</span>
+              <span class="ag-tag ok">updated</span></div>
+            <div class="ag-box on">
+              <h4>The test this passes</h4>
+              <p>Every archivable thing in the app can be un-archived, and every layer can be
+                re-filed without losing the history it holds.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Two log types, one ADR, four paragraphs. Both types copy a shape that already exists
+            in the same file, so neither is a new idea.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The app gains the ability to un-archive an Area, which means a filter list that can
+            grow back, and a Goal that can appear under a different heading than the one its reports
+            were generated under. Both are honest consequences of the reversibility invariant.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. Recording the actions is what the reversibility invariant asks for, and the
+            alternative — silence — is the failure ADR 0012 fixed twice already.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What reversibility measures</h2>
+    <div class="measure" id="measure-reversible">…</div>
+  </div>
+</section>
+
+</main>
+
+<script src="lab.js"></script>
+<script src="nav.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var screens = ['doors', 'glyphs', 'inbox', 'reversible'];
+  var seen = {};
+  var tabs = document.getElementById('tabs');
+
+  tabs.addEventListener('click', function (e) {
+    var b = e.target.closest('.tab');
+    if (b && b.dataset.go) go(b.dataset.go);
+  });
+
+  function go(id) {
+    screens.forEach(function (s) {
+      var el = document.getElementById(s);
+      if (el) el.hidden = (s !== id);
+    });
+    Array.prototype.forEach.call(tabs.children, function (b) {
+      b.classList.toggle('on', b.dataset.go === id);
+    });
+    if (!seen[id]) {
+      seen[id] = true;
+      requestAnimationFrame(function () {
+        MEASURE[id]();
+        ['measure-' + id, id + '-cost'].forEach(function (el) {
+          var node = document.getElementById(el);
+          if (node) node.innerHTML = unesc(node.innerHTML);
+        });
+      });
+    }
+  }
+
+  // Turn a literal backslash-backslash-uXXXX into the character it names.
+  var BS = String.fromCharCode(92);
+  var SEQ = new RegExp(BS + BS + 'u([0-9a-fA-F]{4})', 'g');
+  function unesc(s) {
+    return String(s).replace(SEQ, function (m, h) {
+      return String.fromCharCode(parseInt(h, 16));
+    });
+  }
+
+  function paras(list) {
+    return list.map(function (s) { return '<p class="mf">' + s + '</p>'; }).join('');
+  }
+  function table(rows) {
+    return '<div class="rows">' + rows.map(function (r) {
+      return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+        '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+    }).join('') + '</div>';
+  }
+
+  var MEASURE = {};
+
+  // -- doors
+  MEASURE.doors = function () {
+    var rows = [
+      ['Surfaces in §Surfaces', 'filter · list · goal list · goal detail · creation', '5'],
+      ['Surfaces in surfaces.md', 'the same five rows', '5'],
+      ['Area filter reach, per §Surfaces', '"In the Tasks and Habits modes"', '2'],
+      ['Area filter reach, per §Filters', 'Tasks · Habits · Notes · Search', '4'],
+      ['Of those, evidenced by the module', 'tasks.md; notes.md', '2'],
+      ['Described as grouping, not filtering', 'habits.md: "grouped by Area"', '1'],
+      ['Claimed here and specified nowhere', 'search — retrieval.md has no Area filter', '1'],
+      ['Goal list doors', 'Settings · palette · any protocol detail', '3'],
+      ['Area list doors', 'Settings — and the palette cannot reach it', '1'],
+      ['Goal creation doors', 'the proposal flow · the Goal list', '2'],
+      ['Area detail screens', 'searched the set', '0'],
+      ['Goal detail screens', 'a screen with history and an action', '1'],
+      ['Surfaces the invariant calls "not destinations"', '"filters and parents"', '2'],
+      ['Of those that are destinations', 'the Goal list and its detail', '2']
+    ];
+
+    document.getElementById('measure-doors').innerHTML = table(rows) + paras([
+      'Two counts in one doc, four paragraphs apart: §Surfaces says the Area filter reaches <b>2</b> modes, §Filters says <b>4</b> places. Checking them cuts it to <b>3</b> real filters — Tasks and Notes are documented, Search is claimed only here — plus one <b>grouping</b> that the module describes as grouping. Grouping and filtering differ in the thing that matters: a filter needs a recovery, and <code>tasks.md</code> supplies one ("Clear filters") that a group header never needs.',
+      'The invariant is the other half. <i>"Areas and Goals do not appear in any mode\u2019s navigation. They are filters and parents, not destinations."</i> The first sentence is true of both; the second is true of Areas and false of Goals, which have <b>3</b> doors, a detail screen holding two protocols\u2019 worth of history, and an action that starts a new experiment. The doc built the destination and then wrote a sentence forbidding it.'
+    ]);
+
+    document.getElementById('doors-cost').innerHTML =
+      'The Area filter reaches <b>2</b> modes in §Surfaces and <b>4</b> places in §Filters \u2014 and the four are really <b>2 filters + 1 grouping + 1 claim</b> with no home. The invariant says neither layer is a destination while the Goal list has <b>3</b> doors and a detail screen carries the app\u2019s only cross-protocol comparison.';
+  };
+
+  // -- glyphs
+  MEASURE.glyphs = function () {
+    var rows = [
+      ['Glyphs in the inventory', 'components.md, "closed at thirteen"', '13'],
+      ['Marking Areas', 'briefcase · house · heart-pulse · book-open', '4'],
+      ['Areas seeded on first launch', 'Health · Work · Home · Learning', '4'],
+      ['Area entity fields', 'id · name · state', '3'],
+      ['Fields holding a glyph', 'object-model.md', '<b>0</b>'],
+      ['Docs asserting a row leads with it', 'tasks.md · onboarding.md · components.md', '3'],
+      ['Seeded Areas with a glyph', 'of four', '4'],
+      ['The Inbox Area', 'built in, cannot be archived, not in the thirteen', '<b>none</b>'],
+      ['A user-created Area', '"The user can rename, archive, or add."', '<b>none</b>'],
+      ['A renamed seeded Area', 'the glyph is keyed to the name', 'unresolved'],
+      ['Areas a user can have', '4 seeded + Inbox + any number added', 'unbounded'],
+      ['Inventory rule', '"nothing outside this table is drawn"', 'closed'],
+      ['Glyphs available to add', 'of the thirteen', '<b>0 spare</b>'],
+      ['Renames', 'data-lifecycle.md: "Free to change."', 'free'],
+      ['Glyph payload in the log', 'area.created and area.renamed both omit it', '<b>absent</b>']
+    ];
+
+    document.getElementById('glyphs-cost').innerHTML =
+      'A <b>closed</b> inventory of <b>13</b> glyphs holds <b>4</b> for Areas, and the Area entity has <b>3</b> fields, none of which is a glyph. So <b>3</b> docs assert a rule that holds for the <b>4</b> seeded Areas and for nothing else \u2014 not Inbox, not an added Area, and not a renamed one, in a doc that calls renames <i>free</i>.';
+
+    document.getElementById('measure-glyphs').innerHTML = table(rows) + paras([
+      'The glyph is the cleanest example in the set of a rule that works because nobody has done the other thing yet. Four glyphs, four seeded Areas, and a closed inventory: the mapping is total <b>today</b>. Add a fifth Area, or rename one, or look at Inbox \u2014 which is where capture puts everything \u2014 and the rule has no answer, because the answer would have to be a field and the entity has three.',
+      'It matters because of where the rule is enforced: <code>tasks.md</code> says a task row <b>leads</b> with its Area\u2019s glyph. That makes the glyph structural rather than decorative \u2014 it is the first thing in the row. So a captured task (Inbox, no glyph) and a filed one (Work, briefcase) render differently, and the difference is decided by a table in a third doc that the row\u2019s own doc only references.'
+    ]);
+  };
+
+  // -- inbox
+  MEASURE.inbox = function () {
+    var rows = [
+      ['Meanings of "Inbox"', 'an Area \u00b7 a destination \u00b7 the parser\u2019s default', '3'],
+      ['Docs making them', 'areas-and-goals \u00b7 capture \u00b7 tier-1-parsing', '3'],
+      ['Tasks mode scopes', 'Today \u00b7 Next \u00b7 Someday \u00b7 All', '4'],
+      ['Scopes named Inbox', 'tasks.md \u00a7Scopes', '<b>0</b>'],
+      ['Fields marking a built-in Area', 'state is only active | archived', '<b>0</b>'],
+      ['Rules with no field behind them', '"cannot be archived" \u00b7 "four are seeded"', '2'],
+      ['Built-in Areas named by id', 'searched the set', '<b>0</b>'],
+      ['Parser mentions of "Area"', 'one example output line', '1'],
+      ['Parser prefix syntax', 'searched for "work:", "infer"', '<b>0</b>'],
+      ['Docs describing what Tier 1 parses', 'tier-1-parsing (owner) \u00b7 capture \u00b7 areas-and-goals', '3'],
+      ['Surfaces named "inbox"', 'the Inbox Area \u00b7 the inbox list', '2'],
+      ['Gestures that clear the Area', 'today \u00b7 someday \u00b7 attach \u00b7 remove', '<b>0</b>'],
+      ['Words for the two unset things', '"uncategorized" (an Area) \u00b7 "unclassified" (a type)', '2'],
+      ['Capture\u2019s non-picking invariant', '"does not pick a type, an Area, a date"', 'violated by the syntax']
+    ];
+
+    document.getElementById('inbox-cost').innerHTML =
+      'One word, <b>3</b> meanings, in <b>3</b> docs \u2014 and the middle one names a <b>scope the Tasks mode does not have</b> (its four are Today, Next, Someday, All). Two Area rules have <b>0</b> fields behind them, the parser feature is specified in <b>0</b> places where parsing is owned, and a capture that begins <code>work:</code> is the user picking an Area in the field designed so they need not.';
+
+    document.getElementById('measure-inbox').innerHTML = table(rows) + paras([
+      '<code>capture.md</code> says a task appears <i>"in Tasks \u2192 Today if scheduled, or Next / Someday / <b>Inbox</b> otherwise"</i> \u2014 three scope names, and the third is an <b>Area</b>. It reads as a scope because it sits beside two, and <code>tasks.md</code> has four scopes with no Inbox among them. The word is doing a second job in the sentence immediately after a doc established what it means.',
+      'Underneath that is a smaller, sharper pair. <b>"Inbox cannot be archived"</b> and <b>"four Areas are seeded"</b> are both rules about identity, and the Area entity has no field that carries identity \u2014 only <code>id</code>, <code>name</code>, <code>state</code>. So the projection that enforces them has to match on <b>name</b>, which is the one property <code>data-lifecycle.md</code> says is free to change. The glyph screen and this one are the same finding: three facts about the built-in Areas that no field records.'
+    ]);
+  };
+
+  // -- reversible
+  MEASURE.reversible = function () {
+    var rows = [
+      ['The invariant', 'data-lifecycle.md: "Archival is reversible."', '1'],
+      ['Entity types in §Archival', 'tasks \u00b7 notes \u00b7 events \u00b7 habits \u00b7 protocols \u00b7 people', '6'],
+      ['Archivable types missing from it', 'areas \u00b7 goals', '<b>2</b>'],
+      ['Archived \u2192 unarchived pairs in the log', 'task \u00b7 habit \u00b7 person', '3'],
+      ['Archived with no inverse', 'area.archived', '<b>1</b>'],
+      ['ADR 0012 types added for this reason', 'habit.unarchived \u00b7 person.unarchived', '2'],
+      ['ADR 0012 types declined', 'area.deleted \u2014 "deliberately not added"', '1'],
+      ['So the namespace was consulted', 'and the inverse was not asked about', 'once'],
+      ['Entities that can change Area', 'a Task, via task.reassigned_area', '1'],
+      ['Entities that cannot', 'Habits \u00b7 Goals', '<b>2</b>'],
+      ['Goal endings', 'achieved \u00b7 abandoned', '2'],
+      ['Goal reversals', 'goal.reopened, for either', '1'],
+      ['Endings carrying a reason', 'abandoned only', '1 of 2'],
+      ['What the Goal workaround splits', 'the delta column \u2014 the reason Goals exist', '1'],
+      ['Un-archivable acts reachable one row from a rename', 'the Area list', '1'],
+      ['Next ADR', 'a new type requires one', '0022']
+    ];
+
+    document.getElementById('measure-reversible').innerHTML = table(rows) + paras([
+      '<code>data-lifecycle.md</code> opens its §Invariants with <i>"Archival is reversible"</i> and then works through <b>6</b> entity types in §Archival. Areas and Goals are both absent, and Areas are archivable \u2014 so the doc that answers "how does this come back" has no answer for them. The log makes it concrete: <b>3</b> domains have an <code>archived</code>/<code>unarchived</code> pair and the Area domain has half of one. ADR 0012 added <b>2</b> of those pairs for precisely this defect and, in the same decision, ruled on <code>area.deleted</code> while leaving the inverse unasked.',
+      'The Goal\u2019s constraint is the more expensive one. <i>"To change their Area, archive and recreate them"</i> \u2014 and §Archival promises the abandoned Goal keeps its protocols and reports, so the history survives and becomes <b>unreachable from the Goal the user now uses</b>. A Goal\u2019s entire contribution to the app is the delta column that compares two protocols against each other; the workaround divides that column in two. The move a Task already has (<code>task.reassigned_area</code>) is the shape that fixes it, and it is one line in the same log file.'
+    ]);
+
+    document.getElementById('reversible-cost').innerHTML =
+      '"Archival is reversible" \u2014 over <b>6</b> entity types, <b>2</b> of which are missing. <code>area.archived</code> has no <code>unarchived</code> where task, habit and person all do, and ADR 0012 added two of those pairs for this exact defect. Worse, a Goal cannot change Area, so the workaround <b>splits the delta column</b> \u2014 the one thing a Goal is for.';
+  };
+
+  go('doors');
+})();
+</script>
+</body>
+</html>
