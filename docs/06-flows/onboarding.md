@@ -285,11 +285,12 @@ in a subtle banner on the second open of the app
 
 The banner is dismissable and does not return after dismissal.
 
-The banner is one of exactly three surfaces **exempt** from the
+The banner is one of the **two** surfaces **exempt** from the
 attention budget: it fires once per install, dismissal is permanent
 for its trigger, and it never competes for the hourly slot. Exempt
 surfaces have no `SurfaceId` and no settings toggle
-(`03-experience/attention-budget.md`, ADR 0013).
+(`03-experience/attention-budget.md`, ADR 0013 as amended by
+ADR 0023).
 
 ### What onboarding does not do
 

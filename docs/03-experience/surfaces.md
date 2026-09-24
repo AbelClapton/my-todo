@@ -166,7 +166,7 @@ and the contributors are named in the defining doc's specification.
 |---|---|---|
 | Now line | Ambient | `06-flows/doing-the-day.md` |
 | Timeline | Ambient | `05-modules/calendar.md` |
-| Prep card | Card | `05-modules/people.md`, `06-flows/doing-the-day.md` |
+| Prep card | Card | `04-ai/tier-2-contextual.md` |
 | Contextual nudge | Card | `06-flows/doing-the-day.md` |
 | Gap nudge | Card (`contextual`) | `06-flows/doing-the-day.md` |
 | Calendar-shift offer | Card (`contextual`) | `06-flows/disruption.md` |

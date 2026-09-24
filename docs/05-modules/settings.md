@@ -159,10 +159,16 @@ catalog (`03-experience/attention-budget.md`) has its own toggle,
 keyed as `nudge.surface.<SurfaceId>.enabled`. Disabling a surface
 removes it from the queue permanently until re-enabled.
 
-The three exempt surfaces — the onboarding local-only banner, the
-"all three done" card, and the lapse-recovery card — are not in the
-catalog and have no toggle. They do not consume budget either
-(ADR 0013).
+The two exempt surfaces — the onboarding local-only banner and the
+lapse-recovery card — are not in the catalog and have no toggle. They
+do not consume budget either (ADR 0013, as amended by ADR 0023).
+
+**Consequence surfaces are not in this list either, and not because they
+are exempt.** The undo toast, the completion note field, the protocol
+metric toast and the "all three done" card render a mutation the user just
+made, so they fail the attention budget's definition of a nudge rather than
+being let through it. They have no toggle for the same reason a checkbox has
+none (ADR 0023).
 
 **Suppressed surfaces.** Surfaces auto-suppressed by two dismissals
 (then 30 days, then permanently) are listed here with a "Re-enable"

@@ -22,7 +22,7 @@ number. Two existing examples: ADR 0016 amends ADR 0011's note mapping,
 and ADR 0019 records a decision ADR 0005's shape would have used.
 
 **Numbering.** Sequential, four digits, never reused. The next one is
-**0023**.
+**0025**.
 
 ## The index
 
@@ -40,7 +40,7 @@ and ADR 0019 records a decision ADR 0005's shape would have used.
 | 0010 | **Invariant 1 gains a second undo mechanism** (a direct toggle) with a **closed set**: `habit.checked`, `habit.unchecked`, `habit.skipped`. Adding to the set requires an ADR. The toggle is valid only while the reversing affordance stays reachable. Everything else keeps the undo toast. |
 | 0011 | **Eight gestures.** Swipe up attaches; swipe down removes from the list reversibly and is never destructive; swipe left is uniform everywhere; delete moves off swipe. **Amended by 0016** — the note row's swipe down is withdrawn. |
 | 0012 | **Log entry shape and the type list.** `sync?: boolean` on `LogEntry`; `daily_note.created` becomes `day.note_created` with a permanent replay obligation and no `schema_version` bump; `habit.unarchived` and `person.unarchived` added; `area.deleted` deliberately not added; `task.created.source` not extended. |
-| 0013 | **Attention budget scope.** One new `SurfaceId` (`streak_repair`); gap and calendar-shift nudges become `contextual` variants; exactly three exempt surfaces against a three-part criterion; the morning plan is budget-governed and the digest is content inside shutdown, not a surface. |
+| 0013 | **Attention budget scope.** One new `SurfaceId` (`streak_repair`); gap and calendar-shift nudges become `contextual` variants; three exempt surfaces against a three-part criterion; the morning plan is budget-governed and the digest is content inside shutdown, not a surface. **Amended by 0023** — the exempt list is two, and the criterion has a fifth clause. |
 | 0014 | **`cost-model.md` is authoritative** for metering, quotas, and unit costs. Tier 3 complex queries are metered at 50/month Free; a research call is 50 units. Quota blocks the call and states the reset date — no silent degradation. Pro is specified but not purchasable, and no feature sits behind an unbuyable tier. |
 | 0015 | **The app is `Small Wins`** (store name `Small Wins: Habit Tracker`). Only `README.md` line 1 carries it; every other doc says "the app." The brand word is never a glossary synonym, and the store listing must not mention a paid tier (ADR 0014). |
 | 0016 | **Notes have no removal state.** The note list's swipe down is disabled rather than repurposed, and `note.archived`/`note.unarchived` are not added. Amends ADR 0011's note mapping. |
@@ -50,6 +50,8 @@ and ADR 0019 records a decision ADR 0005's shape would have used.
 | 0020 | **An update is never announced.** No toast, banner, dialog, badge, or "what's new" — a new build is picked up on the next cold launch and never takes over a live session. The obligation that follows: an old client must stay correct, so the log schema and sync protocol must tolerate a client several versions behind. |
 | 0021 | **The lapse skip is logged.** `system.lapse_skipped` added, so the flow's three exits are three entries and "once per lapse" is stated rather than inferred. The trigger becomes durable — the gap between the **last two** `day.opened` entries, not since the last one — so a firing blocked by quiet hours, focus mode or an event waits instead of being lost. No `system.lapse_shown`: firings go to the diagnostics buffer. The lapse card does not suppress the morning plan. |
 | 0022 | **Layers are restorable and moveable.** `area.unarchived` added, so "archival is reversible" is true of every type that has an archive event — the third instance of the defect ADR 0012 fixed twice. `goal.reassigned_area` added, retiring the archive-and-recreate workaround that left a Goal's protocols unreachable from the Goal in use. A Habit still cannot move. No `area.deleted` (0012's ruling stands) and no `glyph` field on Area (the four glyphs bind to ids, which is what makes a rename safe). |
+| 0023 | **A consequence surface is not a nudge.** The nudge definition's third condition is read as causation rather than navigation, so the surfaces that render a mutation the user just made — the undo toast, the completion note field, the metric toast, the "all three done" card — are outside the budget and outside quiet hours by definition, not by exemption. **Amends ADR 0013:** the exempt list is two (onboarding banner, lapse card). The exemption criterion gains a boundary — a trigger that expires inside the longest block it can be given makes a surface ineligible. |
+| 0024 | **Refusals are logged.** `system.nudges_silenced { day, surface_ids }` added, so the calendar-shift offer's "Keep as is" and the digest's "Leave them" are facts in the log rather than values in an unsynced client buffer — the third instance of the shape ADR 0021 fixed one lab earlier. The array is the decision: the second refusal of a day extends the first instead of overwriting it, which two per-flow types could not do. |
 
 ## Decisions with no ADR
 

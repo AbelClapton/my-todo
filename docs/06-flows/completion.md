@@ -13,8 +13,12 @@ badges, no streak counters.
 ## Invariants
 
 - Completion is undoable (Invariant 1).
-- The completion animation is at or under 400ms
-  (`03-experience/motion-vocabulary.md`).
+- The completion **sequence** is at or under 400ms, from the gesture to
+  the list having closed, including the space the inline note field
+  needs. `03-experience/motion-vocabulary.md` §Sequence budgets states
+  the total and the transitions inside it divide it — the ceiling is a
+  budget for the sequence, not a limit each animation may spend
+  independently.
 - The completion haptic fires at commit
   (`03-experience/haptic-vocabulary.md`).
 - Completion notes are optional and skippable.
@@ -38,21 +42,36 @@ require confirmation.
 
 ### The animation
 
-On commit:
+The whole sequence is **400ms**, from the gesture to the list having closed.
+`03-experience/motion-vocabulary.md` §Sequence budgets states that total;
+the transitions below divide it:
 
-1. Completion haptic fires.
-2. The row's checkbox fills over 150ms.
-3. The row scales 1.0 → 1.02 → 0.98 → 0 (400ms total,
-   `duration-deliberate`).
-4. The row fades to 0.
-5. Remaining rows shift up (200ms).
+1. Completion haptic fires, at the gesture.
+2. The row's checkbox fills — **60ms**, and it is visible. The fill is a
+   control inside a row that is scaling to nothing, so a fill longer than
+   the first beat is a fill nobody sees.
+3. The row scales 1.0 → 1.02 → 0.98 → 0 and fades — the middle **160ms**.
+4. Remaining rows shift up — the last **180ms**, *beginning before the row
+   has finished leaving*, so the row's disappearance and the closing of the
+   gap are one event rather than two.
+5. The inline note field appears, in the space the reflow made for it.
 
 This is the only scale-in/scale-out in the app
 (`03-experience/motion-vocabulary.md`).
 
+**The sequence is a budget, not four animations that happen to be next to
+each other.** Time added to one step is taken from the one after it. An
+earlier version of this doc listed the three durations end to end —
+150 + 400 + 200 — which is **750ms**, against an invariant stated in this
+doc and in the motion doc as 400ms. Each number was inside its token;
+nobody added them up, and the doc that owned the ceiling did not own the
+total. `duration-deliberate` in particular is *"used sparingly"*, and
+spending it on the scale is what put the sequence at 1.88× its own limit.
+
 If `prefers-reduced-motion` is set:
 
-- The row fades over 100ms. No scale. No shift animation.
+- The row fades over 100ms. No scale; no reflow animation, so the list
+  closes in one step.
 
 ### The undo toast
 
@@ -72,10 +91,9 @@ the completion entry. The row returns to its original position.
 
 ### The completion note
 
-Optional, one line, inline:
-
-After completion, a small inline field appears below where the row
-was:
+Optional, one line, inline. The field appears **in the space the reflow made**
+for it — that is what the last 180ms of the sequence is for, and it is why the
+field cannot be inserted after the list has already closed:
 
     "Why did this take longer than expected?"
     [                                        ]  [Skip]
@@ -87,7 +105,10 @@ The user can:
 - Tap "Skip" → the field dismisses.
 - Tap elsewhere → the field dismisses without saving.
 
-The field dismisses automatically after 10 seconds if untouched.
+The field dismisses automatically after 10 seconds if untouched. The undo
+toast lasts five, so the two are on screen together for five of those ten
+seconds; the toast sits in the shell's toast layer and the field is in the
+list, so neither covers the other and no ordering is needed.
 
 The completion note is used to detect estimate-vs-actual patterns
 (`09-roadmap/milestones.md`). It is not required.
@@ -98,8 +119,12 @@ Completed tasks do not vanish. They move to a completed log:
 
 - Accessible via Tasks → All → filter "Completed."
 - Filterable by day, week, month.
-- Read-only. Completed tasks can be uncompleted from the log
-  (which restores them).
+- **Writes off, reads on.** The list is a record, so nothing in it edits a
+  task in place; but a completed task can be uncompleted from here, which
+  restores it. "Read-only" was the earlier wording and it was wrong the same
+  way it was wrong for the time machine (`06-flows/retrieval.md`): disabling
+  the writes disables the reads too, and this list has exactly two actions —
+  open and uncomplete.
 
 The log is the "what I did" view
 (`01-foundation/identity.md`). It is deeply motivating and it is
@@ -118,13 +143,31 @@ If the completed task was the third of today's top three:
 The card:
 
 - Uses `type-title-3`, `space-7` padding, `radius-lg`.
-- Has no confetti, no animation beyond the fade-in.
+- Fades in over `duration-fast` and out over `duration-fast` — the two
+  catalog entries `03-experience/motion-vocabulary.md` now holds for an
+  in-place fade. No scale, no slide, no confetti.
 - Does not fire a second time if the user unchecks and rechecks.
-- Is one of exactly three surfaces **exempt** from the attention
-  budget: it fires at most once per day, dismissal is permanent for
-  its trigger, and it never competes for the hourly slot. Exempt
-  surfaces have no `SurfaceId` and no per-surface settings toggle
-  (`03-experience/attention-budget.md`, ADR 0013).
+- **Is not a nudge, so it needs no exemption.**
+  `03-experience/attention-budget.md` defines a nudge as a surface that
+  interrupts, wants a decision *and* **is not user-initiated**. This card is
+  the direct consequence of the completion the user just made, so it fails
+  the third test — the same test that already excludes the undo toast and
+  the completion note field, both of which fire beside it. It therefore
+  consumes no budget **and obeys no quiet hours**, because those rules exist
+  to protect the user from the app and a card they caused with their own tap
+  is not the app interrupting them.
+- The 150ms pause before the Success haptic is 150ms **after the commit**,
+  which puts it inside the sequence above rather than after it.
+
+Earlier drafts filed the card as one of *"exactly three surfaces exempt"*,
+and that was wrong twice over. It made the card one of three things needing
+an entry in an exemption table, and the fourth requirement of an exemption —
+*"a blocked firing preserves the trigger rather than consuming it"* — cannot
+be met by a trigger that expires at midnight. Quiet hours are **540** of a
+day's **1440** minutes, plus focus mode and any event; a third completion at
+22:30 would have queued to 07:00 and congratulated the user about a list
+that no longer existed. The exempt list is now two, and this card is outside
+the budget because it is outside the definition.
 
 ### Habit completion
 

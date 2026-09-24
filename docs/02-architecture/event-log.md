@@ -199,11 +199,25 @@ out of validity.
 
 **System**
 - `system.settings_changed` — { key: SettingsKey, value }
+- `system.nudges_silenced` — { day, surface_ids: SurfaceId[] }
 - `system.lapse_skipped` — { lapsed_days }
 - `system.fresh_start` — { lapsed_days, archived_tasks, archived_protocols }
 - `system.catch_up` — { lapsed_days }
 - `system.clock_corrected` — { skew_seconds }
 - `system.auth_expired` — { reason }
+
+**`system.nudges_silenced` is a refusal, and it is an array because a day
+can produce more than one.** Two flows need it: the calendar-shift offer's
+*"Keep as is"* (*"the app remembers the choice for that day"*,
+`06-flows/disruption.md`) and the what-slipped digest's dismissal (*"does
+not fire again that day"*). Both are per-day and both ask the same question
+— *is this surface done for today?* — so the second refusal of a day
+appends to the list rather than replacing it. A per-flow type would have
+been right alone and would have erased the first one.
+
+It is in the log rather than in the client's diagnostics buffer because a
+refusal the user gave has to survive a restart, and `projections.md`
+describes that buffer as client-side and not synced.
 
 ### The `SettingsKey` union
 
@@ -353,6 +367,20 @@ union.
     // system.catch_up
     {
       lapsed_days: 23
+    }
+
+    // system.nudges_silenced — the calendar-shift offer, refused
+    {
+      day: "2026-09-24",
+      surface_ids: ["contextual"]
+    }
+
+    // system.nudges_silenced — later the same day, the digest dismissed
+    // A new entry, not an amendment: the log is append-only, and the
+    // projection reads the latest array for the day.
+    {
+      day: "2026-09-24",
+      surface_ids: ["contextual", "what_slipped"]
     }
 
 ### Compensation

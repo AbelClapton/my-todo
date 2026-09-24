@@ -51,8 +51,8 @@ groups, or links them.
       id: ULID,
       title: string,
       area_id: AreaId,           // required
-      due?: ISO-8601 UTC,
-      defer?: ISO-8601 UTC,
+      due?: DateString,
+      defer?: DateString,
       priority: 'now' | 'next' | 'later',
       parent_task_id?: TaskId,
       scheduled_day?: DateString,
@@ -61,6 +61,30 @@ groups, or links them.
       completed_at?: ISO-8601 UTC,
       completion_note?: string
     }
+
+**All three temporal fields are days, and two of them used to be typed as
+instants.** `05-modules/tasks.md` states the rule: *"`scheduled_day` —
+appears on this day's calendar; `defer` — becomes visible on this day;
+`due` — must be done by this day."* Three days, and `02-architecture/day-as-unit.md`
+is explicit that a Day is a local-timezone `YYYY-MM-DD` and *"not a 24-hour
+window in UTC."* Two fields disagreed with both, and nothing depended on it
+until `disruption.md`'s reflow had to compare a `scheduled_day` against
+today. The one place a task is positioned within a day rather than on it is
+its **scheduled placement on the calendar**, and that is the open question
+below rather than a fourth field here.
+
+**Open question: a scheduled task's clock time has no field.**
+`05-modules/calendar.md` draws scheduled tasks *"as proportional blocks,
+positioned by clock time across the shared gutter"*, and
+`06-flows/disruption.md`'s reflow shifts *"scheduled tasks that have a
+`scheduled_day` of today and a time after the overrun"*. Both need to know
+*when* a task sits on its day; `scheduled_day?: DateString` says only which
+day. So the app draws and filters on a value it has no field for. This is
+recorded rather than resolved because the fix has a choice in it — a
+`scheduled_time` on the Task, or the reflow and the calendar both reading
+the task's position from somewhere else — and because either route changes a
+log payload and therefore needs an ADR. Noted here so the next reader finds
+it in the field set rather than in the lab that found it.
 
 **Note** — anything with a body. Field set:
 

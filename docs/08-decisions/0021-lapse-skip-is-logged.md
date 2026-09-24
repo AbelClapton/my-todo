@@ -12,6 +12,13 @@ link, and it claims a property in `03-experience/attention-budget.md`'s
 terms: the card is one of exactly three exempt surfaces, and
 "dismissal is permanent for that lapse."
 
+> **Read the count as history.** The exempt list is two, not three: ADR 0023
+> established that the "all three done" card is a **consequence surface** and
+> so is outside the budget by definition rather than by exemption. Nothing in
+> this ADR's decision changes — `system.lapse_skipped` is still the lapse's
+> resolution, still per-lapse, and the card is still exempt with a one-shot
+> trigger. This paragraph records what the docs said at the time.
+
 Two problems, and they are the same problem.
 
 **1. The permanence had no record.** §Skipping said, in full, *"Does

@@ -77,14 +77,15 @@ A single card:
 The two options are shown side by side (or stacked on narrow
 screens), equal visual weight. No default. The user chooses.
 
-The card is one of exactly three surfaces **exempt** from the
+The card is one of the **two** surfaces **exempt** from the
 attention budget: it fires once per lapse, dismissal is permanent
 for that lapse, and it never competes for the hourly slot. Exempt
 surfaces have no `SurfaceId` and no per-surface settings toggle
-(`03-experience/attention-budget.md`, ADR 0013).
+(`03-experience/attention-budget.md`, ADR 0013 as amended by
+ADR 0023).
 
 **Exemption is from the hourly slot, not from the clock.** Like the
-other two exempt surfaces, this one obeys quiet hours, focus mode, and
+other exempt surface, this one obeys quiet hours, focus mode, and
 in-event suppression. Because its trigger is a one-shot state, a
 blocked firing **preserves** the state rather than consuming it: the
 card waits for the next eligible open instead of being lost. This is

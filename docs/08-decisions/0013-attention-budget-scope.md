@@ -56,6 +56,13 @@ class. They count as `contextual` when they fire. No new IDs.
 - the "all three done" card
 - the lapse-recovery card
 
+> **Amended by ADR 0023.** This list is now **two**. The "all three done"
+> card is a **consequence surface** — the direct rendering of a mutation the
+> user just made — so it fails the nudge definition's third condition and was
+> never in the budget to be exempt from. The exemption criterion also gains a
+> boundary below: a surface whose trigger expires inside the longest block it
+> can be given is not eligible to be exempt.
+
 **The exemption criterion**, which any future candidate must satisfy
 in full:
 
@@ -75,6 +82,15 @@ no per-surface settings toggle.
 > surface records its **resolution** in the log and its **firing** in
 > the diagnostics buffer, and that the lapse-recovery card takes the
 > day's first position without suppressing the morning plan.
+
+> **Extended by ADR 0023.** A fifth clause, and the one that shows why the
+> fourth needed it: *"must be able to wait"* assumes the wait ends before the
+> trigger does. **A surface whose trigger expires inside the longest block it
+> can be given is not eligible to be exempt** — either its trigger outlasts the
+> block, or it is a consequence surface, or it enters the catalog and pays.
+> ADR 0024 also establishes that a refusal to a nudge which the flow promises
+> not to repeat that day is logged as `system.nudges_silenced { day,
+> surface_ids }`, rather than kept in the diagnostics buffer.
 
 **The morning plan is budget-governed.** The "not a nudge" claim in
 `06-flows/morning-plan.md` is wrong and is corrected. The plan

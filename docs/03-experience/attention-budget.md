@@ -30,7 +30,7 @@ This is Invariant 3 (`01-foundation/principles.md`), specified.
 - Surfaces with overlapping TTLs may be **merged at fire time**.
   A merged nudge counts as **one** nudge, not two.
 - The user can disable any surface permanently in settings.
-- Exactly three surfaces are exempt from the budget, and no others
+- Exactly two surfaces are exempt from the budget, and no others
   (`08-decisions/0013-attention-budget-scope.md`).
 
 ## Specification
@@ -43,6 +43,23 @@ A **nudge** is any surface that:
 2. Wants a decision or action.
 3. Is not user-initiated.
 
+**Condition 3 means "the user's gesture caused this surface", not "the user
+opened a screen".** The two are different and the difference is load-bearing,
+because a surface that answers a gesture the user just made cannot be an
+interruption to them. A **consequence surface** is the direct result of an
+action the user took a moment ago, and it fails condition 3 by definition:
+
+- the undo toast (`06-flows/completion.md`)
+- the completion note field (`06-flows/completion.md`)
+- the "all three done" card (`06-flows/completion.md`)
+- the protocol metric toast (`06-flows/completion.md`)
+
+None of these consumes budget and none of them obeys quiet hours, focus mode
+or in-event suppression — not as exemptions, but because they were never
+nudges. **They are not in the exempt list below either:** that list exists for
+surfaces that *do* interrupt the user and are let through anyway, and a
+consequence surface is not interrupting anyone.
+
 Surfaces that are *not* nudges:
 
 - **The now line.** Persistent, always visible, does not interrupt.
@@ -50,9 +67,11 @@ Surfaces that are *not* nudges:
   logging. Surfaces once per day in a single card. Does not repeat.
 - **User-initiated surfaces.** Tapping search, opening the calendar,
   long-pressing a task — the user asked for these.
+- **Consequence surfaces.** Listed above. They are the result of a
+  gesture rather than a request for one.
 - **Passive state.** A running timer, a sync indicator, a
   recording indicator. These are status, not nudges.
-- **Exempt surfaces.** Three surfaces interrupt without consuming
+- **Exempt surfaces.** Two surfaces interrupt without consuming
   budget. They are named below and are not in the catalog.
 
 ### The queue
@@ -127,7 +146,7 @@ surface means updating all three in the same change (ADR 0013).
 | Surface ID | Used for | Typical urgency | Typical relevance | TTL | Mergeable |
 |---|---|---|---|---|---|
 | `prep_card` | 10 min before an event with people or a note | 10 | 8 | Until event start | no |
-| `contextual` | a gap, a cancellation, a free slot | 6 | 7 | 30 min | no |
+| `contextual` | a gap, a cancellation, a free slot, a day that has shifted | 6 | 7 | 30 min | no |
 | `forgotten` | captures never acted on | 3 | 4 | 7 days | yes |
 | `people` | a relationship gone quiet | 2 | 4 | 14 days | yes |
 | `weekly_review` | the week's aggregation | 4 | 6 | 7 days | yes |
@@ -146,30 +165,59 @@ one celebrates a streak that reached a 30-day multiple
 just broke, spending the monthly repair token
 (`06-flows/resurfacing.md`, ADR 0013).
 
+**The TTL runs from when a surface becomes *eligible*, not from when it
+becomes true.** The two clocks are different lengths — TTL is often shorter
+than the cap that can block a firing — so a surface whose countdown starts at
+creation expires while it waits its turn. `contextual` has the sharpest case:
+a **30-minute TTL against a one-per-hour cap**, which means a contextual nudge
+blocked by the cap would expire 30 minutes before the next slot opened and
+would never fire at all. That is not the intent for any of the four, and for
+the calendar-shift offer it is the difference between the feature working and
+not: a day whose previous hour produced any nudge at all would silently lose
+its shift offer.
+
+So the countdown starts when the budget first permits the surface to fire.
+A blocked nudge waits, and the wait does not consume it.
+
 ### Contextual variants
 
-Three nudges in the flow docs look like surfaces of their own and are
-not. They are `contextual` firing with a different trigger:
+Four nudges in the flow docs look like surfaces of their own and are not.
+They are `contextual` firing with a different trigger, and every one of them
+is in `06-flows/doing-the-day.md` except the third:
 
-- the gap nudge ("No events for the next 45 min") —
-  `06-flows/doing-the-day.md`
-- the cancelled-event nudge ("Your 11am was cancelled") —
+- the gap nudge ("No events for the next 45 min") — `06-flows/doing-the-day.md`
+- the cancelled-event nudge ("Your 11am was cancelled") — `06-flows/doing-the-day.md`
+- the quick-task nudge ("20 min before your 3pm — enough for a quick task?") —
   `06-flows/doing-the-day.md`
 - the calendar-shift nudge ("Design review ran 22 min over") —
   `06-flows/disruption.md`
 
-Same surface, same urgency band, same TTL class. They count as
-`contextual` when they fire, they have no ID of their own, and they
-get no separate toggle. A synonym surface would make this table
-describe a scheduler that does not exist (ADR 0013).
+Same surface, same urgency band, same TTL class. They count as `contextual`
+when they fire, they have no ID of their own, and they get no separate
+toggle. A synonym surface would make the table above describe a scheduler
+that does not exist (ADR 0013).
+
+**The list is four, and it was three in two places and three different things
+in a third.** This doc named the gap, the cancellation and the calendar-shift;
+`06-flows/doing-the-day.md` named the gap, the cancellation and the
+*quick-task*; and the catalog row above described *"a gap, a cancellation, a
+free slot"* — a third vocabulary for the same triggers. So two flows each
+believed they had the complete set, they shared two of three, and the one
+neither of them had was the one the other did. A count cannot be checked
+against a list it does not appear in, which is how the quick-task nudge came
+to exist in one doc and in no table.
 
 ### Exempt surfaces
 
-Exactly three surfaces interrupt the user without consuming budget:
+Exactly two surfaces interrupt the user without consuming budget:
 
 - the onboarding local-only banner (`06-flows/onboarding.md`)
-- the "all three done" card (`06-flows/completion.md`)
 - the lapse-recovery card (`06-flows/lapsed-recovery.md`)
+
+The "all three done" card was the third until it was re-read against the
+definition above. It is a **consequence surface**, so it was never a nudge,
+and filing it here caused two problems: an unnecessary table entry, and a
+rule it could not obey. See the fourth requirement below.
 
 A candidate is exempt only if it satisfies all three tests:
 
@@ -189,6 +237,16 @@ Exempt surfaces:
   the firing without preserving the state silently deletes the surface.
   This is a property of the exemption, not of any one flow: any surface
   whose trigger is a state rather than a schedule must be able to wait.
+- **And the state has to outlast the block.** "Must be able to wait"
+  quietly assumes the wait ends before the trigger does. It does not for a
+  trigger scoped to a day: quiet hours are 540 of a day's 1440 minutes, so a
+  once-a-day surface triggered at 22:30 would queue to 07:00 and fire at a
+  fact that had expired. **A surface whose trigger expires inside the
+  longest block is not eligible to be exempt** — either its trigger outlasts
+  the block, or it is a consequence surface, or it goes in the catalog and
+  pays. This is the boundary the fourth requirement was missing, and finding
+  it is what showed the card was on the wrong list rather than under the
+  wrong rule.
 
 **Exemption is from the hourly slot, not from the clock.** Flows that
 restate the exemption tend to restate the first three bullets and drop

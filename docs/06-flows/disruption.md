@@ -23,22 +23,30 @@ have to.**
 
 ## Specification
 
-### The shove
+### The defer sheet, and its three doors
 
-When the user drags a scheduled task past today (or taps "Defer"
-and picks a date), the app asks:
+Moving something off today is the **defer sheet**. Its options, their order
+and what each one writes are specified in `05-modules/tasks.md` §Defer
+sheet; this flow does not restate them, and an earlier version of this doc
+drew the sheet with a different fourth option — "Keep today", which sets
+`defer` to the day the task was already deferred to and therefore writes
+nothing — while omitting "Next week". Two sheets in one app, and the doc
+whose own closing section says the sheet belongs to `tasks.md` was the one
+that disagreed with it.
 
-    Move to tomorrow?
-    [Tomorrow]  [Pick a date…]  [Someday]  [Keep today]
+What this flow owns is **where the sheet opens from**, which the module doc
+does not say:
 
-Two taps, no full date picker unless "Pick a date…" is chosen. The
-default is "Tomorrow."
+- From a task row, by swiping left.
+- From the task detail, by "Reschedule".
+- From the calendar, by dragging a task to another day.
 
-The shove is the primary rescheduling mechanism. It is available:
-
-- From a task row via swipe left.
-- From the task detail via "Reschedule."
-- From the calendar by dragging a task to another day.
+**Deferring is not rescheduling.** The sheet sets `defer`, which `tasks.md`
+defines as *"when the task becomes visible"*. Changing **when it is worked
+on** is `scheduled_day`, and it is a different act on a different field —
+the distinction §Deadline vs. slippage below works through. An earlier
+draft called the sheet *"the primary rescheduling mechanism"*, which is
+what put the wrong fourth option in it.
 
 ### Automatic reflow
 
@@ -59,13 +67,22 @@ Tapping "Shift":
 1. Shifts all subsequent events today by the overrun amount (with
    the user's confirmation for each event, batched).
 2. Shifts scheduled tasks that have a `scheduled_day` of today and
-   a time slot after the overrun.
+   a time after the overrun. **A scheduled task's time is a field the
+   object model does not have** — `05-modules/calendar.md` positions
+   scheduled tasks *"as proportional blocks, positioned by clock
+   time"*, and `Task` carries `scheduled_day` and nothing to place
+   within it. Recorded as an open question in
+   `02-architecture/object-model.md` rather than resolved here.
 3. Logs `calendar.updated` / `task.scheduled_to_day` for each
    shift.
 4. Undo toast covers all shifts atomically.
 
-If the user chose "Keep as is," the app remembers the choice for
-that day and does not ask again.
+If the user chose "Keep as is," the app remembers the choice for that day
+and does not ask again. **That is a durable fact and it is logged:**
+`system.nudges_silenced { day, surface_ids: ['contextual'] }`. It is not a
+field on the Day and not a client-side buffer, because a refusal the user
+gave has to survive a restart — the same argument that produced
+`system.lapse_skipped` in `06-flows/lapsed-recovery.md`.
 
 ### Overdue framing
 
@@ -85,12 +102,21 @@ flow, or as a standalone nudge if shutdown is skipped):
     "Today: 6 done, 3 slipped. Reschedule the slipped?"
     [Reschedule all to tomorrow]  [Review individually]  [Leave them]
 
-- **Reschedule all to tomorrow.** Defers every slipped task to
-  tomorrow in one atomic action.
+- **Reschedule all to tomorrow.** Moves every slipped task's
+  `scheduled_day` to tomorrow in one atomic action —
+  `task.scheduled_to_day`, one entry per task, reversed as one. **Not
+  `defer`:** a slipped task was *scheduled* for today, and *"Disruption
+  affects the scheduled day"* is this doc's own rule one section down.
+  Earlier drafts said the action "defers every slipped task", which
+  named the wrong field on the wrong entity in the doc that had just
+  finished distinguishing them.
 - **Review individually.** Opens a list where each task gets a
   swipe-right (tomorrow) or swipe-left (someday).
 - **Leave them.** Dismisses the digest; the tasks remain in their
-  current state.
+  current state, and the dismissal is logged as
+  `system.nudges_silenced { day, surface_ids: ['what_slipped'] }` so
+  "does not fire again that day" is a fact the log holds rather than a
+  value the client remembers.
 
 Slipped tasks are tasks with `scheduled_day: today` that were not
 completed. They are not tasks with `due: today` (which are a
@@ -145,8 +171,8 @@ explicitly.
 **The shove.**
 
     User swipes task "Call contractor" left.
-    Sheet appears:
-      [Tomorrow]  [Pick a date…]  [Someday]  [Keep today]
+    The defer sheet opens (`05-modules/tasks.md` §Defer sheet):
+      Tomorrow · Next week · Someday · Pick a date…
     User taps Tomorrow.
     `task.rescheduled` logged with `defer: tomorrow`.
     Row stays (it was scheduled today, defer is tomorrow), metadata
@@ -175,7 +201,8 @@ explicitly.
 ## What this doc must NOT do
 
 - This doc does not define the defer sheet. That is in
-  `05-modules/tasks.md`.
+  `05-modules/tasks.md` — including its options, which this doc cites
+  and does not redraw.
 - This doc does not define the shutdown flow. Shutdown is
   `06-flows/shutdown.md`.
 - This doc does not define the attention budget. It references

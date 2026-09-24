@@ -15,7 +15,10 @@ explains what happened; it does not decorate.**
 - There are exactly six durations and two easing curves. No screen
   may define a seventh duration or a third easing.
 - Motion is at or under 400ms in every case. Beyond that, users
-  perceive delay.
+  perceive delay. **A transition spends up to 400ms; a sequence has a
+  400ms budget and divides it** (§Sequence budgets). Reading the
+  ceiling as a limit on parts alone lets a moment that lasts 750ms
+  pass a rule that says 400.
 - Motion never blocks input. A user can interrupt any animation by
   interacting.
 - Respect `prefers-reduced-motion`. When set, transitions become
@@ -59,7 +62,10 @@ when something is being dismissed.
 
 ### The transition catalog
 
-Every transition in the app is one of these. No custom transitions.
+**Every transition in the app is one of these. No custom transitions.**
+The list is closed at sixteen, and three of them were added because flows
+had been using them for months without a name: the list reflow, and the two
+in-place fades.
 
 **List row reveal (swipe).** `duration-default`, `ease-standard`.
 The row slides horizontally, revealing the action background. On
@@ -69,7 +75,10 @@ commit, holds for 200ms, then animates away vertically with
 **Completion confirmation.** `duration-deliberate`,
 `ease-standard`. The completed item scales slightly (1.0 → 1.02 →
 0.98 → 0) and fades. This is the only scale-in/scale-out in the
-app, and it is reserved for completion.
+app, and it is reserved for completion — but it does not last 400ms
+on its own. See §Sequence budgets: it is the middle of a 400ms
+budget that also contains the checkbox fill and the reflow, and it
+spends 160ms of it.
 
 **Mode switch (nav).** `duration-default`, `ease-standard`. The
 mode indicator slides to the new position; the content cross-fades.
@@ -118,6 +127,20 @@ between the two states.
 When a capture becomes a scheduled item, the capture field morphs
 into the item's detail view.
 
+**List reflow.** `duration-default`, `ease-standard`. When a row leaves a
+list, the rows below it close the gap. It begins *before* the departing row
+has finished its exit, so the removal and the closing read as one event
+rather than two. `06-flows/completion.md` has been specifying this since it
+was written, in a step with a duration and no name; this is its home.
+
+**In-place fade (in).** `duration-fast`, `ease-standard`. Opacity only — no
+transform and no backdrop. For a card that appears where it already belongs.
+Distinct from the popover's fade, which rides a 0.96 → 1.0 scale, and from
+the modal's, which rides a backdrop.
+
+**In-place fade (out).** `duration-fast`, `ease-exit`. The same in reverse —
+a card dismissed where it stands, rather than leaving the screen.
+
 **State change (hover, focus, press).** `duration-instant`,
 `ease-standard`. Colour and opacity only, never transform. A row
 that lifts, scales, or slides under the pointer is a bug in an
@@ -128,6 +151,44 @@ under 400ms shows nothing at all, and a longer one shows a static
 placeholder plus a count when the app has one
 (`03-experience/states.md`). This is an entry in the catalog precisely
 because it is a transition the app has and never animates.
+
+### Sequence budgets
+
+A transition has a duration. A **sequence** — several transitions the user
+perceives as one moment — has a budget, and the transitions inside it divide
+it rather than each spending up to the ceiling.
+
+That distinction was missing, and its absence hid a real number for as long
+as this doc has had a table. "Motion is at or under 400ms in every case" is a
+rule about a transition. Read as a rule about a moment it is false; read as a
+rule about transitions it constrains nothing, because an app whose every
+screen took eleven seconds to settle would satisfy it — and this one is
+quoted as the reason the app feels calm. The completion sequence was
+150 + 400 + 200 = **750ms**, 1.88× the ceiling this doc and
+`06-flows/completion.md` both quote.
+
+The app has one sequence long enough to need a budget:
+
+| Sequence | Total | Divisions |
+|---|---|---|
+| Completion (`06-flows/completion.md`) | 400ms | fill 60 · scale and fade 160 · reflow 180 |
+
+**The rules for a budget.**
+
+- Time taken from one division is given to another, so the total never
+  moves.
+- The reflow starts before the exiting element has finished, because two
+  beats read as slower than one.
+- A division drawn *inside* another's transform is visible for less than the
+  enclosing transform lasts, so it has to fit inside the first beat or it was
+  never drawn. The checkbox fill is the case: it is a control inside a row
+  that is scaling to nothing.
+- A division is not a token. The three numbers above are the budget's
+  arithmetic, not three new durations, and no screen may define a seventh.
+
+A second sequence joins this table when a flow's moment is composed of more
+than one transition. Everything else is a transition, and the 400ms ceiling
+applies to it alone.
 
 ### Motion philosophy in practice
 
@@ -164,10 +225,11 @@ When `prefers-reduced-motion: reduce`:
 **Task completion.**
 
     Swipe release → row slides right (already revealed).
-    Row holds 200ms.
-    Completion animation: scale 1.0 → 1.02 → 0.98 → 0, fade to 0.
-    Duration: 400ms, ease-standard.
-    Row removes from list. Remaining rows shift up in 200ms.
+    Checkbox fills (60ms) — visible, inside the row.
+    Completion animation: scale 1.0 → 1.02 → 0.98 → 0, fade to 0 (160ms).
+    Row removes from list; remaining rows shift up (180ms), starting
+    before the row is gone.
+    Total: 400ms, ease-standard — one budget, not three durations.
 
 **Opening a task detail.**
 
