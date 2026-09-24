@@ -27,14 +27,26 @@ metered where expensive.**
 | Feature | Runs on | Cost to app |
 |---|---|---|
 | Tier 1 parsing | On-device | $0 |
-| Tier 2 local actions (break down, find related, prep me) | On-device | $0 |
-| Semantic search (embeddings + retrieval) | On-device | $0 |
-| Tier 3 simple queries (state, history) | On-device | $0 |
-| Tier 3 complex queries (reasoning) | Cloud | per-call |
+| Tier 2 local actions (break down, find related, prep me, and the local reads) | On-device | $0 |
+| Tier 2 cloud actions (research; any synthesis that leaves the device) | Cloud | per-call |
+| Tier 2 scheduled generation (the protocol report) | Cloud | per-call |
+| Semantic search (embeddings + retrieval) | On-device where possible | $0 unless a query requires cloud models |
+| Tier 3 simple queries (state, history, search) | On-device | $0 |
+| Tier 3 complex queries (reasoning, mutations, protocol actions) | Cloud | per-call |
 | Research (web search) | Cloud | per-call + search API |
 | Weekly review generation | Cloud | per-call |
-| Protocol report generation | Cloud | per-call |
 | Voice STT | On-device | $0 |
+
+**Two rows are deliberately wider than one feature.**
+
+- **Semantic search** is on-device *"where possible"*: `04-ai/retrieval-layer.md`
+  gives exactly one condition for a query leaving the device — *"if a query
+  requires cloud models"* — so the $0 above is conditional and Tier 3's
+  simple tier inherits the condition.
+- **Tier 2's two rows are a classification, not a list.** The catalog in
+  `04-ai/tier-2-contextual.md` has eighteen actions across five item types;
+  the parenthetical names the ones that are unambiguously local. An action
+  that is not named in either row needs classifying before it is built.
 
 Roughly 80% of AI interactions run on-device and cost nothing.
 

@@ -76,7 +76,7 @@ Tier 3 returns one of:
         payload: object,
         explanation: string
       }>,
-      summary: string       // one-line summary of the batch
+      explanation: string    // one line for the batch — the field the log stores
     }
 
     {
@@ -164,6 +164,43 @@ The user picks an option or types a new query. The clarification
 is not logged as a separate call; it is part of the same
 conversation.
 
+### The query classes and what they cost
+
+Seven classes, and every one of them has a **class**, a **price**, and a
+**place it runs**. `07-infrastructure/cost-model.md` is the authority for
+the prices — this table names them so the classes and the prices cannot
+drift apart.
+
+| Class | Example | Price | Runs |
+|---|---|---|---|
+| Current state | "What's on my calendar tomorrow?" | simple | on-device |
+| History | "When did I last talk to Sarah?" | simple | on-device |
+| Search | "What did I write about the kitchen renovation?" | simple | **may use cloud** |
+| Reasoning | "Am I overcommitted?" | complex | cloud |
+| Mutations | "Move everything Thursday to Friday." | complex | cloud |
+| Protocol actions | "Start a sleep protocol." | complex | cloud |
+| Unknown / out of scope | "How much did I spend on groceries?" | none | none — Rule 7 |
+
+**Search is the class to read twice.** `04-ai/retrieval-layer.md` says
+semantic search runs on-device *"where possible"* and leaves the device
+*"only if a query requires cloud models"*. So a search query is priced as
+simple and local and may still be the one that reaches the cloud; the cost
+table carries its own row for that reason.
+
+### Offline
+
+Tier 3 is the only surface in the app whose behaviour depends on a
+connection, so its offline behaviour is stated here rather than inferred
+from `06-flows/retrieval.md`'s per-surface table:
+
+- **Answers about current state and history** work — they are reads over
+the local log.
+- **Search** falls back to keyword, with the retrieval flow's note.
+- **Reasoning and mutations** cannot run. The palette says so and offers
+  the query again later; a mutation never half-applies.
+- **A clarification** is produced locally and still works, so a user can
+  resolve an ambiguity offline and be told the answer has to wait.
+
 ### The conversation model
 
 Tier 3 does not maintain conversation history across invocations.
@@ -183,20 +220,16 @@ palette exactly like typed text. No difference in behavior.
 
 ### Costs and metering
 
-Tier 3 has two modes:
+Tier 3 has two priced modes — simple and complex — and the query-class
+table above says which class is which. Research (via Tier 3) is metered
+separately.
 
-- **Simple queries** (state, history, search): 3 units.
-- **Complex queries** (reasoning, multi-step, mutations with
-  reasoning): 10 units.
+`07-infrastructure/cost-model.md` is the authority for quotas, unit costs,
+and the behavior at the limit. **This doc does not restate numbers.**
 
-The retrieval layer enforces budgets (see
-`04-ai/retrieval-layer.md`).
-
-Tier 3 complex queries are metered per user in v1; simple and local
-queries are not. Research (via Tier 3) is metered separately.
-`07-infrastructure/cost-model.md` is the authority for quotas, unit
-costs, and the behavior at the limit; this doc does not restate
-numbers.
+At the limit, the fallback is stated by the cost model: complex queries
+fall back to simple mode with a notice. A simple query that cannot run
+offline follows §Offline instead.
 
 ### Fallbacks
 

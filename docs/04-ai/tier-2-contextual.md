@@ -13,24 +13,46 @@ without a tap.
 
 ## Invariants
 
-- Tier 2 is always user-initiated. There is no ambient Tier 2.
-- Tier 2 always produces a proposal. The user taps to apply
-  (Rule 1).
+- Tier 2 is always user-initiated. There is no ambient Tier 2 — with one
+  class of exception, **scheduled generation**, defined below. It runs on
+  an app open the user caused, never on a timer.
+- Tier 2 actions return either a **proposal** (the user taps to apply,
+  Rule 1) or a **navigation** (a surface the app already has). Nothing
+  else. The catalog marks each action.
 - Tier 2 uses the focused item as primary context, plus whatever
   the retrieval layer fetches.
 - Tier 2 never modifies an active protocol (Rule 3).
 - Tier 2 never generates UI (Rule 2).
-- Every Tier 2 call is logged (`ai.proposed`, then `ai.applied` or
-  `ai.rejected`).
+- **A Tier 2 call is logged when it results in something the user could
+  accept or reject** (`ai.proposed`, then `ai.applied` or `ai.rejected`).
+  A call that only reads is not logged; it goes to the diagnostics
+  buffer, exactly as `04-ai/tier-3-assistant.md` specifies for its own
+  read queries.
 
 ## Specification
 
 ### The invocation
 
-Tier 2 is invoked via long-press on any atom (Task, Event, Note,
-Habit). The contextual menu appears (see
-`03-experience/gesture-vocabulary.md`). The menu's contents are
-item-type-specific.
+Tier 2 is invoked via long-press on an atom. **The atom set is
+`02-architecture/object-model.md`'s** — Task, Event, Note, Habit,
+Protocol, Person, Goal — and the exceptions are stated here rather than
+implied by omission:
+
+- **Task, Event, Note, Habit** — full menus, below.
+- **Protocol** — a menu exists **at review time only**. See
+  §Scheduled generation for why the report is usually already written
+  by the time the menu appears.
+- **Person** — a menu with **no AI in it**, because every useful Tier 2
+  action needs a subject that is not a person. See §On a Person.
+- **Goal** — **no menu.** A Goal has no contextual action; the matrix
+  records the dash.
+- **A calendar *day*** — the month view's long-press targets the day
+  under the finger, not the month, and a day is not an atom. The
+  calendar day view's long-press targets an event, which is.
+
+`03-experience/gesture-vocabulary.md`'s matrix owns **where** the gesture
+is available; this doc owns **what it shows**. Every cell in that matrix
+is a section here, or an exception above with a reason.
 
 Keyboard: `Cmd+Enter` on a focused item — the keyboard form of
 long-press, per that doc's key map. **Not `Cmd+K`:** that chord opens
@@ -40,61 +62,97 @@ would make one keystroke mean two things in the same state.
 
 ### The action catalog
 
-Each action is a specific Tier 2 function. The menu shows a subset
-based on the item type and state.
+Each action is a specific Tier 2 function. Every action is marked with
+what it returns — a **proposal** (the user accepts or rejects) or a
+**navigation** (a surface that already exists).
+
+**The subset rule.** A type's list below is the full catalog for that
+type; the menu shows an action when it is **applicable** (the item is the
+right type and the precondition holds) and **permitted** (no rule
+forbids it). Two instance: *Suggest tags* is disabled until tags exist,
+and *Adjust cadence* does not apply inside an active protocol (Rule 3).
+Protocol's menu is the third: available at review time only.
 
 **On a Task:**
 
-- **Research this.** Runs web research on the task's subject.
-  Returns a note proposal with 3–5 candidates (for shopping) or a
+- **Research this.** *(proposal: note)* Runs web research on the task's
+  subject. Returns a note proposal with 3–5 candidates (for shopping) or a
   synthesis (for informational). See
   `04-ai/research-and-protocols.md`.
-- **Break this down.** Proposes 2–5 subtasks. Creates a parent
-  task with children (Task → Task edge).
-- **Reschedule.** Proposes a new due or defer date based on
-  current context (calendar density, adjacent tasks, energy).
-- **Link person.** Searches People and proposes a Task → Person
-  link.
-- **Add note.** Opens a note composer attached to the task.
-- **Find related.** Runs semantic search over the user's own
-  notes, tasks, and events. Returns a list of related items.
+- **Break this down.** *(proposal: mutations)* Proposes 2–5 subtasks.
+  Creates a parent task with children (Task → Task edge).
+- **Reschedule.** *(proposal: mutations)* Proposes a new due or defer date
+  based on current context (calendar density, adjacent tasks, energy).
+- **Link person.** *(proposal: mutations)* Searches People and proposes a
+  Task → Person link.
+- **Add note.** *(navigation)* Opens a note composer attached to the task
+  in place.
+- **Find related.** *(navigation)* Opens the search screen with a query
+  derived from the task. See §Find related below.
 
 **On an Event:**
 
-- **Prep me.** Returns a prep card: attendees (People), when you last
+- **Prep me.** *(proposal: text)* Returns a prep card: attendees (People), when you last
   met each of them, the last note about each, the last completed task
   with each, open tasks linked to each, and any notes attached to the
   event. **This list owns the card's contents** — `05-modules/people.md`
   describes the same card and points here rather than repeating it.
-- **Find related.** Semantic search over the user's own data.
-- **Reschedule.** Proposes new times, respecting buffer and travel
-  time.
+- **Find related.** *(navigation)* See §Find related below.
+- **Reschedule.** *(proposal: mutations)* Proposes new times, respecting
+  buffer and travel time.
 
 **On a Habit:**
 
-- **Why am I slipping?** Analyzes compliance over the recent
-  window and proposes an explanation. Does not modify anything.
-- **Adjust cadence.** Proposes a new cadence based on compliance
-  patterns. Does not apply unless the habit is not part of an
+- **Why am I slipping?** *(proposal: text)* Analyzes compliance over the
+  recent window and proposes an explanation. Does not modify anything.
+- **Adjust cadence.** *(proposal: mutations)* Proposes a new cadence based
+  on compliance patterns. Does not apply unless the habit is not part of an
   active protocol (Rule 3).
-- **View history.** Opens the compliance view.
+- **View history.** *(navigation)* Opens the compliance view.
 
 **On a Note:**
 
-- **Summarize.** Produces a shorter version of the note.
-- **Extract tasks.** Finds actionable items in the note and
-  proposes tasks.
-- **Find related.** Semantic search.
-- **Suggest tags.** (No tags exist in the model; this action is
-  listed here as a placeholder and is disabled until tags are
-  added via ADR.)
+- **Summarize.** *(proposal: text)* Produces a shorter version of the note.
+- **Extract tasks.** *(proposal: mutations)* Finds actionable items in the
+  note and proposes tasks.
+- **Find related.** *(navigation)* See §Find related below.
+- **Suggest tags.** *(disabled)* No tags exist in the model; this action is
+  listed here as a placeholder and is disabled until tags are added via
+  ADR.
 
 **On a Protocol (at review time only):**
 
-- **Generate report.** Produces the protocol report. See
+- **Generate report.** *(proposal: note)* Produces the protocol report
+  early. See §Scheduled generation and
   `04-ai/research-and-protocols.md`.
-- **Suggest adjustment.** Proposes protocol changes for the
-  *next* version. Never modifies the active one (Rule 3).
+- **Suggest adjustment.** *(proposal: mutations)* Proposes protocol changes
+  for the *next* version. Never modifies the active one (Rule 3).
+
+**On a Person:**
+
+- **Open detail.** *(navigation)* The person's own screen.
+- **Add a task.** *(navigation)* Opens capture prefilled: "Reach out to
+  <name>." Same action the people-resurfacing card offers
+  (`06-flows/resurfacing.md`).
+
+**No AI action is offered here, and that is the point.** Every action in
+the catalog above needs a subject that is not a person — a task to break
+down, a note to summarise, a compliance window to analyse. A person has
+none of those; a person has *history*, and history is what the prep card
+on a shared **event** already reads. Specifying a menu with no model call
+in it is better than leaving the cell blank.
+
+### Find related
+
+**This is a navigation, not a proposal.** It runs semantic search and
+opens the search screen with the query prefilled, because its output is
+retrieval rows — the standard row component, each carrying a "why this
+matched" line (`06-flows/retrieval.md`, `04-ai/retrieval-layer.md`).
+
+Routing it through a proposal would mean inventing a fourth proposal
+type for a list, and inheriting the `text` path's sheet with its **Copy**
+button for a result the user wants to browse. A search result belongs on
+the search screen, which already exists and already specifies all of it.
 
 ### The proposal shape
 
@@ -167,12 +225,33 @@ specification lives in `04-ai/research-and-protocols.md`. In brief:
 The note is attached to the task. Its results carry `retrieved_at`
 and `source` (Invariant 4).
 
-### Costs and metering
+### Scheduled generation
 
-- Most Tier 2 actions cost 1 unit.
-- "Research this" costs 50 units and is metered separately
-  (see `07-infrastructure/cost-model.md`).
-- The user sees a running total in settings if they want it.
+**This is the one class of Tier 2 call a gesture does not cause, and it is
+still not ambient.** A scheduled generation runs on an **app open the user
+performed**, at or after a trigger date, and obeys the same three context
+rules everything else does — quiet hours, focus mode, in-event
+suppression. It does not interrupt, it is not a nudge, and it consumes no
+attention budget.
+
+The prototype is the daily obligations card
+(`03-experience/attention-budget.md`): *"once per day, at a time based on
+the user's typical first open (learned)"*, explicitly not a nudge.
+
+The one instance today is the **protocol report**, which
+`05-modules/protocols.md` generates at the review date and on abandonment.
+It is a scheduled generation, not a contextual action:
+
+- Its trigger is a date, not a gesture.
+- Its output is a Note, not a proposal the user accepts or rejects.
+- It is metered as a Tier 2 call, priced in `07-infrastructure/cost-model.md`.
+- If the quota blocks it, it **waits** and the protocol says so — a
+  scheduled call must not fail silently, because fire time may be hours
+  after the user last looked (ADR 0014).
+
+The menu action (§On a Protocol) exists for the case where the user wants
+a report **early**; it is not the same path and it is not redundant with
+the automatic one.
 
 ### Where a result lands
 
@@ -202,6 +281,18 @@ nothing, or the model is offline):
   "Couldn't complete. Try again?"
 - No partial proposals are shown.
 - The user can dismiss and try later.
+
+Offline, the actions differ by where they run, and
+`07-infrastructure/cost-model.md` is the table that says which:
+
+- **On-device actions** (break down, find related, prep me, and the
+  purely local reads) work with no connection.
+- **Cloud actions** (research, and any action whose synthesis leaves the
+  device) fail with the message above.
+- A scheduled generation **waits** rather than failing.
+
+Counts and units are owned by `07-infrastructure/cost-model.md` and are not
+restated here. The user sees their running total in settings.
 
 ## Examples
 

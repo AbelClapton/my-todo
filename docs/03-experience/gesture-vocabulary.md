@@ -129,6 +129,7 @@ not a general gesture.
 | Calendar (month) | — | — | — | — | AI menu (day) | — | back | zoom |
 | Date picker | — | dismiss | — | — | — | — | — | — |
 | People list | — | — | attach | archive | AI menu | capture | back | — |
+| Protocol detail | — | — | — | — | AI menu (review time) | — | back | — |
 | Protocol report | — | — | — | — | — | — | back | zoom |
 | Inbox | today | someday | attach | remove | AI menu | capture | back | — |
 | Search results | — | — | attach | — | AI menu | capture | back | — |
