@@ -18,7 +18,19 @@
   // references all carry a fallback, so the nav does not break in a file that
   // forgot `tokens.css` either.
   var STYLE = [
-    '.labnav { position: sticky; top: 0; z-index: 40; display: flex; align-items: center;',
+    // This bar owns the top of the stack, and the numbers are high on purpose.
+    //
+    // The panels below are *descendants* of this element, so they are painted inside
+    // this bar's stacking context: their own z-index only orders them against each
+    // other, and against the page their effective value is this one. A lab that pins
+    // its own chrome with `position: sticky; z-index: 100` — which the palette lab did,
+    // for a header it means to sit *under* this bar, since it pins at
+    // `top: var(--labnav-h)` — therefore painted over the notes panel. Its header is
+    // 2 now, which is all it ever needed to beat the page content it scrolls across.
+    //
+    // The contract: a lab's pinned chrome goes below this. Nothing in a lab should
+    // need a value anywhere near 500.
+    '.labnav { position: sticky; top: 0; z-index: 500; display: flex; align-items: center;',
     '  gap: var(--space-3, 12px); padding: var(--space-3, 12px) var(--space-5, 20px);',
     '  background: var(--bg-raised, #fff); border-bottom: 1px solid var(--border-default, #E4E4E7); }',
     '.labnav-brand { flex: none; white-space: nowrap; padding-right: var(--space-4, 16px);',
@@ -58,7 +70,7 @@
     '  background: var(--accent-default, #0F766E); }',
     // Panels. `top: calc(100% + 6px)` needs no measuring, because the nav is sticky
     // and therefore already the containing block.
-    '.navpop { position: absolute; top: calc(100% + 6px); z-index: 50;',
+    '.navpop { position: absolute; top: calc(100% + 6px); z-index: 510;',
     '  background: var(--bg-raised, #fff); border: 1px solid var(--border-default, #E4E4E7);',
     '  border-radius: var(--radius-lg, 12px); padding: var(--space-4, 16px);',
     '  box-shadow: 0 14px 36px -10px rgba(0,0,0,.24), 0 2px 6px -2px rgba(0,0,0,.10); }',
@@ -143,7 +155,10 @@
     '  line-height: 1.5; padding: var(--space-3, 12px); border: 1px solid var(--border-default, #E4E4E7);',
     '  border-radius: var(--radius-md, 8px); background: var(--surface-2, #F4F4F5);',
     '  color: var(--text-primary, #18181B); }',
-    '.navtoast { position: fixed; left: 50%; bottom: 24px; z-index: 60; transform: translateX(-50%);',
+    // The toast is a sibling of the bar rather than a child, so it sits in the root
+    // stacking context and needs a value of its own — above the bar, since a toast
+    // behind the bar is as invisible as one behind a lab header.
+    '.navtoast { position: fixed; left: 50%; bottom: 24px; z-index: 520; transform: translateX(-50%);',
     '  max-width: calc(100vw - 32px); padding: 9px 15px; border-radius: var(--radius-md, 8px);',
     '  background: var(--text-primary, #18181B); color: var(--bg-raised, #fff);',
     '  font-size: var(--type-subhead-size, 15px); opacity: 0; pointer-events: none;',
