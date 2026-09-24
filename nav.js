@@ -58,7 +58,8 @@
     { file: 'lapsed-lab.html',      name: 'Lapse' },
     { file: 'tiers-lab.html',       name: 'AI tiers' },
     { file: 'areas-lab.html',       name: 'Areas & Goals' },
-    { file: 'disruption-lab.html',  name: 'Disruption' }
+    { file: 'disruption-lab.html',  name: 'Disruption' },
+    { file: 'system-lab.html',      name: 'System states' }
   ];
 
   var here = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
