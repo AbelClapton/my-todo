@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="warm" data-mode="light" data-accent="teal"
+      data-semantics="vivid" data-type="system">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tier 2 &amp; Tier 3 lab · Small Wins</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="lab.css">
+<style>
+/* tabular readouts */
+.t2-r{display:grid;grid-template-columns:132px minmax(0,1fr) auto;gap:10px;align-items:baseline;
+  padding:8px 0;border-bottom:1px solid var(--border-subtle);font-size:13px;line-height:18px}
+.t2-r:last-child{border-bottom:0}
+.t2-k{color:var(--text-tertiary)}
+.t2-d{color:var(--text-secondary)}
+.t2-n{font-variant-numeric:tabular-nums;font-weight:600;color:var(--text-primary)}
+.t2-n.good{color:var(--success-text)}
+.t2-n.bad{color:var(--warning-text)}
+.t2-h{font-size:11px;line-height:15px;color:var(--text-muted);margin:10px 0 2px;
+  text-transform:uppercase;letter-spacing:.05em;font-weight:600;display:flex;align-items:center;
+  gap:7px}
+.t2-h:first-child{margin-top:0}
+
+/* tags */
+.t2-tag{display:inline-flex;align-items:center;height:20px;padding:0 7px;border-radius:5px;
+  font-size:11px;letter-spacing:.04em;text-transform:uppercase;font-weight:600}
+.t2-tag.ok{background:var(--success-subtle);color:var(--success-text)}
+.t2-tag.no{background:var(--warning-subtle);color:var(--warning-text)}
+.t2-tag.nu{background:var(--surface-2);color:var(--text-secondary)}
+
+/* boxes */
+.t2-box{border:1px solid var(--border-subtle);border-radius:10px;padding:10px 12px}
+.t2-box.on{border-color:var(--accent-default)}
+.t2-box.bad{border-color:var(--warning-text)}
+.t2-box h4{margin:0 0 7px;font-size:11px;line-height:14px;color:var(--text-muted);font-weight:600;
+  text-transform:uppercase;letter-spacing:.05em;display:flex;align-items:center;gap:7px}
+.t2-box p{margin:0;font-size:12.5px;line-height:18px;color:var(--text-secondary)}
+.t2-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.t2-quote{font-size:12.5px;line-height:18px;color:var(--text-secondary);font-style:italic;
+  padding-left:11px;border-left:2px solid var(--border-subtle);margin:6px 0 0}
+
+/* the action matrix */
+.t2-mx{display:grid;gap:5px}
+.t2-mx-h{display:grid;grid-template-columns:88px repeat(6,minmax(0,1fr));gap:6px;
+  font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--text-muted);
+  font-weight:600;padding-bottom:2px}
+.t2-mx-r{display:grid;grid-template-columns:88px repeat(6,minmax(0,1fr));gap:6px;
+  font-size:11px;line-height:16px;padding:5px 0;border-bottom:1px solid var(--border-subtle)}
+.t2-mx-r:last-child{border-bottom:0}
+.t2-mx-r .t{color:var(--text-primary);font-weight:600}
+.t2-mx-r .a{color:var(--text-secondary)}
+.t2-mx-r .x{color:var(--warning-text);font-weight:600}
+.t2-mx-r .d{color:var(--text-muted)}
+
+/* the surface table */
+.t2-surf{display:grid;gap:4px}
+.t2-surf-r{display:grid;grid-template-columns:minmax(0,1fr) 92px 104px;gap:8px;
+  align-items:baseline;font-size:12px;line-height:17px;padding:6px 0;
+  border-bottom:1px solid var(--border-subtle)}
+.t2-surf-r:last-child{border-bottom:0}
+.t2-surf-r .s{color:var(--text-secondary)}
+.t2-surf-r .o{font-size:10.5px;color:var(--text-muted)}
+
+/* the proposal shapes, side by side */
+.t2-code{font-family:var(--type-mono-family,ui-monospace,Menlo,monospace);font-size:10.5px;
+  line-height:16px;color:var(--text-secondary);white-space:pre-wrap;word-break:break-word;
+  background:var(--surface-2);border-radius:8px;padding:10px 11px}
+.t2-code .k{color:var(--text-primary);font-weight:600}
+.t2-code .bad{color:var(--warning-text);font-weight:600}
+
+/* the meter */
+.t2-bar{display:flex;height:22px;border-radius:6px;overflow:hidden;margin:6px 0 4px}
+.t2-seg{display:grid;place-items:center;font-size:10px;font-weight:600;letter-spacing:.03em}
+.t2-seg.paid{background:var(--accent-subtle);color:var(--accent-text)}
+.t2-seg.free{background:var(--surface-3);color:var(--text-muted)}
+.t2-seg.unknown{background:var(--warning-subtle);color:var(--warning-text)}
+</style>
+</head>
+<body data-lab="tiers">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-pointer" viewBox="0 0 24 24"><path d="M12.586 12.586 19 19"/><path d="M3.688 3.037a.497.497 0 0 0-.651.651l6.5 15.999a.501.501 0 0 0 .947-.062l1.569-6.083a2 2 0 0 1 1.448-1.479l6.124-1.579a.5.5 0 0 0 .063-.947z"/></symbol>
+  <symbol id="i-command" viewBox="0 0 24 24"><path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"/></symbol>
+  <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol>
+  <symbol id="i-mode-tasks" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol>
+  <symbol id="i-mode-notes" viewBox="0 0 24 24"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></symbol>
+</svg>
+
+<header class="masthead">
+  <p class="eyebrow">Lab 15 · the two AI surfaces, and the last of the set</p>
+  <h1 class="t-title-1">Tier 2 &amp; Tier 3</h1>
+  <p class="lede-p">
+    Two docs, side by side, describing the only two places the AI touches the user. Tier 2 is
+    <i>"the highest-value AI in a daily tracker"</i> — a long-press on one thing. Tier 3 is
+    <i>"the escape hatch"</i> — the palette, for queries that span modules.
+  </p>
+  <p class="lede-p">
+    Both are governed by tight invariants, and three of those invariants are the ones broken here:
+    Tier 2 always produces a proposal, Tier 2 is never ambient, and the cost model owns the
+    numbers. In each case the doc that owns the rule is right and the docs that describe surfaces
+    have moved past it.
+  </p>
+</header>
+
+<div class="bar">
+  <nav class="tabs" id="tabs">
+    <button class="tab" data-go="menu">Who has a menu</button>
+    <button class="tab" data-go="shape">Always a proposal</button>
+    <button class="tab" data-go="ambient">Never ambient</button>
+    <button class="tab" data-go="metering">Who owns the numbers</button>
+  </nav>
+</div>
+
+<main id="main">
+
+<!-- ================================================================== MENU -->
+<section class="screen" id="menu">
+  <div class="lede">
+    <h2 class="t-title-2">Who has a menu</h2>
+    <p class="lede-p">
+      §The invocation is one sentence: <i>"Tier 2 is invoked via long-press on any atom
+      (<b>Task, Event, Note, Habit</b>)."</i> Four types. §The action catalog then writes menus
+      for <b>five</b> — the fifth being Protocol, <i>"at review time only."</i>
+    </p>
+    <p class="lede-p">
+      The gesture matrix is what actually grants the gesture, and it grants it to <b>eight</b>
+      surfaces. Two of those surfaces have a menu that no doc in the set writes the contents of.
+      One has the reverse problem: a catalog section for a surface the matrix does not give a
+      menu to.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">Four atoms, five catalog sections, eight surfaces, seven atom types.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="t2-h"><svg class="ic"><use href="#i-pointer"/></svg>Long-press, per surface</p>
+            <div class="t2-surf">
+              <div class="t2-surf-r"><span class="s">Task list</span>
+                <span class="o">atom: Task</span><span class="t2-tag ok">written</span></div>
+              <div class="t2-surf-r"><span class="s">Habit list</span>
+                <span class="o">atom: Habit</span><span class="t2-tag ok">written</span></div>
+              <div class="t2-surf-r"><span class="s">Note list</span>
+                <span class="o">atom: Note</span><span class="t2-tag ok">written</span></div>
+              <div class="t2-surf-r"><span class="s">Calendar (day)</span>
+                <span class="o">atom: Event</span><span class="t2-tag ok">written</span></div>
+              <div class="t2-surf-r"><span class="s">Inbox</span>
+                <span class="o">notes + tasks</span><span class="t2-tag nu">by atom</span></div>
+              <div class="t2-surf-r"><span class="s">Search results</span>
+                <span class="o">notes + tasks + events</span>
+                <span class="t2-tag nu">by atom</span></div>
+              <div class="t2-surf-r"><span class="s">People list</span>
+                <span class="o">atom: Person</span><span class="t2-tag no">nothing</span></div>
+              <div class="t2-surf-r"><span class="s">Calendar (month)</span>
+                <span class="o">"AI menu (day)"</span><span class="t2-tag no">nothing</span></div>
+            </div>
+            <div class="t2-box bad">
+              <h4><svg class="ic"><use href="#i-alert"/></svg>Two menus nobody has written</h4>
+              <p>A Person has a detail screen and seven other surfaces' worth of specification,
+                and the People list's long-press has no contents anywhere &mdash; not in
+                <code>tier-2-contextual.md</code>, which has no "On a Person" section, and not in
+                <code>people.md</code>, which defers the one card it does describe back to Tier 2.</p>
+            </div>
+            <div class="t2-box bad">
+              <h4>And one the other way</h4>
+              <p>The catalog writes "On a Protocol (at review time only)" &mdash; but the matrix
+                gives the Protocol report row a dash in the long-press column. The contents exist
+                for a gesture that is not granted.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The invocation's four atoms, the catalog's five sections, and the matrix's
+            eight AI-menu cells.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="menu-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The matrix's own note says <i>"a dash means the gesture is disabled on that
+            surface,"</i> and it has no such note for a cell that grants a gesture whose contents
+            nobody wrote. Eight cells, five menus.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Fourth, fifth, eighth</span>
+        <p class="vc-stance">The invocation says four atoms, the catalog covers five, the matrix
+          grants eight, and the app has seven atom types.</p>
+        <span class="vc-read">name the atom set once, then the exceptions</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="t2-cols">
+              <div class="t2-box">
+                <h4>§The invocation</h4>
+                <p>"long-press on <b>any atom</b> (Task, Event, Note, Habit)"</p>
+                <p style="margin-top:6px"><b>4</b></p>
+              </div>
+              <div class="t2-box on">
+                <h4>§The action catalog</h4>
+                <p>Task &middot; Event &middot; Habit &middot; Note &middot; <b>Protocol
+                  (at review time only)</b></p>
+                <p style="margin-top:6px"><b>5</b></p>
+              </div>
+            </div>
+            <div class="t2-cols">
+              <div class="t2-box bad">
+                <h4>§The matrix</h4>
+                <p>Task list &middot; Habit list &middot; Note list &middot; Calendar day &middot;
+                  Calendar month &middot; People list &middot; Inbox &middot; Search results</p>
+                <p style="margin-top:6px"><b>8</b></p>
+              </div>
+              <div class="t2-box bad">
+                <h4>The app</h4>
+                <p>Entities with a detail screen: Task, Event, Note, Habit, Protocol,
+                  <b>Person</b>, <b>Goal</b></p>
+                <p style="margin-top:6px"><b>7</b></p>
+              </div>
+            </div>
+            <div class="t2-box bad">
+              <h4>Reconciling them needs three exceptions, not one</h4>
+              <p>Protocol has a menu but no granted gesture. Person has a granted gesture but no
+                menu. Goal has neither and is not mentioned by either doc. And the Calendar's
+                month row grants a menu on a <i>day</i>, which is not an atom at all.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The invocation names the atom set by reference to
+            <code>02-architecture/object-model.md</code> and states the exceptions instead of
+            listing four of seven. The catalog gains a <b>Person</b> section and a
+            <b>Day</b> section, or the matrix loses those two cells.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A Person menu is six or seven actions to specify, or a decision that a Person is
+            long-pressed for something narrower — opening the detail is the obvious candidate, and
+            it needs no AI at all.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The catalog is organised <b>by item type</b> and the invocation is scoped to
+            <b>atoms</b>. As soon as a surface grants the gesture to a non-atom (a day, a search
+            result, an inbox row), the catalog's organising principle cannot express it — which is
+            why the three counts drifted in three directions.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The catalog is a subset rule</span>
+        <p class="vc-stance">"The menu shows a subset based on the item type and state." Nothing
+          states which subset, for any type.</p>
+        <span class="vc-read">state the rule · or admit every action is always shown</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="t2-box">
+              <h4>§The action catalog, first line</h4>
+              <p><i>"Each action is a specific Tier 2 function. The menu shows a <b>subset</b> based
+                on the item type and state."</i></p>
+            </div>
+            <p class="t2-h">Actions per type, and whether the subset is specified</p>
+            <div class="t2-r"><span class="t2-k">Task</span>
+              <span class="t2-d">6 listed — Research, Break down, Reschedule, Link person, Add
+                note, Find related</span>
+              <span class="t2-tag no">no rule</span></div>
+            <div class="t2-r"><span class="t2-k">Event</span>
+              <span class="t2-d">3 listed — Prep me, Find related, Reschedule</span>
+              <span class="t2-tag no">no rule</span></div>
+            <div class="t2-r"><span class="t2-k">Habit</span>
+              <span class="t2-d">3 listed — Why am I slipping?, Adjust cadence, View history</span>
+              <span class="t2-tag no">no rule</span></div>
+            <div class="t2-r"><span class="t2-k">Note</span>
+              <span class="t2-d">4 listed — Summarize, Extract tasks, Find related, Suggest tags</span>
+              <span class="t2-tag no">no rule</span></div>
+            <div class="t2-r"><span class="t2-k">Protocol</span>
+              <span class="t2-d">2 listed — Generate report, Suggest adjustment</span>
+              <span class="t2-tag no">no rule</span></div>
+            <div class="t2-box bad">
+              <h4>And two of the eighteen are conditional in prose</h4>
+              <p>"Suggest tags" is disabled until tags exist, and "Adjust cadence" does not apply
+                inside an active protocol. Those are <b>state</b> conditions, which is exactly what
+                the missing rule is for — so the doc has two examples of its own rule and no
+                statement of it.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The subset rule is stated: an action is shown when it is <b>applicable</b> (the item
+            is the right type and the precondition holds) and <b>permitted</b> (no rule forbids it).
+            The two prose conditions become instances, and Protocol's "review time only" becomes the
+            third.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A sentence and three restatements. The alternative is a menu whose length is decided
+            per implementation — five actions on a Task on one build, six on another.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>A menu that shows a subset is a menu whose contents depend on state, and the whole
+            set has exactly one other surface like that &mdash; the now line, with its six sources
+            in a fixed order. This one has the word "subset" and no order.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Where the result lands, per surface</span>
+        <p class="vc-stance">The one section that reasons about containers and sheets picks the rule
+          from the surface, not the action.</p>
+        <span class="vc-read">keep this · it is the model the rest should follow</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="t2-cols">
+              <div class="t2-box">
+                <h4>Long-press in a list</h4>
+                <p>The menu opens as a sheet and the result lands <b>in the sheet</b>, "because a
+                  list row has no surface for a card to land in."</p>
+              </div>
+              <div class="t2-box on">
+                <h4>Long-press inside a detail</h4>
+                <p>The result lands <b>inline</b>, "because the detail is the surface the result is
+                  about."</p>
+              </div>
+            </div>
+            <div class="t2-box">
+              <h4>And the reason is a rule from another doc</h4>
+              <p><code>app-shell.md</code> allows at most one sheet at a time, so a result in a
+                sheet "would dismiss the very detail it was asked about". This section is the only
+                place in the two docs that reasons from the shell's constraints rather than
+                restating an outcome.</p>
+            </div>
+            <div class="t2-box bad">
+              <h4>Its one gap</h4>
+              <p>It is written for <i>a card</i>. Two of the eighteen actions return a
+                <b>list</b> — Find related, three times over — and a list is neither a card nor a
+                sheet's contents. The section does not say where those land.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>One sentence: a list result lands where a card lands, as a list. Everything else in
+            the section is kept as written.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>None measurable. The section already does the hard part.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The section says a result "lands in the surface it was invoked from" — which is a rule
+            about <b>containers</b>, and a list has the same container options a card does. The
+            omission is only that the section's noun is singular.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">The gesture table and the catalog become two views of one set, and that
+          set is named once.</p>
+        <span class="vc-read">synthesis · one owner, then exceptions with reasons</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="t2-h"><svg class="ic"><use href="#i-layers"/></svg>The set, corrected</p>
+            <div class="t2-surf">
+              <div class="t2-surf-r"><span class="s">Task &middot; Event &middot; Note &middot;
+                Habit</span><span class="o">4 actions each, minimum</span>
+                <span class="t2-tag ok">full menus</span></div>
+              <div class="t2-surf-r"><span class="s">Protocol</span>
+                <span class="o">granted; review time only</span>
+                <span class="t2-tag ok">matrix row</span></div>
+              <div class="t2-surf-r"><span class="s">Person</span>
+                <span class="o">"Open detail" + "Add a task" &mdash; no AI</span>
+                <span class="t2-tag ok">specified</span></div>
+              <div class="t2-surf-r"><span class="s">Goal</span>
+                <span class="o">no menu; the matrix says so</span>
+                <span class="t2-tag ok">decided</span></div>
+              <div class="t2-surf-r"><span class="s">Calendar (month)</span>
+                <span class="o">the <b>day</b> under the finger, not the month</span>
+                <span class="t2-tag ok">stated</span></div>
+            </div>
+            <div class="t2-box on">
+              <h4>And the two docs stop duplicating the set</h4>
+              <p>The gesture matrix owns <i>where</i> the gesture is available. This catalog owns
+                <i>what it shows</i>. Every cell in the first is a section in the second, or a
+                stated exception with a reason.</p>
+            </div>
+            <div class="t2-box">
+              <h4>The test this passes</h4>
+              <p>A reader can take any surface in the app, long-press it, and know before the build
+                whether the menu is empty, familiar, or a new surface to design.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>One Person section or a deliberate decision that Person has no menu, one matrix row
+            for Protocol, one line for the month view's day target, and the subset rule.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Four edits in two docs. Three of the eight cells currently have no contents, so the
+            alternative is a long-press that does nothing in three places.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. The gesture doc keeps the gesture; the AI doc keeps the contents; the two
+            counts stop being able to disagree.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the menus measure</h2>
+    <div class="measure" id="measure-menu">…</div>
+  </div>
+</section>
+
+<!-- ================================================================= SHAPE -->
+<section class="screen" id="shape">
+  <div class="lede">
+    <h2 class="t-title-2">Always a proposal</h2>
+    <p class="lede-p">
+      §Invariants: <i>"Tier 2 <b>always</b> produces a proposal. The user taps to apply."</i>
+      §The proposal shape then fixes what a proposal can be — <code>text</code>,
+      <code>mutations</code>, or <code>note</code>.
+    </p>
+    <p class="lede-p">
+      The catalog has eighteen actions across five item types. Measured against the three declared
+      types, seven of them ask for something the shape does not have: a list, a card, a composer,
+      or a navigation. The three that are lists are the same action offered three times.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">Eighteen actions, three types, and one invariant that says all of them
+          fit.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="t2-h">The three declared proposal types</p>
+            <div class="t2-r"><span class="t2-k">text</span>
+              <span class="t2-d">shown in a sheet, with "Copy" and "Dismiss"</span>
+              <span class="t2-tag nu">1</span></div>
+            <div class="t2-r"><span class="t2-k">mutations</span>
+              <span class="t2-d">a list of changes, with "Apply" and "Cancel"</span>
+              <span class="t2-tag nu">2</span></div>
+            <div class="t2-r"><span class="t2-k">note</span>
+              <span class="t2-d">a preview, with "Add as note" and "Cancel"</span>
+              <span class="t2-tag nu">3</span></div>
+            <p class="t2-h">The eighteen actions</p>
+            <div class="t2-mx">
+              <div class="t2-mx-h"><span>Type</span><span>fits</span><span>fits</span>
+                <span>fits</span><span>no</span><span>no</span><span>no</span></div>
+              <div class="t2-mx-r"><span class="t">Task &middot; 6</span>
+                <span class="a">Research</span><span class="a">Break down</span>
+                <span class="a">Reschedule</span><span class="x">Link person</span>
+                <span class="x">Add note</span><span class="x">Find related</span></div>
+              <div class="t2-mx-r"><span class="t">Event &middot; 3</span>
+                <span class="a">Reschedule</span><span class="x">Prep me</span>
+                <span class="x">Find related</span><span class="d">&mdash;</span>
+                <span class="d">&mdash;</span><span class="d">&mdash;</span></div>
+              <div class="t2-mx-r"><span class="t">Habit &middot; 3</span>
+                <span class="a">Why slipping</span><span class="a">Adjust cadence</span>
+                <span class="x">View history</span><span class="d">&mdash;</span>
+                <span class="d">&mdash;</span><span class="d">&mdash;</span></div>
+              <div class="t2-mx-r"><span class="t">Note &middot; 4</span>
+                <span class="a">Summarize</span><span class="a">Extract tasks</span>
+                <span class="x">Find related</span><span class="x">Suggest tags</span>
+                <span class="d">&mdash;</span><span class="d">&mdash;</span></div>
+              <div class="t2-mx-r"><span class="t">Protocol &middot; 2</span>
+                <span class="a">Gen report</span><span class="a">Suggest adj</span>
+                <span class="d">&mdash;</span><span class="d">&mdash;</span>
+                <span class="d">&mdash;</span><span class="d">&mdash;</span></div>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. §The proposal shape's three types, the catalog's eighteen actions, and the
+            invariant that says every one of them returns one.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="shape-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The invariant is <i>"Tier 2 always produces a proposal."</i> Seven actions produce a
+            list, a card, a navigation or a composer. Each is a surface decision the shape cannot
+            express, so each implementation makes it differently.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">A list is not a text</span>
+        <p class="vc-stance">Find related is offered on three item types, runs a search, and returns
+          results — which are none of the three types.</p>
+        <span class="vc-read">add the type · or route it to the search screen</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="t2-box">
+              <h4>Find related, as three docs describe it</h4>
+              <p><b>Task:</b> <i>"Runs semantic search over the user's own notes, tasks, and events.
+                Returns a list of related items."</i></p>
+              <p style="margin-top:6px"><b>Event:</b> <i>"Semantic search over the user's own
+                data."</i> &nbsp;<b>Note:</b> <i>"Semantic search."</i></p>
+            </div>
+            <div class="t2-cols">
+              <div class="t2-box">
+                <h4>Its output is</h4>
+                <p>A ranked list with a "why this matched" line on each row
+                  (<code>06-flows/retrieval.md</code>).</p>
+              </div>
+              <div class="t2-box bad">
+                <h4>Its type must be one of</h4>
+                <p><code>text</code> &middot; <code>mutations</code> &middot; <code>note</code></p>
+              </div>
+            </div>
+            <div class="t2-box bad">
+              <h4>A second question the shape cannot ask</h4>
+              <p>The retrieval layer's <code>semantic_search</code> returns <code>why</code> and,
+                per the retrieval lab, <b>no score on screen</b>. Tier 2's <code>text</code> path
+                renders in a sheet with "Copy" and "Dismiss" — so a semantic result list routed
+                through it inherits a Copy button and loses the row component the search screen
+                specifies.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Find related stops being a proposal at all and becomes a <b>navigation</b>: it opens
+            the search screen with the query prefilled. One destination, the row component already
+            specified, the why line already specified, and no fourth type needed.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The result leaves the contextual sheet, which for a semantic search over the user's
+            whole log is arguably right — the user wants to browse, and a sheet is a decision
+            surface.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The catalog's own header says the menu shows a <b>subset</b> of actions based on item
+            type and state. Find related is the one action offered on three of the five types, which
+            makes it look like a generic affordance rather than a Tier 2 function — and a generic
+            affordance has no business returning a <code>tier: 2</code> proposal.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Two siblings, two shapes</span>
+        <p class="vc-stance">Tier 2 and Tier 3 both return proposals. They describe the same object
+          twice, with different field names.</p>
+        <span class="vc-read">one shape · the log already has it</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="t2-code"><span class="k">Tier 2</span>
+{
+  tier: 2,
+  action: string,
+  proposal: {
+    type: <span class="bad">'text' | 'mutations' | 'note'</span>,
+    mutations?: [{ target, operation, payload, explanation }],
+    note?: { body, attached_to, metadata }
+  },
+  explanation: string
+}</div>
+            <div class="t2-code"><span class="k">Tier 3</span>
+{
+  type: <span class="bad">'answer' | 'proposals' | 'clarification'</span>,
+  proposals?: [{ target, operation, payload, explanation }],
+  summary: string
+}</div>
+            <div class="t2-box">
+              <h4>The log settles it</h4>
+              <p><code>ai.proposed</code> is one entry type for all three tiers &mdash;
+                <code>{ proposal_id, tier: 1 | 2 | 3, context, proposal, explanation }</code>.
+                So whatever the two responses look like on the wire, the log stores one shape, and
+                the <code>explanation</code> field is part of it.</p>
+            </div>
+            <div class="t2-box bad">
+              <h4>And Tier 3 has no <code>explanation</code></h4>
+              <p>It has <code>summary</code> at the top and <code>explanation</code> per proposal.
+                Tier 2 has <code>explanation</code> at the top and per mutation. One field, two
+                names, one concept &mdash; and the log picks the name.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Both docs use one name for the top-level line — <code>explanation</code>, matching the
+            log — and Tier 3's <code>type</code> values are renamed so that
+            <code>type</code> means the same thing in both. The response envelopes stay different,
+            because an answer and a card genuinely are.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Two renames. The invariants, the flows and the log are unchanged, which is the point
+            — the log was already the single shape.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>A field that the log stores under one name and two docs describe under two is a field
+            an implementer will map twice. `object-model.md`'s rule — the log is the shape,
+            projections follow it — applies to responses too.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Three tiers, three logging rules</span>
+        <p class="vc-stance">Every call, every application, or only the proposing ones — and one of
+          them is a middle case nobody states.</p>
+        <span class="vc-read">state the rule by outcome, not by tier</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="t2-r"><span class="t2-k">Tier 1</span>
+              <span class="t2-d">"Every Tier 1 <b>application</b> is logged"</span>
+              <span class="t2-tag nu">applies</span></div>
+            <div class="t2-r"><span class="t2-k">Tier 2</span>
+              <span class="t2-d">"Every Tier 2 <b>call</b> is logged"</span>
+              <span class="t2-tag no">calls</span></div>
+            <div class="t2-r"><span class="t2-k">Tier 3</span>
+              <span class="t2-d">"Every Tier 3 call <b>that produces a proposal</b> is logged"</span>
+              <span class="t2-tag nu">proposals</span></div>
+            <div class="t2-box bad">
+              <h4>Tier 2's rule is the odd one</h4>
+              <p>It logs <b>calls</b>, so a pure read is logged — "View history", "Find related",
+                "Prep me". Tier 3 explicitly does not log a pure read: those go to the diagnostics
+                buffer. Same action kind, opposite rule, one tier apart.</p>
+            </div>
+            <div class="t2-box bad">
+              <h4>And the clarification</h4>
+              <p>Tier 3 produces a <code>clarification</code>, which is neither an answer nor a
+                proposal. The doc says it "is not logged as a separate call; it is part of the same
+                conversation" &mdash; so the clarifiying <i>call</i> is logged or not, depending on
+                whether the second attempt proposed anything.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The rule is restated once, by outcome: <b>a call that results in a mutation the user
+            could accept is logged; a call that only reads is not</b>. That covers all three tiers
+            and settles the clarification without a special case.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Tier 2 loses log entries for three read actions. The audit surface
+            (<code>05-modules/settings.md</code>) lists <code>ai.proposed</code> /
+            <code>applied</code> / <code>rejected</code>, so fewer entries means a shorter —
+            and more honest — audit list.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>ADR 0003's obligation is that <b>AI actions are auditable</b>. An audit is of
+            <i>actions</i>; "Find related" is a read. Logging it inflates the audit surface the
+            settings doc promises, which is the opposite of the intent.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Three types plus navigation, one shape across two tiers, one logging
+          rule.</p>
+        <span class="vc-read">synthesis · say what an action returns, not what it is called</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="t2-h"><svg class="ic"><use href="#i-sparkles"/></svg>What an action can return</p>
+            <div class="t2-r"><span class="t2-k">proposal</span>
+              <span class="t2-d">text &middot; mutations &middot; note — the user accepts or not</span>
+              <span class="t2-tag ok">11 actions</span></div>
+            <div class="t2-r"><span class="t2-k">navigation</span>
+              <span class="t2-d">opens a surface that already exists; no proposal, no log</span>
+              <span class="t2-tag ok">3 actions</span></div>
+            <div class="t2-r"><span class="t2-k">disabled</span>
+              <span class="t2-d">shown greyed with the reason, or not shown</span>
+              <span class="t2-tag ok">1 action</span></div>
+            <div class="t2-box on">
+              <h4>And the counts stop disagreeing</h4>
+              <p>18 actions = 11 proposals + 3 navigations + 1 disabled + 3 that are proposals whose
+                container is chosen by the surface (Prep me, Generate report, and the two
+                cards).</p>
+            </div>
+            <div class="t2-box">
+              <h4>The test this passes</h4>
+              <p>The invariant "Tier 2 always produces a proposal" becomes true of the actions it
+                is true of, and the others have a name.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The invariant is scoped, two action classes are named, the proposal shape gains its
+            fifth declared field where it needs it, and the logging rule becomes one rule for three
+            tiers.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The catalog gains a column. It is the column that decides whether a long-press
+            produces something the user has to answer.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. Every change makes an existing action's contract explicit rather than
+            inferred.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the proposal shape measures</h2>
+    <div class="measure" id="measure-shape">…</div>
+  </div>
+</section>
+
+<!-- =============================================================== AMBIENT -->
+<section class="screen" id="ambient">
+  <div class="lede">
+    <h2 class="t-title-2">Never ambient</h2>
+    <p class="lede-p">
+      The first invariant of the doc: <i>"Tier 2 is <b>always user-initiated</b>. There is no
+      ambient Tier 2."</i> It is stated twice in the same block — once as a rule and once as its
+      consequence — which is the shape of a rule the author expected to be tested.
+    </p>
+    <p class="lede-p">
+      It is tested by the protocol report, which has three generation triggers and one of them is a
+      date arriving. <code>protocols.md</code> says so twice, and it says "Tier 2 generates the
+      report" in both places.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The invariant, and the three ways a report comes into being.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="t2-quote">"Tier 2 is always user-initiated. There is no ambient Tier 2."</div>
+            <p class="t2-h"><svg class="ic"><use href="#i-sparkles"/></svg>The three triggers, in
+              protocols.md</p>
+            <div class="t2-r"><span class="t2-k">1 &middot; The action</span>
+              <span class="t2-d">"Generate report" in the menu</span>
+              <span class="t2-tag ok">user</span></div>
+            <div class="t2-r"><span class="t2-k">2 &middot; The date</span>
+              <span class="t2-d">§Review: "At the review date&hellip; Tier 2 generates the
+                report."</span>
+              <span class="t2-tag no">time</span></div>
+            <div class="t2-r"><span class="t2-k">3 &middot; Abandonment</span>
+              <span class="t2-d">"Generates a report if &ge;7 days were logged"</span>
+              <span class="t2-tag ok">user</span></div>
+            <div class="t2-box bad">
+              <h4>Trigger 2 is ambient Tier 2</h4>
+              <p>The review date is a projection of
+                <code>adoption_date + baseline_days + duration_days</code>. When it arrives, a Tier
+                2 model call happens with no gesture behind it — which is the exact state the
+                invariant's second sentence forbids.</p>
+            </div>
+            <div class="t2-box bad">
+              <h4>And trigger 1 becomes redundant</h4>
+              <p>Because the menu is offered <b>"at review time only"</b>, and the report is
+                generated at review time automatically, the only moment the action is available is
+                the moment the work is already done.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The invariant, and the three triggers as <code>protocols.md</code> states
+            them.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="ambient-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Rule 1 (<i>"the AI proposes; the user decides"</i>) is not broken — the report proposes
+            nothing, it <i>summarises</i>. The rule broken is the narrower one about ambience, which
+            exists because a model call the user did not ask for is a model call the user did not
+            pay for and cannot predict.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The report is not a proposal</span>
+        <p class="vc-stance">It is generated automatically, and it is a Note. Those two facts are
+            independent of Tier 2 entirely.</p>
+        <span class="vc-read">move the generation · keep the writer</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="t2-h">What the report actually is</p>
+            <div class="t2-r"><span class="t2-k">Stored as</span>
+              <span class="t2-d">"Reports are Notes." A <code>note.created</code> entry</span>
+              <span class="t2-tag nu">an atom</span></div>
+            <div class="t2-r"><span class="t2-k">Proposed first?</span>
+              <span class="t2-d">No &mdash; the user never accepts or rejects it</span>
+              <span class="t2-tag no">not a proposal</span></div>
+            <div class="t2-r"><span class="t2-k">Editable</span>
+              <span class="t2-d">"The user may edit a report; the edit is a
+                <code>note.edited</code> entry"</span>
+              <span class="t2-tag nu">normal note</span></div>
+            <div class="t2-r"><span class="t2-k">Abandon path frames it</span>
+              <span class="t2-d">"'You stopped after N days. Here's what the data showed.'"</span>
+              <span class="t2-tag nu">deterministic</span></div>
+            <div class="t2-box on">
+              <h4>Nothing about it needs Tier 2 except the writing</h4>
+              <p>The trigger is a date. The content is compliance data the app already has. The
+                output is a Note. What it needs is <b>a model that writes prose on a schedule</b>,
+                which is a fourth thing — neither a contextual action nor the assistant.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The report's generation moves out of Tier 2 and into the protocol's own lifecycle, and
+            <code>protocols.md</code> names the writer. Tier 2 keeps the <b>manual</b> action, which
+            is the one place a user gesture exists.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One sentence in <code>protocols.md</code> establishing that a scheduled report is a
+            scripted generation rather than a contextual AI action. The metering already
+            distinguishes the two, so the cost model needs no change.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd><code>protocols.md</code>'s own precedent is exactly this move. §Abandonment's
+            threshold <i>"used to count only the active period"</i> and was moved here with the note
+            <i>"This is the only statement of the threshold."</i> The same doc has already
+            centralised a rule once.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Who pays for a report nobody asked for</span>
+        <p class="vc-stance">Tier 2 costs units. Units are metered. The automatic report is the one
+          call with no user gesture to consent from.</p>
+        <span class="vc-read">state the exemption · or meter it like everything else</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="t2-box">
+              <h4>cost-model.md</h4>
+              <p><i>"Tier 2: 1 unit."</i> and <i>"Tier 2 local actions (break down, find related,
+                prep me) | On-device | $0"</i></p>
+            </div>
+            <div class="t2-r"><span class="t2-k">The report's action</span>
+              <span class="t2-d">Generate report — not among the three named local actions</span>
+              <span class="t2-tag no">unpriced</span></div>
+            <div class="t2-r"><span class="t2-k">Its trigger</span>
+              <span class="t2-d">a date, with no user present</span>
+              <span class="t2-tag no">no consent</span></div>
+            <div class="t2-r"><span class="t2-k">Its quota behaviour</span>
+              <span class="t2-d">cost-model: "Quota blocks the call and states the reset date"</span>
+              <span class="t2-tag no">unstated</span></div>
+            <div class="t2-box bad">
+              <h4>And the abort path has the same shape</h4>
+              <p>"Generates a report if &ge;7 days were logged" &mdash; deterministic trigger,
+                model-written prose, one unit, on the way out of a protocol the user is already
+                having a hard day about.</p>
+            </div>
+            <div class="t2-box bad">
+              <h4>A quota block on a scheduled call is a silent failure</h4>
+              <p>ADR 0014 says a quota <i>"blocks the call and states the reset date &mdash; no
+                silent degradation."</i> Stating a reset date requires a surface, and a scheduled
+                report fires when no surface is open.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd><code>cost-model.md</code> names the report as a scheduled Tier 2 generation with its
+            own unit line, and states what happens when the quota is exhausted at the moment the
+            date arrives: the report waits, and the protocol says so.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One row in the cost table and one sentence in <code>protocols.md</code>. The
+            alternative is a metered call whose consent story nobody has written.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>ADR 0014: <i>"no feature sits behind an unbuyable tier"</i> and quota never degrades
+            silently. A report that vanishes because a quota filled while the user was away is
+            exactly a silent degradation, in the one flow whose subject is a user who has been
+            away.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">The scheduler that might be meant</span>
+        <p class="vc-stance">The set has a rule for scheduled surfaces and a rule for AI calls. A
+          scheduled AI call falls between them.</p>
+        <span class="vc-read">place it · the budget already has the vocabulary</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="t2-h"><svg class="ic"><use href="#i-command"/></svg>One call, two rulebooks</p>
+            <div class="t2-cols">
+              <div class="t2-box">
+                <h4>If it is a surface</h4>
+                <p>Then it is a nudge, it registers with the queue, it obeys quiet hours, and it
+                  has a <code>SurfaceId</code> and a settings toggle.</p>
+              </div>
+              <div class="t2-box">
+                <h4>If it is an AI call</h4>
+                <p>Then it is user-initiated or it does not happen — and this is one that
+                  is not.</p>
+              </div>
+            </div>
+            <div class="t2-box bad">
+              <h4>It is neither, and both docs assume the other</h4>
+              <p><code>protocols.md</code> describes the output appearing on the card
+                (&sect;Review step 4: "The protocol card shows the delta and the report link"), so a
+                surface is implied. <code>tier-2-contextual.md</code> describes an action, so a
+                gesture is implied. Neither names the third thing: a scheduler.</p>
+            </div>
+            <div class="t2-box on">
+              <h4>The set already has the answer in one place</h4>
+              <p>The daily obligations card is <i>"once per day, at a time based on the user&rsquo;s
+                typical first open (learned)"</i> and is <b>not a nudge</b>. That is a scheduled,
+                non-interrupting generation with a stated trigger — the pattern the report
+                needs.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The report is classed as a <b>scheduled generation</b>: it runs on the next eligible
+            open at or after the review date, obeys the same three context rules, does not
+            interrupt, and is not a nudge. That is the obligations card's rule, reused.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One paragraph in <code>protocols.md</code>. The report may appear a few hours after
+            the review date rather than at it, which is invisible to the user because the card is
+            where they read it.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. It resolves the invariant by giving the call the trigger the invariant requires
+            — an open the user caused — rather than by weakening the invariant.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">A third class of AI call, named: scheduled generation.</p>
+        <span class="vc-read">synthesis · keep the invariant, name the exception</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="t2-h"><svg class="ic"><use href="#i-layers"/></svg>Three ways AI runs</p>
+            <div class="t2-r"><span class="t2-k">Ambient</span>
+              <span class="t2-d">none, anywhere. The invariant stands</span>
+              <span class="t2-tag no">0</span></div>
+            <div class="t2-r"><span class="t2-k">User-initiated</span>
+              <span class="t2-d">Tier 1 parses, Tier 2 actions, Tier 3 queries</span>
+              <span class="t2-tag ok">the default</span></div>
+            <div class="t2-r"><span class="t2-k">Scheduled</span>
+              <span class="t2-d">the report, on an open at or after the review date</span>
+              <span class="t2-tag ok">user-caused</span></div>
+            <div class="t2-box on">
+              <h4>Why "scheduled" survives the invariant</h4>
+              <p>The call happens on an <b>app open the user performed</b>, not on a timer. That is
+                the same shape as the obligations card and the morning plan — both of which are
+                time-based and both of which are therefore user-caused.</p>
+            </div>
+            <div class="t2-box">
+              <h4>The test this passes</h4>
+              <p>Nothing runs on the device while the user is not looking, and the report still
+                exists when they come back.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Two sentences in <code>tier-2-contextual.md</code> and one in
+            <code>protocols.md</code>. The catalog's Protocol section keeps its manual action for
+            the case where the user wants one early.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The invariant gains a qualifier instead of losing one. "Always user-initiated" becomes
+            "always user-initiated, or on an open the user initiated" — which is what the whole set
+            already means by "ambient."</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. The word doing the work is <i>open</i>: the app has no background execution
+            anywhere, so every call in the set is already caused by something the user did.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the ambience rule measures</h2>
+    <div class="measure" id="measure-ambient">…</div>
+  </div>
+</section>
+
+<!-- ============================================================== METERING -->
+<section class="screen" id="metering">
+  <div class="lede">
+    <h2 class="t-title-2">Who owns the numbers</h2>
+    <p class="lede-p">
+      ADR 0014 makes <code>cost-model.md</code> authoritative for metering, quotas and unit costs.
+      Both tier docs restate the numbers anyway, and one of them does it in the same paragraph as a
+      sentence promising not to.
+    </p>
+    <p class="lede-p">
+      The larger question is which actions the numbers cover. The cost model names <b>three</b> Tier
+      2 actions and <b>three</b> of Tier 3's query classes. The catalogs contain <b>eighteen</b>
+      and <b>seven</b>.
+    </p>
+  </div>
+
+  <div class="grid">
+
+    <!-- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The authority, and the two docs that disclaim it while restating it.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="t2-box">
+              <h4><svg class="ic"><use href="#i-gauge"/></svg>cost-model.md, per ADR 0014</h4>
+              <p>Tier 2: <b>1 unit</b>. Tier 3 simple: <b>3 units</b>. Tier 3 complex:
+                <b>10 units</b>. Research: <b>50 units</b>.</p>
+            </div>
+            <p class="t2-h">And the same numbers, restated</p>
+            <div class="t2-r"><span class="t2-k">tier-2-contextual.md</span>
+              <span class="t2-d">"Most Tier 2 actions cost 1 unit. 'Research this' costs 50
+                units"</span>
+              <span class="t2-tag no">2 numbers</span></div>
+            <div class="t2-r"><span class="t2-k">tier-3-assistant.md</span>
+              <span class="t2-d">"Simple queries&hellip;: 3 units. Complex queries&hellip;: 10
+                units."</span>
+              <span class="t2-tag no">2 numbers</span></div>
+            <div class="t2-box bad">
+              <h4>And then, in the same paragraph</h4>
+              <p><i>"<code>07-infrastructure/cost-model.md</code> is the authority for quotas, unit
+                costs, and the behavior at the limit; <b>this doc does not restate
+                numbers</b>."</i></p>
+              <p style="margin-top:6px">Two sentences after restating two of them. The sentence is
+                right and it is in the wrong place — it is a note for the next editor, written
+                after the thing it forbids.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing. The cost model's four lines and the two restatements.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd id="metering-cost">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>ADR 0014 makes one doc authoritative so that a price change is a one-doc change. Four
+            restated numbers across two other docs means a price change is a three-doc change, and
+            the retrieval lab found the same defect twice already — in the capture bands and in the
+            offline list.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Three of eighteen</span>
+        <p class="vc-stance">The cost model names the local Tier 2 actions. The catalog has fifteen
+          more, and none of them is priced.</p>
+        <span class="vc-read">price the actions, not the tier</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="t2-box">
+              <h4>cost-model.md</h4>
+              <p><i>"Tier 2 local actions (<b>break down, find related, prep me</b>) | On-device |
+                $0"</i></p>
+            </div>
+            <p class="t2-h">The other fifteen</p>
+            <div class="t2-mx">
+              <div class="t2-mx-r"><span class="t">Task</span>
+                <span class="a">Research</span><span class="a">Break down</span>
+                <span class="x">Reschedule</span><span class="x">Link person</span>
+                <span class="x">Add note</span><span class="a">Find related</span></div>
+              <div class="t2-mx-r"><span class="t">Event</span>
+                <span class="a">Prep me</span><span class="x">Find related</span>
+                <span class="x">Reschedule</span><span class="d">&mdash;</span>
+                <span class="d">&mdash;</span><span class="d">&mdash;</span></div>
+              <div class="t2-mx-r"><span class="t">Habit</span>
+                <span class="x">Why slipping</span><span class="x">Adjust cadence</span>
+                <span class="x">View history</span><span class="d">&mdash;</span>
+                <span class="d">&mdash;</span><span class="d">&mdash;</span></div>
+              <div class="t2-mx-r"><span class="t">Note</span>
+                <span class="x">Summarize</span><span class="x">Extract tasks</span>
+                <span class="x">Find related</span><span class="x">Suggest tags</span>
+                <span class="d">&mdash;</span><span class="d">&mdash;</span></div>
+              <div class="t2-mx-r"><span class="t">Protocol</span>
+                <span class="x">Gen report</span><span class="x">Suggest adj</span>
+                <span class="d">&mdash;</span><span class="d">&mdash;</span>
+                <span class="d">&mdash;</span><span class="d">&mdash;</span></div>
+            </div>
+            <div class="t2-box bad">
+              <h4>Blanks are not a design; they are an omission with a default</h4>
+              <p>A builder pricing "Reschedule" and "Why am I slipping?" from this table has no row
+                to read, and the tier's own line — <i>"most Tier 2 actions cost 1 unit"</i> — is the
+                only guidance, which prices a device-local synthesis the same as a model call
+                because the doc does not distinguish them.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The cost model's Tier 2 row becomes a table over the catalog's actions, grouped by
+            where they run: on-device (no unit, no quota) and cloud (1 unit, or 50 for research).
+            Every action has a row.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>An eighteen-row table in the cost doc. It is the table the tier doc already implies
+            with the phrase "most Tier 2 actions," and it is the one a builder needs.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The cost model's own first table lists <i>three</i> actions under a row labelled
+            "Tier 2 local actions" — as if the tier had three. It does not; it has eighteen, and the
+            parenthetical reads as a sample when it is in fact a definition.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Seven classes, two prices</span>
+        <p class="vc-stance">The assistant's query patterns are seven. The cost model prices two and
+          names three.</p>
+        <span class="vc-read">map the classes · one table</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="t2-h">§The query patterns &mdash; 7 classes</p>
+            <div class="t2-r"><span class="t2-k">Current state</span>
+              <span class="t2-d">"What's on my calendar tomorrow?"</span>
+              <span class="t2-tag ok">priced</span></div>
+            <div class="t2-r"><span class="t2-k">History</span>
+              <span class="t2-d">"When did I last talk to Sarah?"</span>
+              <span class="t2-tag ok">priced</span></div>
+            <div class="t2-r"><span class="t2-k">Reasoning</span>
+              <span class="t2-d">"Am I overcommitted?"</span>
+              <span class="t2-tag ok">priced</span></div>
+            <div class="t2-r"><span class="t2-k">Search</span>
+              <span class="t2-d">"What did I write about the kitchen renovation?"</span>
+              <span class="t2-tag no">priced by tier-3 only</span></div>
+            <div class="t2-r"><span class="t2-k">Mutations</span>
+              <span class="t2-d">"Move everything Thursday to Friday."</span>
+              <span class="t2-tag no">unpriced</span></div>
+            <div class="t2-r"><span class="t2-k">Protocol actions</span>
+              <span class="t2-d">"Start a sleep protocol."</span>
+              <span class="t2-tag no">unpriced</span></div>
+            <div class="t2-r"><span class="t2-k">Unknown / out of scope</span>
+              <span class="t2-d">"How much did I spend on groceries?"</span>
+              <span class="t2-tag no">unpriced</span></div>
+            <div class="t2-box bad">
+              <h4>Search is the one that costs money</h4>
+              <p>cost-model's simple tier is <i>"On-device | $0"</i> and its parenthetical is
+                <i>"(state, history)"</i>. tier-3 puts <b>search</b> in the simple tier at 3 units.
+                But <code>retrieval-layer.md</code> says semantic search may leave the device
+                <i>"if a query requires cloud models"</i> — so a query the assistant prices as free
+                and local is the one most likely to call a cloud model.</p>
+            </div>
+            <div class="t2-box bad">
+              <h4>And "what should I focus on?"</h4>
+              <p>Falls in <b>reasoning</b>, priced 10 units. It is also, per
+                <code>doing-the-day.md</code>, the kind of question the now line answers for free
+                with no AI at all.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>One table with seven rows, in the cost doc, mapping each query class to its price and
+            to whether it may reach the cloud. <code>tier-3-assistant.md</code> keeps the classes and
+            cites the table.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Five rows that do not exist today. Mutations and protocol actions both resolve targets
+            with tools and then propose, which is the shape the doc already calls "multi-step" —
+            pricing them is naming a decision, not making one.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>The tier doc's §Costs defines the two tiers by <b>query class</b> —
+            <i>"(state, history, search)"</i> and <i>"(reasoning, multi-step, mutations with
+            reasoning)"</i> — which is a classification by class in a doc that also lists seven
+            classes. Two enumerations of the same thing, neither complete.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">What the assistant may do offline</span>
+        <p class="vc-stance">The retrieval flow lists what degrades. The assistant doc never
+          mentions being offline.</p>
+        <span class="vc-read">cite the list · it is already total</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="t2-cols">
+              <div class="t2-box on">
+                <h4>retrieval.md, after the last lab</h4>
+                <p>A total table over five surfaces, with <b>two</b> affected offline and both
+                  getting a note.</p>
+              </div>
+              <div class="t2-box bad">
+                <h4>tier-3-assistant.md</h4>
+                <p>The word "offline" does not appear. Neither does "connection", except in the
+                  note the other doc promises.</p>
+              </div>
+            </div>
+            <div class="t2-r"><span class="t2-k">Simple queries</span>
+              <span class="t2-d">state and history are local reads — they should work</span>
+              <span class="t2-tag bad">unstated</span></div>
+            <div class="t2-r"><span class="t2-k">Complex queries</span>
+              <span class="t2-d">cost-model prices them "Cloud | per-call"</span>
+              <span class="t2-tag bad">unstated</span></div>
+            <div class="t2-r"><span class="t2-k">Clarifications</span>
+              <span class="t2-d">a local decision, or a model call?</span>
+              <span class="t2-tag bad">unstated</span></div>
+            <div class="t2-box bad">
+              <h4>So the class the user is most likely to hit is the one with no behaviour</h4>
+              <p>The palette stays open offline and stops offering the third result class. What
+                happens to the first two — and to a query already typed when the connection drops —
+                is in no doc, and the tier doc is where it belongs.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>§Costs in <code>tier-3-assistant.md</code> gains the offline behaviour for each of its
+            three response types, and cites <code>retrieval.md</code>'s table rather than writing a
+            second one.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Three sentences, one of them a cross-reference. The retrieval flow already promises
+            the user-facing note; this doc is where the tier's own limits get decided.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>Invariant 4 and the local-first posture mean a user can be offline at any moment, and
+            tier 3 is the only surface in the app whose whole behaviour depends on a connection
+            without a doc that says so.</dd></div>
+      </dl>
+    </article>
+
+    <!-- V5 -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">One price table, one class map, and the two tier docs reduced to
+          pointers.</p>
+        <span class="vc-read">synthesis · the authority owns the numbers, the docs own the shape</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="t2-h"><svg class="ic"><use href="#i-gauge"/></svg>Who owns what, after</p>
+            <div class="t2-r"><span class="t2-k">cost-model.md</span>
+              <span class="t2-d">every unit, every quota, every limit, and the offline table</span>
+              <span class="t2-tag ok">1 owner</span></div>
+            <div class="t2-r"><span class="t2-k">tier-2-contextual.md</span>
+              <span class="t2-d">what each action does, and where it runs</span>
+              <span class="t2-tag ok">shape</span></div>
+            <div class="t2-r"><span class="t2-k">tier-3-assistant.md</span>
+              <span class="t2-d">the seven query classes and their response types</span>
+              <span class="t2-tag ok">shape</span></div>
+            <div class="t2-r"><span class="t2-k">Numbers restated outside the owner</span>
+              <span class="t2-d">searchable across the three docs</span>
+              <span class="t2-n bad">0</span></div>
+            <div class="t2-box on">
+              <h4>The test this passes</h4>
+              <p>A price change is a one-doc change, and a reader asking "what does this cost?"
+                finds the answer in one place — which is the only reason to have an authority
+                doc.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Four numbers removed from two docs, one table grown to eighteen rows, one class map
+            added, one offline paragraph added. The prices themselves do not move.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The tier docs lose the convenience of stating their own prices inline. A reader
+            following one of them has to take one more hop, which is what ADR 0014 asked for.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. This is the third time in the set the same repair is needed — the capture
+            bands, the retrieval offline list, and now the tier prices — and the rule that fixes it
+            is always the same: <b>the doc that owns a number is the only doc that writes it.</b></dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-3">What the metering measures</h2>
+    <div class="measure" id="measure-metering">…</div>
+  </div>
+</section>
+
+</main>
+
+<script src="lab.js"></script>
+<script src="nav.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var screens = ['menu', 'shape', 'ambient', 'metering'];
+  var seen = {};
+  var tabs = document.getElementById('tabs');
+
+  tabs.addEventListener('click', function (e) {
+    var b = e.target.closest('.tab');
+    if (b && b.dataset.go) go(b.dataset.go);
+  });
+
+  function go(id) {
+    screens.forEach(function (s) {
+      var el = document.getElementById(s);
+      if (el) el.hidden = (s !== id);
+    });
+    Array.prototype.forEach.call(tabs.children, function (b) {
+      b.classList.toggle('on', b.dataset.go === id);
+    });
+    if (!seen[id]) {
+      seen[id] = true;
+      requestAnimationFrame(function () {
+        MEASURE[id]();
+        ['measure-' + id, id + '-cost'].forEach(function (el) {
+          var node = document.getElementById(el);
+          if (node) node.innerHTML = unesc(node.innerHTML);
+        });
+      });
+    }
+  }
+
+  // Turn a literal backslash-backslash-uXXXX into the character it names.
+  var BS = String.fromCharCode(92);
+  var SEQ = new RegExp(BS + BS + 'u([0-9a-fA-F]{4})', 'g');
+  function unesc(s) {
+    return String(s).replace(SEQ, function (m, h) {
+      return String.fromCharCode(parseInt(h, 16));
+    });
+  }
+
+  function paras(list) {
+    return list.map(function (s) { return '<p class="mf">' + s + '</p>'; }).join('');
+  }
+  function table(rows) {
+    return '<div class="rows">' + rows.map(function (r) {
+      return '<div class="rl"><span class="rk">' + r[0] + '</span>' +
+        '<span class="rd">' + r[1] + '</span><span class="rv">' + r[2] + '</span></div>';
+    }).join('') + '</div>';
+  }
+
+  var MEASURE = {};
+
+  // -- menu
+  MEASURE.menu = function () {
+    var rows = [
+      ['Atoms named in the invocation', 'tier-2 \\u00a7The invocation', '4'],
+      ['Item types with a catalog section', 'Task \\u00b7 Event \\u00b7 Habit \\u00b7 Note \\u00b7 Protocol', '5'],
+      ['Atom types in the app', 'entities with a detail screen', '7'],
+      ['Surfaces the matrix grants a menu', 'gesture-vocabulary.md', '<b>8</b>'],
+      ['Surfaces whose menu is written', 'four atoms, plus Inbox and Search by row type', '6'],
+      ['Surfaces whose menu is written nowhere', 'People list \\u00b7 Calendar (month)', '<b>2</b>'],
+      ['Person in the catalog', 'searched the doc', '<b>no section</b>'],
+      ['Person in people.md', 'the doc defers its one card to Tier 2', 'nothing'],
+      ['Goal in either doc', 'searched both', '<b>0 mentions</b>'],
+      ['Menus granted by the catalog, not the matrix', 'Protocol, "at review time only"', '<b>1</b>'],
+      ['The month row targets', '"AI menu (day)" \\u2014 a day is not an atom', 'not a type'],
+      ['Subset rule stated', '"the menu shows a subset based on item type and state"', '1 sentence'],
+      ['Subsets actually specified', 'per type, per state', '<b>0</b>'],
+      ['State conditions stated in prose', 'Suggest tags; Adjust cadence', '2'],
+      ['Actions due to the subset rule', 'if it were applied consistently', '18']
+    ];
+
+    document.getElementById('measure-menu').innerHTML = table(rows) + paras([
+      'Four atoms, five catalog sections, seven atom types, eight granted surfaces. Each count is right for its own question and the four are never reconciled, so the set has <b>three exceptions</b> instead of one: <b>Protocol</b> has a menu with no granted gesture, <b>Person</b> has a granted gesture with no menu, and <b>Goal</b> has neither and appears in neither doc. The month view adds a fourth: its menu targets a <i>day</i>, which is not an atom and therefore has no section by construction.',
+      'The subset rule is the reason the drift was invisible. "The menu shows a subset based on the item type and state" licenses any menu length, so a type with six actions and a type with three are both compliant, and a type with none is too. The doc even supplies two state conditions of its own \u2014 Suggest tags is disabled, Adjust cadence does not apply inside an active protocol \u2014 without stating the rule they are instances of.'
+    ]);
+
+    document.getElementById('menu-cost').innerHTML =
+      '<b>8</b> surfaces are granted a Tier 2 menu and <b>2</b> of them have contents in no doc \\u2014 a Person and a calendar day. The catalog writes a menu for Protocol, which the matrix does not grant, and the invocation names <b>4</b> of the app\\u2019s <b>7</b> atom types. The subset rule that would make the counts agree is stated once and specified <b>0</b> times.';
+  };
+
+  // -- shape
+  MEASURE.shape = function () {
+    var rows = [
+      ['Declared proposal types', 'text \\u00b7 mutations \\u00b7 note', '3'],
+      ['The invariant says', '"Tier 2 always produces a proposal"', 'always'],
+      ['Actions in the catalog', 'Task 6 \\u00b7 Event 3 \\u00b7 Habit 3 \\u00b7 Note 4 \\u00b7 Protocol 2', '18'],
+      ['Actions returning a proposal', 'of the three declared types', '11'],
+      ['Actions returning something else', 'a list \\u00d73 \\u00b7 a navigation \\u00b7 a composer \\u00b7 a disabled action', '<b>7</b>'],
+      ['The list action, offered on', 'Task, Event, Note', '3 of 5 types'],
+      ['What it returns', 'rows with a "why this matched" line', 'retrieval.md\\u2019s component'],
+      ['Where it would land', '\\u00a7Where a result lands', 'written for a card'],
+      ['Top-level line, Tier 2', 'explanation', '1 name'],
+      ['Top-level line, Tier 3', 'summary', 'the other name'],
+      ['Per-item line, both', 'explanation', 'same name'],
+      ['The log\\u2019s field', 'ai.proposed { \\u2026 explanation }', 'the log picks one'],
+      ['Response envelopes', 'Tier 2 and Tier 3', '2 shapes'],
+      ['Logging rules', 'Tier 1 applies \\u00b7 Tier 2 calls \\u00b7 Tier 3 proposals', '<b>3</b>'],
+      ['Tier 2 actions that only read', 'View history \\u00b7 Find related \\u00d73 \\u00b7 Prep me', '5'],
+      ['Tier 3\\u2019s rule for the same kind', '"logged to the diagnostics buffer"', 'not logged'],
+      ['The clarification', '"not logged as a separate call"', 'a third case']
+    ];
+
+    document.getElementById("measure-shape").innerHTML = table(rows) + paras([
+      'The invariant is absolute and the catalog is not: <b>7 of 18</b> actions return a list, a navigation, a composer, or nothing at all. The most interesting is <b>Find related</b>, offered on three of the five item types and returning retrieval rows \u2014 so a Tier 2 action exists whose output is defined by another flow entirely, whose row component has a why line, and whose only legal type in this doc is <code>text</code>: a sheet with a <b>Copy</b> button.',
+      'The two siblings then disagree about their own fields. Tier 2 puts <code>explanation</code> at the top level; Tier 3 puts <code>summary</code> there and <code>explanation</code> on each proposal. The log settles it, because <code>ai.proposed</code> is one entry for all three tiers and carries <code>explanation</code>. And the logging rules differ per tier \u2014 Tier 2 logs <b>calls</b> where Tier 3 logs <b>proposals</b> \u2014 which puts five read-only actions in the audit list the settings doc promises, and leaves the clarification somewhere between.'
+    ]);
+
+    document.getElementById('shape-cost').innerHTML =
+      '"Tier 2 always produces a proposal" holds for <b>11</b> of the catalog\u2019s <b>18</b> actions; the other <b>7</b> return a list, a navigation, a composer or nothing. The two tiers name the same field twice (<code>explanation</code> / <code>summary</code>) while the log uses one, and the <b>3</b> tiers have <b>3</b> logging rules \u2014 with Tier 2 the only one that logs reads.';
+  };
+
+  // -- ambient
+  MEASURE.ambient = function () {
+    var rows = [
+      ['The invariant', '"Tier 2 is always user-initiated"', 'stated twice'],
+      ['Report generation triggers', 'the action \\u00b7 the review date \\u00b7 abandonment', '3'],
+      ['Triggers that are not user-initiated', 'the review date arriving', '<b>1</b>'],
+      ['Docs stating the automatic trigger', 'protocols.md \\u00a7Review and \\u00a7The protocol report', '2'],
+      ['What the review date is', 'adoption_date + baseline_days + duration_days', 'a projection'],
+      ['When the menu is available', '"at review time only"', 'the same moment'],
+      ['So the menu action is', 'redundant with the automatic trigger', '1 collision'],
+      ['What the report is stored as', '"Reports are Notes" \\u2014 a note.created', 'an atom'],
+      ['Is it ever proposed?', 'the user never accepts or rejects it', '<b>no</b>'],
+      ['Its cost', 'cost-model.md: Tier 2 is 1 unit', '1 unit'],
+      ['Named in the local table', 'the three actions cost-model lists', '<b>not listed</b>'],
+      ['Consent path', 'no gesture, no tap, no sheet', '0 steps'],
+      ['Quota behaviour at the limit', 'ADR 0014: "states the reset date"', 'needs a surface'],
+      ['Surfaces open when it fires', 'none \\u2014 it is a date', '<b>0</b>'],
+      ['The set\\u2019s existing pattern', 'the obligations card: learned time, not a nudge', '1 precedent'],
+      ['protocols.md\\u2019s own precedent', '\\u00a7Abandonment centralised its threshold', '1']
+    ];
+
+    document.getElementById('measure-ambient').innerHTML = table(rows) + paras([
+      'The invariant has two sentences because the author expected the second to be tested, and it is: <i>"At the review date... Tier 2 generates the report."</i> A date arrives, a model runs, and no gesture caused it. The same doc states it <b>twice</b>, in section Review and again in section The protocol report, so it is a settled intention rather than a slip.',
+      'The sharper problem is what the report is. It is stored as a <b>Note</b>, the user never accepts or rejects it, it carries <b>one unit</b> of cost, and it fires when no surface is open. Every part of that is fine except the class it was filed under: it is not a contextual action, it is not the assistant, and the doc that owns context rules already has the pattern - the obligations card, generated at a learned time, explicitly <i>not a nudge</i>, obeying the same three context rules. The report is the second instance of that pattern and was written as the first instance of a different one.'
+    ]);
+
+    document.getElementById('ambient-cost').innerHTML =
+      '"There is no ambient Tier 2" - and the protocol report is generated when <b>a date arrives</b>, stated in <b>2</b> places, costing <b>1 unit</b>, with <b>0</b> surfaces open and <b>0</b> consent steps. Its menu action is available <b>only</b> at review time, which is the moment the work is already done.';
+  };
+
+  // -- metering
+  MEASURE.metering = function () {
+    var rows = [
+      ['The authority', 'cost-model.md, per ADR 0014', '1 doc'],
+      ['Docs restating its numbers', 'tier-2-contextual.md, tier-3-assistant.md', '<b>2</b>'],
+      ['Numbers restated', '1 \\u00b7 50 \\u00b7 3 \\u00b7 10', '4'],
+      ['And one of them says', '"this doc does not restate numbers"', 'in the same paragraph'],
+      ['Tier 2 actions in the cost model', 'break down \\u00b7 find related \\u00b7 prep me', '<b>3</b>'],
+      ['Tier 2 actions in the catalog', 'counted across five types', '<b>18</b>'],
+      ['Actions with a price', 'of the eighteen', '<b>3</b>'],
+      ['Local/cloud split in the catalog', 'stated per action', '<b>0</b>'],
+      ['Tier 3 query classes', 'state \\u00b7 history \\u00b7 reasoning \\u00b7 search \\u00b7 mutations \\u00b7 protocol \\u00b7 unknown', '7'],
+      ['Tier 3 price tiers', '3 units \\u00b7 10 units', '2'],
+      ['Classes the cost model names', '(state, history) and (reasoning)', '3 of 7'],
+      ['Classes with no price anywhere', 'mutations \\u00b7 protocol actions \\u00b7 unknown', '3'],
+      ['Classes priced only by the tier doc', 'search', '1'],
+      ['"Offline" in tier-3-assistant.md', 'searched the doc', '<b>0 mentions</b>'],
+      ['Response types offline behaviour', 'answer \\u00b7 proposals \\u00b7 clarification', '<b>0 specified</b>'],
+      ['The retrieval table that already exists', 'retrieval.md, 5 surfaces, total', '1']
+    ];
+
+    document.getElementById('measure-metering').innerHTML = table(rows) + paras([
+      'ADR 0014 makes one doc authoritative so a price change is a one-doc change. Four numbers are restated in two other docs, and one of those docs contains the sentence <i>"this doc does not restate numbers"</i> immediately after restating two of them - which is the same defect the capture bands and the retrieval offline list both had, so it is now the <b>third</b> instance of one rule going unowned.',
+      'The bigger gap is coverage. The cost model names <b>3</b> Tier 2 actions where the catalog has <b>18</b>, and <b>3</b> of the assistant\u2019s <b>7</b> query classes. The class it gets most wrong is <b>search</b>: the tier doc files it as simple - 3 units, on-device, free - while <code>retrieval-layer.md</code> says semantic search leaves the device <i>"if a query requires cloud models"</i>. So the query class most likely to reach the cloud is the one priced at zero. And the assistant, the only surface in the app whose behaviour depends on a connection, contains no reference to being offline at all.'
+    ]);
+
+    document.getElementById('metering-cost').innerHTML =
+      'The authority doc names <b>3</b> of the catalog\u2019s <b>18</b> actions and <b>3</b> of the assistant\u2019s <b>7</b> query classes, while <b>2</b> other docs restate <b>4</b> of its numbers - one of them in the same paragraph as a promise not to. The class priced at zero is the one most likely to reach the cloud, and the tier that depends on a connection never mentions being offline.';
+  };
+
+  go('menu');
+})();
+</script>
+</body>
+</html>
