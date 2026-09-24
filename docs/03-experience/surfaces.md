@@ -121,7 +121,7 @@ position ("The Month view layout").
 | Person detail | Screen | `05-modules/people.md` |
 | Person picker | Overlay | `05-modules/people.md` |
 | Area list | Screen (in Settings) | `05-modules/areas-and-goals.md` |
-| Area filter | Control ×3 | `05-modules/areas-and-goals.md` |
+| Area filter | Control ×2 (+1 unspecified) | `05-modules/areas-and-goals.md` |
 | Goal list | Screen | `05-modules/areas-and-goals.md` |
 | Goal detail | Screen | `05-modules/areas-and-goals.md` |
 | Goal creation | Overlay | `05-modules/areas-and-goals.md` |
