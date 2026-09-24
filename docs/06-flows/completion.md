@@ -156,8 +156,11 @@ The card:
   consumes no budget **and obeys no quiet hours**, because those rules exist
   to protect the user from the app and a card they caused with their own tap
   is not the app interrupting them.
-- The 150ms pause before the Success haptic is 150ms **after the commit**,
-  which puts it inside the sequence above rather than after it.
+- The 150ms pause before the Success haptic is 150ms **after the commit**, so
+  the card's fade-in **overlaps** the row's sequence rather than following it.
+  That overlap is deliberate and it is why the pause is measured from the
+  gesture: two things animating at once read as one moment, and a card that
+  waited for the sequence would make the moment 550ms.
 
 Earlier drafts filed the card as one of *"exactly three surfaces exempt"*,
 and that was wrong twice over. It made the card one of three things needing

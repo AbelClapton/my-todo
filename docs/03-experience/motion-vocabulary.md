@@ -72,13 +72,12 @@ The row slides horizontally, revealing the action background. On
 commit, holds for 200ms, then animates away vertically with
 `duration-default` and `ease-exit`.
 
-**Completion confirmation.** `duration-deliberate`,
-`ease-standard`. The completed item scales slightly (1.0 → 1.02 →
-0.98 → 0) and fades. This is the only scale-in/scale-out in the
-app, and it is reserved for completion — but it does not last 400ms
-on its own. See §Sequence budgets: it is the middle of a 400ms
-budget that also contains the checkbox fill and the reflow, and it
-spends 160ms of it.
+**Completion confirmation.** `duration-deliberate` is the **budget** for
+this sequence, `ease-standard` its curve. The completed item scales slightly
+(1.0 → 1.02 → 0.98 → 0) and fades; this is the only scale-in/scale-out in the
+app and it is reserved for completion. It does not last 400ms on its own —
+see §Sequence budgets, where it is the middle of the budget and spends 160ms
+of it.
 
 **Mode switch (nav).** `duration-default`, `ease-standard`. The
 mode indicator slides to the new position; the content cross-fades.
@@ -183,8 +182,10 @@ The app has one sequence long enough to need a budget:
   enclosing transform lasts, so it has to fit inside the first beat or it was
   never drawn. The checkbox fill is the case: it is a control inside a row
   that is scaling to nothing.
-- A division is not a token. The three numbers above are the budget's
-  arithmetic, not three new durations, and no screen may define a seventh.
+- A division is **not a new token**. The three numbers above are the budget's
+  arithmetic: the sequence is `duration-deliberate` and its three divisions
+  are fractions of it. No screen may define a seventh duration, and a
+  division may not be quoted as one.
 
 A second sequence joins this table when a flow's moment is composed of more
 than one transition. Everything else is a transition, and the 400ms ceiling
