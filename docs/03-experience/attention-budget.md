@@ -183,6 +183,19 @@ Exempt surfaces:
 - Are not in the catalog and have no `SurfaceId`.
 - Have no per-surface settings toggle.
 - Still obey quiet hours, focus mode, and in-event suppression.
+- **A blocked firing preserves the trigger rather than consuming it.**
+  Two of the three are one-shot — the lapse card fires once per lapse,
+  the onboarding banner once per lifetime — so a rule that suppresses
+  the firing without preserving the state silently deletes the surface.
+  This is a property of the exemption, not of any one flow: any surface
+  whose trigger is a state rather than a schedule must be able to wait.
+
+**Exemption is from the hourly slot, not from the clock.** Flows that
+restate the exemption tend to restate the first three bullets and drop
+the fourth; the fourth is the one with a time in it, and it is the one
+that keeps a one-shot surface alive. (`06-flows/lapsed-recovery.md` is
+the case that made this explicit: its trigger read a gap that the same
+app open rewrote.)
 
 Exemption is not an escape hatch. A candidate that fails any one
 test is a surface, and belongs in the catalog.

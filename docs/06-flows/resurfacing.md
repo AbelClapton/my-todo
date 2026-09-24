@@ -15,6 +15,13 @@ that the user can dismiss permanently.
 
 - Resurfacing fires as a nudge, subject to the attention budget
   (`03-experience/attention-budget.md`).
+- **A lapse suppresses every resurfacing surface.** No resurfacing fires
+  on a day the lapse-recovery card appeared, or on any later day until
+  the user has resolved it. The forgotten surface below lists exactly
+  the backlog that flow exists not to dump, and every threshold in this
+  doc is at or under the lapse threshold, so its material is guaranteed
+  to be present on the return day
+  (`06-flows/lapsed-recovery.md`).
 - Two dismissals of a surface = 30-day suppression. Three =
   permanent (until re-enabled).
 - Resurfacing never repeats the same task, person, or capture twice
@@ -24,6 +31,11 @@ that the user can dismiss permanently.
   individually or as a surface.
 - Resurfacing never shames. The copy is neutral
   (`01-foundation/identity.md`).
+- **Thresholds are named, not shared.** `resurfacing.note_age` (14 days)
+  and `lapse.threshold` (14 by default) happen to be equal today; they
+  are not the same constant, and neither doc may assume the other's
+  value. Same for `resurfacing.task_age` (21) against
+  `lapse.archive_horizon` (21).
 
 ## Specification
 
@@ -35,17 +47,24 @@ Captures never acted on:
 
 - Inbox notes with no follow-up.
 - Tasks created but never scheduled, deferred, or completed, older
-  than 21 days.
-- Notes with an "[unparsed]" title prefix older than 14 days.
+  than `resurfacing.task_age` (21 days).
+- Notes with an "[unparsed]" title prefix older than
+  `resurfacing.note_age` (14 days).
 
 Fires weekly, at most once. Shows the top 5 by age.
 
     "5 things you captured but never acted on."
     [Review]  [Dismiss for 30 days]
 
-Review opens a list with the sort-ritual gestures (swipe right to
-schedule today, left to someday, up to attach, down to remove —
-never delete).
+Review opens a list with the sort-ritual gestures, **applied per row
+ type**: an inbox note routes to today or someday, and a task row uses
+the task row's own meanings — complete is disabled here, because the
+review is for deciding what to do with the thing, not for finishing it
+(`03-experience/gesture-vocabulary.md`).
+
+Anything the inbox's sort ritual is already eligible to handle is
+excluded (§What does not resurface): the ritual owns a large, old inbox,
+and this surface owns the small one.
 
 **2. Low-energy matching.**
 
@@ -62,7 +81,7 @@ tasks explicitly marked as quick.
 **3. People resurfacing.**
 
 People marked "worth maintaining" (default: on) whose last
-interaction is > 30 days.
+interaction is > `resurfacing.people_quiet` (30 days).
 
 Fires weekly, at most once.
 
@@ -132,6 +151,15 @@ The framing is "life happens," not "you failed."
   `06-flows/disruption.md`).
 - Overdue tasks (they appear in the Today scope with an
   "overdue" chip).
+- **Inbox items the sort ritual can already handle** — anything that
+  would put the inbox over its 10-capture threshold, because a user with
+  12 old captures should be offered the ritual and not a card describing
+  the ritual's contents (`06-flows/capture.md`). Every entry in this list
+  is a surface that already owns the thing.
+
+**A lapse is the sixth case in the same spirit** and is stated as an
+invariant above rather than here, because it is a window rather than a
+kind of item.
 
 ### Frequency
 
@@ -197,7 +225,7 @@ The app is a lab notebook. Resurfacing is a lab assistant saying
     Swipes:
       - Remove "The thing with the stuff."
       - Someday "Try that restaurant..."
-      - Schedule "Standing desk research" for today.
+      - Today "Standing desk research."
       - Keep "Kitchen color ideas" (no action).
       - Remove "Read the article on sleep."
 

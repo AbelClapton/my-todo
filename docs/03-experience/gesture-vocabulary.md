@@ -134,6 +134,8 @@ not a general gesture.
 | Search results | — | — | attach | — | AI menu | capture | back | — |
 | Morning plan row | keep for today | defer | — | someday | — | — | back | — |
 | Shutdown row | keep for tomorrow | defer | — | someday | — | — | back | — |
+| Catch-up list | today | someday | attach | someday | — | — | back | — |
+| Forgotten review | today | someday | attach | remove | — | — | back | — |
 | Nudge | action | dismiss | — | — | — | — | — | — |
 
 A dash means the gesture is disabled on that surface.

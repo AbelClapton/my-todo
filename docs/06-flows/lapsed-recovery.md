@@ -27,12 +27,36 @@ already struggling.
 
 ### The trigger
 
-On the first app open after a lapse:
+The card surfaces on an app open when **both** hold:
 
-- Lapse is defined as ≥ 14 days since the last `day.opened`.
-- The threshold is configurable (7, 14, 21, 30 days) in settings.
+- The gap between the **last two** `day.opened` entries is ≥ 14 days
+  (configurable: 7, 14, 21, 30 in settings).
+- **No resolution entry has been logged since the later of those two
+  entries** — none of `system.fresh_start`, `system.catch_up`,
+  `system.lapse_skipped`.
 
-The flow replaces the morning plan on that day.
+**The trigger is deliberately not "≥ 14 days since the last
+`day.opened`."** Rollover writes today's `day.opened` on the same open
+that evaluates this flow, and rollover is not budget-governed — so a
+trigger phrased against *the last* entry is true for the instant before
+its own evaluation and false immediately after. A user who returns at
+06:40 would consume the lapse and never see the card. Reading the gap
+between the last **two** entries is a durable fact: it is still true on
+the next open, and on every open until the flow is resolved.
+
+**Resolution is recorded, not inferred.** The three ways to be done with
+the card are `system.fresh_start`, `system.catch_up` and
+`system.lapse_skipped` — one per door plus the skip — so "once per
+lapse" is something the log says rather than something the gap
+arithmetic happens to produce. The **showing** is not logged: firings
+are recorded in the client diagnostics buffer, never the event log
+(`03-experience/attention-budget.md`, ADR 0021).
+
+**The card takes the day's first position, ahead of the morning
+plan.** The morning plan still runs — it is the flow's own next step
+(§Start fresh, step 6) and it is called from three other places. This
+flow does not suppress it. If a reader implements "replaces" as
+suppression, the plan is lost on the one day the user most needs it.
 
 ### The screen
 
@@ -44,7 +68,8 @@ A single card:
     How would you like to pick up?
 
     [ Start fresh ]
-    Pick a new baseline. We'll set aside what didn't get done.
+    Pick a new baseline. We'll set aside tasks scheduled more than
+    three weeks ago that you never finished. Recent ones stay.
 
     [ Catch up ]
     Review what's still open. Keep what matters.
@@ -58,6 +83,15 @@ for that lapse, and it never competes for the hourly slot. Exempt
 surfaces have no `SurfaceId` and no per-surface settings toggle
 (`03-experience/attention-budget.md`, ADR 0013).
 
+**Exemption is from the hourly slot, not from the clock.** Like the
+other two exempt surfaces, this one obeys quiet hours, focus mode, and
+in-event suppression. Because its trigger is a one-shot state, a
+blocked firing **preserves** the state rather than consuming it: the
+card waits for the next eligible open instead of being lost. This is
+the consequence of the durable gap in §The trigger and the reason that
+change matters — 9 of the day's 24 hours are quiet, before meetings and
+focus sessions are counted.
+
 ### Start fresh
 
 Tapping "Start fresh":
@@ -67,6 +101,17 @@ Tapping "Start fresh":
    that were scheduled but not completed. The horizon is deliberately
    larger than the lapse threshold: a lapse is 14 days by default,
    the archive reaches further back.
+
+   **Two things this rule does not touch, and the door's copy now says
+   so.** Tasks that were never scheduled are not archived at any age —
+   they were never committed to, so there is nothing to set aside — and
+   a task scheduled in the 14–21 day band survives, because the horizon
+   deliberately keeps the most recent backlog. The gap between the
+   threshold and the horizon is 7 days, and it is the reason the button
+   describes the horizon instead of saying "what didn't get done."
+
+   The never-scheduled pile is not lost: `06-flows/resurfacing.md`
+   surfaces it 21 days after creation.
 3. Abandons all protocols that were `active` or `baseline` (via
    `protocol.abandoned`). Their reports, if any, remain.
 4. Does not touch habits (habits survive lapses; they are the
@@ -95,23 +140,37 @@ Tapping "Catch up":
    - Events during the lapse (read-only).
    - Protocols that were active.
    - Inbox captures.
-3. The list supports the sort-ritual gestures (swipe right to
-   keep, left to defer, up to attach, down to remove — never
-   delete).
-4. The user processes at their own pace. There is no counter,
-   no pressure.
+3. The list supports the sort-ritual gestures, **per row type**: swipe
+   right to today, left to someday, up to attach, down to remove —
+   never delete. (This list holds tasks, events, protocols and captures,
+   and the ritual's mapping is the **inbox** row's; swipe up and down
+   are disabled on the rows where that mapping has no meaning. See
+   `03-experience/gesture-vocabulary.md`.)
+4. The user processes at their own pace. There is **no progress
+   counter** — nothing shows how many remain as you work. A collapsed
+   group states its own size, because hiding it would make the Archive
+   all button a surprise.
 5. When the user exits the list, they land on today's calendar.
 
 The catch-up list is bounded. Anything older than 60 days collapses
 into a single row: "47 more [Review] [Archive all]." The user can
 choose to review or archive in one tap.
 
+**"Archive all" is a batch, so it carries the same undo the other one
+does.** The action is atomic and undoable for five seconds, exactly as
+§Start fresh's archive is (Invariant 1): one toast, compensation
+entries for each archived task, and the same expiry rule. It is the
+largest single mutation in the app and it was the only one in this flow
+without a stated way back. The row states its count **before** the tap,
+which is why a collapsed group is allowed to show a number when nothing
+else on this screen does.
+
 ### Skipping
 
 A "Skip" link in the bottom corner. Tapping:
 
 - Dismisses the flow.
-- Does not log anything.
+- Logs `system.lapse_skipped`.
 - Runs the morning plan normally.
 
 The user can trigger the flow again via the command palette:
@@ -123,8 +182,13 @@ After either path:
 
 - The morning plan runs.
 - The daily obligations card surfaces normally.
-- Resurfacing may fire once at a reduced priority to welcome the
-  user back.
+- **Resurfacing is suppressed for the rest of the return day, and
+  resumes the next day.** No resurfacing surface fires on a day the
+  lapse card appeared: the forgotten surface
+  (`06-flows/resurfacing.md`) lists precisely the backlog this flow
+  exists not to dump, and its thresholds (14 days for an "[unparsed]"
+  note, 21 for a never-scheduled task) are at or below this flow's own,
+  so its material is guaranteed to exist on the return day.
 - The weekly review generates on the next Sunday, covering the
   week since the return (not the lapse).
 
@@ -179,18 +243,18 @@ growth feature disguised as a product feature
       Task: Call contractor             Sep 2
       Task: Buy standing desk           Sep 5
       Task: Review pricing page         Sep 8
-      ... (23 more)
-      + 47 more [Review] [Archive all]
+      ... (23 more from the last 60 days)
+      + 47 older than 60 days [Review] [Archive all]
 
     User swipes:
-      - File Q4 taxes → keep for today.
-      - Call contractor → removed (archived).
+      - File Q4 taxes → today.
+      - Call contractor → someday.
       - Buy standing desk → someday.
-      - Review pricing page → defer.
+      - Review pricing page → someday.
       - ...
 
     User taps "47 more → Archive all."
-    All archived in one action.
+    All 47 archived in one action, undoable for five seconds.
 
     User exits the list.
     Lands on today's calendar.

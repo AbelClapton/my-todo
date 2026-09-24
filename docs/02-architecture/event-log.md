@@ -197,6 +197,7 @@ out of validity.
 
 **System**
 - `system.settings_changed` — { key: SettingsKey, value }
+- `system.lapse_skipped` — { lapsed_days }
 - `system.fresh_start` — { lapsed_days, archived_tasks, archived_protocols }
 - `system.catch_up` — { lapsed_days }
 - `system.clock_corrected` — { skew_seconds }

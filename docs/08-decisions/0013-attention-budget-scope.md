@@ -67,6 +67,15 @@ An exempt surface still obeys quiet hours, focus mode, and in-event
 suppression. Exempt surfaces are not in the `SurfaceId` union and have
 no per-surface settings toggle.
 
+> **Extended by ADR 0021.** The criterion above has four parts, not
+> three. A blocked firing must **preserve** the trigger rather than
+> consume it, because two of the three exempt surfaces are one-shot:
+> suppressing the firing without preserving the state deletes the
+> surface silently. ADR 0021 also establishes that a one-shot exempt
+> surface records its **resolution** in the log and its **firing** in
+> the diagnostics buffer, and that the lapse-recovery card takes the
+> day's first position without suppressing the morning plan.
+
 **The morning plan is budget-governed.** The "not a nudge" claim in
 `06-flows/morning-plan.md` is wrong and is corrected. The plan
 consumes a slot when it fires unprompted; it does not consume a slot

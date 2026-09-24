@@ -22,7 +22,7 @@ number. Two existing examples: ADR 0016 amends ADR 0011's note mapping,
 and ADR 0019 records a decision ADR 0005's shape would have used.
 
 **Numbering.** Sequential, four digits, never reused. The next one is
-**0021**.
+**0022**.
 
 ## The index
 
@@ -48,6 +48,7 @@ and ADR 0019 records a decision ADR 0005's shape would have used.
 | 0018 | **Production stack.** Cloudflare Workers hosting (Netlify the named fallback), a domain at cost chosen independently of the wordmark, Resend for outbound via Supabase's custom SMTP, and Cloudflare Email Routing to a Worker for inbound. Deferred with triggers: the human mailbox and shell-build automation. Turso is the server store, not the sync mechanism. |
 | 0019 | **Waiting never animates.** No spinner, no shimmer, no indeterminate progress anywhere. Under 400ms shows nothing; past it, a static `surface-2` placeholder plus a line in `text-secondary`; countable waits show the count. A design that seems to need a spinner has a product problem. |
 | 0020 | **An update is never announced.** No toast, banner, dialog, badge, or "what's new" — a new build is picked up on the next cold launch and never takes over a live session. The obligation that follows: an old client must stay correct, so the log schema and sync protocol must tolerate a client several versions behind. |
+| 0021 | **The lapse skip is logged.** `system.lapse_skipped` added, so the flow's three exits are three entries and "once per lapse" is stated rather than inferred. The trigger becomes durable — the gap between the **last two** `day.opened` entries, not since the last one — so a firing blocked by quiet hours, focus mode or an event waits instead of being lost. No `system.lapse_shown`: firings go to the diagnostics buffer. The lapse card does not suppress the morning plan. |
 
 ## Decisions with no ADR
 
