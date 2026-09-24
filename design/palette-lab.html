@@ -33,7 +33,12 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 .lab {
-  position: sticky; top: var(--labnav-h, 0px); z-index: 100;
+  /* z-index 2, not 100. This header pins at `top: var(--labnav-h)`, so it is meant to
+     sit *below* the shared bar — and 100 put it above the bar's own panels. Those
+     panels are descendants of the bar and are painted inside its stacking context, so
+     their own z-index cannot protect them from a page-level one. 2 is all this needs
+     to stay above the content it scrolls across. */
+  position: sticky; top: var(--labnav-h, 0px); z-index: 2;
   display: flex; align-items: center; gap: var(--space-5);
   flex-wrap: wrap;
   min-height: var(--row-default);
