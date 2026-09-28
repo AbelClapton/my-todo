@@ -147,6 +147,76 @@
 
   <div class="grid">
 
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended — status and requests are two layers<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">Keep all three banners and the 5xx one. Fix the sentence that is wrong:
+          a banner that carries an action is asking, and the shell's rule is about the ones that
+          do not.</p>
+        <span class="vc-read">the synthesis · one rule narrowed, one list made total</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <p class="ss-h">The layer, split by what each banner does</p>
+            <div class="ss-slot">
+              <span class="cap">layer 3a · status, one at a time, no action</span>
+              <div class="ss-banner"><svg class="ic"><use href="#i-cloud-off"/></svg>Offline. Changes will sync when you reconnect.</div>
+            </div>
+            <div class="ss-slot">
+              <span class="cap">layer 3b · a failing thing, with its action inline</span>
+              <div class="ss-banner"><svg class="ic"><use href="#i-calendar"/></svg>Calendar as of 2 hours ago.<span class="act">Retry</span></div>
+            </div>
+            <p class="ss-h">What the rule becomes</p>
+            <div class="ss-quote">"Banners never stack. A <b>status</b> banner reports and carries no
+              control; a <b>repair</b> banner names the failing thing and carries exactly one action,
+              which retries it. They share the layer and the priority order, and the order is
+              stale-calendar, offline, local-only, server-error."</div>
+            <p class="ss-h">And the enumeration becomes a rule</p>
+            <div class="ss-r"><span class="ss-k">Named in</span>
+              <span class="ss-d">app-shell · components · error-handling · sync-engine</span>
+              <span class="ss-n">4 docs</span></div>
+            <div class="ss-r"><span class="ss-k">Complete in</span>
+              <span class="ss-d">all four, once the table says it is the whole list</span>
+              <span class="ss-n good">4 banners</span></div>
+            <div class="ss-r"><span class="ss-k">A repair banner is</span>
+              <span class="ss-d">not a nudge — it is the surface that already failed, reporting</span>
+              <span class="ss-tag ok">status</span></div>
+            <div class="ss-box on">
+              <h4><svg class="ic"><use href="#i-check"/></svg>Nothing is removed and the sentence is true</h4>
+              <p>The two kinds differ in the one way that matters: a status banner is a <b>fact</b>, and
+                a repair banner is a fact plus the action that ends it. Naming them separately makes
+                "banners inform; they do not ask" a statement about the status kind, and it gives the
+                repair kind a stated shape — one banner, one failing thing, one action.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd><code>app-shell.md</code>'s layer table gains a kind column and its invariant is narrowed
+            to status banners; the table states it is the whole list; the priority order gains the 5xx
+            banner as a fourth position; and <code>components.md</code> and
+            <code>surfaces.md</code> stop calling a banner a Card.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One more concept in the shell — two kinds of banner rather than one — and a priority
+            order that is now four long for a slot that shows one thing. No surface is added or
+            removed.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. It removes a contradiction instead of choosing a side, and every banner keeps the
+            copy <code>error-handling.md</code> already specifies for it.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
+
     <!-- V1 -->
     <article class="vc">
       <div class="vc-head">
@@ -390,74 +460,7 @@
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended — status and requests are two layers</span>
-        <p class="vc-stance">Keep all three banners and the 5xx one. Fix the sentence that is wrong:
-          a banner that carries an action is asking, and the shell's rule is about the ones that
-          do not.</p>
-        <span class="vc-read">the synthesis · one rule narrowed, one list made total</span>
-      </div>
-      <div class="vc-stage">
-        <div class="phone tall">
-          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
-            <p class="ss-h">The layer, split by what each banner does</p>
-            <div class="ss-slot">
-              <span class="cap">layer 3a · status, one at a time, no action</span>
-              <div class="ss-banner"><svg class="ic"><use href="#i-cloud-off"/></svg>Offline. Changes will sync when you reconnect.</div>
-            </div>
-            <div class="ss-slot">
-              <span class="cap">layer 3b · a failing thing, with its action inline</span>
-              <div class="ss-banner"><svg class="ic"><use href="#i-calendar"/></svg>Calendar as of 2 hours ago.<span class="act">Retry</span></div>
-            </div>
-            <p class="ss-h">What the rule becomes</p>
-            <div class="ss-quote">"Banners never stack. A <b>status</b> banner reports and carries no
-              control; a <b>repair</b> banner names the failing thing and carries exactly one action,
-              which retries it. They share the layer and the priority order, and the order is
-              stale-calendar, offline, local-only, server-error."</div>
-            <p class="ss-h">And the enumeration becomes a rule</p>
-            <div class="ss-r"><span class="ss-k">Named in</span>
-              <span class="ss-d">app-shell · components · error-handling · sync-engine</span>
-              <span class="ss-n">4 docs</span></div>
-            <div class="ss-r"><span class="ss-k">Complete in</span>
-              <span class="ss-d">all four, once the table says it is the whole list</span>
-              <span class="ss-n good">4 banners</span></div>
-            <div class="ss-r"><span class="ss-k">A repair banner is</span>
-              <span class="ss-d">not a nudge — it is the surface that already failed, reporting</span>
-              <span class="ss-tag ok">status</span></div>
-            <div class="ss-box on">
-              <h4><svg class="ic"><use href="#i-check"/></svg>Nothing is removed and the sentence is true</h4>
-              <p>The two kinds differ in the one way that matters: a status banner is a <b>fact</b>, and
-                a repair banner is a fact plus the action that ends it. Naming them separately makes
-                "banners inform; they do not ask" a statement about the status kind, and it gives the
-                repair kind a stated shape — one banner, one failing thing, one action.</p>
-            </div>
-          </div>
-          <div class="dock">
-            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
-            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
-            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
-            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd><code>app-shell.md</code>'s layer table gains a kind column and its invariant is narrowed
-            to status banners; the table states it is the whole list; the priority order gains the 5xx
-            banner as a fourth position; and <code>components.md</code> and
-            <code>surfaces.md</code> stop calling a banner a Card.</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>One more concept in the shell — two kinds of banner rather than one — and a priority
-            order that is now four long for a slot that shows one thing. No surface is added or
-            removed.</dd></div>
-        <div class="vc-line rules"><dt>Against rules</dt>
-          <dd>None. It removes a contradiction instead of choosing a side, and every banner keeps the
-            copy <code>error-handling.md</code> already specifies for it.</dd></div>
-      </dl>
-    </article>
-
+    </details>
   </div>
 
   <div class="lede">
@@ -485,6 +488,74 @@
   </div>
 
   <div class="grid">
+
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended — the taxonomy keeps eight, and names its edge<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">Four categories stay four. The doc records the four messages as
+          <b>outside</b> the taxonomy, with their owners, and stops claiming total coverage of
+          everything the user sees.</p>
+        <span class="vc-read">the synthesis · an honest boundary instead of a fifth list</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <p class="ss-h">The claim, narrowed</p>
+            <div class="ss-quote">"Every failure falls into one of these eight categories, and each has
+              a defined response. **Four messages in the app are not failures** and are not covered
+              here; each is specified by the doc that owns it, and this section is the index:
+              quota (<code>cost-model.md</code>), rate limiting (<code>cost-model.md</code>), a
+              deliberate fallback (<code>cost-model.md</code>), and a client too old for an entry
+              (<code>local-backup.md</code>). A message that reports a state rather than a failure
+              belongs to its state's owner, not to this taxonomy."</div>
+            <p class="ss-h">And the two rules that make the boundary safe</p>
+            <div class="ss-r"><span class="ss-k">Owner</span>
+              <span class="ss-d">each of the four names the doc that specifies it</span>
+              <span class="ss-n good">4 of 4</span></div>
+            <div class="ss-r"><span class="ss-k">Container</span>
+              <span class="ss-d">modal · inline · notice · prompt — none of them a banner</span>
+              <span class="ss-n">4 kinds</span></div>
+            <div class="ss-r"><span class="ss-k">Recovery</span>
+              <span class="ss-d">a date, a wait, a fallback, an update — none is a retry</span>
+              <span class="ss-n">0 retries</span></div>
+            <div class="ss-r"><span class="ss-k">So the taxonomy need not hold them</span>
+              <span class="ss-d">it is a table of recoveries, and none of the four recovers by
+                retrying</span><span class="ss-tag ok">correct edge</span></div>
+            <div class="ss-box on">
+              <h4><svg class="ic"><use href="#i-check"/></svg>The boundary is the recovery, not the cause</h4>
+              <p>What unites the eight is that each is answered by an <b>action the app takes</b> —
+                retry, disable, surface, reload. The four outside it are answered by something
+                <b>outside the app</b>: the clock, the user's wallet, a future build. That is a real
+                line, and it is why the four had nowhere to go rather than because anyone forgot
+                them.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The closure claim narrows to failures; a short index of the four non-failure messages is
+            added with their owners; and the taxonomy gains the sentence that states its criterion,
+            which is <b>the recovery is an action the app takes</b>.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Four strings and four owners restated in a doc that does not own them. The mitigation is
+            that it is an index with no copy — each row names a doc, not a message, so there is nothing
+            to drift.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. It is the only variant that adds no surface, no category, no second table and no
+            exception — and it answers <code>states.md</code>'s Error row, which names three of the
+            eight and implied the rest were unowned.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
 
     <!-- V1 -->
     <article class="vc">
@@ -727,72 +798,7 @@
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended — the taxonomy keeps eight, and names its edge</span>
-        <p class="vc-stance">Four categories stay four. The doc records the four messages as
-          <b>outside</b> the taxonomy, with their owners, and stops claiming total coverage of
-          everything the user sees.</p>
-        <span class="vc-read">the synthesis · an honest boundary instead of a fifth list</span>
-      </div>
-      <div class="vc-stage">
-        <div class="phone tall">
-          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
-            <p class="ss-h">The claim, narrowed</p>
-            <div class="ss-quote">"Every failure falls into one of these eight categories, and each has
-              a defined response. **Four messages in the app are not failures** and are not covered
-              here; each is specified by the doc that owns it, and this section is the index:
-              quota (<code>cost-model.md</code>), rate limiting (<code>cost-model.md</code>), a
-              deliberate fallback (<code>cost-model.md</code>), and a client too old for an entry
-              (<code>local-backup.md</code>). A message that reports a state rather than a failure
-              belongs to its state's owner, not to this taxonomy."</div>
-            <p class="ss-h">And the two rules that make the boundary safe</p>
-            <div class="ss-r"><span class="ss-k">Owner</span>
-              <span class="ss-d">each of the four names the doc that specifies it</span>
-              <span class="ss-n good">4 of 4</span></div>
-            <div class="ss-r"><span class="ss-k">Container</span>
-              <span class="ss-d">modal · inline · notice · prompt — none of them a banner</span>
-              <span class="ss-n">4 kinds</span></div>
-            <div class="ss-r"><span class="ss-k">Recovery</span>
-              <span class="ss-d">a date, a wait, a fallback, an update — none is a retry</span>
-              <span class="ss-n">0 retries</span></div>
-            <div class="ss-r"><span class="ss-k">So the taxonomy need not hold them</span>
-              <span class="ss-d">it is a table of recoveries, and none of the four recovers by
-                retrying</span><span class="ss-tag ok">correct edge</span></div>
-            <div class="ss-box on">
-              <h4><svg class="ic"><use href="#i-check"/></svg>The boundary is the recovery, not the cause</h4>
-              <p>What unites the eight is that each is answered by an <b>action the app takes</b> —
-                retry, disable, surface, reload. The four outside it are answered by something
-                <b>outside the app</b>: the clock, the user's wallet, a future build. That is a real
-                line, and it is why the four had nowhere to go rather than because anyone forgot
-                them.</p>
-            </div>
-          </div>
-          <div class="dock">
-            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
-            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
-            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
-            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd>The closure claim narrows to failures; a short index of the four non-failure messages is
-            added with their owners; and the taxonomy gains the sentence that states its criterion,
-            which is <b>the recovery is an action the app takes</b>.</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>Four strings and four owners restated in a doc that does not own them. The mitigation is
-            that it is an index with no copy — each row names a doc, not a message, so there is nothing
-            to drift.</dd></div>
-        <div class="vc-line rules"><dt>Against rules</dt>
-          <dd>None. It is the only variant that adds no surface, no category, no second table and no
-            exception — and it answers <code>states.md</code>'s Error row, which names three of the
-            eight and implied the rest were unowned.</dd></div>
-      </dl>
-    </article>
-
+    </details>
   </div>
 
   <div class="lede">
@@ -819,6 +825,65 @@
   </div>
 
   <div class="grid">
+
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended — one threshold, and the ladder cites it<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">400ms is the app's threshold for saying anything, and it belongs to one
+          doc. The ladder applies it, the background cycle applies it, and the "no UI while
+          transient" rule is deleted.</p>
+        <span class="vc-read">the synthesis · the waiting rule wins, and the ladder is left alone</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <p class="ss-h">Three surfaces, one rule</p>
+            <div class="ss-r"><span class="ss-k">A read</span>
+              <span class="ss-d">completes in a frame — under 400ms, shows nothing</span>
+              <span class="ss-tag ok">nothing</span></div>
+            <div class="ss-r"><span class="ss-k">A ladder</span>
+              <span class="ss-d">62s — placeholder at 400ms, one line, no count</span>
+              <span class="ss-tag ok">placeholder</span></div>
+            <div class="ss-r"><span class="ss-k">A background cycle</span>
+              <span class="ss-d">silent for an hour — it is not in a surface the user is in</span>
+              <span class="ss-tag ok">banner</span></div>
+            <p class="ss-h">And the rule that separates them</p>
+            <div class="ss-quote">"The 400ms threshold applies to a wait the user is <b>in</b> — a
+              surface they are looking at, with a result they are waiting for. A background cycle is
+              not a wait; it is a state, and it reports through the sync indicator and the banner."</div>
+            <div class="ss-box on">
+              <h4><svg class="ic"><use href="#i-check"/></svg>It separates two things one doc was using one word for</h4>
+              <p><code>error-handling.md</code> calls both of them a failure to surface, and they are
+                different: one is a person watching a spinner-less screen, the other is a device
+                quietly behind. Naming the difference is what makes "nothing while transient" true for
+                the second and false for the first — which is where it was wrong.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd><code>error-handling.md</code> gains the distinction between a wait and a state; its
+            network section cites <code>states.md</code> for the threshold; and both ladders' summaries
+            state their totals — <b>62s</b> for the user-initiated one, capped at 60s per attempt for
+            the background one.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One new distinction and one number published (62s). No behaviour in the ladder changes,
+            and the placeholder is the component every other wait already uses.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. Every number and every string keeps its owner; the only edit to a rule is the one
+            that made it false for the case it was written about.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
 
     <!-- V1 -->
     <article class="vc">
@@ -1053,63 +1118,7 @@
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended — one threshold, and the ladder cites it</span>
-        <p class="vc-stance">400ms is the app's threshold for saying anything, and it belongs to one
-          doc. The ladder applies it, the background cycle applies it, and the "no UI while
-          transient" rule is deleted.</p>
-        <span class="vc-read">the synthesis · the waiting rule wins, and the ladder is left alone</span>
-      </div>
-      <div class="vc-stage">
-        <div class="phone tall">
-          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
-            <p class="ss-h">Three surfaces, one rule</p>
-            <div class="ss-r"><span class="ss-k">A read</span>
-              <span class="ss-d">completes in a frame — under 400ms, shows nothing</span>
-              <span class="ss-tag ok">nothing</span></div>
-            <div class="ss-r"><span class="ss-k">A ladder</span>
-              <span class="ss-d">62s — placeholder at 400ms, one line, no count</span>
-              <span class="ss-tag ok">placeholder</span></div>
-            <div class="ss-r"><span class="ss-k">A background cycle</span>
-              <span class="ss-d">silent for an hour — it is not in a surface the user is in</span>
-              <span class="ss-tag ok">banner</span></div>
-            <p class="ss-h">And the rule that separates them</p>
-            <div class="ss-quote">"The 400ms threshold applies to a wait the user is <b>in</b> — a
-              surface they are looking at, with a result they are waiting for. A background cycle is
-              not a wait; it is a state, and it reports through the sync indicator and the banner."</div>
-            <div class="ss-box on">
-              <h4><svg class="ic"><use href="#i-check"/></svg>It separates two things one doc was using one word for</h4>
-              <p><code>error-handling.md</code> calls both of them a failure to surface, and they are
-                different: one is a person watching a spinner-less screen, the other is a device
-                quietly behind. Naming the difference is what makes "nothing while transient" true for
-                the second and false for the first — which is where it was wrong.</p>
-            </div>
-          </div>
-          <div class="dock">
-            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
-            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
-            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
-            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd><code>error-handling.md</code> gains the distinction between a wait and a state; its
-            network section cites <code>states.md</code> for the threshold; and both ladders' summaries
-            state their totals — <b>62s</b> for the user-initiated one, capped at 60s per attempt for
-            the background one.</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>One new distinction and one number published (62s). No behaviour in the ladder changes,
-            and the placeholder is the component every other wait already uses.</dd></div>
-        <div class="vc-line rules"><dt>Against rules</dt>
-          <dd>None. Every number and every string keeps its owner; the only edit to a rule is the one
-            that made it false for the case it was written about.</dd></div>
-      </dl>
-    </article>
-
+    </details>
   </div>
 
   <div class="lede">
@@ -1137,6 +1146,71 @@
   </div>
 
   <div class="grid">
+
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended — one surface, one threshold, one owner<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">Keep the indicator and specify it where three docs already point. Give the
+          hour one owner, and let the pending count be its second state rather than a separate row.</p>
+        <span class="vc-read">the synthesis · the citation completed, and the count folded in</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
+            <p class="ss-h">One surface, in the header, with three states</p>
+            <div class="ss-slot">
+              <span class="cap">header, trailing slot</span>
+              <div class="ss-banner"><svg class="ic"><use href="#i-check"/></svg>Synced<span class="act">quiet</span></div>
+              <div class="ss-banner"><svg class="ic"><use href="#i-rotate"/></svg>4 pending<span class="act">counting</span></div>
+              <div class="ss-banner"><svg class="ic"><use href="#i-cloud-off"/></svg>Can't reach the server<span class="act">Retry</span></div>
+            </div>
+            <p class="ss-h">And the surfaces it replaces</p>
+            <div class="ss-r"><span class="ss-k">Settings indicator</span>
+              <span class="ss-d">becomes a row pointing at the same projection, not a second indicator</span>
+              <span class="ss-n good">1 source</span></div>
+            <div class="ss-r"><span class="ss-k">"Retry"</span>
+              <span class="ss-d">the indicator's third state, in the indicator</span>
+              <span class="ss-n good">1 action</span></div>
+            <div class="ss-r"><span class="ss-k">"Retry network now"</span>
+              <span class="ss-d">deleted — it was the same action under a second name</span>
+              <span class="ss-n good">0 duplicates</span></div>
+            <div class="ss-r"><span class="ss-k">Pending count</span>
+              <span class="ss-d">the indicator's second state, not a settings row of its own</span>
+              <span class="ss-n good">folded</span></div>
+            <div class="ss-box on">
+              <h4><svg class="ic"><use href="#i-check"/></svg>Six surfaces become three, and every citation becomes true</h4>
+              <p>The indicator lives where three docs already say it does, the hour is defined once
+                (an unbroken streak of failed background cycles), and the passive-state example the
+                budget leans on becomes a real component with three states instead of a phrase in a
+                list.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd><code>sync-engine.md</code> gains the indicator and the threshold;
+            <code>app-shell.md</code>'s header slot name it; <code>settings.md</code> loses the
+            duplicate retry and the standalone pending row; <code>surfaces.md</code> and
+            <code>components.md</code> stop calling it Ambient and a notification source
+            respectively.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The header gains a glyph, and the shell's header slots go from three named contents to
+            four. One sync surface (the settings indicator) is absorbed rather than kept.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. Three docs already asserted this design; the variant writes it down, gives the
+            hour one owner, and removes one surface that was never in any list.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
 
     <!-- V1 -->
     <article class="vc">
@@ -1391,69 +1465,7 @@ Thresholds:
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended — one surface, one threshold, one owner</span>
-        <p class="vc-stance">Keep the indicator and specify it where three docs already point. Give the
-          hour one owner, and let the pending count be its second state rather than a separate row.</p>
-        <span class="vc-read">the synthesis · the citation completed, and the count folded in</span>
-      </div>
-      <div class="vc-stage">
-        <div class="phone tall">
-          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-3)">
-            <p class="ss-h">One surface, in the header, with three states</p>
-            <div class="ss-slot">
-              <span class="cap">header, trailing slot</span>
-              <div class="ss-banner"><svg class="ic"><use href="#i-check"/></svg>Synced<span class="act">quiet</span></div>
-              <div class="ss-banner"><svg class="ic"><use href="#i-rotate"/></svg>4 pending<span class="act">counting</span></div>
-              <div class="ss-banner"><svg class="ic"><use href="#i-cloud-off"/></svg>Can't reach the server<span class="act">Retry</span></div>
-            </div>
-            <p class="ss-h">And the surfaces it replaces</p>
-            <div class="ss-r"><span class="ss-k">Settings indicator</span>
-              <span class="ss-d">becomes a row pointing at the same projection, not a second indicator</span>
-              <span class="ss-n good">1 source</span></div>
-            <div class="ss-r"><span class="ss-k">"Retry"</span>
-              <span class="ss-d">the indicator's third state, in the indicator</span>
-              <span class="ss-n good">1 action</span></div>
-            <div class="ss-r"><span class="ss-k">"Retry network now"</span>
-              <span class="ss-d">deleted — it was the same action under a second name</span>
-              <span class="ss-n good">0 duplicates</span></div>
-            <div class="ss-r"><span class="ss-k">Pending count</span>
-              <span class="ss-d">the indicator's second state, not a settings row of its own</span>
-              <span class="ss-n good">folded</span></div>
-            <div class="ss-box on">
-              <h4><svg class="ic"><use href="#i-check"/></svg>Six surfaces become three, and every citation becomes true</h4>
-              <p>The indicator lives where three docs already say it does, the hour is defined once
-                (an unbroken streak of failed background cycles), and the passive-state example the
-                budget leans on becomes a real component with three states instead of a phrase in a
-                list.</p>
-            </div>
-          </div>
-          <div class="dock">
-            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
-            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
-            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
-            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd><code>sync-engine.md</code> gains the indicator and the threshold;
-            <code>app-shell.md</code>'s header slot name it; <code>settings.md</code> loses the
-            duplicate retry and the standalone pending row; <code>surfaces.md</code> and
-            <code>components.md</code> stop calling it Ambient and a notification source
-            respectively.</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>The header gains a glyph, and the shell's header slots go from three named contents to
-            four. One sync surface (the settings indicator) is absorbed rather than kept.</dd></div>
-        <div class="vc-line rules"><dt>Against rules</dt>
-          <dd>None. Three docs already asserted this design; the variant writes it down, gives the
-            hour one owner, and removes one surface that was never in any list.</dd></div>
-      </dl>
-    </article>
-
+    </details>
   </div>
 
   <div class="lede">

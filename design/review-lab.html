@@ -106,6 +106,58 @@
   </div>
 
   <div class="grid">
+
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">Keep it a note, and give the <b>Sources block</b> a rule.</p>
+        <span class="vc-read">one generated-note rule for both generated notes</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="rv-note2">
+              <p class="rv-h" style="margin:0">The fix is one rule in <code>notes.md</code>, applied
+                to both generated notes (the review and the protocol report), and one line in each:</p>
+              <p class="rv-said" style="margin-top:8px">"A <b>generated</b> note's Sources block is
+                part of the artefact, not the body. It is editable, and
+                <code>note.edited</code> records the change — but the block is rendered from the
+                event's own metadata, so an edit to it is a correction the user can see, not a
+                silent one."</p>
+            </div>
+            <div class="rv-note">
+              <div class="rv-title" style="font-size:17px">Weekly review — Sep 14–20</div>
+              <div class="rv-body" style="padding-bottom:10px">
+                <p style="font-size:14px;line-height:20px;margin-bottom:0">…two paragraphs…</p>
+                <p class="src">Sources: 14 tasks, 4 habits, 6 events, 2 protocols.<br>
+                  Generated 22 Sep 18:00. Freshness as recorded at generation.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing about the surfaces. One shared rule for generated notes, and a Sources block
+            that says <b>what it is</b> — a record taken at generation — instead of asserting a
+            freshness that decays. Invariant 4 is satisfied and stays satisfied.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It concedes that a generated note's citation can be edited, which means the invariant
+            is enforced by convention rather than by the model. And a block "rendered from the
+            event's own metadata" is a new rendering path for a note body part — the app's only
+            non-markdown region inside one.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether the review is the user's note or the app's. Every surface decision above
+            follows from that one, and the doc leans both ways: the review <i>lives with the user's
+            writing</i> (so it is theirs) and it <i>cites its sources</i> (so it is a record). The
+            lab can show the consequence of each — there is no reading that satisfies both, because
+            a note the user owns is a note the user can change.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
+
     <!-- V1 -->
     <article class="vc">
       <div class="vc-head">
@@ -292,54 +344,7 @@
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
-        <p class="vc-stance">Keep it a note, and give the <b>Sources block</b> a rule.</p>
-        <span class="vc-read">one generated-note rule for both generated notes</span>
-      </div>
-      <div class="vc-stage">
-        <div class="phone">
-          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
-            <div class="rv-note2">
-              <p class="rv-h" style="margin:0">The fix is one rule in <code>notes.md</code>, applied
-                to both generated notes (the review and the protocol report), and one line in each:</p>
-              <p class="rv-said" style="margin-top:8px">"A <b>generated</b> note's Sources block is
-                part of the artefact, not the body. It is editable, and
-                <code>note.edited</code> records the change — but the block is rendered from the
-                event's own metadata, so an edit to it is a correction the user can see, not a
-                silent one."</p>
-            </div>
-            <div class="rv-note">
-              <div class="rv-title" style="font-size:17px">Weekly review — Sep 14–20</div>
-              <div class="rv-body" style="padding-bottom:10px">
-                <p style="font-size:14px;line-height:20px;margin-bottom:0">…two paragraphs…</p>
-                <p class="src">Sources: 14 tasks, 4 habits, 6 events, 2 protocols.<br>
-                  Generated 22 Sep 18:00. Freshness as recorded at generation.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd>Nothing about the surfaces. One shared rule for generated notes, and a Sources block
-            that says <b>what it is</b> — a record taken at generation — instead of asserting a
-            freshness that decays. Invariant 4 is satisfied and stays satisfied.</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>It concedes that a generated note's citation can be edited, which means the invariant
-            is enforced by convention rather than by the model. And a block "rendered from the
-            event's own metadata" is a new rendering path for a note body part — the app's only
-            non-markdown region inside one.</dd></div>
-        <div class="vc-line open"><dt>Still needs</dt>
-          <dd>Whether the review is the user's note or the app's. Every surface decision above
-            follows from that one, and the doc leans both ways: the review <i>lives with the user's
-            writing</i> (so it is theirs) and it <i>cites its sources</i> (so it is a record). The
-            lab can show the consequence of each — there is no reading that satisfies both, because
-            a note the user owns is a note the user can change.</dd></div>
-      </dl>
-    </article>
+    </details>
   </div>
 
   <div class="lede">
@@ -360,6 +365,58 @@
   </div>
 
   <div class="grid">
+
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">Derive the numbers, derive the range, and <b>narrow the rule</b>.</p>
+        <span class="vc-read">the example is the test — make it pass</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="rv-note">
+              <div class="rv-title" style="font-size:17px">Weekly review — Sep 14–20</div>
+              <div class="rv-body" style="padding-bottom:10px">
+                <p style="font-size:14px;line-height:20px">You completed <b>14</b> tasks, hit <b>24
+                  of 28</b> habit checks, and attended <b>6</b> events. Two protocols were active:
+                  Sleep (day 18) and Focus (day 4).</p>
+                <p style="font-size:14px;line-height:20px;margin-bottom:0">Wednesday slipped: 2
+                  tasks deferred twice. Your meditation habit correlated with days you walked first
+                  (<b>6 of 7</b>).</p>
+                <p class="src">Sources: <b>14</b> tasks, <b>24/28</b> checks, <b>6</b> events, <b>2</b>
+                  protocols — computed from the same query as paragraph 1.<br>
+                  Generated 22 Sep 18:00.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Three fixes to the doc, none to the module. <b>(1)</b> The Sources line is derived from
+            the same query as the prose, so its numbers cannot disagree. <b>(2)</b> The window is the
+            seven days ending at the trigger — <b>Sep 14–20</b> — and the four places carrying
+            "Sep 16–22" are corrected, including <code>retrieval.md</code>'s. <b>(3)</b> The
+            no-prescription rule is narrowed to forbid <i>directing a change to the user's day</i>
+            while allowing the correlation to be named as the example does.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Deriving the Sources line means four aggregates must be available to the renderer
+            independently of the prose, so the review's generation is split into a query and a
+            composition where the doc currently describes one Tier 3 pass. That is a real change to
+            how the app produces its highest-value output.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>What the Sources line is <b>for</b>. Invariant 4 says the review cites its sources and
+            their freshness, which is a claim about trust — but the numbers are the review's own
+            front page restated, and the freshness decays (see the next screen). If the citation's
+            purpose is auditability, it wants the query and the moment; if it is reassurance, it
+            wants neither. The doc never says which, and the block's shape follows.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
+
     <!-- V1 -->
     <article class="vc">
       <div class="vc-head">
@@ -535,54 +592,7 @@
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
-        <p class="vc-stance">Derive the numbers, derive the range, and <b>narrow the rule</b>.</p>
-        <span class="vc-read">the example is the test — make it pass</span>
-      </div>
-      <div class="vc-stage">
-        <div class="phone" style="width:390px;height:auto">
-          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
-            <div class="rv-note">
-              <div class="rv-title" style="font-size:17px">Weekly review — Sep 14–20</div>
-              <div class="rv-body" style="padding-bottom:10px">
-                <p style="font-size:14px;line-height:20px">You completed <b>14</b> tasks, hit <b>24
-                  of 28</b> habit checks, and attended <b>6</b> events. Two protocols were active:
-                  Sleep (day 18) and Focus (day 4).</p>
-                <p style="font-size:14px;line-height:20px;margin-bottom:0">Wednesday slipped: 2
-                  tasks deferred twice. Your meditation habit correlated with days you walked first
-                  (<b>6 of 7</b>).</p>
-                <p class="src">Sources: <b>14</b> tasks, <b>24/28</b> checks, <b>6</b> events, <b>2</b>
-                  protocols — computed from the same query as paragraph 1.<br>
-                  Generated 22 Sep 18:00.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd>Three fixes to the doc, none to the module. <b>(1)</b> The Sources line is derived from
-            the same query as the prose, so its numbers cannot disagree. <b>(2)</b> The window is the
-            seven days ending at the trigger — <b>Sep 14–20</b> — and the four places carrying
-            "Sep 16–22" are corrected, including <code>retrieval.md</code>'s. <b>(3)</b> The
-            no-prescription rule is narrowed to forbid <i>directing a change to the user's day</i>
-            while allowing the correlation to be named as the example does.</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>Deriving the Sources line means four aggregates must be available to the renderer
-            independently of the prose, so the review's generation is split into a query and a
-            composition where the doc currently describes one Tier 3 pass. That is a real change to
-            how the app produces its highest-value output.</dd></div>
-        <div class="vc-line open"><dt>Still needs</dt>
-          <dd>What the Sources line is <b>for</b>. Invariant 4 says the review cites its sources and
-            their freshness, which is a claim about trust — but the numbers are the review's own
-            front page restated, and the freshness decays (see the next screen). If the citation's
-            purpose is auditability, it wants the query and the moment; if it is reassurance, it
-            wants neither. The doc never says which, and the block's shape follows.</dd></div>
-      </dl>
-    </article>
+    </details>
   </div>
 
   <div class="lede">
@@ -611,6 +621,55 @@
   </div>
 
   <div class="grid">
+
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">Say <b>what was true at generation</b>, and give the note both dates.</p>
+        <span class="vc-read">anchor to the artefact · keep the invariant</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="rv-note">
+              <div class="rv-title" style="font-size:17px">Weekly review — Sep 14–20</div>
+              <div class="rv-body" style="padding-bottom:10px">
+                <p class="src">Sources: 14 tasks, 24/28 checks, 6 events, 2 protocols.<br>
+                  Snapshots taken 20 Sep 18:00 — calendar 2h old, health 8h old.</p>
+              </div>
+            </div>
+            <div class="rv-note2">
+              <p class="rv-h" style="margin:0">Both dates are present and they are different facts:
+                the <b>window</b> (Sep 14–20) and the <b>snapshot</b> (20 Sep 18:00). The freshness
+                clause is anchored to the snapshot, so it is permanently true, and the note's
+                scheduled-date attachment is untouched.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The freshness clause gains an anchor — the snapshot moment — so it describes the
+            generation rather than the reading. This also separates two things §Invariants currently
+            conflates by giving the note one date: <b>which week this is about</b> and <b>when it was
+            produced</b>. The late-generation case needs both, and the doc gives one.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Two dates on one note is a small piece of bookkeeping the user now has to read, and in
+            the ordinary case they are minutes apart, so the second date is noise on 51 reviews a
+            year. It is load-bearing only on the review generated late — which §Invariants handles by
+            making the note's date <i>not</i> the generation time.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Which date is the review's identity. §Invariants attaches a late review to its
+            <b>scheduled</b> date "not the open date" — so the app already decided the scheduled date
+            wins, and a review generated the following Wednesday is filed under a Sunday. That is the
+            right call for grouping and the wrong one for freshness, and the doc argues for one date
+            while needing two.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
+
     <!-- V1 -->
     <article class="vc">
       <div class="vc-head">
@@ -787,51 +846,7 @@
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
-        <p class="vc-stance">Say <b>what was true at generation</b>, and give the note both dates.</p>
-        <span class="vc-read">anchor to the artefact · keep the invariant</span>
-      </div>
-      <div class="vc-stage">
-        <div class="phone" style="width:390px;height:auto">
-          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
-            <div class="rv-note">
-              <div class="rv-title" style="font-size:17px">Weekly review — Sep 14–20</div>
-              <div class="rv-body" style="padding-bottom:10px">
-                <p class="src">Sources: 14 tasks, 24/28 checks, 6 events, 2 protocols.<br>
-                  Snapshots taken 20 Sep 18:00 — calendar 2h old, health 8h old.</p>
-              </div>
-            </div>
-            <div class="rv-note2">
-              <p class="rv-h" style="margin:0">Both dates are present and they are different facts:
-                the <b>window</b> (Sep 14–20) and the <b>snapshot</b> (20 Sep 18:00). The freshness
-                clause is anchored to the snapshot, so it is permanently true, and the note's
-                scheduled-date attachment is untouched.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd>The freshness clause gains an anchor — the snapshot moment — so it describes the
-            generation rather than the reading. This also separates two things §Invariants currently
-            conflates by giving the note one date: <b>which week this is about</b> and <b>when it was
-            produced</b>. The late-generation case needs both, and the doc gives one.</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>Two dates on one note is a small piece of bookkeeping the user now has to read, and in
-            the ordinary case they are minutes apart, so the second date is noise on 51 reviews a
-            year. It is load-bearing only on the review generated late — which §Invariants handles by
-            making the note's date <i>not</i> the generation time.</dd></div>
-        <div class="vc-line open"><dt>Still needs</dt>
-          <dd>Which date is the review's identity. §Invariants attaches a late review to its
-            <b>scheduled</b> date "not the open date" — so the app already decided the scheduled date
-            wins, and a review generated the following Wednesday is filed under a Sunday. That is the
-            right call for grouping and the wrong one for freshness, and the doc argues for one date
-            while needing two.</dd></div>
-      </dl>
-    </article>
+    </details>
   </div>
 
   <div class="lede">
@@ -857,6 +872,59 @@
   </div>
 
   <div class="grid">
+
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">One window rule: <b>the period the trigger closes</b>, for all three.</p>
+        <span class="vc-read">fix the definition once</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="rv-row"><span class="rv-k">Weekly</span>
+              <span class="rv-v">7 days ending at the trigger</span><span class="rv-n">Sep 14–20</span></div>
+            <div class="rv-row"><span class="rv-k">Monthly</span>
+              <span class="rv-v">the calendar month the trigger closes</span>
+              <span class="rv-n">Sep 1–30</span></div>
+            <div class="rv-row"><span class="rv-k">Annual</span>
+              <span class="rv-v">the calendar year the trigger closes</span>
+              <span class="rv-n">2026</span></div>
+            <div class="rv-row"><span class="rv-k">Nesting</span>
+              <span class="rv-v">52 weeks = 12 months = 1 year</span>
+              <span class="rv-n">exact</span></div>
+            <div class="rv-note2">
+              <p class="rv-h" style="margin:0">One sentence replaces three: <b>a review covers the
+                period its trigger closes.</b> The weekly keeps its seven days, the monthly becomes a
+                month, and the annual becomes a year — and the three nest, so the annual review can
+                be computed from the monthly windows the app already produced.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>One definition governs all three windows, so the nesting is exact and no day is
+            unreviewed. The weekly is unchanged (its trigger is already periodic), and this is the
+            same fix the previous screen's date-range row needs — one rule for "which days is this
+            review about".</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It gives up the one property "4 weeks" had: equal-length windows. Monthly totals stop
+            being comparable month to month, which for a report whose whole job is comparison is a
+            real loss — and the doc may have chosen 4 weeks for exactly that reason without saying
+            so.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether comparability or coverage matters more for the monthly review. A 4-week window
+            makes "you completed 62 tasks" mean the same thing every month; a calendar month makes it
+            true for the month and different every time. The lab can show that the doc's current
+            answer is <b>neither</b> — it states a 4-week window and fires it on a calendar boundary
+            — so the decision is open rather than made, and the doc should make it.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
+
     <!-- V1 -->
     <article class="vc">
       <div class="vc-head">
@@ -1015,55 +1083,7 @@
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
-        <p class="vc-stance">One window rule: <b>the period the trigger closes</b>, for all three.</p>
-        <span class="vc-read">fix the definition once</span>
-      </div>
-      <div class="vc-stage">
-        <div class="phone" style="width:390px;height:auto">
-          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
-            <div class="rv-row"><span class="rv-k">Weekly</span>
-              <span class="rv-v">7 days ending at the trigger</span><span class="rv-n">Sep 14–20</span></div>
-            <div class="rv-row"><span class="rv-k">Monthly</span>
-              <span class="rv-v">the calendar month the trigger closes</span>
-              <span class="rv-n">Sep 1–30</span></div>
-            <div class="rv-row"><span class="rv-k">Annual</span>
-              <span class="rv-v">the calendar year the trigger closes</span>
-              <span class="rv-n">2026</span></div>
-            <div class="rv-row"><span class="rv-k">Nesting</span>
-              <span class="rv-v">52 weeks = 12 months = 1 year</span>
-              <span class="rv-n">exact</span></div>
-            <div class="rv-note2">
-              <p class="rv-h" style="margin:0">One sentence replaces three: <b>a review covers the
-                period its trigger closes.</b> The weekly keeps its seven days, the monthly becomes a
-                month, and the annual becomes a year — and the three nest, so the annual review can
-                be computed from the monthly windows the app already produced.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd>One definition governs all three windows, so the nesting is exact and no day is
-            unreviewed. The weekly is unchanged (its trigger is already periodic), and this is the
-            same fix the previous screen's date-range row needs — one rule for "which days is this
-            review about".</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>It gives up the one property "4 weeks" had: equal-length windows. Monthly totals stop
-            being comparable month to month, which for a report whose whole job is comparison is a
-            real loss — and the doc may have chosen 4 weeks for exactly that reason without saying
-            so.</dd></div>
-        <div class="vc-line open"><dt>Still needs</dt>
-          <dd>Whether comparability or coverage matters more for the monthly review. A 4-week window
-            makes "you completed 62 tasks" mean the same thing every month; a calendar month makes it
-            true for the month and different every time. The lab can show that the doc's current
-            answer is <b>neither</b> — it states a 4-week window and fires it on a calendar boundary
-            — so the decision is open rather than made, and the doc should make it.</dd></div>
-      </dl>
-    </article>
+    </details>
   </div>
 
   <div class="lede">

@@ -70,6 +70,21 @@ that carried a cross-cutting summary of its comparison (the Premise's "what the
 four agree on") folds that in with them, because it is about the variations rather
 than about the row that ships.
 
+Every lab now carries this shape — **65 screens across 15 labs folded on
+2026-09-28** — except `palette-lab.html`, which is the frozen evidence for the
+palette decisions and draws panels rather than comparison rows. The sweep moved
+each shipped row to the **top of its grid in the DOM** instead of lifting it with
+`order`: the fold's `<summary>` is focusable, so `order: -1` would have put the
+toggle *before* the row it folds for a keyboard or a screen reader, which is the
+one ordering the fold exists to fix.
+
+The row that ships is `class="vc ship"` and carries the badge; the four it beat
+are plain `.vc` inside the fold, in their original order, each keeping its own
+reasoning. A screen where the review adopted something *other* than the lab's own
+recommendation is the case with extra marks on it — the ex-`rec` row gains
+`· not adopted` on its `vc-read` line and `Set aside` as its third line, so the
+record says which row lost as well as which one won.
+
 Because the token set is closed, no lens can move type or colour. That is not a
 limitation of the exercise — it is the token set working as intended, and it is
 why every difference worth arguing about in these labs is composition rather

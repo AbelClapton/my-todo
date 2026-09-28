@@ -109,6 +109,59 @@
   </div>
 
   <div class="grid">
+
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">Keep the row, fix the two undefineds: <b>the traversal</b> and <b>the
+            unlinked person</b>.</p>
+        <span class="vc-read">no visual change · the doc has two holes</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="pp-wrap">
+              <div class="pp-row">
+                <div class="pp-top"><span class="pp-nm">Sarah Chen</span>
+                  <span class="pp-chip">last: 3w ago</span></div>
+                <div class="pp-meta">2 open tasks · 1 upcoming event</div>
+              </div>
+              <div class="pp-row">
+                <div class="pp-top"><span class="pp-nm">Priya Raman</span>
+                  <span class="pp-chip">not linked yet</span></div>
+                <div class="pp-meta">Link a task, event, or note</div>
+              </div>
+            </div>
+            <p class="pp-h">The unlinked person gets a state instead of a blank — which is also the
+              affordance that makes them a layer again.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Two definitions and one empty form. <b>(1)</b> Last activity is a <b>one-hop</b> walk
+            over edges 2, 5, 11, so a note on a linked task is the task's activity. <b>(2)</b> A
+            Person with no links shows <code>not linked yet</code> and a prompt rather than
+            <code>—</code>. <b>(3)</b> The field gets one name — the row says "last", the detail
+            says "Last talked", and the definition says "Last activity".</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The one-hop rule makes the detail's timeline shorter and the prep card's "Last note"
+            blank for anyone whose notes live on tasks — which is most people, since
+            <code>notes.md</code> creates notes from a task's own detail. The honest version of the
+            module is emptier than the example that was written for it.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether a note attached to a <b>linked</b> task should be a Person's activity. It is
+            the difference between "what have I written about Sarah" and "what have I written near
+            Sarah", and the prep card's usefulness depends on the answer — a card that cannot see
+            the pottery note is a card that forgets the one thing you wanted to remember. This may
+            be a case where the <i>invariant</i> is too strict rather than the traversal too
+            narrow.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
+
     <!-- V1 -->
     <article class="vc">
       <div class="vc-head">
@@ -307,55 +360,7 @@
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
-        <p class="vc-stance">Keep the row, fix the two undefineds: <b>the traversal</b> and <b>the
-            unlinked person</b>.</p>
-        <span class="vc-read">no visual change · the doc has two holes</span>
-      </div>
-      <div class="vc-stage">
-        <div class="phone">
-          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
-            <div class="pp-wrap">
-              <div class="pp-row">
-                <div class="pp-top"><span class="pp-nm">Sarah Chen</span>
-                  <span class="pp-chip">last: 3w ago</span></div>
-                <div class="pp-meta">2 open tasks · 1 upcoming event</div>
-              </div>
-              <div class="pp-row">
-                <div class="pp-top"><span class="pp-nm">Priya Raman</span>
-                  <span class="pp-chip">not linked yet</span></div>
-                <div class="pp-meta">Link a task, event, or note</div>
-              </div>
-            </div>
-            <p class="pp-h">The unlinked person gets a state instead of a blank — which is also the
-              affordance that makes them a layer again.</p>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd>Two definitions and one empty form. <b>(1)</b> Last activity is a <b>one-hop</b> walk
-            over edges 2, 5, 11, so a note on a linked task is the task's activity. <b>(2)</b> A
-            Person with no links shows <code>not linked yet</code> and a prompt rather than
-            <code>—</code>. <b>(3)</b> The field gets one name — the row says "last", the detail
-            says "Last talked", and the definition says "Last activity".</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>The one-hop rule makes the detail's timeline shorter and the prep card's "Last note"
-            blank for anyone whose notes live on tasks — which is most people, since
-            <code>notes.md</code> creates notes from a task's own detail. The honest version of the
-            module is emptier than the example that was written for it.</dd></div>
-        <div class="vc-line open"><dt>Still needs</dt>
-          <dd>Whether a note attached to a <b>linked</b> task should be a Person's activity. It is
-            the difference between "what have I written about Sarah" and "what have I written near
-            Sarah", and the prep card's usefulness depends on the answer — a card that cannot see
-            the pottery note is a card that forgets the one thing you wanted to remember. This may
-            be a case where the <i>invariant</i> is too strict rather than the traversal too
-            narrow.</dd></div>
-      </dl>
-    </article>
+    </details>
   </div>
 
   <div class="lede">
@@ -383,6 +388,64 @@
   </div>
 
   <div class="grid">
+
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">Keep the invariant, and let it say <b>what a Person may not have</b>.</p>
+        <span class="vc-read">the claim is about content, and it is already true</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pp-note">
+              <p class="pp-sub" style="margin:0">The invariant, with its boundary stated:</p>
+              <p class="pp-h" style="margin-top:8px">"A Person is a layer, not an atom — it
+                classifies links and holds no content of its own. It may exist <b>before</b> it has
+                links (<code>+</code>), because a name is not content, and it may be
+                <b>archived</b> like any other entity. What it may never have is a field no link
+                can produce."</p>
+            </div>
+            <div class="pp-panel">
+              <p class="pp-sub" style="margin:0">Which is exactly what the prep card proves. Its
+                fields:</p>
+              <div class="pp-graph" style="margin-top:8px">
+                <span class="pp-node">attendees</span>
+                <span class="pp-node">last met</span>
+                <span class="pp-node">last note</span>
+                <span class="pp-node">last completed task</span>
+                <span class="pp-node">open tasks</span>
+              </div>
+              <p class="pp-h" style="margin-top:8px">Five fields from <b>three edges</b>, and the
+                card stores nothing.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The invariant keeps its first half and gains its boundary. The <code>+</code>, the
+            empty state's explanation, and archival stop contradicting it — and the prep card's
+            claim becomes the test: <b>a Person has no field that a link cannot produce.</b> That is
+            the sentence that stops People becoming a CRM, and unlike "does not exist on its own" it
+            can be enforced.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It makes the invariant longer and less quotable, and it formally permits the unlinked
+            Person — so the module gains a state with no designed surface, which the row screen
+            shows a Person's <code>[last]</code> slot cannot express.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>What an unlinked Person's row shows. The row has three parts and two of them are
+            derived from links, so a Person with no links has nothing to fill them — which is a
+            <i>drawing</i> problem the doc created by asserting an invariant the rest of the doc
+            ignores. Either the invariant is firmed up (no unlinked People, and the <code>+</code>
+            goes) or the row gains a state. The lab can show both; the choice is about whether
+            People is a place you add people to.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
+
     <!-- V1 -->
     <article class="vc">
       <div class="vc-head">
@@ -559,60 +622,7 @@
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
-        <p class="vc-stance">Keep the invariant, and let it say <b>what a Person may not have</b>.</p>
-        <span class="vc-read">the claim is about content, and it is already true</span>
-      </div>
-      <div class="vc-stage">
-        <div class="phone" style="width:390px;height:auto">
-          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
-            <div class="pp-note">
-              <p class="pp-sub" style="margin:0">The invariant, with its boundary stated:</p>
-              <p class="pp-h" style="margin-top:8px">"A Person is a layer, not an atom — it
-                classifies links and holds no content of its own. It may exist <b>before</b> it has
-                links (<code>+</code>), because a name is not content, and it may be
-                <b>archived</b> like any other entity. What it may never have is a field no link
-                can produce."</p>
-            </div>
-            <div class="pp-panel">
-              <p class="pp-sub" style="margin:0">Which is exactly what the prep card proves. Its
-                fields:</p>
-              <div class="pp-graph" style="margin-top:8px">
-                <span class="pp-node">attendees</span>
-                <span class="pp-node">last met</span>
-                <span class="pp-node">last note</span>
-                <span class="pp-node">last completed task</span>
-                <span class="pp-node">open tasks</span>
-              </div>
-              <p class="pp-h" style="margin-top:8px">Five fields from <b>three edges</b>, and the
-                card stores nothing.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd>The invariant keeps its first half and gains its boundary. The <code>+</code>, the
-            empty state's explanation, and archival stop contradicting it — and the prep card's
-            claim becomes the test: <b>a Person has no field that a link cannot produce.</b> That is
-            the sentence that stops People becoming a CRM, and unlike "does not exist on its own" it
-            can be enforced.</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>It makes the invariant longer and less quotable, and it formally permits the unlinked
-            Person — so the module gains a state with no designed surface, which the row screen
-            shows a Person's <code>[last]</code> slot cannot express.</dd></div>
-        <div class="vc-line open"><dt>Still needs</dt>
-          <dd>What an unlinked Person's row shows. The row has three parts and two of them are
-            derived from links, so a Person with no links has nothing to fill them — which is a
-            <i>drawing</i> problem the doc created by asserting an invariant the rest of the doc
-            ignores. Either the invariant is firmed up (no unlinked People, and the <code>+</code>
-            goes) or the row gains a state. The lab can show both; the choice is about whether
-            People is a place you add people to.</dd></div>
-      </dl>
-    </article>
+    </details>
   </div>
 
   <div class="lede">
@@ -638,6 +648,59 @@
   </div>
 
   <div class="grid">
+
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">Keep the import, <b>bound it</b>, and give it a stated matching
+            rule.</p>
+        <span class="vc-read">size the write, then make it reversible in one step</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pp-panel">
+              <p class="pp-sub" style="margin:0">Three additions, all definitional:</p>
+              <div class="pp-tl" style="margin-top:8px"><span class="d">1</span>
+                <span><b>State the rule.</b> Match on phone, then email, then exact name — and a
+                  match links, never creates.</span></div>
+              <div class="pp-tl"><span class="d">2</span>
+                <span><b>State the count</b> before the write, on the button.</span></div>
+              <div class="pp-tl"><span class="d">3</span>
+                <span><b>One import, one undo.</b> The import is a set; archiving it is one
+                  action.</span></div>
+            </div>
+            <div class="pp-note">
+              <p class="pp-h" style="margin:0">Nothing about the flow's shape changes. What changes
+                is that the largest write the app can make stops being the least specified.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Three silences become statements, and one of them (the matching rule) is the
+            difference between an import that links and an import that duplicates. The undo needs a
+            batch identity on <code>person.created</code> — an ADR, and the only structural
+            change here.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A batch id is the app's first event field that exists purely to support a reversal,
+            and it is the thin end of a wedge: every bulk operation afterwards will want one. It
+            also makes archival two-tier — archived alone, or archived as part of an import — which
+            <code>person.unarchived</code> does not distinguish.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether a contact <b>is</b> a Person. Import creates People from a phone's address
+            book, which is a list of contact records — and the doc's first line says "People is not
+            a CRM". A 312-person import makes the People list a contact list with a `[last: —]` on
+            most rows, which is the thing the module refuses to be. The honest options are to import
+            only contacts the user has interacted with (needs data the app does not have) or to
+            accept that People starts as a contact list and becomes a graph.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
+
     <!-- V1 -->
     <article class="vc">
       <div class="vc-head">
@@ -821,55 +884,7 @@
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
-        <p class="vc-stance">Keep the import, <b>bound it</b>, and give it a stated matching
-            rule.</p>
-        <span class="vc-read">size the write, then make it reversible in one step</span>
-      </div>
-      <div class="vc-stage">
-        <div class="phone" style="width:390px;height:auto">
-          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
-            <div class="pp-panel">
-              <p class="pp-sub" style="margin:0">Three additions, all definitional:</p>
-              <div class="pp-tl" style="margin-top:8px"><span class="d">1</span>
-                <span><b>State the rule.</b> Match on phone, then email, then exact name — and a
-                  match links, never creates.</span></div>
-              <div class="pp-tl"><span class="d">2</span>
-                <span><b>State the count</b> before the write, on the button.</span></div>
-              <div class="pp-tl"><span class="d">3</span>
-                <span><b>One import, one undo.</b> The import is a set; archiving it is one
-                  action.</span></div>
-            </div>
-            <div class="pp-note">
-              <p class="pp-h" style="margin:0">Nothing about the flow's shape changes. What changes
-                is that the largest write the app can make stops being the least specified.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd>Three silences become statements, and one of them (the matching rule) is the
-            difference between an import that links and an import that duplicates. The undo needs a
-            batch identity on <code>person.created</code> — an ADR, and the only structural
-            change here.</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>A batch id is the app's first event field that exists purely to support a reversal,
-            and it is the thin end of a wedge: every bulk operation afterwards will want one. It
-            also makes archival two-tier — archived alone, or archived as part of an import — which
-            <code>person.unarchived</code> does not distinguish.</dd></div>
-        <div class="vc-line open"><dt>Still needs</dt>
-          <dd>Whether a contact <b>is</b> a Person. Import creates People from a phone's address
-            book, which is a list of contact records — and the doc's first line says "People is not
-            a CRM". A 312-person import makes the People list a contact list with a `[last: —]` on
-            most rows, which is the thing the module refuses to be. The honest options are to import
-            only contacts the user has interacted with (needs data the app does not have) or to
-            accept that People starts as a contact list and becomes a graph.</dd></div>
-      </dl>
-    </article>
+    </details>
   </div>
 
   <div class="lede">
@@ -896,6 +911,61 @@
   </div>
 
   <div class="grid">
+
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">Keep opt-out, and give people the rule captures already has — plus a
+            <b>cap</b>.</p>
+        <span class="vc-read">same shape as the surface next to it</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="pp-panel">
+              <p class="pp-sub" style="margin:0">Three statements, no new chrome:</p>
+              <div class="pp-tl" style="margin-top:8px"><span class="d">1</span>
+                <span><b>Who.</b> "Worth maintaining" (default on) and last interaction &gt; 30
+                  days — unchanged.</span></div>
+              <div class="pp-tl"><span class="d">2</span>
+                <span><b>How many.</b> One nudge, and it names <b>one</b> person: the longest since
+                  an action, not since contact.</span></div>
+              <div class="pp-tl"><span class="d">3</span>
+                <span><b>At most.</b> The nudge is subject to the attention budget like every other
+                  one, and it never exceeds it.</span></div>
+            </div>
+            <div class="pp-note">
+              <p class="pp-h" style="margin:0">The cap that matters is not a top-N: it is that this
+                surface produces <b>one</b> subject per firing, which is what the doc's own example
+                already shows and what its rule never says.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The population rule and the ordering are stated. Nothing about the flow's posture
+            changes and no new chrome is needed: the example was already singular, so the doc is
+            being made to say what it demonstrated. The 60-day suppression becomes the pacing
+            mechanism it already reads as.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>One subject per week means most qualifying people are never surfaced, and the doc has
+            no way to say so — the set is defined by a threshold, the delivery by a rate, and the two
+            numbers are unrelated. With 40 quiet people the honesty problem is that the app claims to
+            resurface quiet relationships and in practice picks one a week.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether the Quiet <b>scope</b> is the same surface as the nudge. <code>people.md</code>
+            makes Quiet "an opt-in view" and the nudge fires weekly; if a user opens Quiet they see
+            all 40, and the nudge shows one of them. Those are two different answers to "who have I
+            lost touch with", in one module, and the doc never says whether they are the same list.
+            The lab can show both is what actually happens — deciding which one is <i>the</i>
+            surface is a product call.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
+
     <!-- V1 -->
     <article class="vc">
       <div class="vc-head">
@@ -1064,57 +1134,7 @@
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
-        <p class="vc-stance">Keep opt-out, and give people the rule captures already has — plus a
-            <b>cap</b>.</p>
-        <span class="vc-read">same shape as the surface next to it</span>
-      </div>
-      <div class="vc-stage">
-        <div class="phone" style="width:390px;height:auto">
-          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
-            <div class="pp-panel">
-              <p class="pp-sub" style="margin:0">Three statements, no new chrome:</p>
-              <div class="pp-tl" style="margin-top:8px"><span class="d">1</span>
-                <span><b>Who.</b> "Worth maintaining" (default on) and last interaction &gt; 30
-                  days — unchanged.</span></div>
-              <div class="pp-tl"><span class="d">2</span>
-                <span><b>How many.</b> One nudge, and it names <b>one</b> person: the longest since
-                  an action, not since contact.</span></div>
-              <div class="pp-tl"><span class="d">3</span>
-                <span><b>At most.</b> The nudge is subject to the attention budget like every other
-                  one, and it never exceeds it.</span></div>
-            </div>
-            <div class="pp-note">
-              <p class="pp-h" style="margin:0">The cap that matters is not a top-N: it is that this
-                surface produces <b>one</b> subject per firing, which is what the doc's own example
-                already shows and what its rule never says.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd>The population rule and the ordering are stated. Nothing about the flow's posture
-            changes and no new chrome is needed: the example was already singular, so the doc is
-            being made to say what it demonstrated. The 60-day suppression becomes the pacing
-            mechanism it already reads as.</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>One subject per week means most qualifying people are never surfaced, and the doc has
-            no way to say so — the set is defined by a threshold, the delivery by a rate, and the two
-            numbers are unrelated. With 40 quiet people the honesty problem is that the app claims to
-            resurface quiet relationships and in practice picks one a week.</dd></div>
-        <div class="vc-line open"><dt>Still needs</dt>
-          <dd>Whether the Quiet <b>scope</b> is the same surface as the nudge. <code>people.md</code>
-            makes Quiet "an opt-in view" and the nudge fires weekly; if a user opens Quiet they see
-            all 40, and the nudge shows one of them. Those are two different answers to "who have I
-            lost touch with", in one module, and the doc never says whether they are the same list.
-            The lab can show both is what actually happens — deciding which one is <i>the</i>
-            surface is a product call.</dd></div>
-      </dl>
-    </article>
+    </details>
   </div>
 
   <div class="lede">

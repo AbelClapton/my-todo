@@ -599,6 +599,76 @@
 
     <div class="grid" id="day-comp">
 
+      <article class="vc ship">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+          <p class="vc-stance">Keep all eight. Change what "a fixed composition" means: an order, not a height.</p>
+          <span class="vc-read">baseline's sections + impeccable's collapse + a scroll</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head" style="border-bottom: 0; padding-bottom: var(--space-2);">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Tue 22 Sep</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 39</span>
+              </div>
+              <!-- The now line does not scroll. `doing-the-day.md` calls it a persistent
+                   instrument that is always present; a day that scrolls takes it off
+                   screen, which is the one thing "always present" cannot mean. -->
+              <div style="flex: none; padding: 0 var(--space-7) var(--space-2); border-bottom: 1px solid var(--border-subtle);">
+                <div class="nowline">
+                  <span class="t-caption" style="color: var(--text-secondary);">11:24</span>
+                  <span class="t-footnote" style="color: var(--text-primary);">Design review in 18 min</span>
+                  <span class="grow"></span>
+                </div>
+              </div>
+              <div class="ob-body scroll" style="padding: var(--space-4) var(--space-7); gap: var(--space-5);">
+                <div class="tl">
+                  <div class="slot"><span class="at">09:00</span><span class="ev"><span class="t-body">Standup</span></span></div>
+                  <div class="slot"><span class="at">11:42</span><span class="ev acc"><span class="t-body">Design review</span><span class="t-footnote" style="display: block; color: var(--text-muted);">30 min</span></span></div>
+                  <div class="slot"><span class="at">13:00</span><span class="ev mirrored"><span class="t-body">Lunch with Sarah</span><span class="t-footnote" style="display: block; color: var(--stale-text);">as of 2 hours ago</span></span></div>
+                  <div class="slot"><span class="at">16:30</span><span class="ev"><span class="t-body">Physio</span></span></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: var(--space-5);">
+                  <span class="check"></span><span class="t-body" style="flex: 1;">Meditate</span>
+                  <span class="t-footnote" style="color: var(--text-muted);">1 min</span>
+                </div>
+                <span class="metric-row"><button>1</button><button>2</button><button>3</button><button aria-pressed="true">4</button><button>5</button></span>
+                <div class="note-card">
+                  <span class="t-subhead">Daily note</span>
+                  <span class="t-footnote" style="color: var(--text-secondary);">Felt good after the walk. Late nights are landing on the right day.</span>
+                </div>
+                <div class="list">
+                  <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Draft the Q3 retro</span></div></div>
+                  <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Reply to Priya about the offsite</span></div></div>
+                  <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span></div></div>
+                </div>
+                <div class="list">
+                  <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Send the invoice</span></div></div>
+                  <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Water the plants</span></div></div>
+                </div>
+              </div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+              <div class="clipnote">part of the record is below the fold</div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for keeping every section and their order — each has a job and none is decoration. <b>Impeccable</b> for the realisation that the sections have wildly different weights and the heavy ones belong below the fold. <b>Design taste</b> for naming what is reachable elsewhere, which is what makes four sections harmless to put second.</dd></div>
+          <div class="vc-line cost"><dt>Fixes</dt><dd>The composition becomes an <b>order rather than a height</b>, and the view scrolls under a header and a now line that do not. Of the six scrolling parts, <b>five are above the fold</b> — timeline, due row, metric, Daily Note, top three — and only the Completed list falls below, by <b>52px</b>. That is the right part to lose: it is the record, read at the end of the day rather than scanned during it, and at 138px it was the section that broke the fit in the first place.</dd></div>
+          <div class="vc-line open"><dt>Still needs</dt><dd>Two spec edits this view cannot make by itself. <code>calendar.md</code> calls the Day view "a fixed vertical composition" — it has to become a fixed <b>order</b> with a height that scrolls. And <code>doing-the-day.md</code> calls the now line a persistent instrument that is always present; a scrolling day takes it off screen, so it has to be specified as <b>not scrolling</b>.</dd></div>
+        </dl>
+      </article>
+
+      <details class="alt">
+        <summary>4 variations considered — rejected</summary>
+
       <!-- ================= V1 · baseline ================= -->
       <article class="vc">
         <div class="vc-head">
@@ -822,74 +892,7 @@
         </dl>
       </article>
 
-      <!-- ================= recommended ================= -->
-      <article class="vc rec">
-        <div class="vc-head">
-          <span class="vc-name t-title-3">Recommended</span>
-          <p class="vc-stance">Keep all eight. Change what "a fixed composition" means: an order, not a height.</p>
-          <span class="vc-read">baseline's sections + impeccable's collapse + a scroll</span>
-        </div>
-        <div class="vc-stage">
-          <div class="phone tall">
-            <div class="day">
-              <div class="day-head" style="border-bottom: 0; padding-bottom: var(--space-2);">
-                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
-                <span class="t-title-2">Tue 22 Sep</span>
-                <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 39</span>
-              </div>
-              <!-- The now line does not scroll. `doing-the-day.md` calls it a persistent
-                   instrument that is always present; a day that scrolls takes it off
-                   screen, which is the one thing "always present" cannot mean. -->
-              <div style="flex: none; padding: 0 var(--space-7) var(--space-2); border-bottom: 1px solid var(--border-subtle);">
-                <div class="nowline">
-                  <span class="t-caption" style="color: var(--text-secondary);">11:24</span>
-                  <span class="t-footnote" style="color: var(--text-primary);">Design review in 18 min</span>
-                  <span class="grow"></span>
-                </div>
-              </div>
-              <div class="ob-body scroll" style="padding: var(--space-4) var(--space-7); gap: var(--space-5);">
-                <div class="tl">
-                  <div class="slot"><span class="at">09:00</span><span class="ev"><span class="t-body">Standup</span></span></div>
-                  <div class="slot"><span class="at">11:42</span><span class="ev acc"><span class="t-body">Design review</span><span class="t-footnote" style="display: block; color: var(--text-muted);">30 min</span></span></div>
-                  <div class="slot"><span class="at">13:00</span><span class="ev mirrored"><span class="t-body">Lunch with Sarah</span><span class="t-footnote" style="display: block; color: var(--stale-text);">as of 2 hours ago</span></span></div>
-                  <div class="slot"><span class="at">16:30</span><span class="ev"><span class="t-body">Physio</span></span></div>
-                </div>
-                <div style="display: flex; align-items: center; gap: var(--space-5);">
-                  <span class="check"></span><span class="t-body" style="flex: 1;">Meditate</span>
-                  <span class="t-footnote" style="color: var(--text-muted);">1 min</span>
-                </div>
-                <span class="metric-row"><button>1</button><button>2</button><button>3</button><button aria-pressed="true">4</button><button>5</button></span>
-                <div class="note-card">
-                  <span class="t-subhead">Daily note</span>
-                  <span class="t-footnote" style="color: var(--text-secondary);">Felt good after the walk. Late nights are landing on the right day.</span>
-                </div>
-                <div class="list">
-                  <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Draft the Q3 retro</span></div></div>
-                  <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Reply to Priya about the offsite</span></div></div>
-                  <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span></div></div>
-                </div>
-                <div class="list">
-                  <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Send the invoice</span></div></div>
-                  <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Water the plants</span></div></div>
-                </div>
-              </div>
-              <div class="dock">
-                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
-                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
-                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
-                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
-              </div>
-              <div class="clipnote">part of the record is below the fold</div>
-            </div>
-          </div>
-        </div>
-        <dl class="vc-foot">
-          <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for keeping every section and their order — each has a job and none is decoration. <b>Impeccable</b> for the realisation that the sections have wildly different weights and the heavy ones belong below the fold. <b>Design taste</b> for naming what is reachable elsewhere, which is what makes four sections harmless to put second.</dd></div>
-          <div class="vc-line cost"><dt>Fixes</dt><dd>The composition becomes an <b>order rather than a height</b>, and the view scrolls under a header and a now line that do not. Of the six scrolling parts, <b>five are above the fold</b> — timeline, due row, metric, Daily Note, top three — and only the Completed list falls below, by <b>52px</b>. That is the right part to lose: it is the record, read at the end of the day rather than scanned during it, and at 138px it was the section that broke the fit in the first place.</dd></div>
-          <div class="vc-line open"><dt>Still needs</dt><dd>Two spec edits this view cannot make by itself. <code>calendar.md</code> calls the Day view "a fixed vertical composition" — it has to become a fixed <b>order</b> with a height that scrolls. And <code>doing-the-day.md</code> calls the now line a persistent instrument that is always present; a scrolling day takes it off screen, so it has to be specified as <b>not scrolling</b>.</dd></div>
-        </dl>
-      </article>
-
+      </details>
     </div>
 
     <!-- ==========================================================
@@ -925,6 +928,72 @@
     </section>
 
     <div class="grid" id="day-cal">
+
+      <article class="vc ship">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+          <p class="vc-stance">The eight parts do not change. The Timeline does — and it takes the band's rule with it.</p>
+          <span class="vc-read">baseline's composition + ADR 0026's band + the axis</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Tue 22 Sep</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 39</span>
+              </div>
+              <div class="nowline" style="flex: none; padding: var(--space-2) var(--space-7); border-bottom: 1px solid var(--border-subtle);">
+                <span class="t-caption" style="color: var(--text-secondary);">11:24</span>
+                <span class="t-footnote" style="color: var(--text-primary);">Design review in 18 min</span>
+                <span class="grow"></span>
+              </div>
+              <div class="ob-body scroll" style="padding: var(--space-4) var(--space-7); gap: var(--space-4);">
+                <div class="cal">
+                  <div class="cal-band">
+                    <div class="bd"><span class="k">All day</span><span class="grow"></span><span>Offsite planning</span></div>
+                    <div class="bd dim"><span class="k">No time</span><span class="grow"></span><span>Book the dentist</span></div>
+                  </div>
+                  <div class="cal-axis"><div class="cal-grid"></div></div>
+                  <div class="cal-cap">1344px of day in a 560px viewport · opens at now</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: var(--space-5);">
+                  <span class="check"></span><span class="t-body" style="flex: 1;">Meditate</span>
+                </div>
+                <span class="metric-row"><button>1</button><button>2</button><button>3</button><button aria-pressed="true">4</button><button>5</button></span>
+                <div class="note-card">
+                  <span class="t-subhead">Daily note</span>
+                  <span class="t-footnote" style="color: var(--text-secondary);">Felt good after the walk.</span>
+                </div>
+                <div class="list">
+                  <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Draft the Q3 retro</span></div></div>
+                  <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Reply to Priya about the offsite</span></div></div>
+                  <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span></div></div>
+                </div>
+                <div class="list">
+                  <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Send the invoice</span></div></div>
+                  <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Water the plants</span></div></div>
+                </div>
+              </div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+              <div class="clipnote">the plan and the record are below the fold</div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for keeping all eight parts and their order — the finding is that the <i>composition</i> needed no change, only the Timeline did. <b>ADR 0026's band rule</b>, which is the one thing baseline is missing: the unplaced task is time-bearing and unplaceable, so it belongs above the axis rather than in a gutter with a blank time. <b>Impeccable</b> for keeping the now <i>rule</i> on the axis while the now <i>line</i> stays in the chrome, because one has six sources and the other has one job.</dd></div>
+          <div class="vc-line cost"><dt>Fixes</dt><dd>Duration becomes visible in the app for the first time: 30 minutes is <b>28px</b> and a 3-hour workshop is <b>168px</b>, where the list drew both at 52px. A conflict becomes countable rather than invisible — two 09:00 blocks at half width with a 1px seam. And the day's height is now a constant (<b>1344px</b> of content, whatever the day holds) instead of a function of how much is in it, which is what made the old fold unpredictable.</dd></div>
+          <div class="vc-line open"><dt>Still needs</dt><dd>Two things this row cannot decide. <b>One:</b> the fold now lands inside the register — the axis is most of the screen — so whether habits, the metric row, the note and the top three stay below it or join the band (the row above) is exactly the composition question ADR 0026 left open. <b>Two:</b> nothing yet sets a task's `scheduled_time` (ADR 0025); the natural gesture is dragging a task onto the axis, and that is this view's own work.</dd></div>
+        </dl>
+      </article>
+
+      <details class="alt">
+        <summary>4 variations considered — rejected</summary>
 
       <!-- ================= CAL 1 · baseline ================= -->
       <article class="vc">
@@ -1151,70 +1220,7 @@
         </dl>
       </article>
 
-      <!-- ================= CAL 5 · recommended ================= -->
-      <article class="vc rec">
-        <div class="vc-head">
-          <span class="vc-name t-title-3">Recommended</span>
-          <p class="vc-stance">The eight parts do not change. The Timeline does — and it takes the band's rule with it.</p>
-          <span class="vc-read">baseline's composition + ADR 0026's band + the axis</span>
-        </div>
-        <div class="vc-stage">
-          <div class="phone tall">
-            <div class="day">
-              <div class="day-head">
-                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
-                <span class="t-title-2">Tue 22 Sep</span>
-                <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 39</span>
-              </div>
-              <div class="nowline" style="flex: none; padding: var(--space-2) var(--space-7); border-bottom: 1px solid var(--border-subtle);">
-                <span class="t-caption" style="color: var(--text-secondary);">11:24</span>
-                <span class="t-footnote" style="color: var(--text-primary);">Design review in 18 min</span>
-                <span class="grow"></span>
-              </div>
-              <div class="ob-body scroll" style="padding: var(--space-4) var(--space-7); gap: var(--space-4);">
-                <div class="cal">
-                  <div class="cal-band">
-                    <div class="bd"><span class="k">All day</span><span class="grow"></span><span>Offsite planning</span></div>
-                    <div class="bd dim"><span class="k">No time</span><span class="grow"></span><span>Book the dentist</span></div>
-                  </div>
-                  <div class="cal-axis"><div class="cal-grid"></div></div>
-                  <div class="cal-cap">1344px of day in a 560px viewport · opens at now</div>
-                </div>
-                <div style="display: flex; align-items: center; gap: var(--space-5);">
-                  <span class="check"></span><span class="t-body" style="flex: 1;">Meditate</span>
-                </div>
-                <span class="metric-row"><button>1</button><button>2</button><button>3</button><button aria-pressed="true">4</button><button>5</button></span>
-                <div class="note-card">
-                  <span class="t-subhead">Daily note</span>
-                  <span class="t-footnote" style="color: var(--text-secondary);">Felt good after the walk.</span>
-                </div>
-                <div class="list">
-                  <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Draft the Q3 retro</span></div></div>
-                  <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Reply to Priya about the offsite</span></div></div>
-                  <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span></div></div>
-                </div>
-                <div class="list">
-                  <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Send the invoice</span></div></div>
-                  <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Water the plants</span></div></div>
-                </div>
-              </div>
-              <div class="dock">
-                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
-                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
-                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
-                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
-              </div>
-              <div class="clipnote">the plan and the record are below the fold</div>
-            </div>
-          </div>
-        </div>
-        <dl class="vc-foot">
-          <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for keeping all eight parts and their order — the finding is that the <i>composition</i> needed no change, only the Timeline did. <b>ADR 0026's band rule</b>, which is the one thing baseline is missing: the unplaced task is time-bearing and unplaceable, so it belongs above the axis rather than in a gutter with a blank time. <b>Impeccable</b> for keeping the now <i>rule</i> on the axis while the now <i>line</i> stays in the chrome, because one has six sources and the other has one job.</dd></div>
-          <div class="vc-line cost"><dt>Fixes</dt><dd>Duration becomes visible in the app for the first time: 30 minutes is <b>28px</b> and a 3-hour workshop is <b>168px</b>, where the list drew both at 52px. A conflict becomes countable rather than invisible — two 09:00 blocks at half width with a 1px seam. And the day's height is now a constant (<b>1344px</b> of content, whatever the day holds) instead of a function of how much is in it, which is what made the old fold unpredictable.</dd></div>
-          <div class="vc-line open"><dt>Still needs</dt><dd>Two things this row cannot decide. <b>One:</b> the fold now lands inside the register — the axis is most of the screen — so whether habits, the metric row, the note and the top three stay below it or join the band (the row above) is exactly the composition question ADR 0026 left open. <b>Two:</b> nothing yet sets a task's `scheduled_time` (ADR 0025); the natural gesture is dragging a task onto the axis, and that is this view's own work.</dd></div>
-        </dl>
-      </article>
-
+      </details>
     </div>
 
     <section class="lede">
@@ -1255,6 +1261,108 @@
     </section>
 
     <div class="grid">
+
+      <article class="vc ship">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+          <p class="vc-stance">Keep the seven columns and drop the titles. The Week answers “which days are heavy”; the Day answers “what is that thing”.</p>
+          <span class="vc-read">baseline's shape + impeccable's blocks<br>V3's proof + V4's reminder</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Week 39</span>
+                <span class="t-footnote" style="color: var(--text-muted);">21–27 Sep</span>
+              </div>
+              <div class="wk">
+                <span></span>
+                <span class="wk-day"><span class="dow">Mon</span><span class="num">21</span></span>
+                <span class="wk-day today"><span class="dow">Tue</span><span class="num">22</span></span>
+                <span class="wk-day"><span class="dow">Wed</span><span class="num">23</span></span>
+                <span class="wk-day"><span class="dow">Thu</span><span class="num">24</span></span>
+                <span class="wk-day"><span class="dow">Fri</span><span class="num">25</span></span>
+                <span class="wk-day"><span class="dow">Sat</span><span class="num">26</span></span>
+                <span class="wk-day"><span class="dow">Sun</span><span class="num">27</span></span>
+              </div>
+              <div class="wk-allday"><span></span><span class="band">Offsite</span></div>
+              <!-- The one thing a chart needs and a chart alone cannot supply: somewhere
+                   for the selection to be read. Selecting and opening are two steps,
+                   because one tap cannot both pick a column out and leave the week. -->
+              <div class="wk-focus">
+                <span class="t-footnote sel">Thu 24 Sep</span>
+                <span class="t-caption" style="color: var(--text-secondary);">5 events · heaviest day</span>
+                <span class="t-caption" style="margin-left: auto; color: var(--text-muted);">tap here to open</span>
+              </div>
+              <div class="wk-body">
+                <div class="wk-grid">
+                  <div class="wk-axis">
+                    <span class="h" style="top: 0%">08</span>
+                    <span class="h" style="top: 20%">10</span>
+                    <span class="h" style="top: 40%">12</span>
+                    <span class="h" style="top: 60%">14</span>
+                    <span class="h" style="top: 80%">16</span>
+                    <span class="h" style="top: 100%">18</span>
+                  </div>
+                  <div class="wk-col">
+                    <span class="wk-block" style="top: 10%; height: 5%;"></span>
+                    <span class="wk-block" style="top: 60%; height: 10%;"></span>
+                    <span class="wk-block" style="top: 90%; height: 7.5%;"></span>
+                  </div>
+                  <div class="wk-col today">
+                    <span class="wk-block" style="top: 10%; height: 5%;"></span>
+                    <span class="wk-block" style="top: 37%; height: 5%;"></span>
+                    <span class="wk-block mirrored" style="top: 50%; height: 10%;"></span>
+                    <span class="wk-block" style="top: 85%; height: 7.5%;"></span>
+                  </div>
+                  <div class="wk-col">
+                    <span class="wk-block" style="top: 10%; height: 5%;"></span>
+                    <span class="wk-block" style="top: 20%; height: 5%;"></span>
+                    <span class="wk-block" style="top: 70%; height: 10%;"></span>
+                  </div>
+                  <div class="wk-col sel">
+                    <span class="wk-block" style="top: 10%; height: 5%;"></span>
+                    <span class="wk-block" style="top: 30%; height: 15%;"></span>
+                    <span class="wk-block mirrored" style="top: 50%; height: 10%;"></span>
+                    <span class="wk-block" style="top: 70%; height: 5%;"></span>
+                    <span class="wk-block" style="top: 85%; height: 10%;"></span>
+                  </div>
+                  <div class="wk-col">
+                    <span class="wk-block" style="top: 10%; height: 5%;"></span>
+                    <span class="wk-block mirrored" style="top: 40%; height: 15%;"></span>
+                  </div>
+                  <div class="wk-col">
+                    <span class="wk-block" style="top: 20%; height: 10%;"></span>
+                  </div>
+                  <div class="wk-col"></div>
+                  <div class="wk-now" style="top: 34%"><span class="lab">11:24</span></div>
+                </div>
+              </div>
+              <div class="wk-counts">
+                <span class="k">tasks</span>
+                <span class="c">2</span><span class="c on">3</span><span class="c">1</span><span class="c">0</span><span class="c">2</span><span class="c">1</span><span class="c">0</span>
+                <span class="k">habits</span>
+                <span class="c">1/3</span><span class="c on">2/4</span><span class="c">3/4</span><span class="c">1/4</span><span class="c">0/4</span><span class="c">2/3</span><span class="c">0/3</span>
+              </div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for seven columns and one shared gutter — the sentence is right, it is simply not a layout. <b>Impeccable</b> for the realisation that proportionality and legibility are the same decision, so the Week earns its chart by giving up the names. <b>Frontend design</b> for testing rotation and proving the constraint is the clock rather than the column count. <b>Design taste</b> for showing what deleting the axis produces: the Day view, seven times, in the place where the Day already works.</dd></div>
+          <div class="vc-line cost"><dt>Fixes</dt><dd>The Week becomes a chart with a <b>two-step way in</b>. <b>Tap a column</b> and it outlines while the focus line names that day and its load; <b>tap the focus line</b> and the day opens. One tap cannot both pick a column out and leave the week, so it does not try. The selection starts on today, which is already the tinted and accented column. The <b>all-day band</b> spans Thu–Fri — an item covering two days, which no other Calendar surface can draw whole. The <b>counts strip</b> spends “collapse to counts” on telling the days apart rather than on naming anything, and the <b>now rule</b> crosses all seven columns but belongs to none of them.</dd></div>
+          <div class="vc-line open"><dt>Still needs</dt><dd>Five decisions this view cannot make for itself. <b>One:</b> `calendar.md`'s Scope gives the Week a sentence and the Day eight numbered parts — the Week needs a layout section of its own, or this row stands in for one. <b>Two:</b> that doc's <b>Surfaces</b> section lists five surfaces and omits Week, Month and Year, all three of which `03-experience/surfaces.md` lists as screens. <b>Three:</b> “The Calendar has no whole-view empty state” is <b>false for the Week</b>, and the reason given for it — “the Daily Note always exists” — is a Day-view argument. A week with nothing on it is genuinely bare; Sunday's column above is that case in every variant. <b>Four:</b> `06-flows/doing-the-day.md` ties the now line to “the calendar <i>day view</i> and the header of other modes”. The Week is neither, so it has no specified now line, while every variant here needs one and this one draws it as a rule. <b>Five:</b> the axis window is unspecified — a fixed clock range (this mock uses 08:00–18:00) or one derived from the week's own earliest and latest events. It decides whether two weeks can be compared at a glance, which is the view's entire purpose.</dd></div>
+        </dl>
+      </article>
+
+      <details class="alt">
+        <summary>4 variations considered — rejected</summary>
 
       <!-- ================= V1 · baseline ================= -->
       <article class="vc">
@@ -1618,106 +1726,7 @@
         </dl>
       </article>
 
-      <!-- ================= recommended ================= -->
-      <article class="vc rec">
-        <div class="vc-head">
-          <span class="vc-name t-title-3">Recommended</span>
-          <p class="vc-stance">Keep the seven columns and drop the titles. The Week answers “which days are heavy”; the Day answers “what is that thing”.</p>
-          <span class="vc-read">baseline's shape + impeccable's blocks<br>V3's proof + V4's reminder</span>
-        </div>
-        <div class="vc-stage">
-          <div class="phone tall">
-            <div class="day">
-              <div class="day-head">
-                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
-                <span class="t-title-2">Week 39</span>
-                <span class="t-footnote" style="color: var(--text-muted);">21–27 Sep</span>
-              </div>
-              <div class="wk">
-                <span></span>
-                <span class="wk-day"><span class="dow">Mon</span><span class="num">21</span></span>
-                <span class="wk-day today"><span class="dow">Tue</span><span class="num">22</span></span>
-                <span class="wk-day"><span class="dow">Wed</span><span class="num">23</span></span>
-                <span class="wk-day"><span class="dow">Thu</span><span class="num">24</span></span>
-                <span class="wk-day"><span class="dow">Fri</span><span class="num">25</span></span>
-                <span class="wk-day"><span class="dow">Sat</span><span class="num">26</span></span>
-                <span class="wk-day"><span class="dow">Sun</span><span class="num">27</span></span>
-              </div>
-              <div class="wk-allday"><span></span><span class="band">Offsite</span></div>
-              <!-- The one thing a chart needs and a chart alone cannot supply: somewhere
-                   for the selection to be read. Selecting and opening are two steps,
-                   because one tap cannot both pick a column out and leave the week. -->
-              <div class="wk-focus">
-                <span class="t-footnote sel">Thu 24 Sep</span>
-                <span class="t-caption" style="color: var(--text-secondary);">5 events · heaviest day</span>
-                <span class="t-caption" style="margin-left: auto; color: var(--text-muted);">tap here to open</span>
-              </div>
-              <div class="wk-body">
-                <div class="wk-grid">
-                  <div class="wk-axis">
-                    <span class="h" style="top: 0%">08</span>
-                    <span class="h" style="top: 20%">10</span>
-                    <span class="h" style="top: 40%">12</span>
-                    <span class="h" style="top: 60%">14</span>
-                    <span class="h" style="top: 80%">16</span>
-                    <span class="h" style="top: 100%">18</span>
-                  </div>
-                  <div class="wk-col">
-                    <span class="wk-block" style="top: 10%; height: 5%;"></span>
-                    <span class="wk-block" style="top: 60%; height: 10%;"></span>
-                    <span class="wk-block" style="top: 90%; height: 7.5%;"></span>
-                  </div>
-                  <div class="wk-col today">
-                    <span class="wk-block" style="top: 10%; height: 5%;"></span>
-                    <span class="wk-block" style="top: 37%; height: 5%;"></span>
-                    <span class="wk-block mirrored" style="top: 50%; height: 10%;"></span>
-                    <span class="wk-block" style="top: 85%; height: 7.5%;"></span>
-                  </div>
-                  <div class="wk-col">
-                    <span class="wk-block" style="top: 10%; height: 5%;"></span>
-                    <span class="wk-block" style="top: 20%; height: 5%;"></span>
-                    <span class="wk-block" style="top: 70%; height: 10%;"></span>
-                  </div>
-                  <div class="wk-col sel">
-                    <span class="wk-block" style="top: 10%; height: 5%;"></span>
-                    <span class="wk-block" style="top: 30%; height: 15%;"></span>
-                    <span class="wk-block mirrored" style="top: 50%; height: 10%;"></span>
-                    <span class="wk-block" style="top: 70%; height: 5%;"></span>
-                    <span class="wk-block" style="top: 85%; height: 10%;"></span>
-                  </div>
-                  <div class="wk-col">
-                    <span class="wk-block" style="top: 10%; height: 5%;"></span>
-                    <span class="wk-block mirrored" style="top: 40%; height: 15%;"></span>
-                  </div>
-                  <div class="wk-col">
-                    <span class="wk-block" style="top: 20%; height: 10%;"></span>
-                  </div>
-                  <div class="wk-col"></div>
-                  <div class="wk-now" style="top: 34%"><span class="lab">11:24</span></div>
-                </div>
-              </div>
-              <div class="wk-counts">
-                <span class="k">tasks</span>
-                <span class="c">2</span><span class="c on">3</span><span class="c">1</span><span class="c">0</span><span class="c">2</span><span class="c">1</span><span class="c">0</span>
-                <span class="k">habits</span>
-                <span class="c">1/3</span><span class="c on">2/4</span><span class="c">3/4</span><span class="c">1/4</span><span class="c">0/4</span><span class="c">2/3</span><span class="c">0/3</span>
-              </div>
-              <div class="dock">
-                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
-                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
-                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
-                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
-              </div>
-            </div>
-          </div>
-        </div>
-        <dl class="vc-foot">
-          <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for seven columns and one shared gutter — the sentence is right, it is simply not a layout. <b>Impeccable</b> for the realisation that proportionality and legibility are the same decision, so the Week earns its chart by giving up the names. <b>Frontend design</b> for testing rotation and proving the constraint is the clock rather than the column count. <b>Design taste</b> for showing what deleting the axis produces: the Day view, seven times, in the place where the Day already works.</dd></div>
-          <div class="vc-line cost"><dt>Fixes</dt><dd>The Week becomes a chart with a <b>two-step way in</b>. <b>Tap a column</b> and it outlines while the focus line names that day and its load; <b>tap the focus line</b> and the day opens. One tap cannot both pick a column out and leave the week, so it does not try. The selection starts on today, which is already the tinted and accented column. The <b>all-day band</b> spans Thu–Fri — an item covering two days, which no other Calendar surface can draw whole. The <b>counts strip</b> spends “collapse to counts” on telling the days apart rather than on naming anything, and the <b>now rule</b> crosses all seven columns but belongs to none of them.</dd></div>
-          <div class="vc-line open"><dt>Still needs</dt><dd>Five decisions this view cannot make for itself. <b>One:</b> `calendar.md`'s Scope gives the Week a sentence and the Day eight numbered parts — the Week needs a layout section of its own, or this row stands in for one. <b>Two:</b> that doc's <b>Surfaces</b> section lists five surfaces and omits Week, Month and Year, all three of which `03-experience/surfaces.md` lists as screens. <b>Three:</b> “The Calendar has no whole-view empty state” is <b>false for the Week</b>, and the reason given for it — “the Daily Note always exists” — is a Day-view argument. A week with nothing on it is genuinely bare; Sunday's column above is that case in every variant. <b>Four:</b> `06-flows/doing-the-day.md` ties the now line to “the calendar <i>day view</i> and the header of other modes”. The Week is neither, so it has no specified now line, while every variant here needs one and this one draws it as a rule. <b>Five:</b> the axis window is unspecified — a fixed clock range (this mock uses 08:00–18:00) or one derived from the week's own earliest and latest events. It decides whether two weeks can be compared at a glance, which is the view's entire purpose.</dd></div>
-        </dl>
-      </article>
-
+      </details>
     </div>
 
     <section class="lede">
@@ -1752,6 +1761,42 @@
     </section>
 
     <div class="grid">
+
+      <article class="vc ship">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+          <p class="vc-stance">The cell is a shrunk Week column, on a grid that is always six rows so every month's cells are the same height.</p>
+          <span class="vc-read">frontend-design's instrument<br>+ impeccable's no-numbers + taste's question</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">September</span>
+                <span class="t-footnote" style="color: var(--text-muted);">2026</span>
+              </div>
+              <div class="mo-dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+              <div class="mo" id="mo-rec"></div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Takes</dt><dd><b>Frontend design</b> for the encoding, which is the only one that satisfies “density” and the zoom rule at the same time. <b>Impeccable</b> for proving a tint is a colour ramp the token set does not have, so the cells stay untinted. <b>Design taste</b> for asking what a 50px cell can actually hold, which is how the marks ended up 2px rather than squares. <b>Baseline</b> for the count — kept, but one tap away in the day view, where it can be read.</dd></div>
+          <div class="vc-line cost"><dt>Fixes</dt><dd id="mo-fixes">…</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>One, and it is not avoidable by drawing better. `calendar.md`'s Freshness section requires a mirrored event's staleness to be shown wherever that event appears, and a 2px mark cannot carry an annotation. The month either gains an exception to the rule or the header carries the staleness for the whole view.</dd></div>
+          <div class="vc-line open"><dt>Still needs</dt><dd>Four decisions the view cannot make for itself. <b>One:</b> <b>“density” has no unit</b> in the spec — this row reads it as position-by-time rather than as a count, and one of the two has to be written down. <b>Two:</b> the month needs the Week's <b>axis window, and the same one</b>; the marks only mean what they mean because 08:00–18:00 sits behind them, so if the two views ever use different windows the pinch between them is drawing two different days in the same place. <b>Three:</b> the Month puts a <b>zoom target and a tap target in the same 50px cell.</b> `surfaces.md` gives the Month its entry — pinch from Week — and `calendar.md` says tapping a day opens it. Pinching is how you reach the Week; tapping is how you open a day. Two gestures, one small cell, and the doc should say which is which before somebody makes pinch open things. <b>Four:</b> the freshness collision above, which is the one item here that is not a choice, only a choice of where to put it.</dd></div>
+        </dl>
+      </article>
+
+      <details class="alt">
+        <summary>4 variations considered — rejected</summary>
 
       <!-- ================= V1 · baseline ================= -->
       <article class="vc">
@@ -1885,40 +1930,7 @@
         </dl>
       </article>
 
-      <!-- ================= recommended ================= -->
-      <article class="vc rec">
-        <div class="vc-head">
-          <span class="vc-name t-title-3">Recommended</span>
-          <p class="vc-stance">The cell is a shrunk Week column, on a grid that is always six rows so every month's cells are the same height.</p>
-          <span class="vc-read">frontend-design's instrument<br>+ impeccable's no-numbers + taste's question</span>
-        </div>
-        <div class="vc-stage">
-          <div class="phone tall">
-            <div class="day">
-              <div class="day-head">
-                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
-                <span class="t-title-2">September</span>
-                <span class="t-footnote" style="color: var(--text-muted);">2026</span>
-              </div>
-              <div class="mo-dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
-              <div class="mo" id="mo-rec"></div>
-              <div class="dock">
-                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
-                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
-                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
-                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
-              </div>
-            </div>
-          </div>
-        </div>
-        <dl class="vc-foot">
-          <div class="vc-line"><dt>Takes</dt><dd><b>Frontend design</b> for the encoding, which is the only one that satisfies “density” and the zoom rule at the same time. <b>Impeccable</b> for proving a tint is a colour ramp the token set does not have, so the cells stay untinted. <b>Design taste</b> for asking what a 50px cell can actually hold, which is how the marks ended up 2px rather than squares. <b>Baseline</b> for the count — kept, but one tap away in the day view, where it can be read.</dd></div>
-          <div class="vc-line cost"><dt>Fixes</dt><dd id="mo-fixes">…</dd></div>
-          <div class="vc-line rules"><dt>Against rules</dt><dd>One, and it is not avoidable by drawing better. `calendar.md`'s Freshness section requires a mirrored event's staleness to be shown wherever that event appears, and a 2px mark cannot carry an annotation. The month either gains an exception to the rule or the header carries the staleness for the whole view.</dd></div>
-          <div class="vc-line open"><dt>Still needs</dt><dd>Four decisions the view cannot make for itself. <b>One:</b> <b>“density” has no unit</b> in the spec — this row reads it as position-by-time rather than as a count, and one of the two has to be written down. <b>Two:</b> the month needs the Week's <b>axis window, and the same one</b>; the marks only mean what they mean because 08:00–18:00 sits behind them, so if the two views ever use different windows the pinch between them is drawing two different days in the same place. <b>Three:</b> the Month puts a <b>zoom target and a tap target in the same 50px cell.</b> `surfaces.md` gives the Month its entry — pinch from Week — and `calendar.md` says tapping a day opens it. Pinching is how you reach the Week; tapping is how you open a day. Two gestures, one small cell, and the doc should say which is which before somebody makes pinch open things. <b>Four:</b> the freshness collision above, which is the one item here that is not a choice, only a choice of where to put it.</dd></div>
-        </dl>
-      </article>
-
+      </details>
     </div>
 
     <section class="lede">
@@ -1956,6 +1968,40 @@
     </section>
 
     <div class="grid">
+
+      <article class="vc ship">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+          <p class="vc-stance">Twelve rows, one cell per day — and give up weekday alignment, because at this scale it costs the most and buys the least.</p>
+          <span class="vc-read">baseline's twelve months + design taste's one row each<br>minus the columns</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">2026</span>
+                <span class="t-footnote" id="yr-head-2" style="color: var(--text-muted);">…</span>
+              </div>
+              <div class="yr" id="yr-rec"></div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for twelve months stacked and for a cell per day — the sentence is right that a year is twelve months. <b>Impeccable</b> for the realisation that the view is an instrument rather than a page. <b>Frontend design</b> for proving the encoding has to change, and for the one thing a wash is genuinely good at: it stops describing <i>time</i> and starts describing <i>amount</i>. <b>Design taste</b> for showing what deleting the day answers, which is a different question from the one the Year is for.</dd></div>
+          <div class="vc-line cost"><dt>Fixes</dt><dd id="yr-fixes">…</dd></div>
+          <div class="vc-line open"><dt>Still needs</dt><dd>Four decisions the view cannot make for itself. <b>One:</b> <b>“reduced density” has no scale.</b> The doc says the grid is reduced and never says by how much, and the reduction that decides everything — a cell's height — is set by how many rows the twelve grids get, which the doc also does not say. <b>Two:</b> <b>weekday alignment is the unexamined default.</b> Every Calendar surface so far aligns days to weekdays. At the Year's scale that alignment is exactly what costs the day its height, so the doc has to say whether the Year keeps it, because it can have that or per-day resolution and not both. <b>Three:</b> <b>the Month's encoding does not survive.</b> The Month specified density as position-by-time; at the Year's cell height that is one pixel per event. Either the Year uses a different encoding — which needs saying, since the pinch is supposed to cross-scale smoothly — or the Month's rule needs a floor. <b>Four:</b> <b>the zoom rule now has nothing to hold.</b> `motion-vocabulary.md` says month→year holds neither horizontal nor vertical position. Worth confirming that is deliberate rather than a consequence of the Year having no day grid left to hold.</dd></div>
+        </dl>
+      </article>
+
+      <details class="alt">
+        <summary>4 variations considered — rejected</summary>
 
       <!-- ================= V1 · baseline ================= -->
       <article class="vc">
@@ -2088,38 +2134,7 @@
         </dl>
       </article>
 
-      <!-- ================= recommended ================= -->
-      <article class="vc rec">
-        <div class="vc-head">
-          <span class="vc-name t-title-3">Recommended</span>
-          <p class="vc-stance">Twelve rows, one cell per day — and give up weekday alignment, because at this scale it costs the most and buys the least.</p>
-          <span class="vc-read">baseline's twelve months + design taste's one row each<br>minus the columns</span>
-        </div>
-        <div class="vc-stage">
-          <div class="phone tall">
-            <div class="day">
-              <div class="day-head">
-                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
-                <span class="t-title-2">2026</span>
-                <span class="t-footnote" id="yr-head-2" style="color: var(--text-muted);">…</span>
-              </div>
-              <div class="yr" id="yr-rec"></div>
-              <div class="dock">
-                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
-                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
-                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
-                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
-              </div>
-            </div>
-          </div>
-        </div>
-        <dl class="vc-foot">
-          <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for twelve months stacked and for a cell per day — the sentence is right that a year is twelve months. <b>Impeccable</b> for the realisation that the view is an instrument rather than a page. <b>Frontend design</b> for proving the encoding has to change, and for the one thing a wash is genuinely good at: it stops describing <i>time</i> and starts describing <i>amount</i>. <b>Design taste</b> for showing what deleting the day answers, which is a different question from the one the Year is for.</dd></div>
-          <div class="vc-line cost"><dt>Fixes</dt><dd id="yr-fixes">…</dd></div>
-          <div class="vc-line open"><dt>Still needs</dt><dd>Four decisions the view cannot make for itself. <b>One:</b> <b>“reduced density” has no scale.</b> The doc says the grid is reduced and never says by how much, and the reduction that decides everything — a cell's height — is set by how many rows the twelve grids get, which the doc also does not say. <b>Two:</b> <b>weekday alignment is the unexamined default.</b> Every Calendar surface so far aligns days to weekdays. At the Year's scale that alignment is exactly what costs the day its height, so the doc has to say whether the Year keeps it, because it can have that or per-day resolution and not both. <b>Three:</b> <b>the Month's encoding does not survive.</b> The Month specified density as position-by-time; at the Year's cell height that is one pixel per event. Either the Year uses a different encoding — which needs saying, since the pinch is supposed to cross-scale smoothly — or the Month's rule needs a floor. <b>Four:</b> <b>the zoom rule now has nothing to hold.</b> `motion-vocabulary.md` says month→year holds neither horizontal nor vertical position. Worth confirming that is deliberate rather than a consequence of the Year having no day grid left to hold.</dd></div>
-        </dl>
-      </article>
-
+      </details>
     </div>
 
     <section class="lede">
@@ -2171,6 +2186,76 @@
     </section>
 
     <div class="grid">
+
+      <article class="vc ship">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+          <p class="vc-stance">A screen, time-first, shown <i>after</i> the card lands — in the room the view already had, because Tier 2 may not run until asked.</p>
+          <span class="vc-read">impeccable's order + design taste's deletions<br>+ the record + the card, in the view it read</span>
+        </div>
+        <div class="vc-stage">
+          <div style="display: flex; flex-direction: column; gap: var(--space-5); align-items: center;">
+            <div class="phone tall">
+              <div class="day">
+                <div class="day-head">
+                  <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                  <span class="t-title-2">Event</span>
+                  <span class="t-footnote" style="margin-left: auto; color: var(--stale-text);">as of 2 hours ago</span>
+                </div>
+                <div class="ev-body" id="ev-body-5" style="padding: var(--space-5) var(--space-7);">
+                  <span class="t-title-3 ev-title">Design review with Sarah</span>
+                  <div class="ev-when">
+                    <span class="t-title-3">11:42</span>
+                    <span class="t-callout" style="color: var(--accent-text);">in 18 min</span>
+                    <span class="t-footnote" style="color: var(--text-muted);">30 min</span>
+                  </div>
+                  <div class="ev-people">
+                    <span class="chip">Sarah Chen</span><span class="chip">Mark Reid</span>
+                  </div>
+                  <div class="ev-card" id="ev-card-5">
+                    <span class="k">PREP CARD · JUST NOW · from 2 attendees, 2 notes, 1 task</span>
+                    <span><span class="k">Last talked</span> — 3 weeks ago, 1 Sep</span>
+                    <span><span class="k">About Sarah</span> — “wants to review the onboarding flow before we ship”</span>
+                    <span><span class="k">Last task together</span> — Send Sarah the mockups, 8 Sep</span>
+                    <span><span class="k">Open tasks linked to Sarah</span> — 1 · Get feedback on pricing page, due Friday</span>
+                    <span><span class="k">Suggested focus</span> — follow up on the onboarding flow</span>
+                  </div>
+                  <div class="ev-sec">
+                    <div class="ev-hd"><span>Linked notes</span><span class="n">2</span></div>
+                    <div class="list">
+                      <div class="row r-default"><div class="r-main"><span class="t-body r-title">Q4 planning — notes</span></div></div>
+                      <div class="row r-default"><div class="r-main"><span class="t-body r-title">Onboarding review</span></div></div>
+                    </div>
+                  </div>
+                  <span class="t-footnote" style="color: var(--text-muted);">Mirrored from Google Calendar. Edit it at the source.</span>
+                </div>
+                <div class="dock">
+                  <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                  <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                  <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                  <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: var(--space-2); align-items: stretch; width: 390px;">
+              <span class="t-caption" style="color: var(--text-muted);">what the prep card sits above</span>
+              <div class="ev-chain">
+                <span>event detail · screen — still open</span>
+                <span>contextual menu · sheet — dismisses, nothing lost</span>
+                <span class="on">prep card · in the view's own room</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Takes</dt><dd><b>Impeccable</b> for the order, which is the whole point of the surface: time, then people, then the way in. <b>Design taste</b> for the two deletions, both of which are corrections rather than preferences. <b>Frontend design</b> for the counts — but folded into one invitation rather than spread across four equal doors, because the counts are a promise about the card, not four destinations. <b>Baseline</b> for keeping the record, which the collapsing lenses both threw away.</dd></div>
+          <div class="vc-line cost"><dt>Fixes</dt><dd id="ev-fixes">…</dd></div>
+          <div class="vc-line open"><dt>Still needs</dt><dd>Four corrections, and they are doc edits rather than design choices. <b>One:</b> <code>calendar.md</code>'s example says Event detail “opens as a sheet”; the sheet rule settles it the other way, so the example is wrong and <code>surfaces.md</code> is right. <b>Two:</b> where a Tier 2 result lands — settled here as <i>the surface it was invoked from</i>, and written into <code>tier-2-contextual.md</code>; the sheet case survives for an invocation from a list row, where there is no surface for a result to land in. <b>Three:</b> the prep card has <b>three content lists that do not agree</b> — <code>people.md</code> lists attendees, last note, last completed task and <b>open tasks</b>; <code>tier-2-contextual.md</code> lists attendees, last notes, last tasks and <b>notes attached to the event</b>; and the worked example adds <b>last talked</b> and <b>suggested focus</b>, which appear in neither prose list. Seven distinct items across three lists; no two lists match and the longest has five. <b>Four:</b> <code>cost-model.md</code> names only “break down” and “find related” as on-device Tier 2 actions, so “Prep me” is presumably one of the units <code>tier-2-contextual.md</code> charges — but no doc says so, and it is the one action whose cost the user is asked to spend blind.</dd></div>
+        </dl>
+      </article>
+
+      <details class="alt">
+        <summary>4 variations considered — rejected</summary>
 
       <!-- ================= V1 · baseline ================= -->
       <article class="vc">
@@ -2382,74 +2467,7 @@
         </dl>
       </article>
 
-      <!-- ================= recommended ================= -->
-      <article class="vc rec">
-        <div class="vc-head">
-          <span class="vc-name t-title-3">Recommended</span>
-          <p class="vc-stance">A screen, time-first, shown <i>after</i> the card lands — in the room the view already had, because Tier 2 may not run until asked.</p>
-          <span class="vc-read">impeccable's order + design taste's deletions<br>+ the record + the card, in the view it read</span>
-        </div>
-        <div class="vc-stage">
-          <div style="display: flex; flex-direction: column; gap: var(--space-5); align-items: center;">
-            <div class="phone tall">
-              <div class="day">
-                <div class="day-head">
-                  <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
-                  <span class="t-title-2">Event</span>
-                  <span class="t-footnote" style="margin-left: auto; color: var(--stale-text);">as of 2 hours ago</span>
-                </div>
-                <div class="ev-body" id="ev-body-5" style="padding: var(--space-5) var(--space-7);">
-                  <span class="t-title-3 ev-title">Design review with Sarah</span>
-                  <div class="ev-when">
-                    <span class="t-title-3">11:42</span>
-                    <span class="t-callout" style="color: var(--accent-text);">in 18 min</span>
-                    <span class="t-footnote" style="color: var(--text-muted);">30 min</span>
-                  </div>
-                  <div class="ev-people">
-                    <span class="chip">Sarah Chen</span><span class="chip">Mark Reid</span>
-                  </div>
-                  <div class="ev-card" id="ev-card-5">
-                    <span class="k">PREP CARD · JUST NOW · from 2 attendees, 2 notes, 1 task</span>
-                    <span><span class="k">Last talked</span> — 3 weeks ago, 1 Sep</span>
-                    <span><span class="k">About Sarah</span> — “wants to review the onboarding flow before we ship”</span>
-                    <span><span class="k">Last task together</span> — Send Sarah the mockups, 8 Sep</span>
-                    <span><span class="k">Open tasks linked to Sarah</span> — 1 · Get feedback on pricing page, due Friday</span>
-                    <span><span class="k">Suggested focus</span> — follow up on the onboarding flow</span>
-                  </div>
-                  <div class="ev-sec">
-                    <div class="ev-hd"><span>Linked notes</span><span class="n">2</span></div>
-                    <div class="list">
-                      <div class="row r-default"><div class="r-main"><span class="t-body r-title">Q4 planning — notes</span></div></div>
-                      <div class="row r-default"><div class="r-main"><span class="t-body r-title">Onboarding review</span></div></div>
-                    </div>
-                  </div>
-                  <span class="t-footnote" style="color: var(--text-muted);">Mirrored from Google Calendar. Edit it at the source.</span>
-                </div>
-                <div class="dock">
-                  <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
-                  <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
-                  <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
-                  <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
-                </div>
-              </div>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: var(--space-2); align-items: stretch; width: 390px;">
-              <span class="t-caption" style="color: var(--text-muted);">what the prep card sits above</span>
-              <div class="ev-chain">
-                <span>event detail · screen — still open</span>
-                <span>contextual menu · sheet — dismisses, nothing lost</span>
-                <span class="on">prep card · in the view's own room</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <dl class="vc-foot">
-          <div class="vc-line"><dt>Takes</dt><dd><b>Impeccable</b> for the order, which is the whole point of the surface: time, then people, then the way in. <b>Design taste</b> for the two deletions, both of which are corrections rather than preferences. <b>Frontend design</b> for the counts — but folded into one invitation rather than spread across four equal doors, because the counts are a promise about the card, not four destinations. <b>Baseline</b> for keeping the record, which the collapsing lenses both threw away.</dd></div>
-          <div class="vc-line cost"><dt>Fixes</dt><dd id="ev-fixes">…</dd></div>
-          <div class="vc-line open"><dt>Still needs</dt><dd>Four corrections, and they are doc edits rather than design choices. <b>One:</b> <code>calendar.md</code>'s example says Event detail “opens as a sheet”; the sheet rule settles it the other way, so the example is wrong and <code>surfaces.md</code> is right. <b>Two:</b> where a Tier 2 result lands — settled here as <i>the surface it was invoked from</i>, and written into <code>tier-2-contextual.md</code>; the sheet case survives for an invocation from a list row, where there is no surface for a result to land in. <b>Three:</b> the prep card has <b>three content lists that do not agree</b> — <code>people.md</code> lists attendees, last note, last completed task and <b>open tasks</b>; <code>tier-2-contextual.md</code> lists attendees, last notes, last tasks and <b>notes attached to the event</b>; and the worked example adds <b>last talked</b> and <b>suggested focus</b>, which appear in neither prose list. Seven distinct items across three lists; no two lists match and the longest has five. <b>Four:</b> <code>cost-model.md</code> names only “break down” and “find related” as on-device Tier 2 actions, so “Prep me” is presumably one of the units <code>tier-2-contextual.md</code> charges — but no doc says so, and it is the one action whose cost the user is asked to spend blind.</dd></div>
-        </dl>
-      </article>
-
+      </details>
     </div>
 
     <section class="lede">
@@ -2492,6 +2510,53 @@
     </section>
 
     <div class="grid">
+
+      <article class="vc ship">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+          <p class="vc-stance">A screen, canned times so the frequent case opens nothing, and the one remaining picker covering the form instead of replacing it.</p>
+          <span class="vc-read">impeccable's screen + taste's one-field idea, kept as a form<br>minus one of its two doors</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">New event</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--accent-text);">Add</span>
+              </div>
+              <div class="nv-body" id="nv-body-5">
+                <div class="nv-f"><span class="lab">Title</span><span class="field">Design review<span class="caret"></span></span></div>
+                <div class="nv-f">
+                  <span class="lab">When</span>
+                  <span class="nv-times">
+                    <span class="chip chip-on">Today 17:00</span>
+                    <span class="chip">Tomorrow 09:00</span>
+                    <span class="chip">Tomorrow 14:00</span>
+                    <span class="chip">Other…</span>
+                  </span>
+                </div>
+                <div class="nv-f"><span class="lab">With</span><span class="field"><span class="chip">Sarah Chen</span><span class="chip">Mark Reid</span><span class="nv-door">picker</span></span></div>
+                <div class="nv-f"><span class="lab">Note</span><span class="field" style="color: var(--text-muted);">Attached after you add the event<span style="margin-left: auto; font-size: var(--type-caption-size);">why</span></span></div>
+                <span class="btn btn-primary btn-block">Add event</span>
+              </div>
+              <div class="keys" id="nv-keys-5">
+                <div class="krow"><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span></div>
+                <div class="krow"><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span></div>
+                <div class="krow"><span class="k go">add</span><span class="k"></span><span class="k"></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Takes</dt><dd><b>Impeccable</b> for both halves of its move: the screen, and the realisation that the frequent answer should be a tap. <b>Frontend design</b> for proving that inlining the form costs the context it was meant to preserve, because the keyboard covers the timeline. <b>Design taste</b> for the observation that capture is already a creation path — kept as the fallback rather than the whole answer, because a sentence is a poor way to name an exact quarter hour.</dd></div>
+          <div class="vc-line cost"><dt>Fixes</dt><dd id="nv-fixes">…</dd></div>
+          <div class="vc-line open"><dt>Still needs</dt><dd>Three corrections. <b>One:</b> <code>surfaces.md</code> and <code>calendar.md</code> disagree about what capture produces — the New event sheet, or the Event detail the capture field “morphs into” per <code>motion-vocabulary.md</code>. Both cannot be the destination of the same gesture. <b>Two:</b> the notes field has no defined behaviour at creation. <code>05-modules/notes.md</code> attaches notes <i>from a detail</i>, and at this point there is no detail — so either the form creates a note and the event in one step, or the field is not there. This row defers it and says so, which is a fix to the copy rather than to the flow. <b>Three:</b> the sentence lists a <b>time</b> field, and a chip row is not a field. If precision matters more than speed, the sentence is right and this row is wrong.</dd></div>
+        </dl>
+      </article>
+
+      <details class="alt">
+        <summary>4 variations considered — rejected</summary>
 
       <!-- ================= V1 · baseline ================= -->
       <article class="vc">
@@ -2669,51 +2734,7 @@
         </dl>
       </article>
 
-      <!-- ================= recommended ================= -->
-      <article class="vc rec">
-        <div class="vc-head">
-          <span class="vc-name t-title-3">Recommended</span>
-          <p class="vc-stance">A screen, canned times so the frequent case opens nothing, and the one remaining picker covering the form instead of replacing it.</p>
-          <span class="vc-read">impeccable's screen + taste's one-field idea, kept as a form<br>minus one of its two doors</span>
-        </div>
-        <div class="vc-stage">
-          <div class="phone tall">
-            <div class="day">
-              <div class="day-head">
-                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
-                <span class="t-title-2">New event</span>
-                <span class="t-footnote" style="margin-left: auto; color: var(--accent-text);">Add</span>
-              </div>
-              <div class="nv-body" id="nv-body-5">
-                <div class="nv-f"><span class="lab">Title</span><span class="field">Design review<span class="caret"></span></span></div>
-                <div class="nv-f">
-                  <span class="lab">When</span>
-                  <span class="nv-times">
-                    <span class="chip chip-on">Today 17:00</span>
-                    <span class="chip">Tomorrow 09:00</span>
-                    <span class="chip">Tomorrow 14:00</span>
-                    <span class="chip">Other…</span>
-                  </span>
-                </div>
-                <div class="nv-f"><span class="lab">With</span><span class="field"><span class="chip">Sarah Chen</span><span class="chip">Mark Reid</span><span class="nv-door">picker</span></span></div>
-                <div class="nv-f"><span class="lab">Note</span><span class="field" style="color: var(--text-muted);">Attached after you add the event<span style="margin-left: auto; font-size: var(--type-caption-size);">why</span></span></div>
-                <span class="btn btn-primary btn-block">Add event</span>
-              </div>
-              <div class="keys" id="nv-keys-5">
-                <div class="krow"><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span></div>
-                <div class="krow"><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span><span class="k"></span></div>
-                <div class="krow"><span class="k go">add</span><span class="k"></span><span class="k"></span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <dl class="vc-foot">
-          <div class="vc-line"><dt>Takes</dt><dd><b>Impeccable</b> for both halves of its move: the screen, and the realisation that the frequent answer should be a tap. <b>Frontend design</b> for proving that inlining the form costs the context it was meant to preserve, because the keyboard covers the timeline. <b>Design taste</b> for the observation that capture is already a creation path — kept as the fallback rather than the whole answer, because a sentence is a poor way to name an exact quarter hour.</dd></div>
-          <div class="vc-line cost"><dt>Fixes</dt><dd id="nv-fixes">…</dd></div>
-          <div class="vc-line open"><dt>Still needs</dt><dd>Three corrections. <b>One:</b> <code>surfaces.md</code> and <code>calendar.md</code> disagree about what capture produces — the New event sheet, or the Event detail the capture field “morphs into” per <code>motion-vocabulary.md</code>. Both cannot be the destination of the same gesture. <b>Two:</b> the notes field has no defined behaviour at creation. <code>05-modules/notes.md</code> attaches notes <i>from a detail</i>, and at this point there is no detail — so either the form creates a note and the event in one step, or the field is not there. This row defers it and says so, which is a fix to the copy rather than to the flow. <b>Three:</b> the sentence lists a <b>time</b> field, and a chip row is not a field. If precision matters more than speed, the sentence is right and this row is wrong.</dd></div>
-        </dl>
-      </article>
-
+      </details>
     </div>
 
     <section class="lede">
@@ -2755,6 +2776,50 @@
     </section>
 
     <div class="grid">
+
+      <article class="vc ship">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+          <p class="vc-stance">Keep the overlay, give the grid the Month's rule, one tap meaning, and draw the one boundary the app hides.</p>
+          <span class="vc-read">impeccable's shared rule + the overlay's dismiss<br>+ the mirror's horizon, which nothing draws</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day" style="position: relative;">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Wed 23 Sep</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 39</span>
+              </div>
+              <div class="tl" style="flex: 1; min-height: 0; padding: var(--space-5) var(--space-7);">
+                <div class="slot"><span class="at">09:00</span><span class="ev"><span class="t-body">Standup</span></span></div>
+              </div>
+              <div class="pk-scrim"></div>
+              <div class="pk-panel">
+                <div class="pk-head">
+                  <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                  <span class="t-title-3 grow" style="text-align: center;">September 2026</span>
+                  <svg class="ic ic-md" style="color: var(--text-secondary); transform: rotate(180deg);"><use href="#i-back"/></svg>
+                </div>
+                <div class="mo-dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+                <div class="mo" id="pk-rec"></div>
+                <div class="pk-foot" style="flex-direction: column; align-items: flex-start; gap: var(--space-2);">
+                  <span class="t-caption" style="color: var(--text-muted);">Tap a day to go there. <span style="color: var(--accent-text);">As of…</span> opens it read-only.</span>
+                  <span class="t-caption" style="color: var(--stale-text);">Dashed days are before 24 Jun — the mirror drops them, so opening one re-fetches.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Takes</dt><dd><b>Impeccable</b> for the shared rule — a day means the same thing in every grid — and for the two fixed points a picker needs. <b>Frontend design</b> for showing that one grid is better than two that agree, and for the reason it cannot be done here: the Month's tap already means something. <b>Design taste</b> for the observation that a grid is the last resort rather than the common case, which is why it should be good at distance rather than at speed.</dd></div>
+          <div class="vc-line cost"><dt>Fixes</dt><dd id="pk-fixes">…</dd></div>
+          <div class="vc-line open"><dt>Still needs</dt><dd>Four decisions. <b>One:</b> the three month grids need a <b>shared rule</b> written once — the Month's “a day shows its shape, positioned by time” — and the picker and the Year should be stated as its consequences rather than as separate designs. <b>Two:</b> <code>gesture-vocabulary.md</code> has <b>no row for the picker</b>, and it needs one, because the swipe that changes month everywhere else is the swipe that globally means “defer / dismiss”. <b>Three:</b> one tap cannot both jump to a day and open it read-only; this row separates them and the docs do not. <b>Four:</b> the <b>90-day mirror horizon</b> is real — <code>02-architecture/data-lifecycle.md</code> prunes mirrored events past it and re-fetches only “if the user navigates to them via time machine” — and no surface draws it. Choosing a date the app cannot answer for is the picker's most likely failure and its least visible one.</dd></div>
+        </dl>
+      </article>
+
+      <details class="alt">
+        <summary>4 variations considered — rejected</summary>
 
       <!-- ================= V1 · baseline ================= -->
       <article class="vc">
@@ -2915,48 +2980,7 @@
         </dl>
       </article>
 
-      <!-- ================= recommended ================= -->
-      <article class="vc rec">
-        <div class="vc-head">
-          <span class="vc-name t-title-3">Recommended</span>
-          <p class="vc-stance">Keep the overlay, give the grid the Month's rule, one tap meaning, and draw the one boundary the app hides.</p>
-          <span class="vc-read">impeccable's shared rule + the overlay's dismiss<br>+ the mirror's horizon, which nothing draws</span>
-        </div>
-        <div class="vc-stage">
-          <div class="phone tall">
-            <div class="day" style="position: relative;">
-              <div class="day-head">
-                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
-                <span class="t-title-2">Wed 23 Sep</span>
-                <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 39</span>
-              </div>
-              <div class="tl" style="flex: 1; min-height: 0; padding: var(--space-5) var(--space-7);">
-                <div class="slot"><span class="at">09:00</span><span class="ev"><span class="t-body">Standup</span></span></div>
-              </div>
-              <div class="pk-scrim"></div>
-              <div class="pk-panel">
-                <div class="pk-head">
-                  <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
-                  <span class="t-title-3 grow" style="text-align: center;">September 2026</span>
-                  <svg class="ic ic-md" style="color: var(--text-secondary); transform: rotate(180deg);"><use href="#i-back"/></svg>
-                </div>
-                <div class="mo-dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
-                <div class="mo" id="pk-rec"></div>
-                <div class="pk-foot" style="flex-direction: column; align-items: flex-start; gap: var(--space-2);">
-                  <span class="t-caption" style="color: var(--text-muted);">Tap a day to go there. <span style="color: var(--accent-text);">As of…</span> opens it read-only.</span>
-                  <span class="t-caption" style="color: var(--stale-text);">Dashed days are before 24 Jun — the mirror drops them, so opening one re-fetches.</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <dl class="vc-foot">
-          <div class="vc-line"><dt>Takes</dt><dd><b>Impeccable</b> for the shared rule — a day means the same thing in every grid — and for the two fixed points a picker needs. <b>Frontend design</b> for showing that one grid is better than two that agree, and for the reason it cannot be done here: the Month's tap already means something. <b>Design taste</b> for the observation that a grid is the last resort rather than the common case, which is why it should be good at distance rather than at speed.</dd></div>
-          <div class="vc-line cost"><dt>Fixes</dt><dd id="pk-fixes">…</dd></div>
-          <div class="vc-line open"><dt>Still needs</dt><dd>Four decisions. <b>One:</b> the three month grids need a <b>shared rule</b> written once — the Month's “a day shows its shape, positioned by time” — and the picker and the Year should be stated as its consequences rather than as separate designs. <b>Two:</b> <code>gesture-vocabulary.md</code> has <b>no row for the picker</b>, and it needs one, because the swipe that changes month everywhere else is the swipe that globally means “defer / dismiss”. <b>Three:</b> one tap cannot both jump to a day and open it read-only; this row separates them and the docs do not. <b>Four:</b> the <b>90-day mirror horizon</b> is real — <code>02-architecture/data-lifecycle.md</code> prunes mirrored events past it and re-fetches only “if the user navigates to them via time machine” — and no surface draws it. Choosing a date the app cannot answer for is the picker's most likely failure and its least visible one.</dd></div>
-        </dl>
-      </article>
-
+      </details>
     </div>
 
     <section class="lede">
@@ -3003,6 +3027,70 @@
     </section>
 
     <div class="grid">
+
+      <article class="vc ship">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+          <p class="vc-stance">One entry, two scopes, one exit — and no new chrome, because the now line is already the slot for “what is current”.</p>
+          <span class="vc-read">retrieval.md's scope + calendar.md's container<br>+ the now line, which already means this</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="tm-rail">
+                <button aria-current="page">Calendar</button><button>Tasks</button><button>Habits</button><button>Notes</button>
+                <span class="grow"></span>
+                <span class="t-caption" style="color: var(--warning-text);">14 Mar 2026</span>
+              </div>
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Sat 14 Mar</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 11</span>
+              </div>
+              <div class="ob-body scroll" style="padding: var(--space-4) var(--space-7); gap: var(--space-6);">
+                <!-- The now line, in the time state: same slot, same position, and the only
+                     part of the view whose meaning was "what is current". The Time machine
+                     does not add a banner — it changes what this line refers to. -->
+                <div class="nowline" style="padding: var(--space-3) 0; border-bottom: 1px solid var(--border-subtle);">
+                  <span class="t-footnote" style="color: var(--warning-text);">As of 14 Mar 2026</span>
+                  <span class="grow"></span>
+                  <span class="t-footnote" style="color: var(--accent-text);">Return to now</span>
+                </div>
+                <div class="tl">
+                  <div class="slot"><span class="at">10:00</span><span class="ev"><span class="t-body">Park run</span></span></div>
+                  <div class="slot"><span class="at">15:00</span><span class="ev"><span class="t-body">Coffee with Mark</span></span></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: var(--space-5);">
+                  <span class="check tm-off"></span><span class="t-body" style="flex: 1; opacity: .55;">Meditate</span>
+                  <span class="t-footnote" style="color: var(--text-muted);">1 min</span>
+                </div>
+                <span class="metric-row tm-off"><button>1</button><button>2</button><button>3</button><button>4</button><button>5</button></span>
+                <div class="note-card">
+                  <span class="t-subhead">Daily note</span>
+                  <span class="t-footnote" style="color: var(--text-secondary);">Long walk, slept badly.</span>
+                </div>
+                <div class="list">
+                  <div class="row r-default"><span class="check tm-off"></span><div class="r-main"><span class="t-body r-title" style="opacity: .55;">Draft the Q1 retro</span></div></div>
+                </div>
+              </div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Takes</dt><dd><b>`retrieval.md`</b> for the scope, because it is the only one of the three that says what the state covers — all four modes. <b>`calendar.md`</b> for the container, because a mode of a view is what a state should be, and the app-shell layers have no room for a fourth kind of surface. <b>Design taste</b> for the observation that three definitions is two too many. <b>Impeccable</b> for insisting the exit be visible — this row just declines to spend a banner and a commit button on it.</dd></div>
+          <div class="vc-line cost"><dt>Fixes</dt><dd id="tm-fixes">…</dd></div>
+          <div class="vc-line open"><dt>Still needs</dt><dd>Three corrections, and the first two are the same correction. <b>One:</b> the Time machine needs <b>one definition</b> — this row's shape is “a state with a date, covering every mode” — and `calendar.md`'s day-scoped version and `data-lifecycle.md`'s entity-scoped one should be stated as its two <i>scopes</i> rather than as two features with one name. <b>Two:</b> `surfaces.md` files it once, under Calendar, as a Screen. If it covers four modes it is listed four times, or once as a state rather than a surface. <b>Three:</b> <b>read-only needs a rule, not an adjective.</b> All three docs say it and none says what it disables — and the answer is not obvious in either direction, since disabling taps removes reading and leaving them on lets a checkbox write to a closed date. This row's answer is <b>writes off, reads on</b>, and no doc currently supports or forbids it.</dd></div>
+        </dl>
+      </article>
+
+      <details class="alt">
+        <summary>4 variations considered — rejected</summary>
 
       <!-- ================= V1 · baseline ================= -->
       <article class="vc">
@@ -3212,68 +3300,7 @@
         </dl>
       </article>
 
-      <!-- ================= recommended ================= -->
-      <article class="vc rec">
-        <div class="vc-head">
-          <span class="vc-name t-title-3">Recommended</span>
-          <p class="vc-stance">One entry, two scopes, one exit — and no new chrome, because the now line is already the slot for “what is current”.</p>
-          <span class="vc-read">retrieval.md's scope + calendar.md's container<br>+ the now line, which already means this</span>
-        </div>
-        <div class="vc-stage">
-          <div class="phone tall">
-            <div class="day">
-              <div class="tm-rail">
-                <button aria-current="page">Calendar</button><button>Tasks</button><button>Habits</button><button>Notes</button>
-                <span class="grow"></span>
-                <span class="t-caption" style="color: var(--warning-text);">14 Mar 2026</span>
-              </div>
-              <div class="day-head">
-                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
-                <span class="t-title-2">Sat 14 Mar</span>
-                <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 11</span>
-              </div>
-              <div class="ob-body scroll" style="padding: var(--space-4) var(--space-7); gap: var(--space-6);">
-                <!-- The now line, in the time state: same slot, same position, and the only
-                     part of the view whose meaning was "what is current". The Time machine
-                     does not add a banner — it changes what this line refers to. -->
-                <div class="nowline" style="padding: var(--space-3) 0; border-bottom: 1px solid var(--border-subtle);">
-                  <span class="t-footnote" style="color: var(--warning-text);">As of 14 Mar 2026</span>
-                  <span class="grow"></span>
-                  <span class="t-footnote" style="color: var(--accent-text);">Return to now</span>
-                </div>
-                <div class="tl">
-                  <div class="slot"><span class="at">10:00</span><span class="ev"><span class="t-body">Park run</span></span></div>
-                  <div class="slot"><span class="at">15:00</span><span class="ev"><span class="t-body">Coffee with Mark</span></span></div>
-                </div>
-                <div style="display: flex; align-items: center; gap: var(--space-5);">
-                  <span class="check tm-off"></span><span class="t-body" style="flex: 1; opacity: .55;">Meditate</span>
-                  <span class="t-footnote" style="color: var(--text-muted);">1 min</span>
-                </div>
-                <span class="metric-row tm-off"><button>1</button><button>2</button><button>3</button><button>4</button><button>5</button></span>
-                <div class="note-card">
-                  <span class="t-subhead">Daily note</span>
-                  <span class="t-footnote" style="color: var(--text-secondary);">Long walk, slept badly.</span>
-                </div>
-                <div class="list">
-                  <div class="row r-default"><span class="check tm-off"></span><div class="r-main"><span class="t-body r-title" style="opacity: .55;">Draft the Q1 retro</span></div></div>
-                </div>
-              </div>
-              <div class="dock">
-                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
-                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
-                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
-                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
-              </div>
-            </div>
-          </div>
-        </div>
-        <dl class="vc-foot">
-          <div class="vc-line"><dt>Takes</dt><dd><b>`retrieval.md`</b> for the scope, because it is the only one of the three that says what the state covers — all four modes. <b>`calendar.md`</b> for the container, because a mode of a view is what a state should be, and the app-shell layers have no room for a fourth kind of surface. <b>Design taste</b> for the observation that three definitions is two too many. <b>Impeccable</b> for insisting the exit be visible — this row just declines to spend a banner and a commit button on it.</dd></div>
-          <div class="vc-line cost"><dt>Fixes</dt><dd id="tm-fixes">…</dd></div>
-          <div class="vc-line open"><dt>Still needs</dt><dd>Three corrections, and the first two are the same correction. <b>One:</b> the Time machine needs <b>one definition</b> — this row's shape is “a state with a date, covering every mode” — and `calendar.md`'s day-scoped version and `data-lifecycle.md`'s entity-scoped one should be stated as its two <i>scopes</i> rather than as two features with one name. <b>Two:</b> `surfaces.md` files it once, under Calendar, as a Screen. If it covers four modes it is listed four times, or once as a state rather than a surface. <b>Three:</b> <b>read-only needs a rule, not an adjective.</b> All three docs say it and none says what it disables — and the answer is not obvious in either direction, since disabling taps removes reading and leaving them on lets a checkbox write to a closed date. This row's answer is <b>writes off, reads on</b>, and no doc currently supports or forbids it.</dd></div>
-        </dl>
-      </article>
-
+      </details>
     </div>
 
     <section class="lede">
@@ -3289,6 +3316,14 @@
 <script>
   const tabs = [...document.querySelectorAll('.tab[data-go]')];
   const screens = [...document.querySelectorAll('.screen')];
+  // Rows are found by what they are, not by where they sit. A reviewed screen
+  // leads with the row that ships (`design/README.md` §How to read a lab), so
+  // `rows[0]` is the shipped row and `rows[rows.length - 1]` is the last of the
+  // four it beat — neither is the control arm any more. The name carries the
+  // `Final` badge inside the span, so the match is on a prefix.
+  const rowNamed = (id, name) =>
+    [...document.querySelectorAll('#' + id + ' .vc')]
+      .find(v => v.querySelector('.vc-name').textContent.trim().indexOf(name) === 0);
   // A hidden section measures zero for everything inside it, so the Week is
   // measured the first time it is actually shown. Measuring it at load would
   // have produced a page of confident zeros.
@@ -3351,13 +3386,13 @@
     };
 
     // What the Completed section costs, measured rather than estimated.
-    const v1 = rows[0];
+    const v1 = rowNamed('day-comp', 'Baseline');
     const s1 = v1.querySelector('.ob-body');
     const full = s1.scrollHeight;
     const done = v1.querySelector('#v1-done');
     const gap = parseFloat(getComputedStyle(s1).rowGap || 0);
     const doneCost = Math.round(done.getBoundingClientRect().height + gap);
-    const recLast = lastVisible(rows[rows.length - 1]);
+    const recLast = lastVisible(rowNamed('day-comp', 'Recommended'));
     const v1Last = lastVisible(v1);
 
     document.getElementById('v1-cost').innerHTML =
@@ -3489,9 +3524,9 @@
       });
       return { last: last || 0, of: s.children.length };
     };
-    const base = foldOf(rows[0]);
-    const rec = foldOf(rows[rows.length - 1]);
-    const floored = [...rows[0].querySelectorAll('.cal-blk')]
+    const base = foldOf(rowNamed('day-cal', 'Baseline'));
+    const rec = foldOf(rowNamed('day-cal', 'Recommended'));
+    const floored = [...rowNamed('day-cal', 'Baseline').querySelectorAll('.cal-blk')]
       .filter(p => p.getBoundingClientRect().height <= CAL_FLOOR + 1).length;
 
     host.innerHTML = [
@@ -4171,21 +4206,23 @@
         kbH: Math.round(kb.getBoundingClientRect().height),
       };
     };
-    const base = analyse(rows[0]);
-    const rec = analyse(rows[4]);
+    const baseRow = rowNamed('new', 'Baseline');
+    const recRow = rowNamed('new', 'Recommended');
+    const base = analyse(baseRow);
+    const rec = analyse(recRow);
     if (!base || !rec) return;
 
     const sheet = document.getElementById('nv-sheet');
     const sheetH = Math.round(sheet.getBoundingClientRect().height);
     const phoneH = Math.round(sheet.parentElement.getBoundingClientRect().height);
     const sheetCap = Math.round(phoneH * 0.86);
-    const chips = rows[4].querySelectorAll('.nv-times .chip').length;
-    const other = [...rows[4].querySelectorAll('.nv-times .chip')]
+    const chips = recRow.querySelectorAll('.nv-times .chip').length;
+    const other = [...recRow.querySelectorAll('.nv-times .chip')]
       .filter(c => c.textContent.trim() === 'Other…').length;
     // The commit button is the one control the form cannot do without, and the keyboard
     // is the thing most likely to be sitting on it.
-    const commit = rows[0].querySelector('.nv-body .btn');
-    const kbTop1 = rows[0].querySelector('.keys').getBoundingClientRect().top;
+    const commit = baseRow.querySelector('.nv-body .btn');
+    const kbTop1 = baseRow.querySelector('.keys').getBoundingClientRect().top;
     const commitUnder = commit ? commit.getBoundingClientRect().bottom > kbTop1 : false;
 
     document.getElementById('nv-cost').innerHTML =
@@ -4347,12 +4384,14 @@
 
   function measureMachine() {
     const host = document.getElementById('measure-machine');
-    const rows = [...document.querySelectorAll('#machine .grid > article')];
+    // The five rows, folded or not: `> article` stopped reaching them the day the
+    // four that lost went inside the fold.
+    const rows = [...document.querySelectorAll('#machine .vc')];
     if (!host || rows.length < 5) return;
 
     // The Day view's parts, classified by what they do. The classification is mine and
     // it is the argument; the counts are read off the markup rather than asserted.
-    const parts = [...rows[0].querySelectorAll('[data-kind]')];
+    const parts = [...rowNamed('machine', 'Baseline').querySelectorAll('[data-kind]')];
     const kind = k => parts.filter(p => p.dataset.kind === k).length;
     const writes = kind('write');
     const reads = kind('read');
@@ -4362,9 +4401,10 @@
     const noRef = parts.filter(p => p.dataset.referent === 'none').length;
     const actionable = writes + reads;
 
-    const off = rows[4].querySelectorAll('.tm-off').length;
-    const modes = rows[4].querySelectorAll('.tm-rail button').length;
-    const exits = rows[4].querySelectorAll('.nowline [style*="accent-text"]').length;
+    const recRow = rowNamed('machine', 'Recommended');
+    const off = recRow.querySelectorAll('.tm-off').length;
+    const modes = recRow.querySelectorAll('.tm-rail button').length;
+    const exits = recRow.querySelectorAll('.nowline [style*="accent-text"]').length;
 
     document.getElementById('tm-cost').innerHTML =
       'The Day view has <b>' + parts.length + ' parts</b>. <b>' + actionable +

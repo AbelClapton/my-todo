@@ -156,6 +156,63 @@
 
   <div class="grid">
 
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">Five conditions, one of which names the shutdown; a window the budget
+          can actually honour; and a precedence rule for the event case.</p>
+        <span class="vc-read">synthesis · make the gates total, then order them</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="mp-h">The trigger, corrected</p>
+            <div class="mp-r"><span class="mp-k">1 · Day open</span>
+              <span class="mp-d"><code>day.opened</code> exists for today</span>
+              <span class="mp-tag ok">keep</span></div>
+            <div class="mp-r"><span class="mp-k">2 · Not confirmed</span>
+              <span class="mp-d"><b>no</b> <code>day.planned</code> with
+                <code>source: 'morning'</code> for today</span>
+              <span class="mp-tag ok">reword</span></div>
+            <div class="mp-r"><span class="mp-k">3 · Not skipped</span>
+              <span class="mp-d">no <code>day.plan_skipped</code> with
+                <code>kind: 'morning'</code></span>
+              <span class="mp-tag ok">name the kind</span></div>
+            <div class="mp-r"><span class="mp-k">4 · Onboarded</span>
+              <span class="mp-d">not the day onboarding finished</span>
+              <span class="mp-tag ok">keep</span></div>
+            <div class="mp-r"><span class="mp-k">5 · Eligible hour</span>
+              <span class="mp-d">07:00–11:00, after quiet hours end</span>
+              <span class="mp-tag ok">add</span></div>
+            <div class="mp-r"><span class="mp-k">Precedence</span>
+              <span class="mp-d">in-event suppression wins; the plan fires after the event</span>
+              <span class="mp-n">stated</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>One added condition, two clarified, one precedence rule. And the pair becomes what
+            the shutdown doc already claims: last night's plan arrives this morning as a
+            <b>draft</b>, and the morning ritual confirms it.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The plan now fires on days the user shut down — which is the intent, and it means the
+            ritual is no longer implicitly opt-out for the users who use the app most.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. Every condition names an entry that either exists or does not, so all five are
+            checkable, and the hour gate cites the budget doc rather than paraphrasing it.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
+
     <!-- V1 -->
     <article class="vc">
       <div class="vc-head">
@@ -393,61 +450,7 @@
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
-        <p class="vc-stance">Five conditions, one of which names the shutdown; a window the budget
-          can actually honour; and a precedence rule for the event case.</p>
-        <span class="vc-read">synthesis · make the gates total, then order them</span>
-      </div>
-      <div class="vc-stage">
-        <div class="phone tall">
-          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
-            <p class="mp-h">The trigger, corrected</p>
-            <div class="mp-r"><span class="mp-k">1 · Day open</span>
-              <span class="mp-d"><code>day.opened</code> exists for today</span>
-              <span class="mp-tag ok">keep</span></div>
-            <div class="mp-r"><span class="mp-k">2 · Not confirmed</span>
-              <span class="mp-d"><b>no</b> <code>day.planned</code> with
-                <code>source: 'morning'</code> for today</span>
-              <span class="mp-tag ok">reword</span></div>
-            <div class="mp-r"><span class="mp-k">3 · Not skipped</span>
-              <span class="mp-d">no <code>day.plan_skipped</code> with
-                <code>kind: 'morning'</code></span>
-              <span class="mp-tag ok">name the kind</span></div>
-            <div class="mp-r"><span class="mp-k">4 · Onboarded</span>
-              <span class="mp-d">not the day onboarding finished</span>
-              <span class="mp-tag ok">keep</span></div>
-            <div class="mp-r"><span class="mp-k">5 · Eligible hour</span>
-              <span class="mp-d">07:00–11:00, after quiet hours end</span>
-              <span class="mp-tag ok">add</span></div>
-            <div class="mp-r"><span class="mp-k">Precedence</span>
-              <span class="mp-d">in-event suppression wins; the plan fires after the event</span>
-              <span class="mp-n">stated</span></div>
-          </div>
-          <div class="dock">
-            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
-            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
-            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
-            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd>One added condition, two clarified, one precedence rule. And the pair becomes what
-            the shutdown doc already claims: last night's plan arrives this morning as a
-            <b>draft</b>, and the morning ritual confirms it.</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>The plan now fires on days the user shut down — which is the intent, and it means the
-            ritual is no longer implicitly opt-out for the users who use the app most.</dd></div>
-        <div class="vc-line rules"><dt>Against rules</dt>
-          <dd>None. Every condition names an entry that either exists or does not, so all five are
-            checkable, and the hour gate cites the budget doc rather than paraphrasing it.</dd></div>
-      </dl>
-    </article>
-
+    </details>
   </div>
 
   <div class="lede">
@@ -473,6 +476,60 @@
   </div>
 
   <div class="grid">
+
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">Three fixed as a target, undo stated, and the plan labelled with who
+          made it.</p>
+        <span class="vc-read">synthesis · the commit becomes reversible and attributable</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="mp-h">The commit, corrected</p>
+            <div class="mp-r"><span class="mp-k">Writes</span>
+              <span class="mp-d"><code>task.scheduled_to_day</code> ×N ·
+                <code>day.planned { source: 'morning' }</code></span>
+              <span class="mp-n">2 types</span></div>
+            <div class="mp-r"><span class="mp-k">How many</span>
+              <span class="mp-d">one to three; three is the target, one is a plan</span>
+              <span class="mp-n">1–3</span></div>
+            <div class="mp-r"><span class="mp-k">Undo</span>
+              <span class="mp-d">five seconds, the batch, per ADR 0010's default</span>
+              <span class="mp-tag ok">stated</span></div>
+            <div class="mp-r"><span class="mp-k">A shutdown draft</span>
+              <span class="mp-d">arrives as the picker's pre-selection, still editable</span>
+              <span class="mp-tag ok">draft</span></div>
+            <div class="mp-r"><span class="mp-k">Re-planning</span>
+              <span class="mp-d">a second <code>source: 'morning'</code> entry supersedes the
+                first</span>
+              <span class="mp-tag ok">stated</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Four clauses in one doc and one field in another. The pair finally behaves as
+            described: the shutdown proposes, the morning confirms, and both are reversible.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The picker gains a pre-selection rule and the screen gains a toast. Both are smaller
+            than the alternative — a ritual that fires once, on the first day the user ever uses
+            it.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. Each change gives an existing mechanism a name it was already missing, rather
+            than adding a mechanism.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
 
     <!-- V1 -->
     <article class="vc">
@@ -707,58 +764,7 @@
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
-        <p class="vc-stance">Three fixed as a target, undo stated, and the plan labelled with who
-          made it.</p>
-        <span class="vc-read">synthesis · the commit becomes reversible and attributable</span>
-      </div>
-      <div class="vc-stage">
-        <div class="phone tall">
-          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
-            <p class="mp-h">The commit, corrected</p>
-            <div class="mp-r"><span class="mp-k">Writes</span>
-              <span class="mp-d"><code>task.scheduled_to_day</code> ×N ·
-                <code>day.planned { source: 'morning' }</code></span>
-              <span class="mp-n">2 types</span></div>
-            <div class="mp-r"><span class="mp-k">How many</span>
-              <span class="mp-d">one to three; three is the target, one is a plan</span>
-              <span class="mp-n">1–3</span></div>
-            <div class="mp-r"><span class="mp-k">Undo</span>
-              <span class="mp-d">five seconds, the batch, per ADR 0010's default</span>
-              <span class="mp-tag ok">stated</span></div>
-            <div class="mp-r"><span class="mp-k">A shutdown draft</span>
-              <span class="mp-d">arrives as the picker's pre-selection, still editable</span>
-              <span class="mp-tag ok">draft</span></div>
-            <div class="mp-r"><span class="mp-k">Re-planning</span>
-              <span class="mp-d">a second <code>source: 'morning'</code> entry supersedes the
-                first</span>
-              <span class="mp-tag ok">stated</span></div>
-          </div>
-          <div class="dock">
-            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
-            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
-            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
-            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd>Four clauses in one doc and one field in another. The pair finally behaves as
-            described: the shutdown proposes, the morning confirms, and both are reversible.</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>The picker gains a pre-selection rule and the screen gains a toast. Both are smaller
-            than the alternative — a ritual that fires once, on the first day the user ever uses
-            it.</dd></div>
-        <div class="vc-line rules"><dt>Against rules</dt>
-          <dd>None. Each change gives an existing mechanism a name it was already missing, rather
-            than adding a mechanism.</dd></div>
-      </dl>
-    </article>
-
+    </details>
   </div>
 
   <div class="lede">
@@ -784,6 +790,66 @@
   </div>
 
   <div class="grid">
+
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">Two new matrix rows, the task-row meanings they actually use, and a
+          button beside each swipe.</p>
+        <span class="vc-read">synthesis · write the vocabulary down where it is defined</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="mp-h">Two rows added to the matrix</p>
+            <div class="mp-sw">
+              <div class="mp-sw-r"><span class="g">Morning plan row</span>
+                <span class="a">→ keep for today · ← defer</span>
+                <span class="b">↓ someday · ↑ —</span></div>
+              <div class="mp-sw-r"><span class="g">Shutdown row</span>
+                <span class="a">→ keep for tomorrow · ← defer</span>
+                <span class="b">↓ someday · ↑ —</span></div>
+            </div>
+            <div class="mp-box on">
+              <h4>And the definition gains one clause</h4>
+              <p><i>"Right swipe always means yes. On a task row outside a list — inside a ritual —
+                'yes' is <b>keep it for the day in question</b>, because completion is not a choice
+                a plan makes."</i></p>
+            </div>
+            <div class="mp-box">
+              <h4>Each swipe gets a control</h4>
+              <p>Checkbox = keep. Overflow = defer, remove, open. Long-press reveals it, the same
+                way the Task list does.</p>
+            </div>
+            <div class="mp-r" style="border-top:1px solid var(--border-subtle)">
+              <span class="mp-k">Rows added</span>
+              <span class="mp-d">matrix 13 → 15 · key map gains 2 bindings</span>
+              <span class="mp-n">+2</span></div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Two matrix rows, one clause in the gesture definition, and an overflow affordance.
+            The rituals keep their speed and stop being the only surfaces outside the
+            vocabulary.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The matrix grows to fifteen rows and the gesture's meanings go from four to five.
+            Both are the honest count of what the app already asks users to remember.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. The rule that a gesture is disabled rather than repurposed survives because
+            "keep" is now the same gesture's meaning in the same kind of row, stated once.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
 
     <!-- V1 -->
     <article class="vc">
@@ -1019,64 +1085,7 @@
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
-        <p class="vc-stance">Two new matrix rows, the task-row meanings they actually use, and a
-          button beside each swipe.</p>
-        <span class="vc-read">synthesis · write the vocabulary down where it is defined</span>
-      </div>
-      <div class="vc-stage">
-        <div class="phone tall">
-          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
-            <p class="mp-h">Two rows added to the matrix</p>
-            <div class="mp-sw">
-              <div class="mp-sw-r"><span class="g">Morning plan row</span>
-                <span class="a">→ keep for today · ← defer</span>
-                <span class="b">↓ someday · ↑ —</span></div>
-              <div class="mp-sw-r"><span class="g">Shutdown row</span>
-                <span class="a">→ keep for tomorrow · ← defer</span>
-                <span class="b">↓ someday · ↑ —</span></div>
-            </div>
-            <div class="mp-box on">
-              <h4>And the definition gains one clause</h4>
-              <p><i>"Right swipe always means yes. On a task row outside a list — inside a ritual —
-                'yes' is <b>keep it for the day in question</b>, because completion is not a choice
-                a plan makes."</i></p>
-            </div>
-            <div class="mp-box">
-              <h4>Each swipe gets a control</h4>
-              <p>Checkbox = keep. Overflow = defer, remove, open. Long-press reveals it, the same
-                way the Task list does.</p>
-            </div>
-            <div class="mp-r" style="border-top:1px solid var(--border-subtle)">
-              <span class="mp-k">Rows added</span>
-              <span class="mp-d">matrix 13 → 15 · key map gains 2 bindings</span>
-              <span class="mp-n">+2</span></div>
-          </div>
-          <div class="dock">
-            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
-            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
-            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
-            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd>Two matrix rows, one clause in the gesture definition, and an overflow affordance.
-            The rituals keep their speed and stop being the only surfaces outside the
-            vocabulary.</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>The matrix grows to fifteen rows and the gesture's meanings go from four to five.
-            Both are the honest count of what the app already asks users to remember.</dd></div>
-        <div class="vc-line rules"><dt>Against rules</dt>
-          <dd>None. The rule that a gesture is disabled rather than repurposed survives because
-            "keep" is now the same gesture's meaning in the same kind of row, stated once.</dd></div>
-      </dl>
-    </article>
-
+    </details>
   </div>
 
   <div class="lede">
@@ -1102,6 +1111,62 @@
   </div>
 
   <div class="grid">
+
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">One suppression list, one card trigger, one first-open sequence, and a
+          now line that means what it means.</p>
+        <span class="vc-read">synthesis · the budget owns the rules, the flows own the order</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <p class="mp-h">Ownership</p>
+            <div class="mp-r"><span class="mp-k">Context rules</span>
+              <span class="mp-d">focus · in-event · quiet hours — <code>attention-budget.md</code>,
+                applied to all three surfaces</span>
+              <span class="mp-tag ok">1 list</span></div>
+            <div class="mp-r"><span class="mp-k">Card trigger</span>
+              <span class="mp-d">first open at or after the learned time — the budget doc</span>
+              <span class="mp-tag ok">1 rule</span></div>
+            <div class="mp-r"><span class="mp-k">First-open order</span>
+              <span class="mp-d">plan → yesterday's prompt → card — <code>morning-plan.md</code></span>
+              <span class="mp-tag ok">1 sequence</span></div>
+            <div class="mp-r"><span class="mp-k">Now line</span>
+              <span class="mp-d">six sources, unchanged; the plan's timeline shows the first
+                event</span>
+              <span class="mp-tag ok">1 meaning</span></div>
+            <div class="mp-box on">
+              <h4>The test this passes</h4>
+              <p>A user who shuts down every night and an early riser both get the same ritual, and
+                a reader can answer "what fires at 6am?" from one doc.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Three docs, four sentences. The suppression list collapses to one, the card's trigger
+            to one, the sequence becomes explicit, and the plan stops describing the now
+            line.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Two flows lose a restated rule each. That is the point: the budget already said
+            it.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt>
+          <dd>None. The three flows keep what they own — when their ritual fires, in what order,
+            and what it writes — and give back what they had borrowed.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
 
     <!-- V1 -->
     <article class="vc">
@@ -1347,60 +1412,7 @@
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
-        <p class="vc-stance">One suppression list, one card trigger, one first-open sequence, and a
-          now line that means what it means.</p>
-        <span class="vc-read">synthesis · the budget owns the rules, the flows own the order</span>
-      </div>
-      <div class="vc-stage">
-        <div class="phone tall">
-          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
-            <p class="mp-h">Ownership</p>
-            <div class="mp-r"><span class="mp-k">Context rules</span>
-              <span class="mp-d">focus · in-event · quiet hours — <code>attention-budget.md</code>,
-                applied to all three surfaces</span>
-              <span class="mp-tag ok">1 list</span></div>
-            <div class="mp-r"><span class="mp-k">Card trigger</span>
-              <span class="mp-d">first open at or after the learned time — the budget doc</span>
-              <span class="mp-tag ok">1 rule</span></div>
-            <div class="mp-r"><span class="mp-k">First-open order</span>
-              <span class="mp-d">plan → yesterday's prompt → card — <code>morning-plan.md</code></span>
-              <span class="mp-tag ok">1 sequence</span></div>
-            <div class="mp-r"><span class="mp-k">Now line</span>
-              <span class="mp-d">six sources, unchanged; the plan's timeline shows the first
-                event</span>
-              <span class="mp-tag ok">1 meaning</span></div>
-            <div class="mp-box on">
-              <h4>The test this passes</h4>
-              <p>A user who shuts down every night and an early riser both get the same ritual, and
-                a reader can answer "what fires at 6am?" from one doc.</p>
-            </div>
-          </div>
-          <div class="dock">
-            <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
-            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
-            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
-            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd>Three docs, four sentences. The suppression list collapses to one, the card's trigger
-            to one, the sequence becomes explicit, and the plan stops describing the now
-            line.</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>Two flows lose a restated rule each. That is the point: the budget already said
-            it.</dd></div>
-        <div class="vc-line rules"><dt>Against rules</dt>
-          <dd>None. The three flows keep what they own — when their ritual fires, in what order,
-            and what it writes — and give back what they had borrowed.</dd></div>
-      </dl>
-    </article>
-
+    </details>
   </div>
 
   <div class="lede">

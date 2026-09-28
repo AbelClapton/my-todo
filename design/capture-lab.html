@@ -112,6 +112,62 @@
   </div>
 
   <div class="grid">
+
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">Correct the scope, and give the <b>Calendar</b> the one thing it lacks.</p>
+        <span class="vc-read">fix the claim, then close the largest gap</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
+            <div class="cp-note">
+              <p class="cp-h" style="margin:0"><b>1. The invariant says what is true:</b> pull-down
+                on every list; the palette on every screen; the share sheet from outside; voice
+                inside the field.</p>
+              <p class="cp-h" style="margin-top:8px;color:var(--text-secondary)"><b>2. The Calendar
+                gets the palette path named as its capture route</b>, because
+                <code>capture.md</code> only offers it as one of four for everyone — and the Day
+                view is where a user most often thinks of something.</p>
+            </div>
+            <div class="cp-note">
+              <p class="cp-h" style="margin:0">Nothing new is built. The gap is one of
+                <b>documentation</b>: three docs state three scopes, and the largest mode in the app
+                is covered by none of them.</p>
+            </div>
+          </div>
+          <div class="dock">
+            <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-calendar"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
+            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The invariant and §The four entry points state the same scope as the gesture matrix, so
+            the three docs agree. The Calendar's route to capture is named rather than implied, and
+            the matrix keeps its dash — which is now a documented absence instead of a
+            contradiction.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It resolves the contradiction by narrowing the promise rather than widening the
+            surface, so the app still cannot capture from its home view with one gesture — and the
+            invariant that sold "effortless" now says "effortless, on five lists".</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether the Calendar should have pull-down capture. Its Day view is a timeline —
+            <b>a list</b>, per the Calendar lab — so it arguably <i>is</i> a scrollable list and the
+            matrix is what is wrong. That would make the invariant's "any scrollable list" correct and
+            the matrix's dash the error, which is the opposite repair. The lab can show the two
+            readings; which is right depends on whether pull-down on a timeline would fight the
+            timeline's own scroll.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
+
     <!-- V1 -->
     <article class="vc">
       <div class="vc-head">
@@ -304,58 +360,7 @@
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
-        <p class="vc-stance">Correct the scope, and give the <b>Calendar</b> the one thing it lacks.</p>
-        <span class="vc-read">fix the claim, then close the largest gap</span>
-      </div>
-      <div class="vc-stage">
-        <div class="phone">
-          <div class="ob-body" style="padding:var(--space-5) var(--space-5) 0;gap:var(--space-4)">
-            <div class="cp-note">
-              <p class="cp-h" style="margin:0"><b>1. The invariant says what is true:</b> pull-down
-                on every list; the palette on every screen; the share sheet from outside; voice
-                inside the field.</p>
-              <p class="cp-h" style="margin-top:8px;color:var(--text-secondary)"><b>2. The Calendar
-                gets the palette path named as its capture route</b>, because
-                <code>capture.md</code> only offers it as one of four for everyone — and the Day
-                view is where a user most often thinks of something.</p>
-            </div>
-            <div class="cp-note">
-              <p class="cp-h" style="margin:0">Nothing new is built. The gap is one of
-                <b>documentation</b>: three docs state three scopes, and the largest mode in the app
-                is covered by none of them.</p>
-            </div>
-          </div>
-          <div class="dock">
-            <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-calendar"/></svg>
-            <svg class="ic ic-lg"><use href="#i-mode-tasks"/></svg>
-            <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
-            <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd>The invariant and §The four entry points state the same scope as the gesture matrix, so
-            the three docs agree. The Calendar's route to capture is named rather than implied, and
-            the matrix keeps its dash — which is now a documented absence instead of a
-            contradiction.</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>It resolves the contradiction by narrowing the promise rather than widening the
-            surface, so the app still cannot capture from its home view with one gesture — and the
-            invariant that sold "effortless" now says "effortless, on five lists".</dd></div>
-        <div class="vc-line open"><dt>Still needs</dt>
-          <dd>Whether the Calendar should have pull-down capture. Its Day view is a timeline —
-            <b>a list</b>, per the Calendar lab — so it arguably <i>is</i> a scrollable list and the
-            matrix is what is wrong. That would make the invariant's "any scrollable list" correct and
-            the matrix's dash the error, which is the opposite repair. The lab can show the two
-            readings; which is right depends on whether pull-down on a timeline would fight the
-            timeline's own scroll.</dd></div>
-      </dl>
-    </article>
+    </details>
   </div>
 
   <div class="lede">
@@ -384,6 +389,57 @@
   </div>
 
   <div class="grid">
+
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">Keep both documents' behaviour, and let <b>one doc own the chip</b>.</p>
+        <span class="vc-read">reconcile the controls, keep the band, name the owner</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="cp-field">
+              <div class="cp-in"><span class="grow">Call dentist Tuesday</span>
+                <span style="font-size:16px">🎤</span></div>
+              <div class="cp-below">→ task · due Tue 29 Sep</div>
+              <div class="cp-btns"><span class="cp-b p">Yes</span><span class="cp-b s">Edit</span>
+                <span class="cp-h" style="align-self:center;margin-left:4px">or ignore it</span></div>
+            </div>
+            <div class="cp-note">
+              <p class="cp-h" style="margin:0"><b>capture.md keeps the layout and the field; tier-1
+                owns the chip's controls and its behaviour.</b> The preview line above the buttons is
+                what §The capture field is describing, and "the user does not have to act on it" is
+                true — the two buttons are how they may act if they want to.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Three reconciliations, no behaviour changes. <b>(1)</b> The region below the field holds
+            a <b>preview line</b> (informational, always) and, in the middle band only, a pair of
+            <b>buttons</b> owned by <code>tier-1-parsing.md</code>. <b>(2)</b> "The user does not have
+            to act on it" is qualified — not acting is supported, and its consequence is stated.
+            <b>(3)</b> <code>capture.md</code> stops describing the chip's controls and points at the
+            doc that owns them.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>It keeps a two-element region under a one-line field on the flow whose invariant is
+            "under two seconds", and it splits ownership of one small piece of UI across two docs —
+            which is the condition that produced the disagreement in the first place.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether "the user does not have to act on it" can be said at all in the middle band.
+            Acting is optional; the <i>consequence</i> of not acting is not — an unparsed note instead
+            of a parsed task. The doc's own defence is that this "costs nothing" because the parse
+            stays on offer, and that is true of the data and false of the user's next twenty minutes.
+            The lab can show both halves; which one the sentence should describe is an editorial
+            choice about honesty.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
+
     <!-- V1 -->
     <article class="vc">
       <div class="vc-head">
@@ -576,53 +632,7 @@
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
-        <p class="vc-stance">Keep both documents' behaviour, and let <b>one doc own the chip</b>.</p>
-        <span class="vc-read">reconcile the controls, keep the band, name the owner</span>
-      </div>
-      <div class="vc-stage">
-        <div class="phone" style="width:390px;height:auto">
-          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
-            <div class="cp-field">
-              <div class="cp-in"><span class="grow">Call dentist Tuesday</span>
-                <span style="font-size:16px">🎤</span></div>
-              <div class="cp-below">→ task · due Tue 29 Sep</div>
-              <div class="cp-btns"><span class="cp-b p">Yes</span><span class="cp-b s">Edit</span>
-                <span class="cp-h" style="align-self:center;margin-left:4px">or ignore it</span></div>
-            </div>
-            <div class="cp-note">
-              <p class="cp-h" style="margin:0"><b>capture.md keeps the layout and the field; tier-1
-                owns the chip's controls and its behaviour.</b> The preview line above the buttons is
-                what §The capture field is describing, and "the user does not have to act on it" is
-                true — the two buttons are how they may act if they want to.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd>Three reconciliations, no behaviour changes. <b>(1)</b> The region below the field holds
-            a <b>preview line</b> (informational, always) and, in the middle band only, a pair of
-            <b>buttons</b> owned by <code>tier-1-parsing.md</code>. <b>(2)</b> "The user does not have
-            to act on it" is qualified — not acting is supported, and its consequence is stated.
-            <b>(3)</b> <code>capture.md</code> stops describing the chip's controls and points at the
-            doc that owns them.</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>It keeps a two-element region under a one-line field on the flow whose invariant is
-            "under two seconds", and it splits ownership of one small piece of UI across two docs —
-            which is the condition that produced the disagreement in the first place.</dd></div>
-        <div class="vc-line open"><dt>Still needs</dt>
-          <dd>Whether "the user does not have to act on it" can be said at all in the middle band.
-            Acting is optional; the <i>consequence</i> of not acting is not — an unparsed note instead
-            of a parsed task. The doc's own defence is that this "costs nothing" because the parse
-            stays on offer, and that is true of the data and false of the user's next twenty minutes.
-            The lab can show both halves; which one the sentence should describe is an editorial
-            choice about honesty.</dd></div>
-      </dl>
-    </article>
+    </details>
   </div>
 
   <div class="lede">
@@ -647,6 +657,58 @@
   </div>
 
   <div class="grid">
+
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">Two characters of notation, in the doc that owns the number.</p>
+        <span class="vc-read">make it a partition · do not redesign it</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="cp-col">
+              <h4>tier-1-parsing.md §Confidence thresholds</h4>
+              <p class="cp-d"><b>c ≥ 0.85</b> — apply silently. Show a "parsed" chip.</p>
+              <p class="cp-d"><b>0.60 ≤ c &lt; 0.85</b> — show a confirmation chip.</p>
+              <p class="cp-d"><b>c &lt; 0.60</b> — do not apply. Keep the raw text as a note.</p>
+              <p class="cp-h" style="margin-top:8px">Every value in [0, 1] has exactly one outcome.
+                0.845 asks. Nothing changed except which side of a boundary it was always supposed to
+                be on.</p>
+            </div>
+            <div class="cp-col">
+              <h4>capture.md §The pipeline</h4>
+              <p class="cp-d">Cites the three outcomes and their thresholds by reference, and keeps
+                only what happens <i>here</i> — the chip, the inbox note, the "[unparsed]" prefix.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The bands become a total partition, half-open, in the doc that owns them — and
+            <code>capture.md</code> stops restating the numbers, which is what let the same gap exist
+            in two places without either catching it. Both changes are to wording; no behaviour is
+            specified differently in either direction, so no implementation changes.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Choosing <b>0.845 asks</b> picks the middle band, which means a value that previously
+            fell through to whatever the code did now produces a visible interruption. The lab cannot
+            prove that is right — only that the alternative (0.845 applies silently) is a decision the
+            docs also never made, and that leaving it undecided is the one option the invariant
+            forbids.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether the thresholds should be <b>numbers at all</b>. <code>tier-1-parsing.md</code>
+            says they are tunable via ADR, which is a strange thing to record for a constant that
+            decides whether the app speaks — it implies someone expects to move them. If confidence
+            calibration is unmeasured, both 0.85 and 0.60 are guesses with two digits of precision,
+            and a hole between them is the least of the problems. The lab can show the range is not
+            partitioned; it cannot show the numbers are right.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
+
     <!-- V1 -->
     <article class="vc">
       <div class="vc-head">
@@ -836,54 +898,7 @@
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
-        <p class="vc-stance">Two characters of notation, in the doc that owns the number.</p>
-        <span class="vc-read">make it a partition · do not redesign it</span>
-      </div>
-      <div class="vc-stage">
-        <div class="phone" style="width:390px;height:auto">
-          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
-            <div class="cp-col">
-              <h4>tier-1-parsing.md §Confidence thresholds</h4>
-              <p class="cp-d"><b>c ≥ 0.85</b> — apply silently. Show a "parsed" chip.</p>
-              <p class="cp-d"><b>0.60 ≤ c &lt; 0.85</b> — show a confirmation chip.</p>
-              <p class="cp-d"><b>c &lt; 0.60</b> — do not apply. Keep the raw text as a note.</p>
-              <p class="cp-h" style="margin-top:8px">Every value in [0, 1] has exactly one outcome.
-                0.845 asks. Nothing changed except which side of a boundary it was always supposed to
-                be on.</p>
-            </div>
-            <div class="cp-col">
-              <h4>capture.md §The pipeline</h4>
-              <p class="cp-d">Cites the three outcomes and their thresholds by reference, and keeps
-                only what happens <i>here</i> — the chip, the inbox note, the "[unparsed]" prefix.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd>The bands become a total partition, half-open, in the doc that owns them — and
-            <code>capture.md</code> stops restating the numbers, which is what let the same gap exist
-            in two places without either catching it. Both changes are to wording; no behaviour is
-            specified differently in either direction, so no implementation changes.</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>Choosing <b>0.845 asks</b> picks the middle band, which means a value that previously
-            fell through to whatever the code did now produces a visible interruption. The lab cannot
-            prove that is right — only that the alternative (0.845 applies silently) is a decision the
-            docs also never made, and that leaving it undecided is the one option the invariant
-            forbids.</dd></div>
-        <div class="vc-line open"><dt>Still needs</dt>
-          <dd>Whether the thresholds should be <b>numbers at all</b>. <code>tier-1-parsing.md</code>
-            says they are tunable via ADR, which is a strange thing to record for a constant that
-            decides whether the app speaks — it implies someone expects to move them. If confidence
-            calibration is unmeasured, both 0.85 and 0.60 are guesses with two digits of precision,
-            and a hole between them is the least of the problems. The lab can show the range is not
-            partitioned; it cannot show the numbers are right.</dd></div>
-      </dl>
-    </article>
+    </details>
   </div>
 
   <div class="lede">
@@ -910,6 +925,67 @@
   </div>
 
   <div class="grid">
+
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">Keep the prefix. Add the one thing the five outcomes lack: <b>what
+            happens next</b>.</p>
+        <span class="vc-read">the outcomes are a list of arrivals, not of ends</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone" style="width:390px;height:auto">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <div class="cp-who"><span class="cp-k">Task</span>
+              <span class="cp-d">Today · Next · Someday · Inbox</span>
+              <span class="cp-n ok">has a next</span></div>
+            <div class="cp-who"><span class="cp-k">Event</span>
+              <span class="cp-d">the Calendar, at its time</span>
+              <span class="cp-n ok">has a next</span></div>
+            <div class="cp-who"><span class="cp-k">Habit</span>
+              <span class="cp-d">Habits → Today</span><span class="cp-n ok">has a next</span></div>
+            <div class="cp-who"><span class="cp-k">Note</span>
+              <span class="cp-d">today's Day, then Recent</span>
+              <span class="cp-n ok">has a next</span></div>
+            <div class="cp-who"><span class="cp-k">Unparsed</span>
+              <span class="cp-d">the inbox — and then?</span>
+              <span class="cp-n bad">no next</span></div>
+            <div class="cp-note">
+              <p class="cp-h" style="margin:0">§The inbox says the sort ritual "ends when the inbox
+                is empty or the user exits", and its swipe-down is "Remove" — takes it out of the
+                inbox. For four outcomes the doc says where the thing goes and what it becomes; for
+                the fifth it says where it waits. There are <b>three</b> ways out of the inbox
+                (classify, remove, or never open it) and the outcomes list does not name
+                any.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>§The capture outcomes gains a column for its fallbacks: what an unparsed note becomes.
+            Classified in the sort ritual (<code>task.created</code> or a re-parse), removed from the
+            inbox (and then <i>what</i> — is it still a note?), or left. The first two are specified
+            elsewhere; the third is not named at all.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Writing "or left" admits the app has a state with no exit, and §The inbox's ritual is
+            designed to empty it. And the swipe-down "Remove" is the ambiguous one: removing a
+            capture from the inbox is defined as "takes the capture out of the inbox", which says
+            nothing about whether the note survives, and the Notes lab showed a note cannot be
+            unattached.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>What "Remove" does to an unparsed note. `capture.md` says it "takes the capture out of
+            the inbox, reversibly"; `notes.md` says a note cannot be unattached and has no archival;
+            ADR 0016 says the note list's swipe down is disabled because notes have no removal state.
+            Three docs, and the inbox's Remove is on a note. Either the inbox's swipe has the same
+            problem ADR 0016 fixed, or removing from the inbox is a display state on the note — and
+            the lab can show that nothing currently says which.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
+
     <!-- V1 -->
     <article class="vc">
       <div class="vc-head">
@@ -1082,63 +1158,7 @@
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
-        <p class="vc-stance">Keep the prefix. Add the one thing the five outcomes lack: <b>what
-            happens next</b>.</p>
-        <span class="vc-read">the outcomes are a list of arrivals, not of ends</span>
-      </div>
-      <div class="vc-stage">
-        <div class="phone" style="width:390px;height:auto">
-          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
-            <div class="cp-who"><span class="cp-k">Task</span>
-              <span class="cp-d">Today · Next · Someday · Inbox</span>
-              <span class="cp-n ok">has a next</span></div>
-            <div class="cp-who"><span class="cp-k">Event</span>
-              <span class="cp-d">the Calendar, at its time</span>
-              <span class="cp-n ok">has a next</span></div>
-            <div class="cp-who"><span class="cp-k">Habit</span>
-              <span class="cp-d">Habits → Today</span><span class="cp-n ok">has a next</span></div>
-            <div class="cp-who"><span class="cp-k">Note</span>
-              <span class="cp-d">today's Day, then Recent</span>
-              <span class="cp-n ok">has a next</span></div>
-            <div class="cp-who"><span class="cp-k">Unparsed</span>
-              <span class="cp-d">the inbox — and then?</span>
-              <span class="cp-n bad">no next</span></div>
-            <div class="cp-note">
-              <p class="cp-h" style="margin:0">§The inbox says the sort ritual "ends when the inbox
-                is empty or the user exits", and its swipe-down is "Remove" — takes it out of the
-                inbox. For four outcomes the doc says where the thing goes and what it becomes; for
-                the fifth it says where it waits. There are <b>three</b> ways out of the inbox
-                (classify, remove, or never open it) and the outcomes list does not name
-                any.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd>§The capture outcomes gains a column for its fallbacks: what an unparsed note becomes.
-            Classified in the sort ritual (<code>task.created</code> or a re-parse), removed from the
-            inbox (and then <i>what</i> — is it still a note?), or left. The first two are specified
-            elsewhere; the third is not named at all.</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>Writing "or left" admits the app has a state with no exit, and §The inbox's ritual is
-            designed to empty it. And the swipe-down "Remove" is the ambiguous one: removing a
-            capture from the inbox is defined as "takes the capture out of the inbox", which says
-            nothing about whether the note survives, and the Notes lab showed a note cannot be
-            unattached.</dd></div>
-        <div class="vc-line open"><dt>Still needs</dt>
-          <dd>What "Remove" does to an unparsed note. `capture.md` says it "takes the capture out of
-            the inbox, reversibly"; `notes.md` says a note cannot be unattached and has no archival;
-            ADR 0016 says the note list's swipe down is disabled because notes have no removal state.
-            Three docs, and the inbox's Remove is on a note. Either the inbox's swipe has the same
-            problem ADR 0016 fixed, or removing from the inbox is a display state on the note — and
-            the lab can show that nothing currently says which.</dd></div>
-      </dl>
-    </article>
+    </details>
   </div>
 
   <div class="lede">

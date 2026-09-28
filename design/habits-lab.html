@@ -148,6 +148,69 @@
   </div>
 
   <div class="grid">
+
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">The box is binary on purpose, and skip earns a mark because it is an
+          <b>intentional</b> state.</p>
+        <span class="vc-read">contrast survives · one mark per distinct intent</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-5)">
+            <div class="hb">
+              <div class="hb-row">
+                <div class="hb-box full"><svg><use href="#i-check"/></svg></div>
+                <div class="hb-t"><span class="hb-nm">Meditate 10 minutes</span>
+                  <span class="hb-md">Every day · Morning</span></div>
+                <span class="hb-cnt">18/28</span>
+              </div>
+              <div class="hb-row">
+                <div class="hb-box full"><svg><use href="#i-check"/></svg></div>
+                <div class="hb-t"><span class="hb-nm">Meditate 10 minutes</span>
+                  <span class="hb-md">Every day · Morning</span></div>
+                <span class="hb-cnt">18/28</span>
+              </div>
+              <div class="hb-row">
+                <div class="hb-box skip slash"></div>
+                <div class="hb-t"><span class="hb-nm">Meditate 10 minutes</span>
+                  <span class="hb-md">Every day · Morning</span></div>
+                <span class="hb-cnt">18/28</span>
+              </div>
+              <div class="hb-row">
+                <div class="hb-box"></div>
+                <div class="hb-t"><span class="hb-nm">Meditate 10 minutes</span>
+                  <span class="hb-md">Every day · Morning</span></div>
+                <span class="hb-cnt">18/28</span>
+              </div>
+            </div>
+            <p class="hb-note">A full check and a minimum check draw <b>identically</b>, because
+              §Minimum-viable says to log the minimum even when you could do more, and the row
+              should not punish that. Only three things get a mark: done, skipped, not yet.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The minimum loses its indicator in the row entirely — no underline, no half fill. The
+            checkbox answers "did today count", and the answer is yes for both versions. Skip keeps
+            a mark because it is the one state that is <i>chosen</i> rather than merely absent.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The row stops being able to answer "was that a full one or a floor?" — the question the
+            chart exists to answer, now pushed entirely there. And it makes the lab's own baseline
+            row a deliberate lie at a glance, which is uncomfortable for a spec that explicitly
+            specifies a minimum indicator.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether a user scanning Today can tell a floor from a full <b>without opening the
+            detail</b>. The row says no; the chart says it's a detail concern. This is a decision the
+            lab can't make by looking — it takes a phone call with the person whose bad day it is.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
+
     <!-- V1 -->
     <article class="vc">
       <div class="vc-head">
@@ -378,65 +441,7 @@
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
-        <p class="vc-stance">The box is binary on purpose, and skip earns a mark because it is an
-          <b>intentional</b> state.</p>
-        <span class="vc-read">contrast survives · one mark per distinct intent</span>
-      </div>
-      <div class="vc-stage">
-        <div class="phone">
-          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-5)">
-            <div class="hb">
-              <div class="hb-row">
-                <div class="hb-box full"><svg><use href="#i-check"/></svg></div>
-                <div class="hb-t"><span class="hb-nm">Meditate 10 minutes</span>
-                  <span class="hb-md">Every day · Morning</span></div>
-                <span class="hb-cnt">18/28</span>
-              </div>
-              <div class="hb-row">
-                <div class="hb-box full"><svg><use href="#i-check"/></svg></div>
-                <div class="hb-t"><span class="hb-nm">Meditate 10 minutes</span>
-                  <span class="hb-md">Every day · Morning</span></div>
-                <span class="hb-cnt">18/28</span>
-              </div>
-              <div class="hb-row">
-                <div class="hb-box skip slash"></div>
-                <div class="hb-t"><span class="hb-nm">Meditate 10 minutes</span>
-                  <span class="hb-md">Every day · Morning</span></div>
-                <span class="hb-cnt">18/28</span>
-              </div>
-              <div class="hb-row">
-                <div class="hb-box"></div>
-                <div class="hb-t"><span class="hb-nm">Meditate 10 minutes</span>
-                  <span class="hb-md">Every day · Morning</span></div>
-                <span class="hb-cnt">18/28</span>
-              </div>
-            </div>
-            <p class="hb-note">A full check and a minimum check draw <b>identically</b>, because
-              §Minimum-viable says to log the minimum even when you could do more, and the row
-              should not punish that. Only three things get a mark: done, skipped, not yet.</p>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd>The minimum loses its indicator in the row entirely — no underline, no half fill. The
-            checkbox answers "did today count", and the answer is yes for both versions. Skip keeps
-            a mark because it is the one state that is <i>chosen</i> rather than merely absent.</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>The row stops being able to answer "was that a full one or a floor?" — the question the
-            chart exists to answer, now pushed entirely there. And it makes the lab's own baseline
-            row a deliberate lie at a glance, which is uncomfortable for a spec that explicitly
-            specifies a minimum indicator.</dd></div>
-        <div class="vc-line open"><dt>Still needs</dt>
-          <dd>Whether a user scanning Today can tell a floor from a full <b>without opening the
-            detail</b>. The row says no; the chart says it's a detail concern. This is a decision the
-            lab can't make by looking — it takes a phone call with the person whose bad day it is.</dd></div>
-      </dl>
-    </article>
+    </details>
   </div>
 
   <div class="lede">
@@ -475,6 +480,84 @@
   </div>
 
   <div class="grid">
+
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">Three become two: a <b>list</b>, and a <b>nudge</b> that opens it.</p>
+        <span class="vc-read">one component, three renderings, one owner</span>
+      </div>
+      <div class="vc-stage" style="display:flex;gap:16px;flex-wrap:wrap">
+        <div class="phone" style="width:300px;height:560px">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
+            <p class="t-title-3" style="margin:0">Today</p>
+            <p class="hb-sub">Tue 22 Sep · 2 habits due</p>
+            <div class="hb">
+              <div class="hb-row">
+                <div class="hb-box"></div>
+                <div class="hb-t"><span class="hb-nm">Meditate 10 minutes</span>
+                  <span class="hb-md">Every day · Morning</span></div>
+                <span class="hb-cnt">18/28</span>
+              </div>
+              <div class="hb-row">
+                <div class="hb-box full"><svg><use href="#i-check"/></svg></div>
+                <div class="hb-t"><span class="hb-nm">Walk outside</span>
+                  <span class="hb-md">Mon, Wed, Fri · Health</span></div>
+                <span class="hb-cnt">9/12</span>
+              </div>
+            </div>
+            <p class="hb-note"><b>The list.</b> Full row affordances, including Skip. This is the
+              only surface where a habit is <i>changed</i>.</p>
+          </div>
+        </div>
+        <div class="phone" style="width:300px;height:560px">
+          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4);justify-content:center">
+            <div class="hb-card">
+              <p class="hb-card-t">Today: 2 habits, 1 metric.</p>
+              <div style="margin-top:12px;display:flex;align-items:center;gap:6px;
+                font-size:14px;font-weight:600;color:var(--accent-text)">
+                Open
+                <svg class="ic ic-sm" style="stroke:currentColor;fill:none"><use href="#i-back"
+                  transform="rotate(180 12 12)"/></svg>
+              </div>
+            </div>
+            <p class="hb-note"><b>The nudge.</b> Counts only, and it opens the list. Fires once per
+              day and never repeats — its one job is not to be missed.</p>
+            <div class="hb-card" style="margin-top:8px">
+              <p class="hb-card-t" style="font-size:14px">Habits due — read-through</p>
+              <div style="margin-top:8px">
+                <div class="hb-row" style="padding:4px 0;min-height:34px;border:0">
+                  <div class="hb-box full" style="width:18px;height:18px;border-radius:5px">
+                    <svg style="width:10px;height:10px"><use href="#i-check"/></svg></div>
+                  <div class="hb-t"><span class="hb-nm" style="font-size:14px">Walk outside</span></div>
+                </div>
+              </div>
+              <p class="hb-note">In the Day view this is the same component with editing off, so the
+                day stays whole without a second implementation of checking.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>One component, three renderings: <b>list</b> (Habits · Today, editing), <b>nudge</b>
+            (the card, counts + a door), <b>read-through</b> (the Calendar Day view, no editing).
+            Skip exists in exactly one place, and it is the place built for it.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>The Day view can show a habit you cannot check, which will read as a bug the first
+            time someone taps it. The alternative — letting the Day view edit too — is what creates
+            the third implementation.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Which surface <b>owns</b> the obligation on a given day. The card fires at a learned
+            time, so before it fires it owns nothing; after it is dismissed it "does not repeat".
+            The lab shows the two can't both be the only one — but which one yields is a product
+            decision about what "the app requires" means.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
+
     <!-- V1 -->
     <article class="vc">
       <div class="vc-head">
@@ -713,80 +796,7 @@
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
-        <p class="vc-stance">Three become two: a <b>list</b>, and a <b>nudge</b> that opens it.</p>
-        <span class="vc-read">one component, three renderings, one owner</span>
-      </div>
-      <div class="vc-stage" style="display:flex;gap:16px;flex-wrap:wrap">
-        <div class="phone" style="width:300px;height:560px">
-          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4)">
-            <p class="t-title-3" style="margin:0">Today</p>
-            <p class="hb-sub">Tue 22 Sep · 2 habits due</p>
-            <div class="hb">
-              <div class="hb-row">
-                <div class="hb-box"></div>
-                <div class="hb-t"><span class="hb-nm">Meditate 10 minutes</span>
-                  <span class="hb-md">Every day · Morning</span></div>
-                <span class="hb-cnt">18/28</span>
-              </div>
-              <div class="hb-row">
-                <div class="hb-box full"><svg><use href="#i-check"/></svg></div>
-                <div class="hb-t"><span class="hb-nm">Walk outside</span>
-                  <span class="hb-md">Mon, Wed, Fri · Health</span></div>
-                <span class="hb-cnt">9/12</span>
-              </div>
-            </div>
-            <p class="hb-note"><b>The list.</b> Full row affordances, including Skip. This is the
-              only surface where a habit is <i>changed</i>.</p>
-          </div>
-        </div>
-        <div class="phone" style="width:300px;height:560px">
-          <div class="ob-body" style="padding:var(--space-5);gap:var(--space-4);justify-content:center">
-            <div class="hb-card">
-              <p class="hb-card-t">Today: 2 habits, 1 metric.</p>
-              <div style="margin-top:12px;display:flex;align-items:center;gap:6px;
-                font-size:14px;font-weight:600;color:var(--accent-text)">
-                Open
-                <svg class="ic ic-sm" style="stroke:currentColor;fill:none"><use href="#i-back"
-                  transform="rotate(180 12 12)"/></svg>
-              </div>
-            </div>
-            <p class="hb-note"><b>The nudge.</b> Counts only, and it opens the list. Fires once per
-              day and never repeats — its one job is not to be missed.</p>
-            <div class="hb-card" style="margin-top:8px">
-              <p class="hb-card-t" style="font-size:14px">Habits due — read-through</p>
-              <div style="margin-top:8px">
-                <div class="hb-row" style="padding:4px 0;min-height:34px;border:0">
-                  <div class="hb-box full" style="width:18px;height:18px;border-radius:5px">
-                    <svg style="width:10px;height:10px"><use href="#i-check"/></svg></div>
-                  <div class="hb-t"><span class="hb-nm" style="font-size:14px">Walk outside</span></div>
-                </div>
-              </div>
-              <p class="hb-note">In the Day view this is the same component with editing off, so the
-                day stays whole without a second implementation of checking.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd>One component, three renderings: <b>list</b> (Habits · Today, editing), <b>nudge</b>
-            (the card, counts + a door), <b>read-through</b> (the Calendar Day view, no editing).
-            Skip exists in exactly one place, and it is the place built for it.</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>The Day view can show a habit you cannot check, which will read as a bug the first
-            time someone taps it. The alternative — letting the Day view edit too — is what creates
-            the third implementation.</dd></div>
-        <div class="vc-line open"><dt>Still needs</dt>
-          <dd>Which surface <b>owns</b> the obligation on a given day. The card fires at a learned
-            time, so before it fires it owns nothing; after it is dismissed it "does not repeat".
-            The lab shows the two can't both be the only one — but which one yields is a product
-            decision about what "the app requires" means.</dd></div>
-      </dl>
-    </article>
+    </details>
   </div>
 
   <div class="lede">
@@ -815,6 +825,56 @@
   </div>
 
   <div class="grid">
+
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">Cells are due days. Colour answers <b>did it happen</b>; fill answers
+          <b>how much</b>.</p>
+        <span class="vc-read">two encodings, two questions · colour used once</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-5)">
+            <div class="hb-panel">
+              <p class="hb-h">Meditate 10 minutes</p>
+              <p class="hb-sub">Every day · Morning · last 28 due days</p>
+              <div class="hb-strip" id="strip-rec-daily" style="margin-top:14px"></div>
+              <div class="hb-lg" id="legend-rec"></div>
+            </div>
+            <div class="hb-panel">
+              <p class="hb-h">Walk outside, 20 minutes</p>
+              <p class="hb-sub">Mon, Wed, Fri · last 12 due days</p>
+              <div class="hb-strip" id="strip-rec-weekly" style="margin-top:14px"></div>
+            </div>
+            <p class="hb-note">Filled = it happened. Half-filled = a floor. A ring = skipped
+              deliberately, which is why it is a ring and not a colour: it is a state, not a grade.
+              Empty = the day passed. <code>success-default</code> is the only colour used, because
+              "it went well" is the only state that needs no explaining.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>The axis becomes scheduled days; the encoding splits into two questions; and the two
+            states that were a 1px ring on a light box — minimum and repair — stop being one
+            drawing. A minimum is a <b>half fill</b>, a repair is a <b>full fill in
+            <code>accent-subtle</code></b>, so they never have to be told apart by hue.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>Repairs need <code>accent-subtle</code>, which is a token that exists but is used
+            nowhere else in this module — so the chart introduces a colour the rest of Habits never
+            teaches. And strips of different widths still aren't comparable, which the previous row's
+            cost also names.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether a floor and a repair should be distinguishable <b>from each other</b> at all.
+            Both are compliance, neither is a miss, and the doc only insists that a miss is different
+            from a skip. Four visual states for a two-state question is the actual defect.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
+
     <!-- V1 -->
     <article class="vc">
       <div class="vc-head">
@@ -984,52 +1044,7 @@
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
-        <p class="vc-stance">Cells are due days. Colour answers <b>did it happen</b>; fill answers
-          <b>how much</b>.</p>
-        <span class="vc-read">two encodings, two questions · colour used once</span>
-      </div>
-      <div class="vc-stage">
-        <div class="phone">
-          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-5)">
-            <div class="hb-panel">
-              <p class="hb-h">Meditate 10 minutes</p>
-              <p class="hb-sub">Every day · Morning · last 28 due days</p>
-              <div class="hb-strip" id="strip-rec-daily" style="margin-top:14px"></div>
-              <div class="hb-lg" id="legend-rec"></div>
-            </div>
-            <div class="hb-panel">
-              <p class="hb-h">Walk outside, 20 minutes</p>
-              <p class="hb-sub">Mon, Wed, Fri · last 12 due days</p>
-              <div class="hb-strip" id="strip-rec-weekly" style="margin-top:14px"></div>
-            </div>
-            <p class="hb-note">Filled = it happened. Half-filled = a floor. A ring = skipped
-              deliberately, which is why it is a ring and not a colour: it is a state, not a grade.
-              Empty = the day passed. <code>success-default</code> is the only colour used, because
-              "it went well" is the only state that needs no explaining.</p>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd>The axis becomes scheduled days; the encoding splits into two questions; and the two
-            states that were a 1px ring on a light box — minimum and repair — stop being one
-            drawing. A minimum is a <b>half fill</b>, a repair is a <b>full fill in
-            <code>accent-subtle</code></b>, so they never have to be told apart by hue.</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>Repairs need <code>accent-subtle</code>, which is a token that exists but is used
-            nowhere else in this module — so the chart introduces a colour the rest of Habits never
-            teaches. And strips of different widths still aren't comparable, which the previous row's
-            cost also names.</dd></div>
-        <div class="vc-line open"><dt>Still needs</dt>
-          <dd>Whether a floor and a repair should be distinguishable <b>from each other</b> at all.
-            Both are compliance, neither is a miss, and the doc only insists that a miss is different
-            from a skip. Four visual states for a two-state question is the actual defect.</dd></div>
-      </dl>
-    </article>
+    </details>
   </div>
 
   <div class="lede">
@@ -1057,6 +1072,68 @@
   </div>
 
   <div class="grid">
+
+    <article class="vc ship">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">The count is right. The <b>denominator</b> is the bug, and it is a
+          computation.</p>
+        <span class="vc-read">fix the number, not the drawing</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone">
+          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-5)">
+            <p class="t-title-3" style="margin:0">History</p>
+            <div class="hb-seg"><span class="on">7 days</span><span>30 days</span><span>90 days</span><span>Custom</span></div>
+            <div class="hb">
+              <div class="hb-row">
+                <div class="hb-box"></div>
+                <div class="hb-t"><span class="hb-nm">Meditate 10 minutes</span>
+                  <span class="hb-md">Every day · Morning</span></div>
+                <span class="hb-cnt">18/28</span>
+              </div>
+              <div class="hb-row">
+                <div class="hb-box"></div>
+                <div class="hb-t"><span class="hb-nm">Walk outside</span>
+                  <span class="hb-md">Mon, Wed, Fri · Health</span></div>
+                <span class="hb-cnt">9/12</span>
+              </div>
+              <div class="hb-row">
+                <div class="hb-box"></div>
+                <div class="hb-t"><span class="hb-nm">Stretch</span>
+                  <span class="hb-md">Every day · Health · since 12 Sep</span></div>
+                <span class="hb-cnt">8/10</span>
+              </div>
+            </div>
+            <p class="hb-note">Same drawing as the baseline. The difference is entirely in
+              <code>scheduled_days</code>: the denominator is due days, capped at the window, and it
+              starts at the habit's creation. Every row now means the same thing, and
+              <code>18/28</code> is honest for a daily habit and impossible for a ten-day-old
+              one.</p>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt>
+          <dd>Nothing visual. The fix is a definition: the denominator is <b>scheduled days in the
+            window, beginning at creation</b>, which makes the chart's axis, the streak's count and
+            the fraction's denominator all the same quantity. The chart's 28 then means "28 due
+            days", which is why the previous screen's axis fix and this one are the same fix.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt>
+          <dd>A weekly habit legitimately shows <code>9/12</code> next to a daily habit's
+            <code>18/28</code>, and nobody comparing two rows will realise the windows are the same
+            length. Comparisons across habits get harder in exchange for each row being true.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt>
+          <dd>Whether <code>28</code> should be a due-day count at all, or whether the module should
+            adopt the selector's windows and drop 28. Choosing 28 because a strip has 28 cells is
+            the drawing deciding the data — and the strip's width is the least important thing
+            about it.</dd></div>
+      </dl>
+    </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
+
     <!-- V1 -->
     <article class="vc">
       <div class="vc-head">
@@ -1249,64 +1326,7 @@
       </dl>
     </article>
 
-    <!-- V5 -->
-    <article class="vc rec">
-      <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
-        <p class="vc-stance">The count is right. The <b>denominator</b> is the bug, and it is a
-          computation.</p>
-        <span class="vc-read">fix the number, not the drawing</span>
-      </div>
-      <div class="vc-stage">
-        <div class="phone">
-          <div class="ob-body" style="padding:var(--space-6) var(--space-5);gap:var(--space-5)">
-            <p class="t-title-3" style="margin:0">History</p>
-            <div class="hb-seg"><span class="on">7 days</span><span>30 days</span><span>90 days</span><span>Custom</span></div>
-            <div class="hb">
-              <div class="hb-row">
-                <div class="hb-box"></div>
-                <div class="hb-t"><span class="hb-nm">Meditate 10 minutes</span>
-                  <span class="hb-md">Every day · Morning</span></div>
-                <span class="hb-cnt">18/28</span>
-              </div>
-              <div class="hb-row">
-                <div class="hb-box"></div>
-                <div class="hb-t"><span class="hb-nm">Walk outside</span>
-                  <span class="hb-md">Mon, Wed, Fri · Health</span></div>
-                <span class="hb-cnt">9/12</span>
-              </div>
-              <div class="hb-row">
-                <div class="hb-box"></div>
-                <div class="hb-t"><span class="hb-nm">Stretch</span>
-                  <span class="hb-md">Every day · Health · since 12 Sep</span></div>
-                <span class="hb-cnt">8/10</span>
-              </div>
-            </div>
-            <p class="hb-note">Same drawing as the baseline. The difference is entirely in
-              <code>scheduled_days</code>: the denominator is due days, capped at the window, and it
-              starts at the habit's creation. Every row now means the same thing, and
-              <code>18/28</code> is honest for a daily habit and impossible for a ten-day-old
-              one.</p>
-          </div>
-        </div>
-      </div>
-      <dl class="vc-foot">
-        <div class="vc-line"><dt>Changed</dt>
-          <dd>Nothing visual. The fix is a definition: the denominator is <b>scheduled days in the
-            window, beginning at creation</b>, which makes the chart's axis, the streak's count and
-            the fraction's denominator all the same quantity. The chart's 28 then means "28 due
-            days", which is why the previous screen's axis fix and this one are the same fix.</dd></div>
-        <div class="vc-line cost"><dt>Cost</dt>
-          <dd>A weekly habit legitimately shows <code>9/12</code> next to a daily habit's
-            <code>18/28</code>, and nobody comparing two rows will realise the windows are the same
-            length. Comparisons across habits get harder in exchange for each row being true.</dd></div>
-        <div class="vc-line open"><dt>Still needs</dt>
-          <dd>Whether <code>28</code> should be a due-day count at all, or whether the module should
-            adopt the selector's windows and drop 28. Choosing 28 because a strip has 28 cells is
-            the drawing deciding the data — and the strip's width is the least important thing
-            about it.</dd></div>
-      </dl>
-    </article>
+    </details>
   </div>
 
   <div class="lede">
