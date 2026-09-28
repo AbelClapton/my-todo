@@ -65,7 +65,10 @@ native `<details>` whose summary says how many there were. **The fold is not
 deletion**: a comparison's job is to show the options that lost, so a row that was
 not adopted keeps its reasoning, its `vc-read` line says `not adopted`, and its
 third line becomes `Set aside`. Exactly one row per screen carries the badge, and
-the folds are closed on load — a reader who wants the argument opens it.
+the folds are closed on load — a reader who wants the argument opens it. A screen
+that carried a cross-cutting summary of its comparison (the Premise's "what the
+four agree on") folds that in with them, because it is about the variations rather
+than about the row that ships.
 
 Because the token set is closed, no lens can move type or colour. That is not a
 limitation of the exercise — it is the token set working as intended, and it is
