@@ -149,6 +149,26 @@ decided. `design/tasks-lab.html` ("The detail") derives one and measures
 it at **40px** (`control-md`), with the three temporal fields grouped and
 each carrying its own meaning as a caption.
 
+**The rail holds the fields that are not set.** Drawn and measured in the
+detail-filled screen of `design/tasks-lab.html`: the facts a task *has* are
+rows, and the fields it does **not** have are a rail of **unlabelled
+slots** under the header — one glyph per absent field, drawn from the
+inventory's own set, tapping which opens that field's picker (ADR 0029).
+It replaces the row that announces an empty field: drawn that way, a
+half-filled task spent **four of its seven rows** saying *Not set*. The
+alternative — a chip carrying the glyph *and* the word — is the form
+`03-experience/components.md` permitted without a decision, and it measures
+**335px** of a 340px column against the rail's **168px**, leaving **5px**
+of headroom where the rail leaves 172. The rail is therefore the one thing
+on this screen that exists because of a measurement rather than a rule.
+
+**Open: the slot's height.** Drawn at 36px it resolves to no control
+token — `control-sm` is 32 and `control-md` is 40 — and `touch-min`'s 44 is
+a **hit area**, not a height ("padding or a transparent hit area fills the
+difference", `03-experience/design-tokens.md`). So the slot has to be told
+which token it is, and `control-md` with a padded hit area is the
+proposal (ADR 0029).
+
 **Open: what the hour control is.** Every control the set gives for
 putting a task on a day is **day-granular** — this screen's action is
 *"Schedule to day"*, which *"opens date picker"*, and the defer sheet's

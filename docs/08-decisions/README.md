@@ -22,7 +22,7 @@ number. Two existing examples: ADR 0016 amends ADR 0011's note mapping,
 and ADR 0019 records a decision ADR 0005's shape would have used.
 
 **Numbering.** Sequential, four digits, never reused. The next one is
-**0029**.
+**0030**.
 
 ## The index
 
@@ -56,6 +56,7 @@ and ADR 0019 records a decision ADR 0005's shape would have used.
 | 0026 | **An all-day event is a fact, not a heuristic.** `all_day: boolean` added to the Event, with `calendar.created`/`calendar.updated`/`calendar.mirrored` gaining it (`raw` unchanged). A genuine 24-hour timed event stays on the axis; an all-day item goes in the band. **The band's membership rule, stated once:** events that occupy the day rather than a moment in it — all-day, or spanning two or more Days — which replaces the Week's "the one part only this view can draw". Whether the untimed obligations (habits due, the metric row, an untimed task) join that band is **deliberately left open**. Records, without resolving, what a missing `end` means. |
 | 0027 | **A Day records the boundary that framed it.** `day.opened` gains `boundary_hour: 0 \| 3 \| 4 \| 5`, so the two settings that fix a Day at its open are treated alike instead of one being pinned and the other inferred from `system.settings_changed` — which is unavailable on a replica holding no `sync: false` entries (ADR 0008). Carries a permanent replay obligation for pre-existing entries, in the shape ADR 0012 set for `day.note_created`. The Day view's axis is what made it drawable rather than derivable. |
 | 0028 | **The four scopes partition the open tasks.** **Next** becomes the complement — everything open that Today and Someday do not hold — instead of a filter on `priority`, so every open task is in exactly one scope. Today gains **due today or earlier** as a third source, which three docs already assumed (`resurfacing.md`, `disruption.md`, ADR 0006) and the doc's own Today example contradicted. `priority` stops being a scope key and keeps only the row's dot and All's second sort. Measured before the change: of twelve realistic tasks, **5 were in no scope** and **1 in two**, and `priority: later` was claimed by none. Records, without settling, what happens to a `someday` task that has a due date. |
+| 0029 | **An unlabelled slot exists.** `components.md` allowed a glyph to mark a slot only when the slot was **labelled** (the protocol card's Goal and Metric), and icon-only buttons only for the mode icons, justified by a tooltip a phone cannot deliver. A reference design drew the fields a task *lacks* as icon-only slots; the lab drew five readings of it and measured them. The rule-clean form — glyph **and** word in a chip — costs **335px** of a 340px column with **5px of headroom**; the bare glyphs cost **168px** with 172px. So the decision was taken on the measurement: an unlabelled slot now exists, under four conditions (it marks a field that is **not set**, uses the inventory's own glyph at `icon-sm`, at most four in a fixed order each opening that field's picker, and is drawn as a slot rather than a labelled control). `paperclip` widens from the note *count* to the note *relation*. Records two unresolved things: a slot height of 36px resolves to no control token, and a rail whose length varies has less of the fixed-position learnability that makes unlabelled glyphs work. |
 
 ## Decisions with no ADR
 

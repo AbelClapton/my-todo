@@ -181,6 +181,44 @@
 .tk-lrow .tk-hh { flex: none; width: 44px; text-align: left; }
 .tk-lrow .ttl { font-size: 15px; color: var(--text-secondary); min-width: 0;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ------------------------------------------------------ the detail, filled
+   The screen above laid out nine fields for a task that has all nine. This one
+   holds every other variable still — same task, same four children, expanded in
+   all five variants — and changes only how a **missing** field is drawn, because a
+   task is captured with a title and its fields arrive over days. The form is the
+   one thing in this lab taken from a reference rather than from a doc: a row for
+   what is there, an offer for what is not. */
+.tk-rail { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 0 2px; }
+/* In the header the rail is a flex child of the title row, where the default `flex-shrink: 1`
+   squeezed its box to 105px while its four slots still needed 168px — so the slots overflowed
+   the rail's own box. In the body it is under `.ob-body > *`, which already gives `flex: none`. */
+.tk-rail.flat { padding: 0; flex: none; }
+.tk-slot { display: flex; align-items: center; justify-content: center; gap: 6px;
+  min-width: 36px; height: 36px; padding: 0 9px; box-sizing: border-box;
+  border-radius: 10px; background: var(--surface-2); color: var(--text-muted);
+  font-size: 13px; line-height: 18px; white-space: nowrap; }
+.tk-slot svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
+  stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+/* the title line's own rail: the reference's position, at no vertical cost */
+.tk-hdtitle { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden;
+  text-overflow: ellipsis; }
+
+/* the children, expanded — where a sub-task's fraction comes from at all */
+.tk-gh { display: flex; align-items: baseline; gap: var(--space-3); padding: 12px 0 2px; }
+.tk-gh .l { font-size: 11px; letter-spacing: var(--type-caption-track);
+  text-transform: uppercase; color: var(--text-muted); }
+.tk-gh .n { font-size: 12px; line-height: 16px; color: var(--text-secondary);
+  font-variant-numeric: tabular-nums; }
+.tk-kid { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 10px;
+  align-items: center; min-height: 32px; }
+.tk-kid .n { font-size: 15px; color: var(--text-primary); min-width: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tk-kid .n.done { color: var(--text-muted); }
+
+/* the one word the no-rail variant leaves, in the shape the detail's actions use */
+.tk-add { display: flex; align-items: center; min-height: 44px; margin-top: 10px;
+  border-top: 1px solid var(--border-subtle); font-size: 13px; color: var(--accent-text); }
 </style>
 </head>
 <body>
@@ -192,6 +230,13 @@
   <symbol id="i-mode-notes" viewBox="0 0 24 24"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
   <symbol id="i-filter" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M7 12h10"/><path d="M10 18h4"/></symbol>
+  <!-- `i-back` was used by the detail screen's header and never defined in this file.
+       An undefined <use> draws nothing and reports nothing, so it went unseen until
+       this screen was added. It is defined here with the rest of the rail's glyphs. -->
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+  <symbol id="i-paperclip" viewBox="0 0 24 24"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></symbol>
 </svg>
 
 <header class="masthead">
@@ -210,6 +255,12 @@
     <code>tasks.md</code> §The task row lists <b>four</b> time facts as chips with a <b>cap of two</b>
     and a stated priority order. A fifth fact has no chip, no place in that order, and no drawing.
   </p>
+  <p class="lede-p">
+    A sixth screen was added after the fact, and from outside the doc set: two reference designs
+    for a task app were shown to this lab, and one of them draws the fields a task <i>doesn't</i>
+    have as icons you tap, which become chips once you have filled them in. That is a claim about
+    the detail screen, so it is measured here rather than argued about.
+  </p>
 </header>
 
 <div class="bar">
@@ -219,6 +270,7 @@
     <button class="tab" data-go="defer">The defer sheet</button>
     <button class="tab" data-go="scopes">The four scopes</button>
     <button class="tab" data-go="log">The completion log</button>
+    <button class="tab" data-go="fill">The detail, filled</button>
   </nav>
 </div>
 
@@ -827,6 +879,222 @@
     <h2 class="t-title-2">The measurement</h2>
     <div class="panel" style="margin-top:var(--space-5)">
       <div class="measure" id="measure-detail">…</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================= THE DETAIL, FILLED -->
+<section class="screen" id="fill" hidden>
+  <div class="lede">
+    <h2 class="t-title-2">The detail, filled</h2>
+    <p class="lede-p">
+      The screen above answered where the nine fields go. It answered it for a task that has all
+      nine — and <b>that is the case a detail screen spends least of its life in</b>. A task is
+      captured with a title and nothing else; the fields arrive one at a time, over days. So the
+      common detail is a mostly-empty one, and the question here is the one the screen above never
+      had to ask: <b>what does a detail look like when half the fields are not set?</b>
+    </p>
+    <p class="lede-p">
+      The form below is the only thing in this lab taken from a <b>reference</b> rather than from a
+      doc: a task card that draws the fields it does <i>not</i> have as icons on the trailing edge,
+      which open a picker and become a chip once filled. Five readings of it, and every other
+      variable is held still — the same task, the same four children expanded in all five — so the
+      single thing that changes is how a <i>missing</i> field is drawn. The task is the one from the
+      screen above, <b>before</b> it was filled in.
+    </p>
+    <p class="lede-p">
+      One form in it needed a <b>decision</b> rather than a doc. <code>03-experience/components.md</code>'s
+      placement table already allowed a glyph to <i>mark a slot</i> — the protocol card's Goal and
+      Metric do exactly that — but every slot it carried was <b>labelled</b>, and icon-only buttons
+      were allowed <b>only for the unlabelled mode icons</b>, on the strength of a tooltip that a
+      phone does not have. Measurement is what made the question unavoidable: the same four fields
+      cost <b>168px as glyphs and 335px as words</b>, and the worded form fits the 340px column with
+      <b>5px to spare</b>. That trade is <b>ADR 0029</b>, and the recommended row below is drawn under
+      it. The children are the second question: they are the only place a sub-task's fraction can be
+      seen at all, and <code>05-modules/habits.md</code> has already decided how the app says a
+      fraction — <i>"counts, not percent, because counts are honest."</i>
+    </p>
+  </div>
+
+  <div class="grid" id="fill-grid">
+
+    <!-- ---------------------------------------------------------- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The screen above's answer, on the same task before it was filled in: the fields it lacks are rows too.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-back"/></svg>
+              <span class="tk-title">Call the contractor about the fence</span>
+            </div>
+            <div class="ob-body scroll" style="padding:var(--space-5) var(--space-7);gap:0">
+              <div class="tk-fill" data-mode="baseline"></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>Nothing about the layout — this is the screen above's recommended answer, redrawn with the task <b>before</b> it was filled in. Seven rows, and the four fields it does not have are rows as well, each saying <i>Not set</i>.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd><b>Four of the seven rows exist only to say the task is not something.</b> Reading down, <i>Not set</i> appears four times and a date once, so the emptiness is the loudest thing on the screen and the user cannot tell what the task <i>has</i> without reading every row. It also draws a half-filled task and a full one at the same length, which is the opposite of what the eye needs: the screen gets no shorter as the task gets thinner.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>None, and it is the only variant here with no charge against it. Everything on it is in the doc: the nine fields, the When · Where · What grouping, and a muted value for an empty one. That is the point of a control arm — the argument against it is the cost line, not a rule.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ---------------------------------------------------------- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">The inversion in words: a row for what the task has, a chip carrying a glyph and a word for what it does not.</p>
+        <span class="vc-read">impeccable · operate<br>the form the placement table already permits</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-back"/></svg>
+              <span class="tk-title">Call the contractor about the fence</span>
+            </div>
+            <div class="ob-body scroll" style="padding:var(--space-5) var(--space-7);gap:0">
+              <div class="tk-fill" data-mode="words"></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd><b>The empty fields stop being rows.</b> What the task has is three rows; what it does not have is four chips, each carrying the glyph the inventory gives that field next to the word that names it — and the glyph is the only label, which is a placement <code>components.md</code> did not carry until this screen asked for it.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd><b>Width, and there is no headroom left.</b> The rail measures <b>335px</b> against the glyph rail's <b>168px</b>, which is <b>99%</b> of the column: it fits on one row with <b>5px to spare</b>, and only because <i>Schedule · Defer · Person · Note</i> are all short. One longer word and it wraps to a second row — which is the height the inversion was for.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>None. Every part is in the table already: the glyph sits <b>inside a chip</b>, the chip is in the chip vocabulary, and no control height is invented. That makes this the <i>rule-clean</i> answer rather than the better one — and the only thing wrong with it is the measurement above.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ---------------------------------------------------------- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Apple design</span>
+        <p class="vc-stance">State goes on the row it belongs to: the rail sits on the title line and costs no vertical space at all.</p>
+        <span class="vc-read">apple-design<br>the rail is what this task is, so it sits with its name</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-back"/></svg>
+              <span class="tk-title tk-hdtitle">Call the contractor about the fence</span>
+              <div class="tk-rail flat">
+                <span class="tk-slot"><svg><use href="#i-calendar"/></svg></span>
+                <span class="tk-slot"><svg><use href="#i-clock"/></svg></span>
+                <span class="tk-slot"><svg><use href="#i-user"/></svg></span>
+                <span class="tk-slot"><svg><use href="#i-paperclip"/></svg></span>
+              </div>
+            </div>
+            <div class="ob-body scroll" style="padding:var(--space-5) var(--space-7);gap:0">
+              <div class="tk-fill" data-mode="title"></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>The rail moves <b>onto the title line</b>, right-aligned — where the reference itself puts it, and the only position that costs nothing vertically. The body is then nothing but facts and children.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd>The title line is the one line that must never be squeezed, and this puts the whole rail on it: <b>168px</b> of the line, leaving the title <b>128px</b> against the 307px this title needs. It also cannot be reduced — see the measurement; the rail is already at its minimum — so the squeeze is structural rather than a tuning problem.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>Two. The placement the recommended row needed — a glyph marking an <b>unlabelled</b> slot (ADR 0029) — <b>and</b> a slot height that resolves to no token: <code>03-experience/design-tokens.md</code> gives four control heights, 24 · 32 · 40 · 48, and <code>touch-min</code> is <b>44</b>, which is not one of them. And the cost of this position is measured below: the rail keeps <b>168px</b> of the title line and the title gets <b>128px of the 307 it needs</b> — <b>42%</b>, so it truncates. That is the same squeeze the list row's chip cap exists to prevent, moved one level up, where the casualty is the task's own name.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ---------------------------------------------------------- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">Remove the accessory: nothing is drawn for what is missing, and one word stands for all four.</p>
+        <span class="vc-read">design-taste<br>the rail is the accessory — take it out</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-back"/></svg>
+              <span class="tk-title">Call the contractor about the fence</span>
+            </div>
+            <div class="ob-body scroll" style="padding:var(--space-5) var(--space-7);gap:0">
+              <div class="tk-fill" data-mode="none"></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>No rail. The screen is the three facts and the children, and the four missing fields are <b>one word at the foot</b> — <i>Add…</i> — opening the same four pickers. Nothing on the screen is drawn for a field that does not exist.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd><b>The app's own emptiness becomes invisible.</b> A user cannot see that a task <i>could</i> hold a due date, so the reference's whole value — the offers <i>are</i> the affordance — is spent to save 36px. It also puts the only route to the four commonest fields below everything else, which is where it is found last or not at all.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>None. No component, no glyph, no new placement: one word, in the pattern the detail's own action row already uses. It and the worded rail above are the only two variants that break nothing, and they are the two that put <b>words</b> on the screen.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ------------------------------------------------ recommended --- -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">The inversion with the placement decided: four glyphs mark four empty slots under the header, a row for each fact, and the children inline.</p>
+        <span class="vc-read">impeccable's inversion + the reference's own position + ADR 0029</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-back"/></svg>
+              <span class="tk-title">Call the contractor about the fence</span>
+            </div>
+            <div class="ob-body scroll" style="padding:var(--space-5) var(--space-7);gap:0">
+              <div class="tk-fill" data-mode="rec"></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Takes</dt><dd><b>Impeccable</b> for the inversion, which is the whole idea — a row for a fact, an offer for an absence. <b>The reference</b> for the position: the rail sits under the header, where it is read before the facts and reached without scrolling, and <b>not</b> on the title line, which leaves the title 42% of the width it needs. <b>Design taste</b> for drawing nothing at all for a field the task already has — only the absent ones get a slot.</dd></div>
+        <div class="vc-line cost"><dt>Fixes</dt><dd>The rail is <b>168px</b> for the same four fields the worded form spends <b>335px</b> on — 172px of headroom on the line instead of 5 — and every slot is a glyph the inventory already draws for that field at <code>icon-sm</code>, so none is invented. The placement it needs is <b>ADR 0029</b>: the one row this screen adds to the placement table, and the only reason the worded form was the recommendation. The children are inline under a group header carrying <b>the fraction</b>, and it is a fraction and not a ring: a ring is a container the vocabulary does not have, it borrows the shape of the undo toast's countdown, and it can read 100% on a task that is still open.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt><dd>Four things this row cannot decide. <b>One, and it is the real one:</b> whether a <i>child</i> is an open task. ADR 0028 says the four scopes partition the open tasks, and nothing in the set says whether children are in that set — if they are, every list grows by the number of children; if they are not, that sentence is about top-level tasks and does not say so. <b>Two:</b> what finishing the last child does; a parent whose children are all done can read <code>4/4</code> and still be open. <b>Three:</b> a slot's height — 36px is between <code>control-sm</code> and <code>control-md</code>, and <code>touch-min</code>'s 44 is a hit area rather than a height, so the slot has to be told which token it is. <b>Four:</b> the rail holds the fields <i>this</i> task lacks, so its length varies — and a rail that changes length loses the fixed-position learnability that makes the mode icons work at all.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-2">The measurement</h2>
+    <div class="panel" style="margin-top:var(--space-5)">
+      <div class="measure" id="measure-fill">…</div>
     </div>
   </div>
 </section>
@@ -1484,7 +1752,7 @@
 (function () {
   'use strict';
 
-  var screens = ['list', 'detail', 'defer', 'scopes', 'log'];
+  var screens = ['list', 'detail', 'defer', 'scopes', 'log', 'fill'];
   var seen = {};
   var tabs = document.getElementById('tabs');
 
@@ -2104,9 +2372,211 @@
     ].join('');
   }
 
+  function measureFill() {
+    var host = document.getElementById('measure-fill');
+    if (!host) return;
+    var vcs = [].slice.call(document.querySelectorAll('#fill-grid .vc'));
+    if (!vcs.length) return;
+    var base = vcs[0], words = vcs[1], titled = vcs[2], rec = vcs[vcs.length - 1];
+
+    var row = rec.querySelector('.tk-f');
+    var rowH = row ? Math.round(row.getBoundingClientRect().height) : 0;
+
+    // The slot as drawn, against the minimum touch target — and the rail it makes,
+    // which is the same kind of quantity the chip cap is a measurement of.
+    var slot = rec.querySelector('.tk-slot');
+    var slotH = slot ? Math.round(slot.getBoundingClientRect().height) : 0;
+    // A flex box reports the *container's* width, not its content's — the first run of
+    // this measurement read 340px for the glyph rail and 340px for the worded one, the
+    // same number twice. So the rail's width is the sum of its slots plus their gaps.
+    function railW(el) {
+      if (!el) return 0;
+      var ks = [].slice.call(el.children);
+      if (!ks.length) return 0;
+      var gap = parseFloat(getComputedStyle(el).columnGap) || 0;
+      return Math.round(ks.reduce(function (n, k) {
+        return n + k.getBoundingClientRect().width;
+      }, 0) + gap * (ks.length - 1));
+    }
+    function railRows(el) {
+      if (!el) return 0;
+      var tops = [].slice.call(el.children).map(function (k) {
+        return Math.round(k.getBoundingClientRect().top);
+      });
+      return tops.filter(function (t, i) { return tops.indexOf(t) === i; }).length;
+    }
+    // The recommended rail is the glyph one; the variant above it keeps the words.
+    var glyphRail = rec.querySelector('.tk-rail');
+    var gW = railW(glyphRail);
+    var gH = glyphRail ? Math.round(glyphRail.getBoundingClientRect().height) : 0;
+    var wordRail = words.querySelector('.tk-rail');
+    var rW = railW(wordRail);
+    var rRows = railRows(wordRail);
+    // The rail is a flex box, so its own box *is* the line it has to fit on.
+    var cW = glyphRail ? Math.round(glyphRail.getBoundingClientRect().width) : 0;
+
+    // What the inversion saves on the same task: the baseline draws the four fields
+    // it lacks as rows, and the recommended draws them as offers.
+    var baseRows = base.querySelectorAll('.tk-f').length;
+    var notSet = base.querySelectorAll('.tk-fv.empty').length;
+    function contentH(vc) {
+      var first = vc.querySelector('.tk-f, .tk-rail, .tk-add');
+      var all = [].slice.call(vc.querySelectorAll('.tk-f, .tk-kid, .tk-rail, .tk-add'));
+      if (!first || !all.length) return 0;
+      var last = all[all.length - 1];
+      return Math.round(last.getBoundingClientRect().bottom -
+        first.getBoundingClientRect().top);
+    }
+    var baseH = contentH(base), recH = contentH(rec);
+
+    // Facts above the fold, so the children's cost is stated against the frame.
+    function above(vc) {
+      var body = vc.querySelector('.ob-body');
+      if (!body) return 0;
+      var fold = body.getBoundingClientRect().top + body.clientHeight;
+      return [].slice.call(vc.querySelectorAll('.tk-f, .tk-kid'))
+        .filter(function (x) { return x.getBoundingClientRect().bottom <= fold + 1; }).length;
+    }
+    var baseAbove = above(base), recAbove = above(rec);
+
+    // The children — constant in all five, and the only place a fraction is visible.
+    var kidEls = rec.querySelectorAll('.tk-kid');
+    var kidsH = 0;
+    if (kidEls.length) {
+      kidsH = Math.round(kidEls[kidEls.length - 1].getBoundingClientRect().bottom -
+        kidEls[0].getBoundingClientRect().top);
+    }
+
+    // The title line the third variant spends on the rail — the rail's own width, and
+    // what is left of the title against the width the title actually needs.
+    var head = titled.querySelector('.day-head');
+    var titleEl = titled.querySelector('.tk-hdtitle');
+    var headRail = titled.querySelector('.day-head .tk-rail');
+    // The header's *content* width. `clientWidth` includes the header's own padding, and
+    // quoting that as "the line" makes the rail look like it leaves 220px for a 128px title.
+    var headW = 0;
+    if (head) {
+      var hcs = getComputedStyle(head);
+      headW = Math.round(head.clientWidth - parseFloat(hcs.paddingLeft) -
+        parseFloat(hcs.paddingRight));
+    }
+    var titleW = titleEl ? Math.round(titleEl.clientWidth) : 0;
+    var titleNeed = titleEl ? Math.round(titleEl.scrollWidth) : 0;
+    var headRailW = headRail ? railW(headRail) : 0;
+
+    host.innerHTML = [
+      '<div><span class="n">' + rowH + 'px</span>' +
+        '<span class="l">a field row, against control-md (40px) — the unit the baseline spends on a field it does not have</span></div>',
+      '<div><span class="n">' + slotH + 'px</span>' +
+        '<span class="l">a slot as drawn, against touch-min (44px) — 36 is between control-sm (32) and control-md (40), so it is no control height at all</span></div>',
+      '<div><span class="n">' + gW + 'px</span>' +
+        '<span class="l">the rail as four bare glyphs, in one ' + gH + 'px row \u2014 ' +
+        (gW + 8) + 'px of interactive span, because 36px slots with 8px gaps put their 44px hit areas exactly edge to edge, so nothing here can be tightened</span></div>',
+      '<div><span class="n">' + rW + 'px</span>' +
+        '<span class="l">the same four fields in words: ' +
+        (gW ? Math.round(rW / gW * 100) + '% of the glyph rail \u00b7 ' : '') +
+        Math.round(rW / cW * 100) + '% of the ' + cW + 'px line, ' +
+        (rRows === 1 ? 'still one row' : rRows + ' rows') +
+        ' \u2014 fitting only because all four words are short</span></div>',
+      '<div><span class="n">' + baseRows + ' / ' + notSet + '</span>' +
+        '<span class="l">rows the baseline draws, and how many of them exist only to say "Not set"</span></div>',
+      '<div><span class="n">' + baseH + ' vs ' + recH + 'px</span>' +
+        '<span class="l">the same task\u2019s content, with rows for the missing fields against offers for them</span></div>',
+      '<div><span class="n">' + baseAbove + ' vs ' + recAbove + '</span>' +
+        '<span class="l">facts drawn above the fold in either form \u2014 nothing falls below it in either, so what the inversion saves is length and not reach (' +
+        kidEls.length + ' children, ' + kidsH + 'px)</span></div>',
+      '<div><span class="n">' + titleW + ' of ' + titleNeed + 'px</span>' +
+        '<span class="l">the title’s line once the rail takes it \u2014 ' +
+        (titleNeed ? Math.round(titleW / titleNeed * 100) + '% of the width it needs, so it truncates; ' : '') +
+        'the line is ' + headW + 'px of content and the rail keeps ' + headRailW + ' of it</span></div>'
+    ].join('');
+  }
+
+  // --------------------------------------------------------- the detail, filled
+  // The screen above drew this task with all nine fields set. Half-filled is the
+  // common case, so this screen changes one variable and holds the rest still: the
+  // same task, the same four children expanded in every variant, and only the
+  // representation of a *missing* field differs. Four fields are missing here —
+  // scheduled, defer, people, notes — and the inventory already gives each of them a
+  // glyph: `calendar` (a date you owe something by), `clock` (a moment), `user` (a
+  // linked person), `paperclip` (the note count). No fifth glyph is invented.
+  var KIDS = [
+    { n: 'Measure both runs', done: true },
+    { n: 'Get a second quote' },
+    { n: 'Ask about the gate' },
+    { n: 'Book a date' }
+  ];
+
+  var EMPTY_FIELDS = [
+    { w: 'Schedule', i: 'i-calendar' },
+    { w: 'Defer',    i: 'i-clock' },
+    { w: 'Person',   i: 'i-user' },
+    { w: 'Note',     i: 'i-paperclip' }
+  ];
+
+  // The children are real checkboxes at `control-xs`, which is what the Controls
+  // table gives "[c]heckbox (task, habit)" — so a child is drawn as a task's own
+  // checkbox and not as a smaller one. The fraction on the group header is the
+  // habit row's `18/28`, and not a ring.
+  // The tick is emitted only when the box is checked: `.tk-box svg` strokes with
+  // `currentColor`, and only `.done` sets that to `on-fill` — so an unconditional
+  // tick draws a dark check inside every empty box.
+  function kids() {
+    var done = KIDS.filter(function (k) { return k.done; }).length;
+    return '<div class="tk-gh"><span class="l">Subtasks</span>' +
+      '<span class="n">' + done + '/' + KIDS.length + '</span></div>' +
+      KIDS.map(function (k) {
+        return '<div class="tk-kid">' +
+          '<span class="tk-box' + (k.done ? ' done' : '') + '">' +
+          (k.done ? '<svg><use href="#i-check"/></svg>' : '') + '</span>' +
+          '<span class="n' + (k.done ? ' done' : '') + '">' + k.n + '</span></div>';
+      }).join('');
+  }
+
+  function rail(withWords) {
+    return '<div class="tk-rail">' + EMPTY_FIELDS.map(function (e) {
+      return '<span class="tk-slot"><svg><use href="#' + e.i + '"/></svg>' +
+        (withWords ? e.w : '') + '</span>';
+    }).join('') + '</div>';
+  }
+
+  // The three fields the task *does* have, in the grouping the screen above
+  // recommends: When (due, priority), Where (area).
+  var HAS = '<p class="tk-gt">When</p>' + field('Due', 'Fri 25 Sep') +
+    field('Priority', 'Next') + '<p class="tk-gt">Where</p>' + field('Area', 'Home');
+
+  var FILL = {
+    // The screen above's answer, on a task that has four of its nine fields. Every
+    // empty field is still a row, and the row says so.
+    baseline: function () {
+      return '<p class="tk-gt">When</p>' +
+        field('Scheduled', '') + field('Due', 'Fri 25 Sep') + field('Defer', '') +
+        field('Priority', 'Next') +
+        '<p class="tk-gt">Where</p>' + field('Area', 'Home') + field('People', '') +
+        '<p class="tk-gt">What</p>' + field('Notes', '') + kids();
+    },
+    // ADR 0029: the slot is the offer, it is unlabelled, and it is 168px where the same
+    // four fields in words are 335px.
+    rec: function () { return rail(false) + HAS + kids(); },
+    // The same rail with the words kept — the form the placement table permitted before
+    // ADR 0029, and the one the width measurement then argued against.
+    words: function () { return rail(true) + HAS + kids(); },
+    // The same rail on the title line instead, so the body is only facts.
+    title: function () { return HAS + kids(); },
+    // No rail, and one word standing for all four.
+    none: function () { return HAS + kids() + '<div class="tk-add">Add\u2026</div>'; }
+  };
+
+  function renderFill() {
+    [].slice.call(document.querySelectorAll('.tk-fill')).forEach(function (el) {
+      var mode = el.dataset.mode;
+      if (FILL[mode]) el.innerHTML = FILL[mode]();
+    });
+  }
+
   var MEASURE = {
     list: measureList, detail: measureDetail, defer: measureSheet,
-    scopes: measureScopes, log: measureLog
+    scopes: measureScopes, log: measureLog, fill: measureFill
   };
 
   // The default screen has no `hidden`, so its measurement runs at load rather than
@@ -2116,6 +2586,7 @@
   renderBehind();
   renderScopes();
   renderLog();
+  renderFill();
   setTimeout(function () { seen.list = true; measureList(); }, 0);
 })();
 </script>

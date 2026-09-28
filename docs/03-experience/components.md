@@ -157,13 +157,17 @@ accent sweep).
 | Leading a list row | **No** | It pushes the checkbox inward and breaks that column's alignment down the list — the one thing a list relies on for scanning — and a neutral glyph beside a word that already reads "Work" is the same information twice |
 | Inside a chip | Yes, `icon-xs` | Glyph and word each carry the meaning, so neither has to be learned alone |
 | On a labelled slot in a protocol card (Goal, Metric) | Yes, `icon-sm`, `text-muted` | The label is a fixed word repeating on every card of its kind, so the glyph marks a *slot* rather than duplicating a value |
-| Rail and dock items, icon-only buttons | Yes, `icon-md` | There is no word to sit beside — the glyph is the label, and the rail carries a tooltip (only the unlabelled mode icons qualify) |
+| On an **unlabelled** slot in a task detail — the absent-field rail | Yes, `icon-sm`, `text-muted` | The slot has nothing to sit beside by definition: the field is not set, so a word would have to name a value that does not exist. At most four, always in the same order, and each opens that field's picker — so unlike the mode icons it needs no tooltip, because tapping it answers the question it raises (ADR 0029) |
+| Rail and dock items, icon-only buttons | Yes, `icon-md` | There is no word to sit beside — the glyph is the label, and the rail carries a tooltip (in the rail and dock, only the unlabelled mode icons qualify) |
 | Above an empty state's headline | **No** | The headline already orients, so a neutral glyph is decoration and a meaningful one duplicates the action below it (`03-experience/states.md`) |
 | As ornament on a card, banner, or screen | **No** | A glyph that marks nothing would be the only ornament in the app |
 
 **Two rules.** An icon belongs where a **word** belongs, not where the
 **row** begins. And a glyph either **replaces** a word or **marks a slot** —
-it never repeats a word already on the line.
+it never repeats a word already on the line. A slot that marks a field with no
+value has no word to replace or sit beside, so it may be **unlabelled**; the two
+placements where that is allowed, and the conditions on each, are the protocol
+card's labelled slots and the task detail's absent-field rail (ADR 0029).
 
 **The inventory.** Thirteen glyphs. Nothing outside this table is drawn,
 and no surface adds one locally.
@@ -179,7 +183,7 @@ and no surface adds one locally.
 | `timer` | `icon-xs` | A span: an estimated or logged duration |
 | `repeat` | `icon-xs` | A recurrence: a cadence |
 | `user` | `icon-xs` | A linked person |
-| `paperclip` | `icon-xs` | The note count in a task row's metadata line |
+| `paperclip` | `icon-xs` | The note count in a task row's metadata line — and, at `icon-sm`, the notes slot in a task detail's rail, where it offers a note rather than counting one (ADR 0029) |
 | `check` | `icon-xs` | Completion — the tick inside a checked checkbox, drawn in `on-fill` on the accent |
 | `target` | `icon-sm` | The Goal slot in a protocol card |
 | `activity` | `icon-sm` | The Metric slot in a protocol card |
