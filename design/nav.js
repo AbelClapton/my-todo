@@ -148,9 +148,11 @@
     '.p-export button:hover { background: var(--surface-2, #F4F4F5); }',
     '.p-export button small { display: block; margin-top: 2px;',
     '  font-size: var(--type-caption-size, 12px); color: var(--text-muted, #71717A); }',
-    '.p-json { width: min(600px, calc(100vw - 32px)); }',
-    '.p-json .psave { display: block; margin: 0 0 var(--space-3, 12px); }',
-    '.p-json textarea { width: 100%; height: 230px; box-sizing: border-box; resize: vertical;',
+    '.p-menu .mfoot .mlab ~ .mlab { margin-top: var(--space-3, 12px); }',
+    '.p-json, .p-import { width: min(600px, calc(100vw - 32px)); }',
+    '.p-json .psave, .p-import .psave { display: block; margin: 0 0 var(--space-3, 12px); }',
+    '.psave.is-bad { color: var(--warning-text, #B45309); }',
+    '.p-json textarea, .p-import textarea { width: 100%; height: 230px; box-sizing: border-box; resize: vertical;',
     '  font-family: var(--font-mono, ui-monospace, Menlo, monospace); font-size: 11px;',
     '  line-height: 1.5; padding: var(--space-3, 12px); border: 1px solid var(--border-default, #E4E4E7);',
     '  border-radius: var(--radius-md, 8px); background: var(--surface-2, #F4F4F5);',
@@ -172,7 +174,7 @@
     // bar a reader needs to keep their place, so it is the last to go and it
     // ellipsises rather than vanishing.
     '@media (max-width: 700px) { .btxt { display: none; } }',
-    '@media (max-width: 620px) { #nav-export { display: none; } }',
+    '@media (max-width: 620px) { #nav-export, #nav-import { display: none; } }',
     '@media (max-width: 560px) { #nav-chk { display: none; } }',
     '@media (max-width: 460px) { .navtitle { display: none; } }'
   ].join('\n');
@@ -242,6 +244,7 @@
     { group: 'Foundation', name: 'Palette',       file: 'palette-lab.html' },
     { group: 'Foundation', name: 'Onboarding',    file: 'onboarding-lab.html' },
     { group: 'Modules',    name: 'Calendar',      file: 'calendar-lab.html' },
+    { group: 'Modules',    name: 'Tasks',         file: 'tasks-lab.html' },
     { group: 'Modules',    name: 'Habits',        file: 'habits-lab.html' },
     { group: 'Modules',    name: 'Notes',         file: 'notes-lab.html' },
     { group: 'Modules',    name: 'Protocols',     file: 'protocols-lab.html' },
@@ -303,6 +306,9 @@
   html += '<button class="nbtn" id="nav-notes" type="button" aria-haspopup="true" aria-expanded="false">' +
           'Notes<span class="dot" id="nav-dot"' + (me.notes && me.notes.trim() ? '' : ' hidden') + '></span></button>';
   html += '<button class="nbtn" id="nav-export" type="button" aria-haspopup="true" aria-expanded="false">Export</button>';
+  // Import is the inverse of Export and sits beside it, so the two read as one pair.
+  // It sheds at the same width, and the menu footer carries it from there.
+  html += '<button class="nbtn" id="nav-import" type="button" aria-haspopup="true" aria-expanded="false">Import</button>';
 
   // A lab whose own controls ARE the subject — the palette lab, where light/dark
   // is the experiment rather than a viewing preference — opts out with
@@ -346,7 +352,10 @@
   });
   menuHtml += '</div>';
   menuHtml += '<div class="mfoot"><span class="mlab">Export</span>' +
-              exportHtml.replace(/data-x=/g, 'data-menux=') + '</div>';
+              exportHtml.replace(/data-x=/g, 'data-menux=') +
+              '<span class="mlab">Import</span>' +
+              '<button type="button" data-open-import>Paste JSON' +
+              '<small>review state and notes, from an export</small></button></div>';
   menuHtml += '</div>';
 
   var notesHtml = '<div class="phead"><strong>Notes</strong>' +
@@ -363,10 +372,26 @@
                   '<span class="grow"></span>' +
                   '<button class="plink pdanger" type="button" id="pop-clear">Clear this view</button></div>';
 
+  // Import. A paste box rather than a file picker, because the export does not write a
+  // file — it puts JSON on the clipboard, and this is that gesture read backwards.
+  // The hint line doubles as the error line: there is one place to look, under the box
+  // the JSON was pasted into, rather than a toast that has gone by the time you look up.
+  var importHtml = '<div class="phead"><strong>Import</strong>' +
+                   '<span class="sub">review state + notes</span><span class="grow"></span>' +
+                   '<button class="plink" type="button" data-close>Close</button></div>' +
+                   '<p class="psave" id="pop-import-msg">Paste the JSON an export gave you. ' +
+                   'It merges view by view, so a lab the file does not mention is left alone.</p>' +
+                   '<textarea id="pop-import-text" spellcheck="false" ' +
+                   'placeholder="{&#10;  &quot;views&quot;: [ … ]&#10;}"></textarea>' +
+                   '<div class="pfoot"><button class="nbtn" type="button" id="pop-import-go">Import</button>' +
+                   '<span class="psave" id="pop-import-sum"></span><span class="grow"></span>' +
+                   '<button class="plink pdanger" type="button" id="pop-import-repl">Replace all</button></div>';
+
   nav.insertAdjacentHTML('beforeend',
     '<div class="navpop p-menu" id="pop-menu" hidden>' + menuHtml + '</div>' +
     '<div class="navpop p-notes" id="pop-notes" hidden>' + notesHtml + '</div>' +
     '<div class="navpop p-export" id="pop-export" hidden>' + exportHtml + '</div>' +
+    '<div class="navpop p-import" id="pop-import" hidden>' + importHtml + '</div>' +
     '<div class="navpop p-json" id="pop-json" hidden>' +
       '<div class="phead"><strong>Copy failed</strong><span class="grow"></span>' +
       '<button class="plink" type="button" data-close>Close</button></div>' +
@@ -412,9 +437,11 @@
 
   // ── panels ────────────────────────────────────────────────────────────────
   var pops = { menu: nav.querySelector('#pop-menu'), notes: nav.querySelector('#pop-notes'),
-               export: nav.querySelector('#pop-export'), json: nav.querySelector('#pop-json') };
+               export: nav.querySelector('#pop-export'), json: nav.querySelector('#pop-json'),
+               import: nav.querySelector('#pop-import') };
   var triggers = { menu: nav.querySelector('#nav-menu'), notes: nav.querySelector('#nav-notes'),
-                   export: nav.querySelector('#nav-export') };
+                   export: nav.querySelector('#nav-export'),
+                   import: nav.querySelector('#nav-import') };
   var open = null;
 
   function closePop() {
@@ -452,6 +479,7 @@
   if (triggers.menu) triggers.menu.addEventListener('click', function () { openPop('menu'); });
   if (triggers.notes) triggers.notes.addEventListener('click', function () { openPop('notes'); });
   if (triggers.export) triggers.export.addEventListener('click', function () { openPop('export'); });
+  if (triggers.import) triggers.import.addEventListener('click', function () { openImport(); });
   Object.keys(pops).forEach(function (k) {
     pops[k].addEventListener('click', function (e) {
       if (e.target.closest('[data-close]')) closePop();
@@ -623,6 +651,137 @@
       box.focus();
       box.select();
     });
+  });
+
+  // ── import ────────────────────────────────────────────────────────────────
+  // The exact inverse of export, and deliberately written per view: `commit` re-reads
+  // the store and patches one entry, so importing six views is six small merges rather
+  // than one wholesale write. That is what keeps an import from clobbering a view
+  // another tab is sitting on — the same reason `commit` exists at all.
+  var impBox = nav.querySelector('#pop-import-text');
+  var impMsg = nav.querySelector('#pop-import-msg');
+  var impSum = nav.querySelector('#pop-import-sum');
+  var IMPORT_HINT = impMsg ? impMsg.textContent : '';
+
+  function plural(n, word) { return n + ' ' + word + (n === 1 ? '' : 's'); }
+
+  // Tolerant on purpose: an export from an older bar, or one a person trimmed by hand,
+  // should still load what it legitimately holds. Only `views[].file` is required, and
+  // a row naming a lab this bar does not know is counted rather than dropped quietly —
+  // an import that silently ignores half its input is how you conclude it worked.
+  function parseImport(text) {
+    var data;
+    try { data = JSON.parse(text); }
+    catch (e) { return { error: 'That is not JSON.' }; }
+    if (!data || typeof data !== 'object' || !Array.isArray(data.views)) {
+      return { error: 'No "views" array — this is not an export from this bar.' };
+    }
+    var known = {};
+    LABS.forEach(function (lab) { known[lab.file.toLowerCase()] = lab; });
+    var rows = [], unknown = 0;
+    data.views.forEach(function (row) {
+      if (!row || typeof row !== 'object' || typeof row.file !== 'string') return;
+      var lab = known[row.file.toLowerCase()];
+      if (!lab) { unknown++; return; }
+      rows.push({ file: lab.file, reviewed: !!row.reviewed,
+                  notes: typeof row.notes === 'string' ? row.notes : '' });
+    });
+    return { rows: rows, unknown: unknown, generatedAt: data.generatedAt };
+  }
+
+  function describe(p) {
+    if (p.error) return p.error;
+    var reviewed = 0, noted = 0;
+    p.rows.forEach(function (r) {
+      if (r.reviewed) reviewed++;
+      if (r.notes.trim()) noted++;
+    });
+    var bits = [plural(p.rows.length, 'view'), reviewed + ' reviewed', noted + ' with notes'];
+    if (p.unknown) bits.push(plural(p.unknown, 'unknown row') + ' skipped');
+    var when = p.generatedAt ? new Date(p.generatedAt) : null;
+    if (when && !isNaN(when.getTime())) {
+      bits.push('exported ' + when.toLocaleDateString() + ' ' +
+                when.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+    }
+    return bits.join(' · ');
+  }
+
+  // Read the box and say what it holds, before anything is written. Returns null when
+  // the box is empty, which is a different thing from an error and is said differently.
+  function readImportBox() {
+    var text = impBox ? impBox.value.trim() : '';
+    var p = text ? parseImport(text) : null;
+    if (impMsg) {
+      impMsg.textContent = p && p.error ? p.error : IMPORT_HINT;
+      impMsg.classList.toggle('is-bad', !!(p && p.error));
+    }
+    if (impSum) impSum.textContent = p && !p.error ? describe(p) : '';
+    return p;
+  }
+
+  function openImport() {
+    openPop('import');
+    readImportBox();
+    if (impBox) impBox.focus();
+  }
+
+  function runImport(replaceAll) {
+    var p = readImportBox();
+    if (!p) { if (impMsg) { impMsg.textContent = 'Paste the JSON first.'; impMsg.classList.add('is-bad'); } return; }
+    if (p.error) return;
+    if (!p.rows.length) {
+      if (impMsg) { impMsg.textContent = 'No view in that JSON can be imported.'; impMsg.classList.add('is-bad'); }
+      return;
+    }
+    if (replaceAll && !window.confirm('Replace all review state and notes in this browser with the ' +
+        plural(p.rows.length, 'view') + ' in the box? Every view the file does not mention is cleared.')) {
+      return;
+    }
+
+    // A pending debounce would otherwise land *after* the import and put pre-import
+    // text back over it. Writes here are cheap and the alternative is a lost edit.
+    clearTimeout(saveTimer);
+    saveNotes();
+
+    if (replaceAll) {
+      try { localStorage.setItem(STORE, JSON.stringify({ version: 1, views: {} })); }
+      catch (e) { /* storage is unavailable; `commit` below reports it instead */ }
+      state = readStore();
+    }
+
+    var ok = 0;
+    p.rows.forEach(function (row) {
+      if (commit(row.file, { reviewed: row.reviewed, notes: row.notes })) ok++;
+    });
+
+    // This view's field has to follow the store, or the `beforeunload` flush writes the
+    // pre-import text straight back over what was just imported.
+    if (ta) {
+      ta.value = (peek(self.file) || {}).notes || '';
+      lastCommitted = ta.value;
+      if (saveMsg) saveMsg.textContent = 'Saved';
+    }
+    repaint();
+
+    if (impBox) impBox.value = '';
+    readImportBox();
+    closePop();
+    var c = counts();
+    flash(ok ? (replaceAll ? 'Replaced with ' : 'Imported ') + plural(ok, 'view') +
+               ' · ' + c.reviewed + ' reviewed, ' + c.noted + ' with notes'
+             : 'Not imported — storage is unavailable');
+  }
+
+  if (impBox) impBox.addEventListener('input', readImportBox);
+  var impGo = nav.querySelector('#pop-import-go');
+  if (impGo) impGo.addEventListener('click', function () { runImport(false); });
+  var impRepl = nav.querySelector('#pop-import-repl');
+  if (impRepl) impRepl.addEventListener('click', function () { runImport(true); });
+  // The menu carries the command as well, so the narrow layout that drops the button
+  // keeps the feature — the same arrangement the export commands have.
+  nav.addEventListener('click', function (e) {
+    if (!e.target.closest('[data-open-import]')) return;
+    openImport();
   });
 
   // ── keys ──────────────────────────────────────────────────────────────────
