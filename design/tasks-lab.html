@@ -1,0 +1,2123 @@
+<!DOCTYPE html>
+<html lang="en" data-palette="warm" data-mode="light" data-accent="teal"
+      data-semantics="vivid" data-type="system">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tasks lab · Small Wins</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="lab.css">
+<style>
+/* ============================================================================
+   THE TASK LIST — the app's most-used surface, and the last one never drawn.
+
+   `tasks.md` fixes the row as [checkbox] Title [metadata] over an identity
+   line, with the time facts as chips on the trailing edge and a **cap of two**.
+   The cap is the one rule here that is already a measurement ("one chip leaves
+   the title 195px, two leave it 144px"), so this lab re-measures it — and then
+   measures it again with the fifth temporal fact, `scheduled_time` (ADR 0025),
+   which the chip vocabulary has no chip for.
+   ============================================================================ */
+.tk { background: var(--surface-1); border-radius: 14px; overflow: hidden;
+  border: 1px solid var(--border-subtle); }
+
+.tk-row { display: grid; align-items: center; gap: 12px; padding: 9px 14px;
+  min-height: 56px; border-bottom: 1px solid var(--border-subtle); }
+.tk-row:last-child { border-bottom: 0; }
+.tk-row.b { grid-template-columns: 24px minmax(0, 1fr) auto; }
+.tk-row.slots { grid-template-columns: 24px minmax(0, 1fr) 76px; }
+.tk-row.bare { grid-template-columns: 24px minmax(0, 1fr) auto; }
+
+.tk-box { position: relative; width: 24px; height: 24px; border-radius: 7px;
+  border: 1.5px solid var(--border-strong); background: var(--surface-1);
+  box-sizing: border-box; display: grid; place-items: center; }
+.tk-box svg { width: 14px; height: 14px; stroke-width: 3.2; fill: none;
+  stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+.tk-box.done { background: var(--accent-default); border-color: var(--accent-default);
+  color: var(--on-fill); }
+.tk-box.now { border-color: var(--accent-default); }
+/* the priority dot, in the checkbox's own gutter rather than floating at the title */
+.tk-box .dot { position: absolute; left: -9px; top: 50%; margin-top: -4px;
+  width: 8px; height: 8px; border-radius: 50%; background: var(--accent-default); }
+
+.tk-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tk-t { font-size: 16px; line-height: 24px; color: var(--text-primary);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tk-m { font-size: 13px; line-height: 18px; color: var(--text-secondary);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tk-m.mono { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); }
+
+/* the chips: text facts on the trailing edge, up to the cap of two */
+.tk-chips { display: flex; gap: 6px; flex: none; }
+.tk-chip { font-size: 12px; line-height: 16px; padding: 3px 8px; border-radius: 8px;
+  background: var(--surface-2); color: var(--text-secondary); white-space: nowrap;
+  font-variant-numeric: tabular-nums; }
+.tk-chip.due { color: var(--text-primary); }
+.tk-chip.sched { background: var(--accent-subtle); color: var(--accent-text); }
+.tk-chip.over { background: var(--warning-subtle); color: var(--warning-text); }
+
+/* the fixed column: a slot per time fact, right-aligned, nothing wraps */
+.tk-slots { display: flex; flex-direction: column; align-items: flex-end; gap: 1px;
+  flex: none; }
+.tk-s { font-size: 12px; line-height: 16px; font-variant-numeric: tabular-nums;
+  color: var(--text-secondary); white-space: nowrap; }
+.tk-s.empty { color: transparent; }
+.tk-s.due { color: var(--text-primary); }
+.tk-s.sched { color: var(--accent-text); }
+.tk-s.dim { color: var(--text-muted); }
+
+/* the mode's chrome */
+/* The scope control sits directly under the mode header, and flush against its
+   border it reads as part of the header rather than as the control it is. The
+   space above is the control's own, so every screen that draws one gets it; the
+   space below comes from the row it sits in. */
+.tk-seg { display: flex; gap: 4px; background: var(--surface-2);
+  border-radius: 10px; padding: 3px; margin-top: var(--space-4); }
+/* The scope control's own row: chrome under the mode header, so it does not scroll
+   with the list. The air above the control is `.tk-seg`'s `margin-top`. */
+.tk-scope { flex: none; padding: 0 var(--space-7) var(--space-3); }
+.tk-seg span { flex: 1 1 0; text-align: center; font-size: 13px; line-height: 18px;
+  padding: 5px 0; border-radius: 8px; color: var(--text-secondary); }
+.tk-seg span.on { background: var(--surface-1); color: var(--text-primary);
+  font-weight: 600; box-shadow: 0 1px 2px rgb(0 0 0 / .06); }
+.tk-filter { display: flex; align-items: center; gap: 6px; font-size: 13px;
+  color: var(--text-secondary); }
+.tk-count { font-size: 12px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+
+/* ---------------------------------------------------------------- the detail
+   `tasks.md` gives the detail one sentence — nine fields and six actions — and
+   `components.md`'s Controls table is complete and contains **no field**: it has
+   a checkbox, a segmented control, a metric row, a window selector, a filter
+   button, arrows, `+`, the capture field, the mic and the completion-note field.
+   So the anatomy below is derived, not quoted, and the variant that uses the most
+   of it says so in its own foot. */
+.tk-title { font-size: 20px; line-height: 26px; color: var(--text-primary); }
+.tk-gt { font-size: 11px; letter-spacing: var(--type-caption-track);
+  text-transform: uppercase; color: var(--text-muted); padding: 12px 0 2px; }
+.tk-f { display: grid; grid-template-columns: 84px minmax(0, 1fr); align-items: center;
+  gap: 12px; min-height: 40px; padding: 6px 0; border-bottom: 1px solid var(--border-subtle); }
+.tk-fl { font-size: 13px; color: var(--text-muted); }
+.tk-fv { font-size: 15px; color: var(--text-primary); min-width: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tk-fv.empty { color: var(--text-muted); }
+.tk-fh { margin: 2px 0 0; font-size: 11px; line-height: 14px; color: var(--text-muted); }
+
+/* the hour: four chips and a way out, at `control-sm`'s scale */
+.tk-time { display: flex; gap: 6px; margin: 6px 0 2px; }
+.tk-tchip { flex: 1 1 0; min-width: 0; white-space: nowrap; overflow: hidden;
+  text-align: center; font-size: 13px; line-height: 18px; padding: 7px 0;
+  border-radius: 8px; background: var(--surface-2); color: var(--text-secondary);
+  font-variant-numeric: tabular-nums; }
+.tk-tchip.on { background: var(--accent-subtle); color: var(--accent-text); font-weight: 600; }
+
+/* the three temporal fields side by side */
+.tk-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;
+  margin: 4px 0 0; }
+.tk-col { background: var(--surface-2); border-radius: 10px; padding: 8px;
+  display: flex; flex-direction: column; min-width: 0; }
+.tk-col .k { font-size: 10px; letter-spacing: .05em; text-transform: uppercase;
+  color: var(--text-muted); }
+.tk-col .v { font-size: 15px; color: var(--text-primary); font-variant-numeric: tabular-nums;
+  margin-top: 2px; }
+.tk-col .m { font-size: 10px; line-height: 13px; color: var(--text-muted); margin-top: 3px; }
+
+.tk-act { display: flex; flex-wrap: wrap; gap: 8px 14px; padding: 14px 0 4px;
+  border-top: 1px solid var(--border-subtle); margin-top: 10px; }
+.tk-act span { font-size: 13px; color: var(--accent-text); }
+.tk-disc { display: flex; align-items: center; gap: 8px; min-height: 40px;
+  border-bottom: 1px solid var(--border-subtle); font-size: 13px; color: var(--text-muted); }
+.tk-disc .grow { flex: 1; }
+
+/* -------------------------------------------------------------- the defer sheet
+   `tasks.md` §Defer sheet: "a bottom sheet with four rows" — Tomorrow, Next week,
+   Someday, Pick a date… — and `06-flows/disruption.md` has already stopped drawing
+   its own version of it. What is left is what the rows *write*: three of them set
+   `defer`, a day, and the fourth sets a state. No doc says so. */
+.tk-scrim { position: absolute; inset: 0; background: var(--bg-overlay); }
+.tk-sheet { position: absolute; left: 0; right: 0; bottom: 0; background: var(--surface-1);
+  border-radius: 18px 18px 0 0; padding: 8px var(--space-5) var(--space-6);
+  box-shadow: 0 -8px 24px rgb(0 0 0 / .14); }
+.tk-grab { width: 36px; height: 4px; border-radius: 2px; background: var(--border-strong);
+  margin: 0 auto var(--space-3); }
+.tk-hd { margin: 0 0 var(--space-2); font-size: 12px; line-height: 16px; color: var(--text-muted); }
+.tk-srow { display: flex; align-items: center; gap: var(--space-4); min-height: 44px;
+  border-top: 1px solid var(--border-subtle); }
+.tk-srow .lb { font-size: 15px; color: var(--text-primary); }
+.tk-srow .rs { margin-left: auto; font-size: 13px; font-variant-numeric: tabular-nums;
+  color: var(--text-secondary); }
+.tk-srow .off { font-size: 12px; font-variant-numeric: tabular-nums; color: var(--text-muted);
+  min-width: 34px; text-align: right; }
+.tk-srow.state { border-top-style: dashed; }
+.tk-srow.state .lb { color: var(--accent-text); }
+.tk-srow.pick .lb { color: var(--text-secondary); }
+.tk-srow.alt .lb { color: var(--warning-text); }
+
+/* ------------------------------------------------------------- the four scopes
+   `tasks.md` §Scopes gives each scope one sentence. Read as predicates they are
+   not a partition — and the doc set already contains the proof, because three
+   docs assert that overdue tasks appear in Today while Today's own definition
+   names only `scheduled_day` and `defer`. */
+.tk-flag { font-size: 11px; line-height: 14px; padding: 2px 6px; border-radius: 6px;
+  background: var(--warning-subtle); color: var(--warning-text); white-space: nowrap; }
+.tk-why { font-size: 11px; line-height: 14px; color: var(--text-muted); }
+.tk-seg span small { display: block; font-size: 10px; line-height: 13px; font-weight: 400;
+  color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.tk-seg span.on small { color: var(--accent-text); }
+
+/* --------------------------------------------------------- the completion log
+   Specified twice, in two docs, under two names — `tasks.md` §The completion log
+   and `06-flows/completion.md` §The completed log — and filed a third way by
+   `03-experience/surfaces.md`. It is the app's "what I did" view, and its rows
+   cannot show when anything was done: the chip vocabulary has five facts and
+   `completed` is not one of them. */
+.tk-day { display: flex; align-items: baseline; gap: var(--space-3); padding: 14px 0 4px; }
+.tk-day .d { font-size: 13px; color: var(--text-primary); }
+.tk-day .c { font-size: 12px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.tk-row.log { grid-template-columns: 44px minmax(0, 1fr) auto; }
+.tk-hh { font-size: 12px; line-height: 18px; font-variant-numeric: tabular-nums;
+  color: var(--text-muted); }
+.tk-lrow { display: flex; align-items: center; gap: var(--space-4); min-height: 44px;
+  border-bottom: 1px solid var(--border-subtle); }
+.tk-lrow .tk-hh { flex: none; width: 44px; text-align: left; }
+.tk-lrow .ttl { font-size: 15px; color: var(--text-secondary); min-width: 0;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol>
+  <symbol id="i-mode-tasks" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol>
+  <symbol id="i-mode-notes" viewBox="0 0 24 24"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M7 12h10"/><path d="M10 18h4"/></symbol>
+</svg>
+
+<header class="masthead">
+  <p class="eyebrow">Lab 18 · the last mode never drawn</p>
+  <h1 class="t-title-1">Tasks</h1>
+  <p class="lede-p">
+    This lab should not have been necessary. The status board has carried <b>Tasks mode</b> as done
+    for months, and there is no lab for it — the row has only ever been drawn <i>inside</i> other
+    screens (the Day view's rows, the morning plan's pool, the palette lab's backdrop). A grep for
+    the mode finds it <b>200 times</b>, almost all of them the dock icon. Work units were counted;
+    coverage never was.
+  </p>
+  <p class="lede-p">
+    It is also the surface the last decision landed on. ADR 0025 gave the Task a fifth temporal
+    fact, <code>scheduled_time</code>, and put it on the creation surfaces —
+    <code>tasks.md</code> §The task row lists <b>four</b> time facts as chips with a <b>cap of two</b>
+    and a stated priority order. A fifth fact has no chip, no place in that order, and no drawing.
+  </p>
+</header>
+
+<div class="bar">
+  <nav class="tabs" id="tabs">
+    <button class="tab" data-go="list">The list</button>
+    <button class="tab" data-go="detail">The detail</button>
+    <button class="tab" data-go="defer">The defer sheet</button>
+    <button class="tab" data-go="scopes">The four scopes</button>
+    <button class="tab" data-go="log">The completion log</button>
+  </nav>
+</div>
+
+<main id="main">
+
+<!-- ================================================================== LIST -->
+<section class="screen" id="list">
+  <div class="lede">
+    <h2 class="t-title-2">The list</h2>
+    <p class="lede-p">
+      <code>tasks.md</code> fixes one row at <code>row-rich</code> (72px) with metadata and
+      <code>row-default</code> (56px) without it: <b>[checkbox] Title [metadata]</b> over an identity
+      line, and every time fact as a chip on the trailing edge. The cap of two is the one rule in the
+      module that is <i>already</i> a measurement — <i>"one chip leaves the title 195px, two leave it
+      144px, and three take 232px of the row and leave the title 60px and wrapping."</i>
+    </p>
+    <p class="lede-p">
+      So this screen re-measures it, at 390px, and then measures it again with the fact that has no
+      chip: a task scheduled at <b>15:00</b>. The interesting failure is not that the title clips —
+      it is that <b>the row height is fixed, so the pressure shows as title starvation</b>, which
+      looks fine at a glance.
+    </p>
+  </div>
+
+  <div class="grid" id="list-grid">
+
+    <!-- ------------------------------------------------------------- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The spec, drawn: chips to the cap, the scheduled hour with nowhere to go.</p>
+        <span class="vc-read">no lens · the control arm, and the cap's own test</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <span class="t-title-2">Tasks</span>
+              <span style="flex:1"></span>
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-filter"/></svg>
+            </div>
+            <div style="flex:none; padding:0 var(--space-7) var(--space-3)">
+              <div class="tk-seg"><span class="on">Today</span><span>Next</span><span>Someday</span><span>All</span></div>
+            </div>
+            <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:var(--space-4)">
+              <div class="tk">
+                <div class="tk-row b">
+                  <div class="tk-box now"><span class="dot"></span></div>
+                  <div class="tk-main">
+                    <span class="tk-t" data-w="1">Draft the Q4 plan</span>
+                    <span class="tk-m">Work · 1 note · @Sarah</span>
+                  </div>
+                  <div class="tk-chips"><span class="tk-chip due">due Fri</span></div>
+                </div>
+                <div class="tk-row b">
+                  <div class="tk-box"></div>
+                  <div class="tk-main">
+                    <span class="tk-t" data-w="2">Call the contractor about the fence</span>
+                    <span class="tk-m">Home · deferred 2d</span>
+                  </div>
+                  <div class="tk-chips"><span class="tk-chip">40m</span><span class="tk-chip sched">15:00</span></div>
+                </div>
+                <div class="tk-row b">
+                  <div class="tk-box"></div>
+                  <div class="tk-main">
+                    <span class="tk-t" data-w="3">Reply to Priya about the offsite</span>
+                    <span class="tk-m">Work · @Priya</span>
+                  </div>
+                  <div class="tk-chips"><span class="tk-chip due">due Tue</span><span class="tk-chip">1h</span><span class="tk-chip">weekly</span></div>
+                </div>
+                <div class="tk-row b">
+                  <div class="tk-box done"><svg><use href="#i-check"/></svg></div>
+                  <div class="tk-main">
+                    <span class="tk-t" style="color:var(--text-secondary)">Send the invoice</span>
+                    <span class="tk-m">Work · completed 10:12</span>
+                  </div>
+                  <div class="tk-chips"></div>
+                </div>
+                <div class="tk-row b">
+                  <div class="tk-box"></div>
+                  <div class="tk-main"><span class="tk-t">Book flights to Lisbon</span></div>
+                  <div class="tk-chips"></div>
+                </div>
+              </div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot" id="list-cost-1">
+        <div class="vc-line"><dt>Changed</dt><dd>Nothing — except that the scheduled hour is drawn, and it is drawn as a chip nobody specified. The row that carries it has <b>two</b> facts and the cap is spent, so the third is invisible: a task due Friday that you have scheduled for 15:00 can only show one of the two.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd id="list-cost-1t">…</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>One, and it is the new fact's fault rather than the drawing's: <code>tasks.md</code>'s chip vocabulary is <i>due · duration · cadence · deferred</i> and its cap's priority order names those four. <code>scheduled_time</code> is a fifth temporal fact (ADR 0025) with <b>no chip and no rank</b>.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ------------------------------------------------------------- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">One job per region: identity on the line, time in a column the eye can scan.</p>
+        <span class="vc-read">impeccable · operate<br>scanability outranks expression</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <span class="t-title-2">Tasks</span>
+              <span style="flex:1"></span>
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-filter"/></svg>
+            </div>
+            <div style="flex:none; padding:0 var(--space-7) var(--space-3)">
+              <div class="tk-seg"><span class="on">Today</span><span>Next</span><span>Someday</span><span>All</span></div>
+            </div>
+            <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:var(--space-4)">
+              <div class="tk">
+                <div class="tk-row slots">
+                  <div class="tk-box now"><span class="dot"></span></div>
+                  <div class="tk-main">
+                    <span class="tk-t">Draft the Q4 plan</span>
+                    <span class="tk-m">Work</span>
+                  </div>
+                  <div class="tk-slots"><span class="tk-s due">due Fri</span><span class="tk-s empty">·</span><span class="tk-s empty">·</span></div>
+                </div>
+                <div class="tk-row slots">
+                  <div class="tk-box"></div>
+                  <div class="tk-main">
+                    <span class="tk-t">Call the contractor about the fence</span>
+                    <span class="tk-m">Home</span>
+                  </div>
+                  <div class="tk-slots"><span class="tk-s sched">15:00</span><span class="tk-s">40m</span><span class="tk-s dim">def 2d</span></div>
+                </div>
+                <div class="tk-row slots">
+                  <div class="tk-box"></div>
+                  <div class="tk-main">
+                    <span class="tk-t">Reply to Priya about the offsite</span>
+                    <span class="tk-m">Work</span>
+                  </div>
+                  <div class="tk-slots"><span class="tk-s due">due Tue</span><span class="tk-s">1h</span><span class="tk-s dim">weekly</span></div>
+                </div>
+                <div class="tk-row slots">
+                  <div class="tk-box done"><svg><use href="#i-check"/></svg></div>
+                  <div class="tk-main">
+                    <span class="tk-t" style="color:var(--text-secondary)">Send the invoice</span>
+                    <span class="tk-m">Work</span>
+                  </div>
+                  <div class="tk-slots"><span class="tk-s dim">10:12</span><span class="tk-s empty">·</span><span class="tk-s empty">·</span></div>
+                </div>
+                <div class="tk-row bare">
+                  <div class="tk-box"></div>
+                  <div class="tk-main"><span class="tk-t">Book flights to Lisbon</span></div>
+                  <div class="tk-slots"><span class="tk-s empty">·</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>The chips become a <b>fixed 76px column</b> that always exists, right-aligned and tabular, so the facts land in the same place on every row and the eye scans a column instead of hunting the edge. A slot with nothing in it holds its place. The metadata line keeps identity alone — it was carrying <i>"Home · deferred 2d"</i>, which is a place and a time.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd>A fixed column takes the same width from every title, whether the row has three facts or none — so the empty rows pay for the busy ones. And the cap is gone without anything replacing it: the column holds three, and a row with a fourth fact has no answer.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>One: <code>tasks.md</code> states what happens beyond the cap — <i>"anything beyond the cap lives in the detail view"</i> — and a fixed column silently changes that to "lives in the third slot". The cap's stated order (deferred, overdue, due, cadence, duration) has no slot here either.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ------------------------------------------------------------- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">The row as an instrument: three slots, tabular figures, nothing wraps.</p>
+        <span class="vc-read">frontend-design<br>the instrument panel, taken literally</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <span class="t-title-2">Tasks</span>
+              <span style="flex:1"></span>
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-filter"/></svg>
+            </div>
+            <div style="flex:none; padding:0 var(--space-7) var(--space-3)">
+              <div class="tk-seg"><span class="on">Today</span><span>Next</span><span>Someday</span><span>All</span></div>
+            </div>
+            <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:var(--space-4)">
+              <div class="tk">
+                <div class="tk-row slots">
+                  <div class="tk-box now"><span class="dot"></span></div>
+                  <div class="tk-main">
+                    <span class="tk-t">Draft the Q4 plan</span>
+                    <span class="tk-m mono">work · 1 note · sarah</span>
+                  </div>
+                  <div class="tk-slots"><span class="tk-s due">due fri</span><span class="tk-s empty">·</span><span class="tk-s empty">·</span></div>
+                </div>
+                <div class="tk-row slots">
+                  <div class="tk-box"></div>
+                  <div class="tk-main">
+                    <span class="tk-t">Call the contractor about the fence</span>
+                    <span class="tk-m mono">home</span>
+                  </div>
+                  <div class="tk-slots"><span class="tk-s sched">15:00</span><span class="tk-s">40m</span><span class="tk-s dim">def 2d</span></div>
+                </div>
+                <div class="tk-row slots">
+                  <div class="tk-box"></div>
+                  <div class="tk-main">
+                    <span class="tk-t">Reply to Priya about the offsite</span>
+                    <span class="tk-m mono">work · priya</span>
+                  </div>
+                  <div class="tk-slots"><span class="tk-s due">due tue</span><span class="tk-s">1h</span><span class="tk-s dim">weekly</span></div>
+                </div>
+                <div class="tk-row slots">
+                  <div class="tk-box done"><svg><use href="#i-check"/></svg></div>
+                  <div class="tk-main">
+                    <span class="tk-t" style="color:var(--text-secondary)">Send the invoice</span>
+                    <span class="tk-m mono">work · 10:12</span>
+                  </div>
+                  <div class="tk-slots"><span class="tk-s empty">·</span><span class="tk-s empty">·</span><span class="tk-s empty">·</span></div>
+                </div>
+                <div class="tk-row bare">
+                  <div class="tk-box"></div>
+                  <div class="tk-main"><span class="tk-t">Book flights to Lisbon</span></div>
+                  <div class="tk-slots"><span class="tk-s empty">·</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>Three fixed slots with a stated order — <b>schedule · duration · deferral</b>, and <code>due</code> takes the first when there is one — the metadata line goes monospaced and lowercase so it reads as apparatus rather than a second title, and the figures are tabular so they line up down the column.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd>A schedule and a deadline compete for the first slot, and this row silently decides that the schedule wins — which is wrong for the one case that matters, a task due Friday and worked on Thursday. Monospaced metadata also costs the Area its capital letters.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>One: the slot order is invented. <code>tasks.md</code> gives a priority order for the <i>cap</i> and this is a different four facts in a different order, stated nowhere. The rule that survives is the shape — a slot per fact, no wrapping — not the order I put in it.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ------------------------------------------------------------- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">The list shows the title and the next thing about it. Everything else is one tap away.</p>
+        <span class="vc-read">design-taste<br>remove one accessory — then two more</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <span class="t-title-2">Tasks</span>
+              <span style="flex:1"></span>
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-filter"/></svg>
+            </div>
+            <div style="flex:none; padding:0 var(--space-7) var(--space-3)">
+              <div class="tk-seg"><span class="on">Today</span><span>Next</span><span>Someday</span><span>All</span></div>
+            </div>
+            <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:var(--space-4)">
+              <div class="tk">
+                <div class="tk-row bare">
+                  <div class="tk-box now"><span class="dot"></span></div>
+                  <div class="tk-main"><span class="tk-t">Draft the Q4 plan</span></div>
+                  <div class="tk-chips"><span class="tk-chip due">due Fri</span></div>
+                </div>
+                <div class="tk-row bare">
+                  <div class="tk-box"></div>
+                  <div class="tk-main"><span class="tk-t">Call the contractor about the fence</span></div>
+                  <div class="tk-chips"><span class="tk-chip sched">15:00</span></div>
+                </div>
+                <div class="tk-row bare">
+                  <div class="tk-box"></div>
+                  <div class="tk-main"><span class="tk-t">Reply to Priya about the offsite</span></div>
+                  <div class="tk-chips"><span class="tk-chip due">due Tue</span></div>
+                </div>
+                <div class="tk-row bare">
+                  <div class="tk-box done"><svg><use href="#i-check"/></svg></div>
+                  <div class="tk-main"><span class="tk-t" style="color:var(--text-secondary)">Send the invoice</span></div>
+                  <div class="tk-chips"></div>
+                </div>
+                <div class="tk-row bare">
+                  <div class="tk-box"></div>
+                  <div class="tk-main"><span class="tk-t">Book flights to Lisbon</span></div>
+                  <div class="tk-chips"></div>
+                </div>
+                <div class="tk-row bare">
+                  <div class="tk-box"></div>
+                  <div class="tk-main"><span class="tk-t">Water the plants</span></div>
+                  <div class="tk-chips"><span class="tk-chip">40m</span></div>
+                </div>
+                <div class="tk-row bare">
+                  <div class="tk-box"></div>
+                  <div class="tk-main"><span class="tk-t">Read the contract the lawyer sent</span></div>
+                  <div class="tk-chips"><span class="tk-chip over">overdue 2d</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>The identity line goes entirely — an Area, a note count and a person are all in the detail, one tap down — and each row keeps <b>at most one</b> time fact: the one that changes what you do next. Seven rows fit the frame instead of five, and every title has the full width.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd>Identity leaves the list. <i>@Sarah</i> and the Area are how a user tells two similar tasks apart ("call the contractor" in Work vs Home), and the one-chip rule means a task with a deadline <i>and</i> a schedule shows only one of them — the same loss the cap had, arrived at from the other direction.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>Two: it deletes the metadata line <code>tasks.md</code> specifies, and it ignores the cap's stated priority order by keeping one fact instead of two. A lens may argue for both; it cannot decide either.</dd></div>
+      </dl>
+    </article>
+
+    <!-- -------------------------------------------------- recommended --- -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Keep the identity line, replace the cap with a column, and give the fifth fact its slot.</p>
+        <span class="vc-read">baseline's identity + impeccable's column + the new fact</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <span class="t-title-2">Tasks</span>
+              <span style="flex:1"></span>
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-filter"/></svg>
+            </div>
+            <div style="flex:none; padding:0 var(--space-7) var(--space-3)">
+              <div class="tk-seg"><span class="on">Today</span><span>Next</span><span>Someday</span><span>All</span></div>
+            </div>
+            <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:var(--space-4)">
+              <div class="tk">
+                <div class="tk-row b">
+                  <div class="tk-box now"><span class="dot"></span></div>
+                  <div class="tk-main">
+                    <span class="tk-t">Draft the Q4 plan</span>
+                    <span class="tk-m">Work · 1 note</span>
+                  </div>
+                  <div class="tk-slots"><span class="tk-s due">due Fri</span><span class="tk-s empty">·</span></div>
+                </div>
+                <div class="tk-row b">
+                  <div class="tk-box"></div>
+                  <div class="tk-main">
+                    <span class="tk-t">Call the contractor about the fence</span>
+                    <span class="tk-m">Home</span>
+                  </div>
+                  <div class="tk-slots"><span class="tk-s sched">15:00</span><span class="tk-s">40m</span></div>
+                </div>
+                <div class="tk-row b">
+                  <div class="tk-box"></div>
+                  <div class="tk-main">
+                    <span class="tk-t">Reply to Priya about the offsite</span>
+                    <span class="tk-m">Work · @Priya</span>
+                  </div>
+                  <div class="tk-slots"><span class="tk-s due">due Tue</span><span class="tk-s empty">·</span></div>
+                </div>
+                <div class="tk-row b">
+                  <div class="tk-box done"><svg><use href="#i-check"/></svg></div>
+                  <div class="tk-main">
+                    <span class="tk-t" style="color:var(--text-secondary)">Send the invoice</span>
+                    <span class="tk-m">Work</span>
+                  </div>
+                  <div class="tk-slots"><span class="tk-s dim">10:12</span><span class="tk-s empty">·</span></div>
+                </div>
+                <div class="tk-row b">
+                  <div class="tk-box"></div>
+                  <div class="tk-main"><span class="tk-t">Book flights to Lisbon</span></div>
+                  <div class="tk-slots"></div>
+                </div>
+              </div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for keeping the identity line, which is what tells two similar tasks apart. <b>Impeccable</b> for the fixed column, which is the only variant that makes the facts land in the same place twice. <b>Design taste</b> for proving the cap is the thing to delete rather than the facts: one chip is a loss and three is a star, and the answer to both is a column that never wraps.</dd></div>
+        <div class="vc-line cost"><dt>Fixes</dt><dd>The fifth fact gets a slot, and it is ranked rather than invented: <b>due</b> and <b>schedule</b> are the two that change what you do next, so they are the two the column holds; duration and deferral are shown only when the first two are empty. The title never starves, because a two-slot column is a constant <b>76px</b> and not a function of how much the row is carrying.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt><dd>A decision this row cannot make: the cap's priority order (<i>deferred, overdue, due, cadence, duration</i>) and this column's two slots disagree about what matters, and one of them has to become the rule. And the fifth fact still has <b>no chip and no vocabulary</b> — <code>tasks.md</code> lists four, ADR 0025 added a fifth, and the doc has not been told.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-2">The measurement</h2>
+    <div class="panel" style="margin-top:var(--space-5)">
+      <div class="measure" id="measure-list">…</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ DETAIL -->
+<section class="screen" id="detail" hidden>
+  <div class="lede">
+    <h2 class="t-title-2">The detail</h2>
+    <p class="lede-p">
+      <code>tasks.md</code> spends one sentence on this screen: <i>"Title, notes, subtasks (children),
+      people, scheduled day and time, due, defer, priority, area. Actions: edit, reschedule, link
+      person, link note, break down (Tier 2), research (Tier 2)."</i> Nine fields and six actions,
+      and no layout. The doc also says the four temporal fields are <b>load-bearing</b> — <i>"the
+      app explains it in context"</i> — so this screen is where that promise has to be kept or broken.
+    </p>
+    <p class="lede-p">
+      And it carries the hole ADR 0025 opened. Every documented control for putting a task on a day
+      is <b>day-granular</b>: the detail's action is <i>"Schedule to day"</i> which <i>"opens date
+      picker"</i>, and the defer sheet's rows are <i>Tomorrow · Next week · Someday · Pick a date…</i>.
+      The field now holds an hour, and <b>nothing in the set can set one</b> — Tier 1 parsing is the
+      only control that has ever produced a time of day. So the question this screen answers is not
+      where the fields go. It is <b>what the hour control is</b>.
+    </p>
+  </div>
+
+  <div class="grid" id="detail-grid">
+
+    <!-- ---------------------------------------------------------- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The sentence, drawn: nine fields in its own order, and the Schedule action it names.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-back"/></svg>
+              <span class="tk-title">Call the contractor about the fence</span>
+            </div>
+            <div class="ob-body scroll" style="padding:var(--space-5) var(--space-7);gap:0">
+              <div class="tk-detail" data-mode="flat"></div>
+              <div class="tk-act"><span>Schedule</span><span>Reschedule</span><span>Link person</span><span>Link note</span><span>Break down</span><span>Research</span></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>Nothing. Nine fields in the order the sentence lists them, and the six actions as one row of text — which is what the doc describes and what no lab has ever drawn.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd><b>Scheduled, Due and Defer are three rows of identical shape</b>, so the load-bearing distinction the doc insists the app explains is carried by the words alone — <i>Thu 24 Sep</i>, <i>Fri 25 Sep</i>, <i>Tue 22 Sep</i> — and nothing else. A user reading down sees three dates.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>One, and it is ADR 0025's: the Planned row <b>displays an hour the screen cannot set</b>. <i>"Schedule to day"</i> opens the date picker, which picks days. The value is reachable by the parser and by nothing you can tap here.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ---------------------------------------------------------- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">One job per region: when, where, what — and each of the three dates says what it does.</p>
+        <span class="vc-read">impeccable · operate<br>scanability outranks expression</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-back"/></svg>
+              <span class="tk-title">Call the contractor about the fence</span>
+            </div>
+            <div class="ob-body scroll" style="padding:var(--space-5) var(--space-7);gap:0">
+              <div class="tk-detail" data-mode="grouped"></div>
+              <div class="tk-act"><span>Schedule</span><span>Link note</span><span>Break down</span></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>Three groups instead of nine rows — <b>When · Where · What</b> — and inside When each field carries its own meaning in a caption: <i>appears on the calendar</i>, <i>must be done by</i>, <i>becomes visible</i>. That is the sentence the doc promises the app explains <i>in context</i>, finally in context. The hour is a row of four chips under the scheduled day.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd>The meanings are 11px muted text repeated on every task, and they are the same three sentences forever — after the tenth read they are noise that costs the fields 14px each. And four time chips imply the app expected you to pick from four times.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>One: the hour chips are <b>a control no doc specifies</b>. `components.md`'s Controls table has no time control, and `tasks.md`'s action table gives one route — <i>"Schedule to day"</i> — which is a day picker. The chips are a proposal, and the row that ships has to be the one that says so.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ---------------------------------------------------------- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">The three dates side by side, so the difference is structural instead of verbal.</p>
+        <span class="vc-read">frontend-design<br>the instrument panel, taken literally</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-back"/></svg>
+              <span class="tk-title">Call the contractor about the fence</span>
+            </div>
+            <div class="ob-body scroll" style="padding:var(--space-5) var(--space-7);gap:0">
+              <div class="tk-detail" data-mode="cols"></div>
+              <div class="tk-act"><span>Schedule</span><span>Link note</span><span>Break down</span></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>The three temporal fields become a <b>three-column block with a header over each</b>, figures tabular, and one line of meaning under each value. Nothing has to be read as prose to tell them apart: they are told apart by position.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd><b>Three columns of nine characters each.</b> <i>Scheduled · Due · Defer</i> is measured below, and a column that narrow forces the meaning lines into two or three lines, which is the vertical space the block was supposed to save. The hour chips also shrink to about a quarter of a column each.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>One: three peers in a grid says the three fields are <b>equal alternatives</b>, and they are not — a task can have a due date with no schedule (most do), and `tasks.md` says a scheduled day is what puts it on the calendar. Position is now arguing with the doc.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ---------------------------------------------------------- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">One control for the act you actually perform; the rare ones behind a word.</p>
+        <span class="vc-read">design-taste<br>remove one accessory — then two more</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-back"/></svg>
+              <span class="tk-title">Call the contractor about the fence</span>
+            </div>
+            <div class="ob-body scroll" style="padding:var(--space-5) var(--space-7);gap:0">
+              <div class="tk-detail" data-mode="disclosure"></div>
+              <div class="tk-act"><span>Link note</span><span>Break down</span></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd><b>When</b> becomes one control that sets the day from four options and the hour from four chips — the act a user actually performs — and <i>due</i>, <i>defer</i> and <i>priority</i> move behind one <b>Also…</b> row, because they are set once and rarely. Four fields become one plus a disclosure.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd><b>A deadline is not a rare act.</b> "Call the contractor by Friday" is the sentence capture hears most often, and it now takes a tap on a word that admits it is secondary. The disclosure also has no state shown, so a task with a due date looks identical to one without.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>Two: it hides three of the nine fields the doc lists, and the doc is explicit that the distinction between due and defer is load-bearing — <i>"the app explains it in context"</i>. A row that says <i>Also…</i> is the opposite of an explanation.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ------------------------------------------------ recommended --- -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">The groups, the meanings, and an hour control that appears only once there is a day.</p>
+        <span class="vc-read">impeccable's groups + baseline's fields + the hour as chips</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-back"/></svg>
+              <span class="tk-title">Call the contractor about the fence</span>
+            </div>
+            <div class="ob-body scroll" style="padding:var(--space-5) var(--space-7);gap:0">
+              <div class="tk-detail" data-mode="rec"></div>
+              <div class="tk-act"><span>Schedule</span><span>Link note</span><span>Break down</span><span>Research</span></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for keeping all nine fields — a detail that hides a field is a detail you have to leave. <b>Impeccable</b> for the When · Where · What grouping and for the three meanings as captions, which is the doc's <i>"explains it in context"</i> taken literally. <b>Frontend design</b> for the tabular figures, which are what makes a date column scannable — but not for the three-column grid, because it ranks three fields that are not peers.</dd></div>
+        <div class="vc-line cost"><dt>Fixes</dt><dd>The hour gets a control with <b>no new component</b>: four chips at `control-sm`'s scale, reusing the segmented control's own vocabulary, one of them <i>Other…</i> for the picker. It is <b>progressive</b> — the chips appear under Scheduled only once a day is set, so an unscheduled task never sees them, and the day-before-hour order matches `tasks.md`'s rule that a time is always placed on a day. <b>Priority</b> joins the When group rather than getting a row of its own, because <i>now · next · later</i> are the app's own words for when.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt><dd>Two things this row cannot decide. <b>One:</b> whether the four presets are the right four — they are a guess, and a real one needs the times people actually schedule. <b>Two:</b> the meanings are captions on three fields, which is nine lines of muted text on a screen a user opens fifty times a day; the alternative is to teach them once in onboarding and drop the captions, and that is a decision about `06-flows/onboarding.md` as much as about this screen.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-2">The measurement</h2>
+    <div class="panel" style="margin-top:var(--space-5)">
+      <div class="measure" id="measure-detail">…</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================= DEFER -->
+<section class="screen" id="defer" hidden>
+  <div class="lede">
+    <h2 class="t-title-2">The defer sheet</h2>
+    <p class="lede-p">
+      The three-doc disagreement about this sheet <b>is already fixed</b> —
+      <code>06-flows/disruption.md</code> stopped drawing its own version, and it now carries the
+      pointer explaining why its fourth row (<i>“Keep today”</i>) was deleted: it set <code>defer</code>
+      to what it already was, which is why <b>0</b> log types cover it. <code>tasks.md</code>,
+      <code>gesture-vocabulary.md</code> and <code>disruption.md</code> now list the same four rows.
+    </p>
+    <p class="lede-p">
+      So the live questions are the two this screen draws. <b>What do the four rows write?</b> Three set
+      <code>defer</code> — a day, <i>“becomes visible on this day”</i> — and the fourth, <i>Someday</i>,
+      means <i>“no due dates, no scheduling”</i>, so it cannot be a <code>defer</code> date at all: it
+      is the state <code>task.marked_someday</code>, which every other doc binds to <b>swipe down</b>.
+      One list, two event types, and <code>tasks.md</code>'s own worked example only walks the
+      <i>Tomorrow</i> row. And <b>what does “Next week” resolve to?</b> — a question the whole doc set
+      leaves open, on the control every long-press and swipe opens.
+    </p>
+  </div>
+
+  <div class="grid" id="defer-grid">
+
+    <!-- ---------------------------------------------------------- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The four rows the three docs now agree on, over the list they open from.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <span class="t-title-2">Tasks</span>
+              <span style="flex:1"></span>
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-filter"/></svg>
+            </div>
+            <div class="tk-scope"><div class="tk-seg"><span class="on">Today</span><span>Next</span><span>Someday</span><span>All</span></div></div>
+            <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:var(--space-4)">
+              <div class="tk" data-rows="6"></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+            <div class="tk-scrim"></div>
+            <div class="tk-sheet" data-mode="baseline"></div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>Nothing: the four rows, in the sheet, over the list. Each row is a bare phrase with no resolved date, and the sheet never says which field it is about.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd><b><i>Next week</i> is undefined anywhere in the set</b>, and it is the one row that is not a date picker — so it is the row a user has to trust. A phrase is a promise about a date that nothing in the log records, and it can resolve to two different weeks.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>One: the third row is a <b>different event type from its three siblings</b>. Three of these rows set `defer`, a day. <i>Someday</i> is a state — <code>task.marked_someday</code> — and every other doc binds that to swipe down.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ---------------------------------------------------------- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">The sheet says what it sets, and each row says what it lands on.</p>
+        <span class="vc-read">impeccable · operate</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <span class="t-title-2">Tasks</span>
+              <span style="flex:1"></span>
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-filter"/></svg>
+            </div>
+            <div class="tk-scope"><div class="tk-seg"><span class="on">Today</span><span>Next</span><span>Someday</span><span>All</span></div></div>
+            <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:var(--space-4)">
+              <div class="tk" data-rows="6"></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+            <div class="tk-scrim"></div>
+            <div class="tk-sheet" data-mode="labelled"></div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>A header naming the field — <i>"Becomes visible on this day"</i> — and a resolved date on every row, so <i>Next week</i> is a promise the sheet keeps on screen. <i>Someday</i> is separated by a dashed rule, because it is the one row that answers a different question.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd>The header is the same sentence every time the sheet opens, and it is explaining <code>defer</code> to a user who swiped left expecting to move a task — the doc's own loaded word (<i>"rescheduling mechanism"</i>) is what they brought with them. And a dashed rule tells nobody that the third row writes a different event.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>One: the resolved dates are computed by the UI and stored nowhere. If the sheet is opened on a Friday and acted on on a Monday, the sentence the user agreed to is not the date that lands — and `defer` is a day, so nothing reconciles it.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ---------------------------------------------------------- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">Both readings of “Next week”, side by side, so the ambiguity is the drawing.</p>
+        <span class="vc-read">frontend-design<br>the instrument panel, taken literally</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <span class="t-title-2">Tasks</span>
+              <span style="flex:1"></span>
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-filter"/></svg>
+            </div>
+            <div class="tk-scope"><div class="tk-seg"><span class="on">Today</span><span>Next</span><span>Someday</span><span>All</span></div></div>
+            <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:var(--space-4)">
+              <div class="tk" data-rows="6"></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+            <div class="tk-scrim"></div>
+            <div class="tk-sheet" data-mode="instrument"></div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>Every row carries its <b>offset</b> as well as its date, in tabular figures, and <i>Next week</i> is drawn <b>twice</b> — <i>+7d</i> and <i>the next calendar week</i> — because those are the two things the phrase can mean and the set never chose.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd>It puts an unresolved decision on the screen. A user who reads both rows has been handed a question the app was supposed to have answered, and the honest fix is not to draw two rows but to pick one and say so.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>One: it makes the sheet <b>five rows</b> where `tasks.md` fixes four. A lens may show why the fifth exists; it cannot ship it.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ---------------------------------------------------------- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">Two rows. The state already has a gesture of its own.</p>
+        <span class="vc-read">design-taste<br>remove one accessory — then one more</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <span class="t-title-2">Tasks</span>
+              <span style="flex:1"></span>
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-filter"/></svg>
+            </div>
+            <div class="tk-scope"><div class="tk-seg"><span class="on">Today</span><span>Next</span><span>Someday</span><span>All</span></div></div>
+            <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:var(--space-4)">
+              <div class="tk" data-rows="6"></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+            <div class="tk-scrim"></div>
+            <div class="tk-sheet" data-mode="two"></div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd><i>Next week</i> goes, because <b>Pick a date…</b> contains it and <i>Tomorrow</i> already covers the common case — two rows, and the sheet stops being a menu. <i>Someday</i> goes too, because swipe down already means it.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd><b>Swipe down is labelled <i>Remove</i>.</b> Telling a user who wants to park a task that the gesture exists under a word meaning <i>take it away</i> is a vocabulary problem moved, not solved — and the defer sheet was the one place the state was reachable by reading rather than by remembering.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>One: it deletes two rows `tasks.md` specifies. A lens may argue for that — it cannot decide it.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ------------------------------------------------ recommended --- -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Four rows, one definition, and a rule between the dates and the state.</p>
+        <span class="vc-read">impeccable's resolved dates + the state named as a state</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <span class="t-title-2">Tasks</span>
+              <span style="flex:1"></span>
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-filter"/></svg>
+            </div>
+            <div class="tk-scope"><div class="tk-seg"><span class="on">Today</span><span>Next</span><span>Someday</span><span>All</span></div></div>
+            <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:var(--space-4)">
+              <div class="tk" data-rows="6"></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+            <div class="tk-scrim"></div>
+            <div class="tk-sheet" data-mode="rec"></div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for the four rows — the sheet is a menu of four answers and the earlier lab was right that a no-op had to leave it. <b>Impeccable</b> for the resolved dates, which are what turn <i>Next week</i> from a promise into a date. <b>Design taste</b> for the observation that the fourth row answers a different question — but not for deleting it.</dd></div>
+        <div class="vc-line cost"><dt>Fixes</dt><dd>Three of the four rows set <code>defer</code> and the fourth sets a state, so the recommendation <b>names the difference</b> instead of hiding it: a labelled rule (<i>then</i>) separates the three dates from <i>Someday</i>, and <i>Someday</i> carries the word that says what it does — <i>no date</i>. And <i>Next week</i> resolves to <b>one</b> definition, stated in the sheet, rather than to whichever week the reader had in mind. The sheet also <b>names the task</b> it is about, because the measurement below says the row it acts on is behind the scrim — a sheet that hides its own object and then says only <i>“Becomes visible on this day”</i> is asking to be trusted with an invisible noun.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt><dd>Two decisions this sheet cannot make for itself. <b>One:</b> which definition of <i>Next week</i> ships — the sheet proves one is needed, not which. <b>Two:</b> the defer sheet sets <b>visibility</b> and nothing here sets <b>the hour</b>; for the app's most-used atom the frequent act is arguably <i>when will I do this</i>, and that act has no gesture at all. That is the mode's gesture map (`03-experience/gesture-vocabulary.md`), not this screen.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-2">The measurement</h2>
+    <div class="panel" style="margin-top:var(--space-5)">
+      <div class="measure" id="measure-defer">…</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ SCOPES -->
+<section class="screen" id="scopes" hidden>
+  <div class="lede">
+    <h2 class="t-title-2">The four scopes</h2>
+    <p class="lede-p">
+      <code>tasks.md</code> §Scopes gives each scope one sentence. Read as predicates they are not a
+      partition, and the doc set already contains the proof of it: <b>three docs</b> say an overdue
+      task appears <i>in the Today scope</i> — <code>resurfacing.md</code>, <code>disruption.md</code>
+      and ADR 0006 — while <b>Today's own definition names neither <code>due</code> nor overdue</b>.
+      It reads <i>“tasks scheduled for today, plus tasks with a defer date of today or earlier.”</i>
+    </p>
+    <p class="lede-p">
+      The same gap runs the other way. <b>Next</b> is keyed on <b>priority</b>, not on dates — <i>“tasks
+      with <code>priority: now</code> or <code>priority: next</code> that are not scheduled for
+      today”</i> — so a task whose only date is a deadline belongs to no scope at all but <b>All</b>.
+      That is not a corner: <b>it is what Tier 1 produces.</b> <i>“Call dentist Tuesday”</i> parses to
+      <code>due</code> and nothing else (`04-ai/tier-1-parsing.md`), and <code>priority: later</code>
+      — the third of the three values — is claimed by no scope either.
+    </p>
+  </div>
+
+  <div class="grid" id="scopes-grid">
+
+    <!-- ---------------------------------------------------------- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">The doc's own Today example, over today's actual definition.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <span class="t-title-2">Tasks</span>
+              <span style="flex:1"></span>
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-filter"/></svg>
+            </div>
+            <div class="tk-scope"><div class="tk-seg"><span class="on">Today</span><span>Next</span><span>Someday</span><span>All</span></div></div>
+            <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:var(--space-4)">
+              <div class="tk" data-doc="today"></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>Nothing. Today's list is the four rows from `tasks.md`'s own <i>“A typical Today view”</i> example, with the two rows its definition does not admit flagged.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd><b>Two of the example's four rows are not in Today.</b> <i>Call contractor</i> has <code>priority: next</code> and no scheduled day — Next, by definition. <i>Buy groceries</i> has <code>due: Sun</code> and nothing else, and no scope claims a bare due date. The example — which is also the spec's own test case — half fails its own rule.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>Three docs, one definition. <code>06-flows/resurfacing.md</code>, <code>06-flows/disruption.md</code> and <code>08-decisions/0006</code> all state that an overdue task shows in Today with a chip; today's definition contains no <code>due</code> at all, so the chip has nothing to attach to.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ---------------------------------------------------------- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">Today is what today is about — three sources, and the row says which.</p>
+        <span class="vc-read">impeccable · operate</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <span class="t-title-2">Tasks</span>
+              <span style="flex:1"></span>
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-filter"/></svg>
+            </div>
+            <div class="tk-scope"><div class="tk-seg"><span class="on">Today</span><span>Next</span><span>Someday</span><span>All</span></div></div>
+            <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:var(--space-4)">
+              <div class="tk" data-scope="today"></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>Today's membership becomes explicit and <b>three-sourced</b>: scheduled for today, <b>due today or earlier</b>, or deferred to today or earlier. Each row carries a caption naming which of the three put it there, so the scope explains itself instead of being inferred.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd>A third source makes Today the largest list in the app on a bad week, and an overdue task from six months ago now sits in Today at the same weight as one planned this morning. That is what `06-flows/resurfacing.md` already assumes — but it is a bigger Today than the present definition gives.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>None, and that is the finding: it makes the definition agree with the three docs that already describe it, and with the doc's own example. It is the smallest change that closes the gap.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ---------------------------------------------------------- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">Put the counts on the control, so the partition is visible instead of deduced.</p>
+        <span class="vc-read">frontend-design<br>the instrument panel, taken literally</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <span class="t-title-2">Tasks</span>
+              <span style="flex:1"></span>
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-filter"/></svg>
+            </div>
+            <div class="tk-scope"><div class="tk-seg"><span class="on">Today<small>6</small></span><span>Next<small>4</small></span><span>Someday<small>12</small></span><span>All<small>41</small></span></div></div>
+            <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:var(--space-4)">
+              <div class="tk" data-scope="today"></div>
+              <p class="tk-why" data-note="sum"></p>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>The control carries a count per scope. The four numbers are the fastest way to <i>see</i> that the scopes are not a partition — <b>6 + 4 + 12 does not equal 41</b>, and the difference is the part of the user's list no scope offers.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd>A count is a number about the user's own record, which this set has refused twice — <i>“there is no counter, no pressure”</i> (`06-flows/lapsed-recovery.md`), where the refusal turned out to be about <b>tone</b>. A count of <b>41</b> in All is pressure; the same numbers as a diagnostic in the filter sheet are not.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>One: `tasks.md` specifies the control's four labels and no counts, and `03-experience/components.md` gives the segmented control one height with no variant that carries a second line.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ---------------------------------------------------------- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">Two scopes that mean something; the rest are filters.</p>
+        <span class="vc-read">design-taste<br>remove one accessory — then another</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <span class="t-title-2">Tasks</span>
+              <span style="flex:1"></span>
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-filter"/></svg>
+            </div>
+            <div class="tk-scope"><div class="tk-seg"><span class="on">Now</span><span>Later</span></div></div>
+            <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:var(--space-4)">
+              <div class="tk" data-scope="today"></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>Four scopes become two — <b>Now</b> (everything with a claim on today, overdue included) and <b>Later</b> — with <i>Someday</i> and <i>All</i> moved to the filter sheet, where "everything open" was always a filter rather than a place.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd><b>Someday stops being a scope</b>, and three flows route to it by name — the capture ritual's swipe, the morning plan's and the shutdown's <i>“down → someday”</i>. A filter that has to be applied before it means anything cannot receive a gesture. And <i>Later</i> is where a dateless task would then go, which is not what "later" says.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>Two: it deletes two scopes `tasks.md` specifies and that `surfaces.md` files as four states of one screen, and it changes where four flows' gestures land. A lens may argue for it; it cannot decide it.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ------------------------------------------------ recommended --- -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">Four scopes, a Today with three named sources, and the hole named instead of hidden.</p>
+        <span class="vc-read">impeccable's three sources + baseline's four scopes</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <span class="t-title-2">Tasks</span>
+              <span style="flex:1"></span>
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-filter"/></svg>
+            </div>
+            <div class="tk-scope"><div class="tk-seg"><span class="on">Today</span><span>Next</span><span>Someday</span><span>All</span></div></div>
+            <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:var(--space-4)">
+              <div class="tk" data-scope="rec"></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for keeping four scopes — they are what three flows route to by name. <b>Impeccable</b> for Today's third source and for naming the reason on each row. <b>Frontend design</b> for proving the gap is visible in arithmetic, not for putting the arithmetic on the control: the counts belong in the filter sheet, where they diagnose rather than nag.</dd></div>
+        <div class="vc-line cost"><dt>Fixes</dt><dd>Today gains <b>due today or earlier</b> as a source, which is the sentence three docs already act on and the one the doc's own example assumes. Overdue rows are marked rather than merged: the row shows <i>overdue 2d</i> as its reason, so today is bigger but not flatter. And a row with no date and no priority — a capture nothing has classified — is drawn in All with a reason of its own rather than being invisible everywhere else.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt><dd>Two decisions. <b>One:</b> <code>priority: later</code> — the third of three values — is claimed by <b>no scope</b>, and the candidates are to give it Next or to retire it; that is an ADR, because it changes a projection. <b>Two:</b> `capture.md` sends an unclassified capture <i>“to Inbox otherwise”</i>, and <code>tasks.md</code> has four scopes with no Inbox among them — so the app's default destination is named in one doc and unreachable in another (`04-ai/areas-lab.html` found the same word doing three jobs).</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-2">The partition test</h2>
+    <div class="panel" style="margin-top:var(--space-5)">
+      <div class="measure" id="measure-scopes">…</div>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================================== LOG -->
+<section class="screen" id="log" hidden>
+  <div class="lede">
+    <h2 class="t-title-2">The completion log</h2>
+    <p class="lede-p">
+      <b>Three docs describe this surface and no two of them agree on what it is.</b>
+      <code>05-modules/tasks.md</code> calls it the <i>completion log</i> and gives it a window —
+      <i>“the filter shows tasks completed in the last 30 days by default.”</i>
+      <code>06-flows/completion.md</code> calls it the <i>completed log</i> and gives it a different one
+      — <i>“filterable by day, week, month.”</i> And <code>03-experience/surfaces.md</code> files it as a
+      <b>Screen</b> whose entry is <i>“All → filter 'Completed'”</i>, which is a <b>state</b> of the All
+      scope and not a surface of its own — the same call this set already corrected once, for the
+      Time machine.
+    </p>
+    <p class="lede-p">
+      And the row cannot say the one thing the log exists for. `tasks.md`'s row carries five time
+      facts as chips — <i>due · scheduled · duration · cadence · deferred</i> — and <b><code>completed</code>
+      is not among them</b>, so a completed task's <code>completed_at</code> has no chip, no column and
+      no place in the row. <code>completion.md</code> calls this <i>“the ‘what I did’ view… deeply
+      motivating and rarely seen by the user unless they go looking”</i> — which is an admission about
+      discoverability sitting in the doc that owns the surface.
+    </p>
+  </div>
+
+  <div class="grid" id="log-grid">
+
+    <!-- ---------------------------------------------------------- V1 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Baseline</span>
+        <p class="vc-stance">All, filtered. The rows are ordinary task rows, because nothing says otherwise.</p>
+        <span class="vc-read">no lens · the control arm</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <span class="t-title-2">Tasks</span>
+              <span style="flex:1"></span>
+              <svg class="ic ic-md" style="color: var(--accent-text)"><use href="#i-filter"/></svg>
+            </div>
+            <div class="tk-scope">
+              <div class="tk-seg"><span class="on">Today</span><span>Next</span><span>Someday</span><span>All</span></div>
+              <p class="tk-why" style="margin:6px 0 0">Filtered: Completed · last 30 days</p>
+            </div>
+            <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:var(--space-4)">
+              <div class="tk" data-log="flat"></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>Nothing. Two taps to reach — the All scope, then the filter — with a 30-day window and the standard row.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd><b>Five completions look exactly like five open tasks.</b> The row's vocabulary has no `completed` chip, so the one fact that makes this a log — <i>when</i> — is absent, and a record with no times in it is a list of titles. The order is a sort, not a story.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>Three. `surfaces.md` says Screen and the doc says filter-state; `tasks.md` says 30 days and `completion.md` says day/week/month; and `01-foundation/identity.md` calls this the <i>“what I did”</i> view while `completion.md` admits it is <i>“rarely seen.”</i></dd></div>
+      </dl>
+    </article>
+
+    <!-- ---------------------------------------------------------- V2 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Impeccable</span>
+        <p class="vc-stance">A record is a document: days as headings, times in the row, counts that close each day.</p>
+        <span class="vc-read">impeccable · operate</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <span class="t-title-2">Completed</span>
+              <span style="flex:1"></span>
+              <span class="t-footnote" style="color:var(--text-muted)">30 days</span>
+            </div>
+            <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:0">
+              <div class="tk" style="border:0;background:none" data-log="grouped"></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>The filter becomes a window in the header, and the list becomes a <b>document</b>: a day heading with its count, then that day's completions each carrying its time. <i>“Tuesday · 3”</i> is the sentence the log exists to say.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd>Day headings cost a row every few items, and they only pay for themselves inside a window — over 30 days the heading for a day with one completion is four fifths furniture. It also abandons the scope control: this screen no longer shows which scope you are in, because it is not one.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>One: `surfaces.md` files this as reachable <b>from All</b>, so a screen with no scope control has to say how you get back — the entry it documents stops being true.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ---------------------------------------------------------- V3 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Frontend design</span>
+        <p class="vc-stance">The time column leads, because a log is chronological before it is anything else.</p>
+        <span class="vc-read">frontend-design<br>the instrument panel, taken literally</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <span class="t-title-2">Completed</span>
+              <span style="flex:1"></span>
+              <svg class="ic ic-md" style="color: var(--text-secondary)"><use href="#i-filter"/></svg>
+            </div>
+            <div class="tk-scope">
+              <div class="tk-seg"><span class="on">7</span><span>30</span><span>90</span><span>Custom</span></div>
+            </div>
+            <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:0">
+              <div class="tk" data-log="time"></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>The completion time becomes the <b>leading column</b>, tabular and left-aligned, with the day as a heading above it — so the eye reads down a clock rather than across a title. And the window is the <b>existing</b> selector: 7 / 30 / 90 / custom, not a second vocabulary.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd>44px of every row goes to a time before the title starts, in a list whose titles are the reason a person visits. And 7/30/90 is a <i>rolling</i> window: it cannot answer <i>“what did I finish in September”</i>, which is the question a log gets asked.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>Two: it substitutes day/week/month for 7/30/90/custom without an ADR, and `03-experience/components.md` binds the window selector to `05-modules/habits.md` — so either the component gains a second owner or the two windows are the same control, which nobody has said.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ---------------------------------------------------------- V4 -->
+    <article class="vc">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Design taste</span>
+        <p class="vc-stance">The answer to “what did I do” is today. The long tail is what search is for.</p>
+        <span class="vc-read">design-taste<br>remove the window</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <span class="t-title-2">Completed today</span>
+              <span style="flex:1"></span>
+              <span class="t-footnote" style="color:var(--text-muted)">3</span>
+            </div>
+            <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:0">
+              <div class="tk" style="border:0;background:none" data-log="today"></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Changed</dt><dd>The window goes entirely and the log answers one question, today, with the count in the header. Anything older is a search or a time-machine request, which `06-flows/retrieval.md` already owns.</dd></div>
+        <div class="vc-line cost"><dt>Cost</dt><dd><b>The motivational view only works when it is full.</b> A bad day shows an empty state where a 30-day view would have shown the week's work, and the surface whose whole justification is <i>“deeply motivating”</i> becomes the one that tells you that you did nothing today.</dd></div>
+        <div class="vc-line rules"><dt>Against rules</dt><dd>One: it deletes the window both docs give this list — `tasks.md`'s 30 days and `completion.md`'s day/week/month. A lens may argue for that; it cannot decide it.</dd></div>
+      </dl>
+    </article>
+
+    <!-- ------------------------------------------------ recommended --- -->
+    <article class="vc rec">
+      <div class="vc-head">
+        <span class="vc-name t-title-3">Recommended</span>
+        <p class="vc-stance">A state of All, not a screen; a day heading, a time in the row, and one window vocabulary.</p>
+        <span class="vc-read">impeccable's document + frontend-design's column, filed correctly</span>
+      </div>
+      <div class="vc-stage">
+        <div class="phone tall">
+          <div class="day">
+            <div class="day-head">
+              <span class="t-title-2">Tasks</span>
+              <span style="flex:1"></span>
+              <svg class="ic ic-md" style="color: var(--accent-text)"><use href="#i-filter"/></svg>
+            </div>
+            <div class="tk-scope">
+              <div class="tk-seg"><span>Today</span><span>Next</span><span>Someday</span><span class="on">All</span></div>
+              <p class="tk-why" style="margin:6px 0 0">Completed · <span class="tk-chip">7d</span> <span class="tk-chip">30d</span></p>
+            </div>
+            <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:0">
+              <div class="tk" style="border:0;background:none" data-log="rec"></div>
+            </div>
+            <div class="dock">
+              <svg class="ic ic-lg"><use href="#i-calendar"/></svg>
+              <svg class="ic ic-lg" style="color:var(--accent-text)"><use href="#i-mode-tasks"/></svg>
+              <svg class="ic ic-lg"><use href="#i-repeat"/></svg>
+              <svg class="ic ic-lg"><use href="#i-mode-notes"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <dl class="vc-foot">
+        <div class="vc-line"><dt>Takes</dt><dd><b>Impeccable</b> for the day heading and the count — a record should say <i>“Tuesday · 3”</i>. <b>Frontend design</b> for the leading time column and the tabular figures. <b>Design taste</b> for the instinct that the frequent question is today — but as the <b>default window</b>, not as the only one.</dd></div>
+        <div class="vc-line cost"><dt>Fixes</dt><dd>Three things the drawings made unavoidable. The log stays a <b>state of All</b> — the scope control is still on screen, so <code>surfaces.md</code>'s entry (<i>“All → filter 'Completed'”</i>) becomes literally true instead of filing a state as a screen. The row carries <b>its own time</b> in a leading column, which is the fact the log exists for and the chip vocabulary cannot hold. And the window is the app's <b>one</b> window selector, so the set stops having three vocabularies for one control.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt><dd>Two things, and the first is not a layout question. <b>One:</b> `completed` needs a chip or a column, and that is a specification decision — the row's five facts are a closed list in `tasks.md` and a completion is a sixth; the log is where they part company. <b>Two:</b> `completion.md` says the log is <i>“rarely seen by the user unless they go looking”</i> and `01-foundation/identity.md` calls it the app's motivating view — so a surface that is supposed to reward the user is reachable only by someone who already knows it is there. Making the app <b>say</b> something about a finished day is a nudge, and a nudge needs a `SurfaceId`, a toggle and a budget line (`03-experience/attention-budget.md`, ADR 0013) — an ADR, not this screen.</dd></div>
+      </dl>
+    </article>
+
+  </div>
+
+  <div class="lede">
+    <h2 class="t-title-2">The measurement</h2>
+    <div class="panel" style="margin-top:var(--space-5)">
+      <div class="measure" id="measure-log">…</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script src="lab.js"></script>
+<script src="nav.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var screens = ['list', 'detail', 'defer', 'scopes', 'log'];
+  var seen = {};
+  var tabs = document.getElementById('tabs');
+
+  tabs.addEventListener('click', function (e) {
+    var b = e.target.closest('.tab');
+    if (b && b.dataset.go) go(b.dataset.go);
+  });
+
+  function go(id) {
+    screens.forEach(function (s) {
+      var el = document.getElementById(s);
+      if (el) el.hidden = (s !== id);
+    });
+    Array.prototype.forEach.call(tabs.children, function (b) {
+      b.classList.toggle('on', b.dataset.go === id);
+    });
+    // A hidden section measures zero for everything, so each screen's numbers are
+    // computed the first time it is shown and never before.
+    if (!seen[id]) {
+      seen[id] = true;
+      requestAnimationFrame(function () { MEASURE[id](); });
+    }
+  }
+
+  // --------------------------------------------------------- the detail's fields
+  // Nine fields from `tasks.md`'s one sentence, and four ways to lay out the three
+  // that carry a date. The hour chips are the same control in three of the four
+  // modes, because the question is whether they are the right control at all.
+  var HOURS = ['09:00', '12:00', '15:00', 'Other\u2026'];
+
+  function hours(pick) {
+    return '<div class="tk-time">' + HOURS.map(function (h) {
+      return '<span class="tk-tchip' + (h === pick ? ' on' : '') + '">' + h + '</span>';
+    }).join('') + '</div>';
+  }
+
+  function field(label, value, meaning, extra) {
+    return '<div class="tk-f"><span class="tk-fl">' + label + '</span>' +
+      '<span class="tk-fv' + (value ? '' : ' empty') + '">' + (value || 'Not set') +
+      '</span></div>' + (meaning ? '<p class="tk-fh">' + meaning + '</p>' : '') + (extra || '');
+  }
+
+  var WHAT = field('Notes', 'Ask about the north side too') +
+    field('Subtasks', 'Get the quote · Confirm the date');
+  var WHERE = field('Area', 'Home') + field('People', '@Mark');
+
+  var DETAIL = {
+    flat: function () {
+      return field('Notes', 'Ask about the north side too') +
+        field('Subtasks', 'Get the quote · Confirm the date') +
+        field('People', '@Mark') +
+        field('Scheduled', 'Thu 24 Sep · 15:00') +
+        field('Due', 'Fri 25 Sep') +
+        field('Defer', 'Tue 22 Sep') +
+        field('Priority', 'Now') +
+        field('Area', 'Home');
+    },
+    grouped: function () {
+      return '<p class="tk-gt">When</p>' +
+        field('Scheduled', 'Thu 24 Sep', 'Appears on the calendar', hours('15:00')) +
+        field('Due', 'Fri 25 Sep', 'Must be done by') +
+        field('Defer', 'Tue 22 Sep', 'Becomes visible') +
+        field('Priority', 'Now') +
+        '<p class="tk-gt">Where</p>' + WHERE +
+        '<p class="tk-gt">What</p>' + WHAT;
+    },
+    cols: function () {
+      function col(k, v, m, extra) {
+        return '<div class="tk-col"><span class="k">' + k + '</span>' +
+          '<span class="v">' + v + '</span><span class="m">' + m + '</span>' +
+          (extra || '') + '</div>';
+      }
+      return '<div class="tk-cols">' +
+        col('Scheduled', 'Thu 24', 'On the calendar', hours('15:00')) +
+        col('Due', 'Fri 25', 'Must be done by') +
+        col('Defer', 'Tue 22', 'Becomes visible') +
+        '</div>' + field('Priority', 'Now') + WHERE + WHAT;
+    },
+    disclosure: function () {
+      return field('When', 'Thu 24 Sep', 'Sets the day and the hour', hours('15:00')) +
+        '<div class="tk-disc"><span>Also\u2026</span><span class="grow"></span>' +
+        '<span>due · defer · priority</span></div>' + WHERE + WHAT;
+    },
+    rec: function () {
+      return '<p class="tk-gt">When</p>' +
+        field('Scheduled', 'Thu 24 Sep', 'Appears on the calendar at this hour', hours('15:00')) +
+        field('Due', 'Fri 25 Sep', 'Must be done by') +
+        field('Defer', 'Tue 22 Sep', 'Becomes visible on this day') +
+        field('Priority', 'Now') +
+        '<p class="tk-gt">Where</p>' + WHERE +
+        '<p class="tk-gt">What</p>' + WHAT;
+    }
+  };
+
+  function renderDetails() {
+    [].slice.call(document.querySelectorAll('.tk-detail')).forEach(function (el) {
+      var mode = el.dataset.mode;
+      if (DETAIL[mode]) el.innerHTML = DETAIL[mode]();
+    });
+  }
+
+  // ------------------------------------------------------- the defer sheet
+  // The fixture's today is Tue 22 Sep 2026 — the date four labs already use — because
+  // "Next week" is meaningless without one, and the set never defines it.
+  var TODAY = new Date(2026, 8, 22);
+  var DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function dayAfter(n) {
+    var d = new Date(TODAY.getTime());
+    d.setDate(d.getDate() + n);
+    return d;
+  }
+  function fmt(d) { return DOW[d.getDay()] + ' ' + d.getDate() + ' ' + MON[d.getMonth()]; }
+  // The next calendar week's Monday — the other thing "next week" can mean.
+  function nextMonday() {
+    var d = dayAfter(1);
+    while (d.getDay() !== 1) d = new Date(d.getTime() + 86400000);
+    return d;
+  }
+
+  function srow(label, resolved, offset, cls) {
+    return '<div class="tk-srow ' + (cls || '') + '"><span class="lb">' + label + '</span>' +
+      (resolved ? '<span class="rs">' + resolved + '</span>' : '') +
+      (offset ? '<span class="off">' + offset + '</span>' : '') + '</div>';
+  }
+
+  var SHEET = {
+    baseline: function () {
+      return '<div class="tk-grab"></div>' +
+        srow('Tomorrow') + srow('Next week') + srow('Someday') +
+        srow('Pick a date…', null, null, 'pick');
+    },
+    labelled: function () {
+      return '<div class="tk-grab"></div>' +
+        '<p class="tk-hd">Becomes visible on this day — not when it is on the calendar.</p>' +
+        srow('Tomorrow', fmt(dayAfter(1))) +
+        srow('Next week', fmt(nextMonday())) +
+        srow('Someday', 'no date', null, 'state') +
+        srow('Pick a date…', null, null, 'pick');
+    },
+    instrument: function () {
+      var monday = nextMonday();
+      return '<div class="tk-grab"></div>' +
+        srow('Tomorrow', fmt(dayAfter(1)), '+1d') +
+        srow('Next week', fmt(dayAfter(7)), '+7d') +
+        srow('Next week', fmt(monday),
+          '+' + Math.round((monday - TODAY) / 86400000) + 'd', 'alt') +
+        srow('Someday', 'no date', null, 'state') +
+        srow('Pick a date…', null, null, 'pick');
+    },
+    two: function () {
+      return '<div class="tk-grab"></div>' +
+        srow('Tomorrow') + srow('Pick a date…', null, null, 'pick');
+    },
+    rec: function () {
+      return '<div class="tk-grab"></div>' +
+        '<p class="tk-hd" style="font-size:14px;line-height:20px;color:var(--text-primary)">' +
+        'Buy groceries</p>' +
+        '<p class="tk-hd">Becomes visible on this day. Not when it is on the calendar.</p>' +
+        srow('Tomorrow', fmt(dayAfter(1))) +
+        srow('Next week', fmt(nextMonday())) +
+        srow('Pick a date…', null, null, 'pick') +
+        '<p class="tk-hd" style="margin:6px 0 0">Then</p>' +
+        srow('Someday', 'no date', null, 'state');
+    }
+  };
+
+  // The list the sheet opens over — ten rows, so the list fills the frame and the row
+  // at the bottom is the one a thumb reaches for and the sheet sits on top of.
+  var LIST_ROWS = [
+    ['Draft the Q4 plan', 'Work · 1 note', 'due Fri'],
+    ['Call the contractor about the fence', 'Home · deferred 2d', '15:00'],
+    ['Reply to Priya about the offsite', 'Work · @Priya', 'due Tue'],
+    ['Send the invoice', 'Work · completed 10:12', ''],
+    ['Book flights to Lisbon', '', ''],
+    ['Read the contract the lawyer sent', 'Work', 'overdue 2d'],
+    ['Water the plants', 'Home', '40m'],
+    ['Order more coffee', 'Home', ''],
+    ['Email the accountant', 'Work · @Priya', 'due Thu'],
+    ['Buy groceries', 'Home', 'deferred 2d']
+  ];
+
+  function renderBehind() {
+    var html = LIST_ROWS.map(function (r) {
+      var done = r[0] === 'Send the invoice';
+      return '<div class="tk-row b"><div class="tk-box' + (done ? ' done' : '') + '">' +
+        (done ? '<svg><use href="#i-check"/></svg>' : '') + '</div>' +
+        '<div class="tk-main"><span class="tk-t">' + r[0] + '</span>' +
+        (r[1] ? '<span class="tk-m">' + r[1] + '</span>' : '') + '</div>' +
+        (r[2] ? '<div class="tk-chips"><span class="tk-chip' +
+          (r[2].indexOf('due') === 0 ? ' due' : '') + '">' + r[2] + '</span></div>' : '') +
+        '</div>';
+    }).join('');
+    [].slice.call(document.querySelectorAll('.tk[data-rows]')).forEach(function (el) {
+      el.innerHTML = html;
+    });
+    [].slice.call(document.querySelectorAll('.tk-sheet[data-mode]')).forEach(function (el) {
+      if (SHEET[el.dataset.mode]) el.innerHTML = SHEET[el.dataset.mode]();
+    });
+  }
+
+  // ------------------------------------------------------------ the four scopes
+  // `tasks.md` §Scopes as predicates, which is the only way to test them. A scope is
+  // a set; four sets are a partition or they are not.
+  var SCOPE_FIXTURE = [
+    { t: 'Draft the Q4 plan', pri: 'now', sched: 'today' },
+    { t: 'Water the plants', sched: 'today' },
+    { t: 'Email the accountant', defer: 'today' },
+    { t: 'File Q4 taxes', due: 'past', defer: 'past', pri: 'next' },
+    { t: 'Read the contract', due: 'past' },
+    { t: 'Buy groceries', due: 'sun' },
+    { t: 'Call dentist', due: 'tue' },
+    { t: 'Call the contractor', pri: 'next', sched: 'thu' },
+    { t: 'Reply to Priya', pri: 'now' },
+    { t: 'Book flights', pri: 'later' },
+    { t: 'Order more coffee' },
+    { t: 'Learn Japanese', someday: true }
+  ];
+
+  function scopeOf(x) {
+    var s = [];
+    if (x.sched === 'today' || x.defer === 'today' || x.defer === 'past') s.push('today');
+    if ((x.pri === 'now' || x.pri === 'next') && x.sched !== 'today') s.push('next');
+    if (x.someday) s.push('someday');
+    return s;
+  }
+
+  function srow2(x, opt) {
+    opt = opt || {};
+    var trail = (opt.chip ? '<span class="tk-chip' + (opt.warn ? ' over' : '') + '">' +
+      opt.chip + '</span>' : '') + (opt.flag ? '<span class="tk-flag">' + opt.flag + '</span>' : '');
+    return '<div class="tk-row b"><div class="tk-box"></div>' +
+      '<div class="tk-main"><span class="tk-t">' + x.t + '</span>' +
+      (opt.why ? '<span class="tk-why">' + opt.why + '</span>' : '') + '</div>' +
+      '<div class="tk-chips">' + trail + '</div></div>';
+  }
+
+  // `tasks.md`'s own "A typical Today view" example, with the rows its definition
+  // does not admit flagged.
+  var DOC_TODAY = [
+    { t: 'Draft Q4 plan', why: 'Work · 1 note' },
+    { t: 'Call contractor', why: 'Home · @Mark', flag: 'not in Today' },
+    { t: 'Buy groceries', why: 'Home · due Sun', flag: 'not in Today' },
+    { t: 'File Q4 taxes', why: 'Home · due Fri · deferred 2d' }
+  ];
+
+  var TODAY_LIST = [
+    { x: SCOPE_FIXTURE[0], why: 'scheduled today', chip: 'due Fri' },
+    { x: SCOPE_FIXTURE[1], why: 'scheduled today', chip: '40m' },
+    { x: SCOPE_FIXTURE[2], why: 'deferred to today', chip: 'due Thu' },
+    { x: SCOPE_FIXTURE[3], why: 'deferred 2d · also in Next', chip: 'overdue 2d', warn: true }
+  ];
+
+  var REC_LIST = TODAY_LIST.concat([
+    { x: SCOPE_FIXTURE[4], why: 'due 2 days ago — overdue', chip: 'overdue 2d', warn: true }
+  ]);
+
+  function renderScopes() {
+    [].slice.call(document.querySelectorAll('.tk[data-scope]')).forEach(function (el) {
+      var mode = el.dataset.scope;
+      if (mode === 'rec') {
+        el.innerHTML = REC_LIST.map(function (r) {
+          return srow2(r.x, { why: r.why, chip: r.chip, warn: r.warn });
+        }).join('');
+        return;
+      }
+      if (mode === 'today') {
+        el.innerHTML = TODAY_LIST.map(function (r) {
+          return srow2(r.x, { why: r.why, chip: r.chip, warn: r.warn });
+        }).join('');
+      }
+    });
+    [].slice.call(document.querySelectorAll('.tk[data-doc]')).forEach(function (el) {
+      el.innerHTML = DOC_TODAY.map(function (r) {
+        return srow2(r, { why: r.why, flag: r.flag, warn: !!r.flag });
+      }).join('');
+    });
+    var sum = document.querySelector('[data-note="sum"]');
+    if (sum) {
+      var none = SCOPE_FIXTURE.filter(function (x) { return scopeOf(x).length === 0; }).length;
+      sum.textContent = none + ' of these ' + SCOPE_FIXTURE.length +
+        ' appear in no scope at all — All is the only place they exist.';
+    }
+  }
+
+  // --------------------------------------------------------- the completion log
+  var LOG = [
+    { t: 'Draft the Q4 plan', at: '17:05', day: 'today' },
+    { t: 'Send the invoice', at: '10:12', day: 'today' },
+    { t: 'Water the plants', at: '08:40', day: 'today' },
+    { t: 'Book flights to Lisbon', at: '16:20', day: 'yesterday' },
+    { t: 'Reply to Priya about the offsite', at: '11:58', day: 'yesterday' },
+    { t: 'Read the contract the lawyer sent', at: '09:15', day: 'yesterday' }
+  ];
+
+  function logRow(r, mode) {
+    if (mode === 'flat') {
+      return '<div class="tk-row b"><div class="tk-box done">' +
+        '<svg><use href="#i-check"/></svg></div>' +
+        '<div class="tk-main"><span class="tk-t" style="color:var(--text-secondary)">' +
+        r.t + '</span></div><div class="tk-chips"></div></div>';
+    }
+    if (mode === 'lead') {
+      return '<div class="tk-lrow"><span class="tk-hh">' + r.at + '</span>' +
+        '<span class="ttl">' + r.t + '</span></div>';
+    }
+    return '<div class="tk-lrow"><span class="ttl">' + r.t + '</span>' +
+      '<span class="tk-hh" style="margin-left:auto">' + r.at + '</span></div>';
+  }
+
+  function dayHead(label, n) {
+    return '<div class="tk-day"><span class="d">' + label + '</span>' +
+      '<span class="c">' + n + '</span></div>';
+  }
+
+  function logGroups(mode) {
+    var out = '', day = '';
+    LOG.forEach(function (r) {
+      if (r.day !== day) {
+        day = r.day;
+        var n = LOG.filter(function (x) { return x.day === day; }).length;
+        out += dayHead(day === 'today' ? 'Today · Tue 22 Sep' : 'Yesterday · Mon 21 Sep', n);
+      }
+      out += logRow(r, mode);
+    });
+    return out;
+  }
+
+  var LOG_MODES = {
+    flat: function () { return LOG.map(function (r) { return logRow(r, 'flat'); }).join(''); },
+    grouped: function () { return logGroups('meta'); },
+    time: function () { return logGroups('lead'); },
+    rec: function () { return logGroups('lead'); },
+    today: function () {
+      return dayHead('Today · Tue 22 Sep', 3) +
+        LOG.slice(0, 3).map(function (r) { return logRow(r, 'lead'); }).join('');
+    }
+  };
+
+  function renderLog() {
+    [].slice.call(document.querySelectorAll('.tk[data-log]')).forEach(function (el) {
+      if (LOG_MODES[el.dataset.log]) el.innerHTML = LOG_MODES[el.dataset.log]();
+    });
+  }
+
+  // ------------------------------------------------------------------ measure
+  function px(n) { return Math.round(n) + 'px'; }
+
+  function measureList() {
+    var host = document.getElementById('measure-list');
+    if (!host) return;
+    var vcs = [].slice.call(document.querySelectorAll('#list-grid .vc'));
+    if (!vcs.length) return;
+
+    var base = vcs[0];
+    var rec = vcs[vcs.length - 1];
+
+    // The title's available width, by how many chips the row is carrying. This is
+    // `tasks.md`'s own claim — 195 / 144 / 60 — re-measured at the real 390px.
+    function titleW(n) {
+      var el = base.querySelector('.tk-t[data-w="' + n + '"]');
+      return el ? Math.round(el.getBoundingClientRect().width) : 0;
+    }
+
+    function stats(v) {
+      var t = [].slice.call(v.querySelectorAll('.tk-t'));
+      return {
+        name: v.querySelector('.vc-name').textContent.trim(),
+        n: t.length,
+        clipped: t.filter(function (x) { return x.scrollWidth > x.clientWidth + 1; }).length
+      };
+    }
+    var all = vcs.map(stats);
+
+    var rows = [].slice.call(rec.querySelectorAll('.tk-row'));
+    var withMeta = rows.filter(function (r) { return r.querySelector('.tk-m'); })[0];
+    var noMeta = rows.filter(function (r) { return !r.querySelector('.tk-m'); })[0];
+    var body = rec.querySelector('.ob-body');
+    var fold = body.getBoundingClientRect().top + body.clientHeight;
+    var visible = rows.filter(function (r) {
+      return r.getBoundingClientRect().bottom <= fold + 1;
+    }).length;
+
+    // What a list screen is actually for: how many rows the frame holds at once. The
+    // fixture is shorter than the frame, so "how many are visible" reports the fixture
+    // rather than the design — the capacity is the number that travels.
+    var bcs = getComputedStyle(body);
+    var bodyH = body.clientHeight - parseFloat(bcs.paddingTop) - parseFloat(bcs.paddingBottom);
+
+    // The chrome-vs-text check the set has needed three times (note row +34, protocol
+    // card +14, person row +3). A row's height is its text plus its chrome, and the
+    // chrome is what breaks a token.
+    var rowH = withMeta ? Math.round(withMeta.getBoundingClientRect().height) : 0;
+    var bareH = noMeta ? Math.round(noMeta.getBoundingClientRect().height) : 0;
+    var cs = withMeta ? getComputedStyle(withMeta) : null;
+    var chrome = cs ? (parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) +
+      parseFloat(cs.borderTopWidth) + parseFloat(cs.borderBottomWidth)) : 0;
+
+    // The token's price, in rows of list.
+    var capacity = rowH ? Math.floor(bodyH / rowH) : 0;
+    var tokenRows = Math.floor(bodyH / 72);
+    var tokenCost = capacity - tokenRows;
+
+    host.innerHTML = [
+      '<div><span class="n">' + px(titleW(1)) + '</span>' +
+        '<span class="l">the title with one chip — tasks.md says 195px</span></div>',
+      '<div><span class="n">' + px(titleW(2)) + '</span>' +
+        '<span class="l">with two — tasks.md says 144px, and two is the cap</span></div>',
+      '<div><span class="n">' + px(titleW(3)) + '</span>' +
+        '<span class="l">with three — tasks.md says 60px and wrapping</span></div>',
+      '<div><span class="n">' + rowH + 'px</span>' +
+        '<span class="l">a row with metadata against row-rich (72px) — chrome is ' +
+        Math.round(chrome) + 'px of it</span></div>',
+      '<div><span class="n">' + bareH + 'px</span>' +
+        '<span class="l">a row with no metadata against row-default (56px)</span></div>',
+      '<div><span class="n">' + capacity + '</span>' +
+        '<span class="l">rows the frame holds at once — ' + bodyH + 'px of list at ' +
+        rowH + 'px a row</span></div>',
+      '<div><span class="n">' + tokenRows + '</span>' +
+        '<span class="l">rows if the row honoured its own token, row-rich (72px) — the token costs ' +
+        tokenCost + (tokenCost === 1 ? ' row' : ' rows') + ' of list</span></div>',
+      '<div><span class="n">' + visible + ' of ' + rows.length + '</span>' +
+        '<span class="l">drawn rows fully visible, recommended — the fixture is shorter than the frame</span></div>'
+    ].concat(all.map(function (s) {
+      return '<div><span class="n">' + s.clipped + ' / ' + s.n + '</span>' +
+        '<span class="l">' + s.name + ' — titles clipped (scrollWidth past clientWidth)</span></div>';
+    })).join('');
+
+    document.getElementById('list-cost-1t').innerHTML =
+      'At 390px the row gives the title <b>' + px(titleW(2)) + '</b> with the two facts the cap ' +
+      'allows — and <b>' + px(titleW(3)) + '</b> with three, which is a title that fits about ' +
+      'four words. The row height is fixed at <b>' + rowH + 'px</b>, so nothing overflows and ' +
+      'nothing wraps: the pressure shows as <b>starvation</b>, which is invisible at a glance. ' +
+      'And the fifth fact does not starve the title, it <b>displaces</b> one of the two that were ' +
+      'already there — a task due Friday and scheduled for 15:00 has to choose.';
+  }
+
+  function measureDetail() {
+    var host = document.getElementById('measure-detail');
+    if (!host) return;
+    var vcs = [].slice.call(document.querySelectorAll('#detail-grid .vc'));
+    if (!vcs.length) return;
+    var rec = vcs[vcs.length - 1];
+    var colV = vcs[2];
+
+    var f = rec.querySelector('.tk-f');
+    var rowH = f ? Math.round(f.getBoundingClientRect().height) : 0;
+    var fcs = f ? getComputedStyle(f) : null;
+    var chrome = fcs ? (parseFloat(fcs.paddingTop) + parseFloat(fcs.paddingBottom) +
+      parseFloat(fcs.borderBottomWidth)) : 0;
+
+    var body = rec.querySelector('.ob-body');
+    var fold = body.getBoundingClientRect().top + body.clientHeight;
+    var fields = [].slice.call(rec.querySelectorAll('.tk-f'));
+    var above = fields.filter(function (x) {
+      return x.getBoundingClientRect().bottom <= fold + 1;
+    }).length;
+
+    // The hour control, at both scales it is drawn at: four across the detail, and
+    // four inside one column of the three-column block.
+    var chipRow = rec.querySelector('.tk-time');
+    var chip = rec.querySelector('.tk-tchip');
+    var chipW = chip ? Math.round(chip.getBoundingClientRect().width) : 0;
+    var chipClipped = chipRow ? [].slice.call(chipRow.children).filter(function (c) {
+      return c.scrollWidth > c.clientWidth + 1;
+    }).length : 0;
+
+    var col = colV ? colV.querySelector('.tk-col') : null;
+    var colW = col ? Math.round(col.getBoundingClientRect().width) : 0;
+    var meaning = colV ? colV.querySelector('.tk-col .m') : null;
+    var meaningH = meaning ? Math.round(meaning.getBoundingClientRect().height) : 0;
+    var colChip = colV ? colV.querySelector('.tk-col .tk-tchip') : null;
+    var colChipClipped = colChip ? colChip.scrollWidth > colChip.clientWidth + 1 : false;
+
+    host.innerHTML = [
+      '<div><span class="n">' + rowH + 'px</span>' +
+        '<span class="l">a field row, against control-md (40px) — chrome is ' +
+        Math.round(chrome) + 'px of it</span></div>',
+      '<div><span class="n">' + above + ' of ' + fields.length + '</span>' +
+        '<span class="l">fields fully above the fold, recommended</span></div>',
+      '<div><span class="n">' + chipW + 'px</span>' +
+        '<span class="l">one hour chip across the detail — four of them plus gaps</span></div>',
+      '<div><span class="n">' + chipClipped + ' of 4</span>' +
+        '<span class="l">chips whose own label does not fit at that width</span></div>',
+      '<div><span class="n">' + colW + 'px</span>' +
+        '<span class="l">a temporal column in the three-column block</span></div>',
+      '<div><span class="n">' + meaningH + 'px</span>' +
+        '<span class="l">what "must be done by" costs in a column that narrow</span></div>',
+      '<div><span class="n">' + (colChipClipped ? 'clipped' : 'fits') + '</span>' +
+        '<span class="l">the hour chip inside a temporal column</span></div>'
+    ].join('');
+  }
+
+  function measureSheet() {
+    var host = document.getElementById('measure-defer');
+    if (!host) return;
+    var vcs = [].slice.call(document.querySelectorAll('#defer-grid .vc'));
+    if (!vcs.length) return;
+    var rec = vcs[vcs.length - 1];
+
+    var row = rec.querySelector('.tk-srow');
+    var rowH = row ? Math.round(row.getBoundingClientRect().height) : 0;
+    var sheet = rec.querySelector('.tk-sheet');
+    var phone = rec.querySelector('.phone');
+    var sheetH = Math.round(sheet.getBoundingClientRect().height);
+    var phoneH = Math.round(phone.getBoundingClientRect().height);
+
+    // What the sheet covers, and whether the row you swiped is behind it — the same
+    // test the Event detail's sheet was put through in the Calendar lab.
+    var list = rec.querySelector('.ob-body');
+    var listBottom = list.getBoundingClientRect().bottom;
+    var sheetTop = sheet.getBoundingClientRect().top;
+    var covered = Math.max(0, Math.round(listBottom - sheetTop));
+    var listRows = [].slice.call(rec.querySelectorAll('.tk-row'));
+    var last = listRows[listRows.length - 1];
+    var lastHidden = last ? last.getBoundingClientRect().bottom > sheetTop : false;
+
+    // The two readings of "Next week" — and how far apart they get across a week, which
+    // is the honest size of the ambiguity. On this fixture it is 1 day; on the worst
+    // weekday it is not.
+    var monday = nextMonday();
+    var here = Math.abs(Math.round((monday - dayAfter(7)) / 86400000));
+    var gaps = [];
+    for (var i = 0; i < 7; i++) {
+      var t = dayAfter(i);
+      var plus7 = new Date(t.getTime() + 7 * 86400000);
+      var nm = new Date(t.getTime() + 86400000);
+      while (nm.getDay() !== 1) nm = new Date(nm.getTime() + 86400000);
+      gaps.push(Math.abs(Math.round((nm - plus7) / 86400000)));
+    }
+
+    host.innerHTML = [
+      '<div><span class="n">' + rowH + 'px</span>' +
+        '<span class="l">a sheet row, against row-compact (44px)</span></div>',
+      '<div><span class="n">' + sheetH + 'px</span>' +
+        '<span class="l">the sheet — ' + Math.round(sheetH / phoneH * 100) +
+        '% of the phone, ' + (4 * rowH) + 'px of it rows</span></div>',
+      '<div><span class="n">' + covered + 'px</span>' +
+        '<span class="l">of the list behind the scrim and the sheet</span></div>',
+      '<div><span class="n">' + (lastHidden ? 'yes' : 'no') + '</span>' +
+        '<span class="l">the row being deferred is behind the sheet</span></div>',
+      '<div><span class="n">' + fmt(dayAfter(7)) + '</span>' +
+        '<span class="l">"Next week" as +7 days</span></div>',
+      '<div><span class="n">' + fmt(monday) + '</span>' +
+        '<span class="l">"Next week" as the next calendar week</span></div>',
+      '<div><span class="n">' + here + '\u2013' + Math.max.apply(null, gaps) + ' days</span>' +
+        '<span class="l">how far apart the two readings are — ' + here +
+        ' on this fixture, up to ' + Math.max.apply(null, gaps) +
+        ' depending on the weekday</span></div>'
+    ].join('');
+  }
+
+  function measureScopes() {
+    var host = document.getElementById('measure-scopes');
+    if (!host) return;
+    var n = SCOPE_FIXTURE.length;
+    var one = 0, none = 0, many = 0;
+    SCOPE_FIXTURE.forEach(function (x) {
+      var s = scopeOf(x).length;
+      if (s === 0) none++; else if (s === 1) one++; else many++;
+    });
+    function count(name) {
+      return SCOPE_FIXTURE.filter(function (x) {
+        return scopeOf(x).indexOf(name) !== -1;
+      }).length;
+    }
+    var docOut = DOC_TODAY.filter(function (r) { return !!r.flag; }).length;
+
+    host.innerHTML = [
+      '<div><span class="n">' + count('today') + '</span>' +
+        '<span class="l">of ' + n + ' tasks in Today, by its definition</span></div>',
+      '<div><span class="n">' + count('next') + '</span>' +
+        '<span class="l">in Next — keyed on priority, not on a date</span></div>',
+      '<div><span class="n">' + count('someday') + '</span>' +
+        '<span class="l">in Someday</span></div>',
+      '<div><span class="n">' + one + ' of ' + n + '</span>' +
+        '<span class="l">tasks in exactly one scope</span></div>',
+      '<div><span class="n">' + none + ' of ' + n + '</span>' +
+        '<span class="l">in <b>no</b> scope — All is the only place they exist</span></div>',
+      '<div><span class="n">' + many + ' of ' + n + '</span>' +
+        '<span class="l">in two scopes at once — deferred-past and priority next overlap</span></div>',
+      '<div><span class="n">' + docOut + ' of ' + DOC_TODAY.length + '</span>' +
+        '<span class="l">rows in tasks.md\u2019s own Today example that its definition excludes</span></div>'
+    ].join('');
+  }
+
+  function measureLog() {
+    var host = document.getElementById('measure-log');
+    if (!host) return;
+    var vcs = [].slice.call(document.querySelectorAll('#log-grid .vc'));
+    if (!vcs.length) return;
+    var rec = vcs[vcs.length - 1];
+    var row = rec.querySelector('.tk-lrow');
+    var rowH = row ? Math.round(row.getBoundingClientRect().height) : 0;
+    var hh = rec.querySelector('.tk-hh');
+    var hhW = hh ? Math.round(hh.getBoundingClientRect().width) : 0;
+    var body = rec.querySelector('.ob-body');
+    var cells = getComputedStyle(body);
+    var bodyH = body.clientHeight - parseFloat(cells.paddingTop) - parseFloat(cells.paddingBottom);
+    var days = 2;
+    var heads = days * 22;
+    var capacity = rowH ? Math.floor((bodyH - heads) / rowH) : 0;
+
+    host.innerHTML = [
+      '<div><span class="n">' + rowH + 'px</span>' +
+        '<span class="l">a log row, against row-compact (44px)</span></div>',
+      '<div><span class="n">' + hhW + 'px</span>' +
+        '<span class="l">the leading time column — ' +
+        Math.round(hhW / (body.clientWidth - 48) * 100) + '% of the row\u2019s width</span></div>',
+      '<div><span class="n">' + capacity + '</span>' +
+        '<span class="l">completions the frame holds, across ' + days +
+        ' day headings (' + bodyH + 'px, ' + rowH + 'px a row)</span></div>',
+      '<div><span class="n">0 of 5</span>' +
+        '<span class="l">of the row\u2019s chip facts that can say <i>when</i> a task was completed</span></div>',
+      '<div><span class="n">3</span>' +
+        '<span class="l">window vocabularies in the set for one control — 30 days, day/week/month, 7/30/90/custom</span></div>'
+    ].join('');
+  }
+
+  var MEASURE = {
+    list: measureList, detail: measureDetail, defer: measureSheet,
+    scopes: measureScopes, log: measureLog
+  };
+
+  // The default screen has no `hidden`, so its measurement runs at load rather than
+  // waiting for a tab that is already selected. The generated screens have to be built
+  // before anything can measure them.
+  renderDetails();
+  renderBehind();
+  renderScopes();
+  renderLog();
+  setTimeout(function () { seen.list = true; measureList(); }, 0);
+})();
+</script>
+</body>
+</html>

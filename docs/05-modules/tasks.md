@@ -33,14 +33,32 @@ deferred.
 The Tasks mode has four scopes, switchable via a segmented control
 in the header:
 
-- **Today.** Tasks scheduled for today, plus tasks with a defer
-  date of today or earlier. Deferred-past tasks appear at the top
-  with a subtle "deferred" chip.
-- **Next.** Tasks with `priority: now` or `priority: next` that
-  are not scheduled for today.
+- **Today.** Three sources, and the row says which one put it
+  there: scheduled for today, **due today or earlier**, or a defer
+  date of today or earlier. Overdue and deferred-past tasks appear
+  at the top carrying their reason as a chip ("overdue 2d",
+  "deferred 2d").
+- **Next.** Everything open that Today and Someday do not hold —
+  the complement, not a priority filter (ADR 0028).
 - **Someday.** Tasks marked `someday`. No due dates, no scheduling.
 - **All.** Everything open, sorted by due date ascending, then
   priority.
+
+**The four are a partition, and that is a decision rather than a
+description** (ADR 0028). Read as predicates the older rules were not
+one: `Next` keyed on `priority`, so a task whose only date was a deadline
+belonged to no scope at all, `priority: later` was claimed by none, and a
+task deferred into the past *while* carrying `priority: next` sat in two
+at once. Measured over twelve realistic tasks
+(`design/tasks-lab.html`, "The four scopes"): **5 had no scope, 1 had
+two.** The missing rule is also already written down three times —
+`06-flows/resurfacing.md`, `06-flows/disruption.md` and
+`08-decisions/0006` all say an overdue task shows in Today with a chip —
+and this doc's own "A typical Today view" example carried **2 of its 4
+rows** that its definition excluded. The hole mattered most where it was
+least visible: `04-ai/tier-1-parsing.md` turns "call dentist Tuesday"
+into a task with `due` and nothing else, so the app's most common capture
+was in no scope but All.
 
 Filters (via `Cmd+F` or a filter button): by Area, by Person, by
 due within N days, by completion date (for the completed log).
@@ -63,23 +81,42 @@ due within N days, by completion date (for the completed log).
   `accent-default`. `next` and `later` have no indicator (their
   absence is the signal).
 - **Time chips.** Every time fact is a chip on the trailing edge, not
-  text in the metadata line: **due** ("due Thu"), **duration**
-  ("40m"), **cadence** ("weekly"), and **deferred** ("deferred 2d").
+  text in the metadata line: **due** ("due Thu"), **scheduled**
+  ("15:00"), **duration** ("40m"), **cadence** ("weekly"), and
+  **deferred** ("deferred 2d"). `scheduled` is the fifth fact and the
+  newest: `scheduled_time` is a **point**, not a span, so its chip
+  carries an hour and its task may have no duration at all (ADR 0025).
   Time changes constantly and identity does not, so separation keeps
   the metadata line to one job and makes the chips a column the eye
   can scan down.
 
 **The row shows at most two chips.** The cap is a measurement rather
-than a taste: at 390px, one chip leaves the title 195px, two leave it
-144px, and three take 232px of the row and leave the title 60px and
-wrapping. Since the row height is fixed at `row-rich`, the pressure
+than a taste, and the measurement has been re-taken at 390px with real
+chips (38–62px wide): one chip leaves the title **210px**, two leave it
+**172px**, and three leave it **110px**. The rule holds — every chip
+costs the title about 40px — but the figures the cap was drawn with
+(195 / 144 / 60) imply a uniform 65px chip, and **three chips do not
+wrap**: the title truncates. Since the row height is fixed, the pressure
 never shows as overflow — it shows as **title starvation**, which looks
 fine at a glance and is therefore worse. Anything beyond the cap lives
-in the detail view.
+in the detail view. (`design/tasks-lab.html`, "The list", measures all
+three, and the clipped-title count in each variant with them.)
 
 When a task has more than two time facts, the cap keeps them in this
 order: **deferred, overdue, due, cadence, duration**. The signals that
-change what the user does next are the ones that survive.
+change what the user does next are the ones that survive. `scheduled`
+belongs in that list and has **no rank in it yet** — which is the open
+question below.
+
+**Open: the cap, or a column?** A task due Friday and placed at 15:00 has
+two facts and the cap is already spent, so the fifth fact does not starve
+the title — it **displaces** one of the two that were there. The two
+answers (`design/tasks-lab.html`, "The list") are a cap that decides what
+to drop, or a **fixed two-slot column** in place of one: `due` and
+`scheduled` are the two facts that change what you do next, so they are
+the two the column holds, and duration and deferral show only when those
+are empty. The column costs the same 76px on a row carrying nothing,
+which is why this is a decision and not a correction.
 
 Row height is `row-rich` (72px) when metadata is present,
 `row-default` (56px) when it is not.
@@ -101,9 +138,25 @@ with the title it belongs to. It must fit on one line at 390px —
 
 **List.** Four scopes, filtered.
 
-**Detail.** Title, notes, subtasks (children), people, due,
-defer, priority, area. Actions: edit, reschedule, link person,
-link note, break down (Tier 2), research (Tier 2).
+**Detail.** Title, notes, subtasks (children), people, scheduled day and
+time, due, defer, priority, area. Actions: edit, reschedule, link
+person, link note, break down (Tier 2), research (Tier 2).
+
+The **layout** is unspecified. `03-experience/components.md`'s Controls
+table is where a control's height is decided, it lists ten controls, and
+it contains no field row — so what a field looks like is yet to be
+decided. `design/tasks-lab.html` ("The detail") derives one and measures
+it at **40px** (`control-md`), with the three temporal fields grouped and
+each carrying its own meaning as a caption.
+
+**Open: what the hour control is.** Every control the set gives for
+putting a task on a day is **day-granular** — this screen's action is
+*"Schedule to day"*, which *"opens date picker"*, and the defer sheet's
+rows are relative days. `scheduled_time` (ADR 0025) therefore has **no
+control anywhere except Tier 1 parsing**. The lab proposes four hour
+chips at `control-sm`'s scale, appearing only once a day is set; whether
+that is a new control or an instance of the segmented control is part of
+the same undecided question.
 
 **Capture.** Pull down from the list; also available from the
 command palette. Inline parsing (Tier 1).
@@ -111,6 +164,27 @@ command palette. Inline parsing (Tier 1).
 **Defer sheet.** Opened by swipe left. Options: Tomorrow, Next
 week, Someday, Pick a date… The defer sheet is a bottom sheet
 with four rows.
+
+**Three of the four rows write `defer`, and the fourth writes a state.**
+`Tomorrow`, `Next week` and `Pick a date…` set `defer` — a day, *"when
+the task becomes visible"* — while `Someday` means *"no due dates, no
+scheduling"* (its own scope definition below), so it cannot be a `defer`
+date at all. It is `task.marked_someday`, which every other doc binds to
+swipe down. One list, two event types, and this is the only place that
+says so.
+
+**The sheet names the task it is about.** The row it acts on is behind the
+scrim: measured, the sheet is **258px**, **31%** of the phone, covering
+**197px** of the list with the swiped row underneath it
+(`design/tasks-lab.html`, "The defer sheet"). A sheet that hides its
+own object and then says only *"becomes visible on this day"* is asking
+to be trusted with an invisible noun.
+
+**Open: what "Next week" resolves to.** Nothing in the set defines it,
+and it is the one row that is not a date picker — so it is the row a user
+has to trust. Its two readings (`+7 days`, or the next calendar week's
+Monday) are **1 to 6 days apart** depending on the weekday, which is the
+size of the ambiguity rather than a rounding difference.
 
 **Someday pile.** The Someday scope is a flat list with no dates
 and no metadata line. It is a parking lot, not a backlog.
@@ -212,17 +286,93 @@ The task detail shows both as separate fields. The defer sheet
 sets defer, not due. The scheduling action in the detail sets
 scheduled_day (which affects the calendar), not due.
 
-Three temporal fields, three purposes:
+Four temporal fields, four purposes:
 
 - `scheduled_day` — appears on this day's calendar
+- `scheduled_time` — appears **at** this hour on that day's axis
 - `defer` — becomes visible on this day
 - `due` — must be done by this day
 
+**A time of day is offered at creation, and it is optional.** Every
+creation path — the inline capture field, Tier 1 parsing, and the task
+detail — asks for the day and the hour together, and the hour is never
+required: a task with a day and no time is *scheduled but unplaced* and
+appears in the Day view's band rather than on its axis (ADR 0025). A time
+of day is not a deadline; a deadline is `due`, which is a day and only a
+day.
+
+**A time of day is always placed on a day.** `scheduled_time` without a
+`scheduled_day` is unrepresentable, because the hour is an offset into a
+Day — `02-architecture/day-as-unit.md` puts the boundary at 4am by default,
+so "9am" is a position between 04:00 and 04:00 and not an instant. Setting
+an hour on a task with no day sets the day to today first.
+
+An **event** needs no such field: an Event's `start` *is* its time
+(`02-architecture/object-model.md`), so `calendar.md`'s New event screen
+already asks for it and nothing is added there.
+
+### Duration and estimates — recorded, not decided
+
+**The app consumes an estimated duration in four places, and no field holds
+one.**
+
+- The row's **duration chip** ("40m") — specified above, filed as a
+  component in `03-experience/components.md`, with the `timer` glyph
+  described as *"a span: an estimated or logged duration."*
+- The gap nudge, which offers open tasks that fit the gap *"based on
+  user-estimated duration (if available) or a heuristic"*
+  (`06-flows/doing-the-day.md`).
+- The low-key-day card, offering *"4 things under 10 minutes"*
+  (`06-flows/resurfacing.md`).
+- The completion prompt itself — *"why did this take longer than
+  expected?"* — which asks the user to explain a deviation from an
+  expectation nothing recorded (`06-flows/completion.md`).
+
+**The ask is to close that loop:** with an estimate and a scheduled hour on
+a task, the app can tell the user how far off their estimates are. It
+already says it intends to — `06-flows/completion.md` states the completion
+note *"is used to detect estimate-vs-actual patterns."*
+
+**It needs a field before it needs a surface.** The candidates are an
+`estimated_minutes` on the Task, or reading the estimate out of completion
+history alone. Recorded rather than decided, because it adds a field to the
+atom and a key to `task.created` — ADR-shaped — and because the two
+consumers that want it most are heuristics that already function without
+it: both fall back, and neither fallback is wrong, only less useful.
+`estimated_minutes` is a **span**, unlike `scheduled_time`, which is a point
+(ADR 0025) — they are not the same field and neither substitutes for the
+other.
+
+**One constraint on the surface, whichever way it goes.** An estimation
+error is a number about the user's own record, and this set has refused that
+shape twice: *"there is no counter, no pressure"* in
+`06-flows/lapsed-recovery.md` is about **tone**, and `05-modules/review.md`
+lets the review describe what the data suggests while forbidding it from
+prescribing an action. So the feature is a statement about **one task's own
+estimate** — "you said 30 minutes; it took 50" — and not a running score,
+and it is not a nudge: `03-experience/attention-budget.md`'s test would give
+it a `SurfaceId`, a toggle and a budget line, which is a much larger
+decision than the field.
+
 ### The completion log
 
-Completed tasks are findable via search and the time machine, and
-via a "Completed" filter in the All scope. The filter shows tasks
-completed in the last 30 days by default.
+Completed tasks are findable via search and the time machine, and in the
+**All** scope with the "Completed" filter applied — a **state of that
+screen, not a screen of its own** (`03-experience/surfaces.md`; the same
+correction the Time machine needed).
+
+The window is the app's **one** window selector — 7 / 30 / 90 / custom
+(`03-experience/components.md`), the control the Habits mode already
+uses — and it defaults to **7 days**. This doc previously said "the last
+30 days" while `06-flows/completion.md` said "day, week, month": two
+vocabularies for one control, and a third answer for its default.
+
+**A completed row carries its own time, in a leading column.** It is a
+record rather than a task: `completed_at` is the fact the log exists for,
+and it is deliberately **not** a sixth chip — the five chips are what an
+*open* task has. Rows read `10:12 · Send the invoice`, and a day heads its
+group with its count (`Today · 3`), because "what did I do" is a question
+about a day before it is a question about a task.
 
 Completion notes are optional. The completion action opens a small
 inline field: "why did this take longer than expected?" Skippable

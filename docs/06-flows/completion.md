@@ -117,18 +117,32 @@ The completion note is used to detect estimate-vs-actual patterns
 
 Completed tasks do not vanish. They move to a completed log:
 
-- Accessible via Tasks → All → filter "Completed."
-- Filterable by day, week, month.
+- A **state of the All scope**, not a screen of its own: Tasks → All →
+  the "Completed" filter (`05-modules/tasks.md` §The completion log).
+- **One window, not a second vocabulary**: the app's window selector —
+  7 / 30 / 90 / custom — defaulting to **7 days**. This doc previously
+  said "day, week, month" while `tasks.md` said "the last 30 days".
 - **Writes off, reads on.** The list is a record, so nothing in it edits a
   task in place; but a completed task can be uncompleted from here, which
   restores it. "Read-only" was the earlier wording and it was wrong the same
   way it was wrong for the time machine (`06-flows/retrieval.md`): disabling
   the writes disables the reads too, and this list has exactly two actions —
   open and uncomplete.
+- A row carries its **`completed_at` in a leading column**, and its day heads
+  the group with a count (`Tuesday · 3`). The time is the fact this list is
+  for, and it is not a chip: the chips are the five facts an *open* task has.
 
 The log is the "what I did" view
 (`01-foundation/identity.md`). It is deeply motivating and it is
 rarely seen by the user unless they go looking.
+
+**That second sentence is an unresolved tension, not a description.** The
+surface the identity doc leans on hardest is reachable only by someone who
+already knows it is there. Making the app *say* something about a finished
+day is a nudge, and a nudge needs a `SurfaceId`, a toggle and a budget line
+(`03-experience/attention-budget.md`, ADR 0013) — so it is recorded here as
+an open decision rather than settled by a layout
+(`design/tasks-lab.html`, "The completion log").
 
 ### The all-three-done moment
 

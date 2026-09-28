@@ -64,7 +64,7 @@ Four row heights exist and every list uses one of them
 | Checkbox (task, habit) | `control-xs` | `05-modules/tasks.md`, `05-modules/habits.md` |
 | Segmented control (scopes) | `control-sm` | `05-modules/tasks.md`, `05-modules/notes.md` |
 | Metric input row `[1][2][3][4][5]` | `control-md` | `05-modules/protocols.md` |
-| Window selector (7 / 30 / 90 / custom) | `control-sm` | `05-modules/habits.md` |
+| Window selector (7 / 30 / 90 / custom) | `control-sm` | `05-modules/habits.md`, `05-modules/tasks.md` |
 | Filter button | `control-sm` | `05-modules/tasks.md` |
 | Header arrows, "Today" | `control-sm` | `05-modules/calendar.md` |
 | `+` button | `control-md` | Calendar, Habits, People |
@@ -75,6 +75,14 @@ Four row heights exist and every list uses one of them
 A checkbox fills with `accent-default` and a white tick when checked. There is no
 separate "checked" colour: the accent is the app's way of saying "this is on",
 and a second one would compete with the priority dot that sits in the same row.
+
+**A field row is not in this table, and the Task detail needs one.** A detail
+screen is nine `[label] [value]` rows (`05-modules/tasks.md` §Surfaces) and this
+is where a control's height is decided, so the absence is the reason the detail
+has no specified anatomy. The row the lab measured comes out at **40px** —
+`control-md`, which is what a `[label] [value]` row costs at `type-body` with
+`space-4` of padding — and the Task detail's three temporal fields are the part
+of that screen where the height actually matters.
 
 ### Overlays
 

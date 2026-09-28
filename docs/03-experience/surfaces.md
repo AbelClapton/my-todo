@@ -58,6 +58,14 @@ due, metric log row, day-note preview cards, top three, completed. The order
 is fixed and the height is not — the view scrolls, with the header and the now
 line held in place (`05-modules/calendar.md`, "The fold").
 
+The timeline is the one part that is a **calendar** rather than a list: a
+**band** of the day's unplaced items, pinned above a **proportional axis**
+drawn at the Week's own 56px/hour, scrolling inside itself and opening at now.
+That is what makes the Day the only Calendar view where a block shows its
+real duration *and* still holds a name — the Week spends its names on fitting
+seven days into 390px (`05-modules/calendar.md`, "The band", "The axis",
+"Concurrent items").
+
 The Week view is not an order of parts but a single instrument: seven days as
 columns over one shared time gutter, with event titles omitted because a
 proportional column cannot hold one (`05-modules/calendar.md`, "The Week view
@@ -82,7 +90,7 @@ position ("The Month view layout").
 | Task detail | Screen | Tap a row |
 | Defer sheet | Overlay | Swipe left on a row |
 | Filter sheet | Overlay | Filter button, `Cmd+F` |
-| Completion log | Screen | All → filter "Completed" |
+| Completion log | State | All → filter "Completed" |
 | Inline capture field | Overlay | Pull down |
 | Completion note field | Ambient (inline) | After a completion |
 
