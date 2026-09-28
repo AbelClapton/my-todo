@@ -1522,16 +1522,18 @@
   // is what keeps a 35-phone document usable.
   const tabs = [...document.querySelectorAll('.tab[data-go]')];
   const screens = [...document.querySelectorAll('.screen')];
-  // Each screen keeps its own place. Switching away used to jump to the top, so
-  // coming back meant re-finding your position; a screen you have not opened yet still
-  // starts at the top, because it has no place of its own to return to.
+  // Switching never moves the page. A screen you have already opened returns to where
+  // you left it; one you have not opened inherits the offset you are at, because going
+  // to the top is the thing that made you scroll down again.
   const place = {};
   function go(id) {
     const out = document.querySelector('.screen:not([hidden])');
-    if (out && out.id !== id) place[out.id] = window.scrollY;
+    if (out && out.id === id) return;
+    const from = window.scrollY;
+    if (out) place[out.id] = from;
     screens.forEach(s => { s.hidden = s.id !== id; });
     tabs.forEach(t => t.setAttribute('aria-selected', String(t.dataset.go === id)));
-    window.scrollTo(0, place[id] || 0);
+    window.scrollTo(0, place[id] !== undefined ? place[id] : from);
   }
   tabs.forEach(t => t.addEventListener('click', () => go(t.dataset.go)));
 
