@@ -314,6 +314,18 @@
 /* the one word the no-rail variant leaves, in the shape the detail's actions use */
 .tk-add { display: flex; align-items: center; min-height: 44px; margin-top: 10px;
   border-top: 1px solid var(--border-subtle); font-size: 13px; color: var(--accent-text); }
+
+/* ------------------------------------------------------------------ the fold
+   The convention from `design/onboarding-lab.html`: the row that ships is read first, and the
+   comparison it was chosen from folds away beneath it. `<details>` is native, so there is no
+   script and no state to keep, and the summary stays visible so the reasoning is one click away
+   rather than gone. The styles themselves are `lab.css`'s.
+
+   `onboarding-lab.html` puts the shipped row first in the **DOM** and the fold after it. Each
+   grid here already ends with its shipped row, so it is lifted with `order` instead of being moved
+   in six places — the fold's job is the reading order on screen. The border the lifted row would
+   inherit from its DOM neighbour is dropped with it. */
+.grid > .vc.ship { order: -1; border-top: 0; }
 </style>
 </head>
 <body>
@@ -449,6 +461,9 @@
   </div>
 
   <div class="grid" id="list-grid">
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
 
     <!-- ------------------------------------------------------------- V1 -->
     <article class="vc">
@@ -748,6 +763,8 @@
       </dl>
     </article>
 
+    </details>
+
     <!-- -------------------------------------------------- recommended --- -->
     <article class="vc rec ship">
       <div class="vc-head">
@@ -864,6 +881,9 @@
   </div>
 
   <div class="grid" id="detail-grid">
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
 
     <!-- ---------------------------------------------------------- V1 -->
     <article class="vc">
@@ -1001,6 +1021,8 @@
       </dl>
     </article>
 
+    </details>
+
     <!-- ------------------------------------------------ recommended --- -->
     <article class="vc rec ship">
       <div class="vc-head">
@@ -1079,6 +1101,9 @@
   </div>
 
   <div class="grid" id="fill-grid">
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
 
     <!-- ---------------------------------------------------------- V1 -->
     <article class="vc">
@@ -1218,6 +1243,8 @@
       </dl>
     </article>
 
+    </details>
+
     <!-- ------------------------------------------------ recommended --- -->
     <article class="vc rec ship">
       <div class="vc-head">
@@ -1284,6 +1311,9 @@
   </div>
 
   <div class="grid" id="defer-grid">
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
 
     <!-- ---------------------------------------------------------- V1 -->
     <article class="vc">
@@ -1433,6 +1463,8 @@
       </dl>
     </article>
 
+    </details>
+
     <!-- ------------------------------------------------ recommended --- -->
     <article class="vc rec ship">
       <div class="vc-head">
@@ -1502,6 +1534,9 @@
   </div>
 
   <div class="grid" id="scopes-grid">
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
 
     <!-- ---------------------------------------------------------- V1 -->
     <article class="vc">
@@ -1644,6 +1679,8 @@
       </dl>
     </article>
 
+    </details>
+
     <!-- ------------------------------------------------ recommended --- -->
     <article class="vc rec ship">
       <div class="vc-head">
@@ -1714,6 +1751,9 @@
   </div>
 
   <div class="grid" id="log-grid">
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
 
     <!-- ---------------------------------------------------------- V1 -->
     <article class="vc">
@@ -1857,6 +1897,8 @@
         <div class="vc-line rules"><dt>Against rules</dt><dd>One: it deletes the window both docs give this list — `tasks.md`'s 30 days and `completion.md`'s day/week/month. A lens may argue for that; it cannot decide it.</dd></div>
       </dl>
     </article>
+
+    </details>
 
     <!-- ------------------------------------------------ recommended --- -->
     <article class="vc rec ship">
