@@ -1,0 +1,28 @@
+{
+  "generatedAt": "2026-09-28T14:27:34.984Z",
+  "source": "Small Wins — design labs",
+  "export": "reviewed",
+  "counts": {
+    "views": 18,
+    "reviewed": 2,
+    "withNotes": 2
+  },
+  "views": [
+    {
+      "lab": "Palette",
+      "file": "palette-lab.html",
+      "group": "Foundation",
+      "reviewed": true,
+      "updatedAt": "2026-09-24T19:08:05.889Z",
+      "notes": "Regarding the chip cluster, maybe we allow the title to take whole available width, even allow to take multiple lines. Then the bottom row is for area and tags in the same space between distribution"
+    },
+    {
+      "lab": "Onboarding",
+      "file": "onboarding-lab.html",
+      "group": "Foundation",
+      "reviewed": true,
+      "updatedAt": "2026-09-28T14:26:27.316Z",
+      "notes": "We go with recommended view for the premise but without the 'in a minute' text. \n\nIn the other views we move the skip down the next button to mantain the steps the same\n\nWe go with recommended on Areas\n\nWe go design taste on 'One habit'\n\nWe go baseline with first task, first win, optional setup and land"
+    }
+  ]
+}
