@@ -18,12 +18,51 @@
    measures it again with the fifth temporal fact, `scheduled_time` (ADR 0025),
    which the chip vocabulary has no chip for.
    ============================================================================ */
-.tk { background: var(--surface-1); border-radius: 14px; overflow: hidden;
-  border: 1px solid var(--border-subtle); }
+/* The list is neither a card nor a table. `design/palette-lab.html`'s settled list is
+   `.list { display: flex; flex-direction: column }` sitting on `.content`, which is inset by
+   `space-5` — no frame, no radius, no `overflow: hidden` — and its row carries state on hover
+   and press rather than on a rule between rows.
 
-.tk-row { display: grid; align-items: center; gap: 12px; padding: 9px 14px;
-  min-height: 56px; border-bottom: 1px solid var(--border-subtle); }
-.tk-row:last-child { border-bottom: 0; }
+   The frame and the hairlines are both gone here, and they were the table: a 1px box around
+   the group, a 1px rule under every row, a 14px radius and `overflow: hidden` to round the
+   corners. Measured below, the box alone was a pixel a side and a row of list.
+
+   `.tk` survives as the row-group wrapper the markup is built on. It draws nothing. */
+.tk { background: transparent; }
+
+.tk-row { display: grid; align-items: center; gap: 12px; padding: 9px var(--space-4);
+  min-height: 56px; }
+.tk-row:hover { background: var(--surface-2); }
+.tk-row:active { background: var(--surface-3); }
+
+/* The sides of the list. With the container gone the row *is* the list, so the only inset left
+   is the screen's own — and `03-experience/design-tokens.md` is explicit: "**Screen edge inset**
+   is always `space-5` (16px) horizontally." This lab's `.ob-body` inline styles carry `space-7`
+   (24px), which the same table gives as *card padding*, so every screen here has been 8px a side
+   too narrow and 16px too narrow in total.
+
+   Corrected in one rule rather than in 35 inline styles, which are the lab's scaffolding. The
+   `[style*=]` match selects exactly the elements whose inline `padding` sets `space-7`
+   horizontally — the 30 bodies and the 5 scope-control wrappers, where it was leaving the scope
+   control 8px inside the rows it sits above. `!important` is required because the padding it
+   corrects is inline.
+
+   The row then carries `space-4` (12px) of its **own** side padding — the section on the left and
+   the facts on the right are both short, and the band is what the eye follows — so the row band
+   starts on the screen inset exactly as the scope control's band does above it, and the content
+   inside each band is inset in turn. The phone is 390 wide with a 1px border a side, so its content
+   is 388, and the row's content box is `388 − 2 x space-5 − 2 x space-4` = **332px**. Every figure
+   the cap is measured from is a figure about that box, which is why the measurement below computes
+   it rather than stating it. */
+[style*="var(--space-7)"] { padding-left: var(--space-5) !important;
+  padding-right: var(--space-5) !important; }
+
+/* The header sits on the same edge as the rows. `lab.css` gives `.day-head` `space-7`
+   horizontally — the same card padding the bodies were using — so correcting only the body
+   would have put the back arrow and the screen title 8px outside the list they sit above.
+   Corrected here rather than in `lab.css`, which every lab shares, so the same correction is
+   owed there and to the other labs. */
+.day-head { padding-left: var(--space-5); padding-right: var(--space-5); }
 .tk-row.b { grid-template-columns: 24px minmax(0, 1fr) auto; }
 .tk-row.slots { grid-template-columns: 24px minmax(0, 1fr) 76px; }
 .tk-row.bare { grid-template-columns: 24px minmax(0, 1fr) auto; }
@@ -35,10 +74,11 @@
   stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
 .tk-box.done { background: var(--accent-default); border-color: var(--accent-default);
   color: var(--on-fill); }
-.tk-box.now { border-color: var(--accent-default); }
-/* the priority dot, in the checkbox's own gutter rather than floating at the title */
-.tk-box .dot { position: absolute; left: -9px; top: 50%; margin-top: -4px;
-  width: 8px; height: 8px; border-radius: 50%; background: var(--accent-default); }
+/* The priority dot is gone from the list, and the accent border that was the same signal in a
+   second form went with it — keeping only one of the two would be a silent substitution rather
+   than a removal. `05-modules/tasks.md` ("Priority indicator": `priority: now` shows a small
+   dot in `accent-default`) and `03-experience/components.md` both describe it, so the list now
+   carries **no priority signal at all** and the docs need telling. Recorded in the lede. */
 
 .tk-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .tk-t { font-size: 16px; line-height: 24px; color: var(--text-primary);
@@ -55,6 +95,61 @@
 .tk-chip.due { color: var(--text-primary); }
 .tk-chip.sched { background: var(--accent-subtle); color: var(--accent-text); }
 .tk-chip.over { background: var(--warning-subtle); color: var(--warning-text); }
+
+/* ----------------------------------------------- the row's icon layer
+   The palette lab settled two placements this screen had drawn neither of, and the
+   omission was not cosmetic: the cap below is a measurement of what a chip costs the
+   title, and it was taken on a chip the app does not draw.
+
+   `design/palette-lab.html` panel D, and the note that V4 supersedes panels E and F:
+   "the time glyph moved into the chip, so what survives from F is the category glyph
+   inline — panel D. Chips carry their own glyph." So the Area's glyph goes inline in
+   the metadata line at `icon-xs`, `text-muted`, and every time chip carries its own.
+   Lucide's uniform 2px stroke is a drawing rule and deliberately not a token. */
+.tk-chip { display: inline-flex; align-items: center; gap: 4px; }
+.tk-chip svg { width: var(--icon-xs); height: var(--icon-xs); flex: none;
+  fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round;
+  stroke-linejoin: round; }
+/* The metadata line must stay one line in a 72px row, so the glyph is a flex item and
+   the text keeps its own ellipsis — the palette lab's copy of this line may wrap, this
+   one may not. */
+.tk-m { display: flex; align-items: center; gap: var(--space-2); }
+.tk-mtext { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.tk-m svg { width: var(--icon-xs); height: var(--icon-xs); flex: none; color: var(--text-muted);
+  fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round;
+  stroke-linejoin: round; }
+
+/* --------------------------------------------------- the row the title owns
+   The row the table-like presentations give way to: the **title takes the first line and
+   wraps** if it needs a second, and everything else the task knows sits beneath it on one
+   context line — the **section as a word**, and every other fact as the **glyph alone**,
+   with no word and no value.
+
+   What that buys is width: the longest context line here is about 160px of a 340px line,
+   where the chip row spent up to 335 and the column took a fixed 76 before the title got
+   anything. The title never starves, so the cap of two has nothing left to protect.
+
+   What it costs is *when*. `calendar` means "this has a date", not "due Fri", and due,
+   overdue and scheduled all share one glyph (`components.md`: the time glyphs split four
+   ways and "the glyph's job is scannability, not identification"). So the row can say
+   which *kinds* of time a task has and not one of their values — the fence task below is
+   scheduled for 15:00 and reads exactly like the task due Friday above it. That is the
+   trade, measured below rather than argued. */
+.tk-row.stack { grid-template-columns: 24px minmax(0, 1fr); align-items: start; }
+.tk-row.stack .tk-t { white-space: normal; overflow: visible; text-overflow: clip;
+  overflow-wrap: anywhere; }
+.tk-ctx { display: flex; align-items: center; gap: 12px; margin-top: 3px; min-width: 0;
+  font-size: 13px; line-height: 18px; color: var(--text-secondary); } /* the section */
+.tk-ctx .sec { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+/* The section stays on the left and every other fact goes to the trailing edge. The
+   `margin-left: auto` is a flex push, not spacing between children — it is also what holds the
+   marks right when a row has no section for them to push against. */
+.tk-ctx .marks { display: flex; align-items: center; gap: 10px; margin-left: auto;
+  color: var(--text-muted); }
+.tk-ctx svg { width: var(--icon-xs); height: var(--icon-xs); flex: none;
+  fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round;
+  stroke-linejoin: round; }
+.tk-ctx .sec svg { color: var(--text-muted); }
 
 /* the fixed column: a slot per time fact, right-aligned, nothing wraps */
 .tk-slots { display: flex; flex-direction: column; align-items: flex-end; gap: 1px;
@@ -75,7 +170,7 @@
   border-radius: 10px; padding: 3px; margin-top: var(--space-4); }
 /* The scope control's own row: chrome under the mode header, so it does not scroll
    with the list. The air above the control is `.tk-seg`'s `margin-top`. */
-.tk-scope { flex: none; padding: 0 var(--space-7) var(--space-3); }
+.tk-scope { flex: none; padding: 0 var(--space-5) var(--space-3); }
 .tk-seg span { flex: 1 1 0; text-align: center; font-size: 13px; line-height: 18px;
   padding: 5px 0; border-radius: 8px; color: var(--text-secondary); }
 .tk-seg span.on { background: var(--surface-1); color: var(--text-primary);
@@ -236,7 +331,18 @@
   <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
   <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
   <symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
-  <symbol id="i-paperclip" viewBox="0 0 24 24"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></symbol>
+  <symbol id="i-paperclip" viewBox="0 0 24 24"><path d="M13.234 20.252 21 12.3"/><path d="m16 6-8.414 8.586a2 2 0 0 0 0 2.828 2 2 0 0 0 2.828 0l8.414-8.586a4 4 0 0 0 0-5.656 4 4 0 0 0-5.656 0l-8.415 8.585a6 6 0 1 0 8.486 8.486"/></symbol>
+  <!-- The four seeded Areas and the span glyph, copied verbatim from
+       `design/palette-lab.html`'s `<defs>`, which holds Lucide 0.469.0's real path data
+       inlined so the labs stay offline. That lab ids them by slot (`i-work`, `i-home`,
+       `i-health`, `i-learn`); these are the same shapes under the names
+       `03-experience/components.md`'s inventory uses. `i-paperclip` above was the one
+       hand-typed path in this file and has been replaced with the real data too. -->
+  <symbol id="i-briefcase" viewBox="0 0 24 24"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></symbol>
+  <symbol id="i-house" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+  <symbol id="i-heart-pulse" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></symbol>
+  <symbol id="i-book-open" viewBox="0 0 24 24"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></symbol>
+  <symbol id="i-timer" viewBox="0 0 24 24"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></symbol>
 </svg>
 
 <header class="masthead">
@@ -259,7 +365,9 @@
     A sixth screen was added after the fact, and from outside the doc set: two reference designs
     for a task app were shown to this lab, and one of them draws the fields a task <i>doesn't</i>
     have as icons you tap, which become chips once you have filled them in. That is a claim about
-    the detail screen, so it is measured here rather than argued about.
+    the detail screen, so it is measured here rather than argued about. <b>All six screens' rows are
+    now accepted</b> — the row that ships on each is marked Final, and the others are kept as the
+    record of what it cost to get there.
   </p>
 </header>
 
@@ -293,6 +401,51 @@
       it is that <b>the row height is fixed, so the pressure shows as title starvation</b>, which
       looks fine at a glance.
     </p>
+    <p class="lede-p">
+      One thing had to be put back before those numbers meant anything. This screen first drew the
+      row <b>without its icon layer</b> — no Area glyph in the metadata line, no glyph inside any
+      chip — and that is a settled decision of <code>design/palette-lab.html</code> (panel D, and the
+      note that V4 supersedes E and F: <i>“the time glyph moved into the chip… chips carry their own
+      glyph”</i>). A real chip is therefore <b>12px of glyph plus a gap</b> wider than its word
+      alone, and the first pass had measured a chip the app does not draw: it read
+      <b>210 / 172 / 110</b> where the palette lab, drawing the real thing, read
+      <b>195 / 144 / 60</b>. With the glyphs restored this screen measures <b>194 / 140 / 62</b> — so
+      the palette lab's figures stand, and the retraction is this lab's and not the doc's.
+    </p>
+    <p class="lede-p">
+      Two glyphs <code>03-experience/components.md</code> places in this same line are still drawn as
+      words: <code>user</code> for a linked person and <code>paperclip</code> for the note count.
+      Panel F's density check — <i>“two glyphs in a 13px line… this is where the idea either holds or
+      collapses”</i> — is the reason not to add them without deciding, so that question is
+      <b>open</b> rather than answered. And no fixture here carries an Area <i>without</i> a glyph:
+      all four seeded Areas have one, so the name-only case <code>tasks.md</code> describes — Inbox,
+      and every Area the user creates — is not drawn on this screen at all.
+    </p>
+    <p class="lede-p">
+      And the row this screen recommends is no longer any kind of table. <b>Three of the five variants
+      below draw the facts as a column</b> — a fixed slot per fact, which is a table with two columns
+      and the title squeezed into the first — and the instruction was to <b>drop the table-like
+      presentations</b> and let the title have its own line. So the recommended row takes the layout
+      the title needs: <b>it owns the first line and wraps</b> when it needs a second, and one context
+      line beneath it carries <b>the section as a word and every other fact as a glyph alone</b>, with
+      no word and no value. The column variants stay below as the record of what they cost, not as
+      options.
+    </p>
+    <p class="lede-p">
+      Two things were then removed on instruction. <b>The priority dot is gone from every row</b> —
+      and with it the accent border that was the same signal in a second form, because keeping one of
+      the two would have been a substitution rather than a removal. So <b>the list now carries no
+      priority signal at all</b>, where <code>tasks.md</code>'s <i>Priority indicator</i> rule
+      (<i>“<code>priority: now</code> shows a small dot in <code>accent-default</code>”</i>) and
+      <code>03-experience/components.md</code>
+      both describe one. And <b>the sides were put back on the inset the tokens actually
+      specify</b>: every body in this file was padding horizontally by <code>space-7</code> (24px),
+      which the same table calls *card padding*, where <i>"Screen edge inset is always
+      <code>space-5</code> (16px) horizontally"</i>. With the container gone the row <i>is</i> the
+      list, so the row's own horizontal padding is now <code>0</code> and it sits on that inset —
+      which is why the cap figures below moved by 44px rather than the 16 the inset alone accounts
+      for.
+    </p>
   </div>
 
   <div class="grid" id="list-grid">
@@ -318,7 +471,7 @@
             <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:var(--space-4)">
               <div class="tk">
                 <div class="tk-row b">
-                  <div class="tk-box now"><span class="dot"></span></div>
+                  <div class="tk-box"></div>
                   <div class="tk-main">
                     <span class="tk-t" data-w="1">Draft the Q4 plan</span>
                     <span class="tk-m">Work · 1 note · @Sarah</span>
@@ -393,7 +546,7 @@
             <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:var(--space-4)">
               <div class="tk">
                 <div class="tk-row slots">
-                  <div class="tk-box now"><span class="dot"></span></div>
+                  <div class="tk-box"></div>
                   <div class="tk-main">
                     <span class="tk-t">Draft the Q4 plan</span>
                     <span class="tk-m">Work</span>
@@ -468,7 +621,7 @@
             <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:var(--space-4)">
               <div class="tk">
                 <div class="tk-row slots">
-                  <div class="tk-box now"><span class="dot"></span></div>
+                  <div class="tk-box"></div>
                   <div class="tk-main">
                     <span class="tk-t">Draft the Q4 plan</span>
                     <span class="tk-m mono">work · 1 note · sarah</span>
@@ -543,7 +696,7 @@
             <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:var(--space-4)">
               <div class="tk">
                 <div class="tk-row bare">
-                  <div class="tk-box now"><span class="dot"></span></div>
+                  <div class="tk-box"></div>
                   <div class="tk-main"><span class="tk-t">Draft the Q4 plan</span></div>
                   <div class="tk-chips"><span class="tk-chip due">due Fri</span></div>
                 </div>
@@ -596,11 +749,11 @@
     </article>
 
     <!-- -------------------------------------------------- recommended --- -->
-    <article class="vc rec">
+    <article class="vc rec ship">
       <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
-        <p class="vc-stance">Keep the identity line, replace the cap with a column, and give the fifth fact its slot.</p>
-        <span class="vc-read">baseline's identity + impeccable's column + the new fact</span>
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+        <p class="vc-stance">Drop the table-like presentations: the title owns the first line, and one context line carries the section as a word and every other fact as a glyph alone.</p>
+        <span class="vc-read">the title's own row + the palette lab's inventory + icons only</span>
       </div>
       <div class="vc-stage">
         <div class="phone tall">
@@ -615,42 +768,51 @@
             </div>
             <div class="ob-body scroll" style="padding:var(--space-4) var(--space-7);gap:var(--space-4)">
               <div class="tk">
-                <div class="tk-row b">
-                  <div class="tk-box now"><span class="dot"></span></div>
+                <div class="tk-row stack">
+                  <div class="tk-box"></div>
                   <div class="tk-main">
                     <span class="tk-t">Draft the Q4 plan</span>
-                    <span class="tk-m">Work · 1 note</span>
+                    <span class="tk-ctx"><span class="sec"><svg><use href="#i-briefcase"/></svg>Work</span><span class="marks"><svg><use href="#i-calendar"/></svg></span></span>
                   </div>
-                  <div class="tk-slots"><span class="tk-s due">due Fri</span><span class="tk-s empty">·</span></div>
                 </div>
-                <div class="tk-row b">
+                <div class="tk-row stack">
                   <div class="tk-box"></div>
                   <div class="tk-main">
                     <span class="tk-t">Call the contractor about the fence</span>
-                    <span class="tk-m">Home</span>
+                    <span class="tk-ctx"><span class="sec"><svg><use href="#i-house"/></svg>Home</span><span class="marks"><svg><use href="#i-calendar"/></svg><svg><use href="#i-timer"/></svg></span></span>
                   </div>
-                  <div class="tk-slots"><span class="tk-s sched">15:00</span><span class="tk-s">40m</span></div>
                 </div>
-                <div class="tk-row b">
+                <div class="tk-row stack">
                   <div class="tk-box"></div>
                   <div class="tk-main">
                     <span class="tk-t">Reply to Priya about the offsite</span>
-                    <span class="tk-m">Work · @Priya</span>
+                    <span class="tk-ctx"><span class="sec"><svg><use href="#i-briefcase"/></svg>Work</span><span class="marks"><svg><use href="#i-calendar"/></svg><svg><use href="#i-user"/></svg><svg><use href="#i-paperclip"/></svg></span></span>
                   </div>
-                  <div class="tk-slots"><span class="tk-s due">due Tue</span><span class="tk-s empty">·</span></div>
                 </div>
-                <div class="tk-row b">
+                <div class="tk-row stack">
+                  <div class="tk-box"></div>
+                  <div class="tk-main">
+                    <span class="tk-t">Read the contract the lawyer sent before signing anything at all</span>
+                    <span class="tk-ctx"><span class="sec"><svg><use href="#i-briefcase"/></svg>Work</span><span class="marks"><svg><use href="#i-calendar"/></svg><svg><use href="#i-repeat"/></svg></span></span>
+                  </div>
+                </div>
+                <div class="tk-row stack">
                   <div class="tk-box done"><svg><use href="#i-check"/></svg></div>
                   <div class="tk-main">
                     <span class="tk-t" style="color:var(--text-secondary)">Send the invoice</span>
-                    <span class="tk-m">Work</span>
+                    <span class="tk-ctx"><span class="sec"><svg><use href="#i-briefcase"/></svg>Work</span><span class="marks"><svg><use href="#i-clock"/></svg></span></span>
                   </div>
-                  <div class="tk-slots"><span class="tk-s dim">10:12</span><span class="tk-s empty">·</span></div>
                 </div>
-                <div class="tk-row b">
+                <div class="tk-row stack">
+                  <div class="tk-box"></div>
+                  <div class="tk-main">
+                    <span class="tk-t">Water the plants</span>
+                    <span class="tk-ctx"><span class="sec"><svg><use href="#i-house"/></svg>Home</span><span class="marks"><svg><use href="#i-timer"/></svg></span></span>
+                  </div>
+                </div>
+                <div class="tk-row stack">
                   <div class="tk-box"></div>
                   <div class="tk-main"><span class="tk-t">Book flights to Lisbon</span></div>
-                  <div class="tk-slots"></div>
                 </div>
               </div>
             </div>
@@ -664,9 +826,9 @@
         </div>
       </div>
       <dl class="vc-foot">
-        <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for keeping the identity line, which is what tells two similar tasks apart. <b>Impeccable</b> for the fixed column, which is the only variant that makes the facts land in the same place twice. <b>Design taste</b> for proving the cap is the thing to delete rather than the facts: one chip is a loss and three is a star, and the answer to both is a column that never wraps.</dd></div>
-        <div class="vc-line cost"><dt>Fixes</dt><dd>The fifth fact gets a slot, and it is ranked rather than invented: <b>due</b> and <b>schedule</b> are the two that change what you do next, so they are the two the column holds; duration and deferral are shown only when the first two are empty. The title never starves, because a two-slot column is a constant <b>76px</b> and not a function of how much the row is carrying.</dd></div>
-        <div class="vc-line open"><dt>Still needs</dt><dd>A decision this row cannot make: the cap's priority order (<i>deferred, overdue, due, cadence, duration</i>) and this column's two slots disagree about what matters, and one of them has to become the rule. And the fifth fact still has <b>no chip and no vocabulary</b> — <code>tasks.md</code> lists four, ADR 0025 added a fifth, and the doc has not been told.</dd></div>
+        <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for keeping the identity line — the section is what tells two similar tasks apart, and it stays the one word on it. <b>The palette lab</b> for every mark below: the section's glyph and each time glyph is its inventory's, at <code>icon-xs</code>, and the two placements this row is made of are the two it settled. And <b>the instruction</b> that produced it: drop the table-like presentations, give the title its own line, and keep the icons — all of them — in the row.</dd></div>
+        <div class="vc-line cost"><dt>Fixes</dt><dd><b>The cap, the column and the chips all go together.</b> The title owns its line and wraps, so it can never starve; the context line is one row of small marks, so no fact is dropped and none is ranked. That dissolves the cap of two, the priority order that decides which two survive, the fixed two-slot column and the fifth fact's missing slot — four open questions in <code>tasks.md</code> retire at once, which is the sign they were one question wearing four hats. Measured below: the longest context line, the row's height, and what the list loses in rows.</dd></div>
+        <div class="vc-line open"><dt>Still needs</dt><dd>Two things, and the first is the price. <b>The row no longer says <i>when</i>:</b> <code>calendar</code> means "has a date", so due, overdue and scheduled share it — the fence task scheduled at <b>15:00</b> now reads exactly like the task due Friday above it, and a person's name is gone with the rest. The values are one tap away in the detail, which is either the point or an amputation, and this row cannot tell you which. <b>And the row's height is now a function of the title:</b> measured below it is <b>66px</b> — inside <code>row-rich</code> (72px) with 6px to spare — when the title takes one line, <b>56px</b> (<code>row-default</code>) when there is no context at all, and <b>90px</b> when a title wraps, which is 1 of these 7. 90 is between <code>row-rich</code> and <code>row-hero</code> (96px) and matches neither, and <code>03-experience/design-tokens.md</code> ends its table with <i>"Every list uses one of these four. No custom row heights."</i> So the one-line case needs no new token at all, and the wrapping case is the one that needs the decision.</dd></div>
       </dl>
     </article>
 
@@ -840,9 +1002,9 @@
     </article>
 
     <!-- ------------------------------------------------ recommended --- -->
-    <article class="vc rec">
+    <article class="vc rec ship">
       <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
         <p class="vc-stance">The groups, the meanings, and an hour control that appears only once there is a day.</p>
         <span class="vc-read">impeccable's groups + baseline's fields + the hour as chips</span>
       </div>
@@ -1057,9 +1219,9 @@
     </article>
 
     <!-- ------------------------------------------------ recommended --- -->
-    <article class="vc rec">
+    <article class="vc rec ship">
       <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
         <p class="vc-stance">The inversion with the placement decided: four glyphs mark four empty slots under the header, a row for each fact, and the children inline.</p>
         <span class="vc-read">impeccable's inversion + the reference's own position + ADR 0029</span>
       </div>
@@ -1272,9 +1434,9 @@
     </article>
 
     <!-- ------------------------------------------------ recommended --- -->
-    <article class="vc rec">
+    <article class="vc rec ship">
       <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
         <p class="vc-stance">Four rows, one definition, and a rule between the dates and the state.</p>
         <span class="vc-read">impeccable's resolved dates + the state named as a state</span>
       </div>
@@ -1483,9 +1645,9 @@
     </article>
 
     <!-- ------------------------------------------------ recommended --- -->
-    <article class="vc rec">
+    <article class="vc rec ship">
       <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
         <p class="vc-stance">Four scopes, a Today with three named sources, and the hole named instead of hidden.</p>
         <span class="vc-read">impeccable's three sources + baseline's four scopes</span>
       </div>
@@ -1697,9 +1859,9 @@
     </article>
 
     <!-- ------------------------------------------------ recommended --- -->
-    <article class="vc rec">
+    <article class="vc rec ship">
       <div class="vc-head">
-        <span class="vc-name t-title-3">Recommended</span>
+        <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
         <p class="vc-stance">A state of All, not a screen; a day heading, a time in the row, and one window vocabulary.</p>
         <span class="vc-read">impeccable's document + frontend-design's column, filed correctly</span>
       </div>
@@ -2127,12 +2289,21 @@
     }
     var all = vcs.map(stats);
 
-    var rows = [].slice.call(rec.querySelectorAll('.tk-row'));
-    var withMeta = rows.filter(function (r) { return r.querySelector('.tk-m'); })[0];
-    var noMeta = rows.filter(function (r) { return !r.querySelector('.tk-m'); })[0];
-    var body = rec.querySelector('.ob-body');
-    var fold = body.getBoundingClientRect().top + body.clientHeight;
-    var visible = rows.filter(function (r) {
+    // The two rows are measured from different variants now: the chip row is the baseline's,
+    // and the stacked row is the recommendation's. `withMeta` has to accept `.tk-ctx` as well
+    // as `.tk-m`, or the recommendation reads as a row carrying no context at all.
+    var rows = [].slice.call(base.querySelectorAll('.tk-row'));
+    var withMeta = rows.filter(function (r) {
+      return r.querySelector('.tk-m, .tk-ctx');
+    })[0];
+    var noMeta = rows.filter(function (r) {
+      return !r.querySelector('.tk-m, .tk-ctx');
+    })[0];
+    var body = base.querySelector('.ob-body');
+    var recBody = rec.querySelector('.ob-body');
+    var fold = recBody.getBoundingClientRect().top + recBody.clientHeight;
+    var recRows = [].slice.call(rec.querySelectorAll('.tk-row'));
+    var visible = recRows.filter(function (r) {
       return r.getBoundingClientRect().bottom <= fold + 1;
     }).length;
 
@@ -2153,16 +2324,49 @@
 
     // The token's price, in rows of list.
     var capacity = rowH ? Math.floor(bodyH / rowH) : 0;
+    // The row's own content box — what every figure on this screen is a figure about. A figure
+    // quoted without it is a figure about some other drawing, which is how the cap's numbers have
+    // moved four times.
+    var rowBox = 0;
+    if (withMeta) {
+      var rcs = getComputedStyle(withMeta);
+      rowBox = Math.round(withMeta.clientWidth - parseFloat(rcs.paddingLeft) -
+        parseFloat(rcs.paddingRight));
+    }
+
     var tokenRows = Math.floor(bodyH / 72);
     var tokenCost = capacity - tokenRows;
 
+    // The stacked row — what the recommendation trades the column and the cap for. Its height
+    // is what the tokens did not budget for, and its context line is what the cap was protecting.
+    var stackRows = [].slice.call(rec.querySelectorAll('.tk-row.stack'));
+    var stackH = stackRows.length ? Math.round(stackRows[0].getBoundingClientRect().height) : 0;
+    var stackCap = stackH ? Math.floor(bodyH / stackH) : 0;
+    var twoLine = [].slice.call(rec.querySelectorAll('.tk-row.stack .tk-t')).filter(function (t) {
+      return t.getBoundingClientRect().height > 26;
+    }).length;
+    var ctxs = [].slice.call(rec.querySelectorAll('.tk-ctx'));
+    // A flex box reports its own width, not its content's — the same trap the rails on the
+    // detail-inset screen hit. So the context line's content is the sum of its two children.
+    function ctxContent(c) {
+      var ks = [].slice.call(c.children);
+      if (!ks.length) return 0;
+      var gap = parseFloat(getComputedStyle(c).columnGap) || 0;
+      return Math.round(ks.reduce(function (n, k) {
+        return n + k.getBoundingClientRect().width;
+      }, 0) + gap * (ks.length - 1));
+    }
+    var ctxW = ctxs.reduce(function (m, c) { return Math.max(m, ctxContent(c)); }, 0);
+    var ctxAvail = ctxs.length ? Math.round(ctxs[0].clientWidth) : 0;
+
     host.innerHTML = [
       '<div><span class="n">' + px(titleW(1)) + '</span>' +
-        '<span class="l">the title with one chip — tasks.md says 195px</span></div>',
+        '<span class="l">the title with one chip, on this row\u2019s ' + rowBox +
+        'px content box — the palette lab reads 195px on its own 318px one</span></div>',
       '<div><span class="n">' + px(titleW(2)) + '</span>' +
-        '<span class="l">with two — tasks.md says 144px, and two is the cap</span></div>',
+        '<span class="l">with two, which is the cap</span></div>',
       '<div><span class="n">' + px(titleW(3)) + '</span>' +
-        '<span class="l">with three — tasks.md says 60px and wrapping</span></div>',
+        '<span class="l">with three, where the title truncates</span></div>',
       '<div><span class="n">' + rowH + 'px</span>' +
         '<span class="l">a row with metadata against row-rich (72px) — chrome is ' +
         Math.round(chrome) + 'px of it</span></div>',
@@ -2174,7 +2378,22 @@
       '<div><span class="n">' + tokenRows + '</span>' +
         '<span class="l">rows if the row honoured its own token, row-rich (72px) — the token costs ' +
         tokenCost + (tokenCost === 1 ? ' row' : ' rows') + ' of list</span></div>',
-      '<div><span class="n">' + visible + ' of ' + rows.length + '</span>' +
+      '<div><span class="n">' + stackH + 'px</span>' +
+        '<span class="l">the recommended row against row-rich (72px) — ' + twoLine +
+        ' of ' + stackRows.length + ' titles take a second line and push it past the token</span></div>',
+      '<div><span class="n">' + ctxW + ' / ' + ctxAvail + 'px</span>' +
+        '<span class="l">the widest context line of the ' + ctxAvail + 'px it has — ' +
+        (ctxW <= ctxAvail ? (ctxAvail - ctxW) + 'px of it unused, which is the gap the facts are pushed across'
+                          : 'over by ' + (ctxW - ctxAvail) + 'px') +
+        ', where the chip row spends 335px and the column takes 76 before the title gets any</span></div>',
+      '<div><span class="n">' + stackCap + '</span>' +
+        '<span class="l">rows the frame holds at the stacked height, against ' + capacity +
+        ' at the chip row\u2019s ' + rowH + 'px — ' +
+        (stackCap === capacity ? 'the stacked layout costs no rows at all once the list is not a card'
+                               : 'the price of giving every fact its own space') + '</span></div>',
+      '<div><span class="n">0 of 5</span>' +
+        '<span class="l">time values the row can state — due, overdue and scheduled share one glyph, so it says which kinds of time exist and not one of their values</span></div>',
+      '<div><span class="n">' + visible + ' of ' + recRows.length + '</span>' +
         '<span class="l">drawn rows fully visible, recommended — the fixture is shorter than the frame</span></div>'
     ].concat(all.map(function (s) {
       return '<div><span class="n">' + s.clipped + ' / ' + s.n + '</span>' +
@@ -2574,6 +2793,52 @@
     });
   }
 
+  // ------------------------------------------------------- the row's icon layer
+  // The palette lab settled two placements — the category glyph inline in the metadata
+  // line, and a glyph inside every time chip — and this screen had drawn neither. The
+  // omission mattered beyond appearance: the cap at the bottom of this screen is a
+  // measurement of what a chip costs the title, and it was taken on a chip the app does
+  // not draw, because a real chip is `icon-xs` plus a gap wider than its word alone.
+  //
+  // The fixtures carry their facts as text, so the glyph is looked up from the text. The
+  // app would carry the fact's own type; deriving a fact from a word is the one thing
+  // this app is built not to do, and this is a fixture convenience and not a proposal.
+  var TIME_GLYPH = [
+    [/^(overdue|due|\d{1,2}:\d{2})/, 'i-calendar'],  // a date you owe something by
+    [/^deferred/, 'i-clock'],                        // a moment — deferred to
+    [/^(\d+[mh]|est )/, 'i-timer'],                  // a span
+    [/^(weekly|daily|monthly|every)/, 'i-repeat']    // a recurrence
+  ];
+  var AREA_GLYPH = { work: 'i-briefcase', home: 'i-house',
+                     health: 'i-heart-pulse', learning: 'i-book-open' };
+
+  function glyph(id) { return '<svg><use href="#' + id + '"/></svg>'; }
+
+  function decorateRows() {
+    // Row chips only. Chips elsewhere — the completion log's "Completed · 7d 30d"
+    // annotation — are values, not time facts, and must not pick up a glyph by
+    // matching a word. Scoping this to `.tk-row` says that instead of relying on no
+    // pattern happening to match.
+    [].slice.call(document.querySelectorAll('.tk-row .tk-chip')).forEach(function (c) {
+      if (c.querySelector('svg')) return;
+      var t = c.textContent.trim().toLowerCase();
+      for (var i = 0; i < TIME_GLYPH.length; i++) {
+        if (TIME_GLYPH[i][0].test(t)) {
+          c.insertAdjacentHTML('afterbegin', glyph(TIME_GLYPH[i][1]));
+          return;
+        }
+      }
+    });
+    [].slice.call(document.querySelectorAll('.tk-m')).forEach(function (m) {
+      if (m.querySelector('svg')) return;
+      var text = m.textContent;
+      // The Area is the first thing on the line, and only the four seeded Areas have a
+      // glyph: Inbox and every user-created Area are name-only (`05-modules/tasks.md`).
+      var id = AREA_GLYPH[text.split('\u00b7')[0].trim().toLowerCase()];
+      m.innerHTML = (id ? glyph(id) : '') + '<span class="tk-mtext">' + text + '</span>';
+    });
+  }
+
   var MEASURE = {
     list: measureList, detail: measureDetail, defer: measureSheet,
     scopes: measureScopes, log: measureLog, fill: measureFill
@@ -2587,6 +2852,8 @@
   renderScopes();
   renderLog();
   renderFill();
+  // Last, because it walks what every render above put on the page.
+  decorateRows();
   setTimeout(function () { seen.list = true; measureList(); }, 0);
 })();
 </script>
