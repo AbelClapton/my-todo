@@ -51,9 +51,15 @@ fold" below, which is the measurement that settled it:
 1. **Day header.** Date, day of week, week number. Previous/next
    day arrows. Tap the date to open the date picker.
 2. **Now line** (`02-architecture/projections.md`). One line: the
-   current event or the next scheduled task.
-3. **Timeline.** A vertical time axis. Events and scheduled tasks
-   are positioned by time. All-day items sit above the axis.
+   current event or the next scheduled task. It is chrome, above the
+   axis, and does not scroll — `06-flows/doing-the-day.md` specifies it
+   as always present, which a scrolling view cannot otherwise honour.
+   The axis carries its own **now rule** at the current time: the line
+   says *what* is current, the rule says *where* in the day it is.
+3. **Timeline.** Two parts in a fixed order: a **band**, pinned above
+   the axis, holding the day's items the axis cannot place; and the
+   **axis** — the Day drawn to scale, opening at now. Both are specified
+   below.
 4. **Habits due.** A compact row of habit checkboxes for the day.
 5. **Metric log.** If a protocol is in `baseline` or `active`, the
    metric input row. Baseline logs the metric too
@@ -89,15 +95,148 @@ entry, not a toggle here.
 
 The layout uses tokens from `03-experience/design-tokens.md`:
 `space-5` horizontal inset, `space-7` between sections, `row-default`
-(56px) for timeline items, `type-title-1` for the header.
+(56px) for the fixed-height rows, and `type-title-1` for the header. The
+timeline's own rows are **not** `row-default` — they are proportional,
+and the two numbers that place them are the axis's scale and the floor,
+both below.
+
+### The band
+
+Above the axis, and **pinned**: it does not scroll with the axis, so an
+all-day item never scrolls out of the day it belongs to.
+
+Its membership rule is one sentence — **the band holds time-bearing items
+whose time does not fit an axis position**:
+
+- An event that **occupies** the day rather than a moment in it: all-day,
+  or spanning two or more Days. `all_day` is a field rather than a
+  duration test, because a genuine 24-hour timed event — a night shift, a
+  flight, an on-call — belongs on the axis as the longest block of the
+  day, and no arithmetic can tell the two apart (ADR 0026).
+- A scheduled task with a `scheduled_day` and **no** `scheduled_time`:
+  scheduled but unplaced. It belongs to the Day, so it cannot be hidden,
+  and it has no hour, so the axis cannot place it (ADR 0025).
+
+**What the band does not hold: the day's obligations.** Habits due, the
+metric log row and the top three are not items the axis failed to place —
+they have no time to place, and they keep their own sections below the
+axis. Putting them here would make the band a second app, and would say
+that a habit is an all-day event.
+
+### The axis
+
+The Day drawn to scale: what the axis spans, how much of it is visible,
+and the rules that put a block on it.
+
+**The window is the Day.** `[day_boundary, day_boundary + 24h)`, from
+`02-architecture/day-as-unit.md`'s configurable boundary — default 4am,
+and recorded per Day in `day.opened` (ADR 0027). On a default account the
+axis therefore runs **04:00 → 04:00**, and the hours below midnight
+belong to the **next calendar day**. They are labelled as clock times
+(`00:00`–`03:00`) with a hairline divider at midnight, because a reader
+thinks in clock times, not in `25:30`. This is where the day boundary
+becomes visible in the UI for the first time.
+
+**The scale is the Week's, and the Month's: 56px per hour.** That number
+is not new — it is what the Week already measures at, a 560px grid over
+its ten-hour crop, so a 30-minute event is 28px (`design/calendar-lab.html`).
+What is new is that the Day uses the *same* one, which is what makes the
+pinch between them a real zoom rather than a rescale. **One clock, four
+views.**
+
+**The crop is what the frame affords; the window is always the Day.** The
+axis's content is the whole Day — 1440 minutes at 56px/hour is **1344px**
+— and it scrolls **inside itself**, opening at now. That is the whole
+reason the Day can be both proportional and legible where the Week cannot:
+the Week divides 390px between seven days and has nowhere to put a name;
+the Day gives one day all of it. It also means the night hours cost
+nothing to skip, and nothing below the timeline is pushed off the screen
+by the day's length.
+
+**A block's height is its duration, with a floor.** At 56px/hour one
+minute is 0.9px and a line of `type-footnote` is 18px, so anything under
+**~19 minutes** cannot hold its own name; those draw at the floor, and the
+time label carries the truth. The floor is also what creates the Day's
+*second* kind of collision — two events less than ~21 minutes apart touch
+even when their times do not overlap — which is why "Concurrent items"
+below is a rule about both cases.
+
+**Two kinds of mark.** An **event** is a span: proportional height, its
+real duration. A **scheduled task** with a time is a **point**: a stub at
+the floor height, because a task placed at 14:30 has a position and no
+stated extent (ADR 0025). A task with a day and no time is not on the axis
+at all; it is in the band.
+
+**What a block shows.** The title on the first line, and the time only
+when the block is two lines tall (about 40 minutes) — the hour labels and
+the block's own position already say when. **The duration is not printed
+as a footnote**, because at this scale the height *is* the duration, and
+that is the thing the old list could not say: a 5-minute call and a
+3-hour workshop were the same 52px and differed only in text.
+
+### Concurrent items
+
+Concurrency is told apart by **position**, and how many positions a block
+can express is a function of its **width**. One rule, four
+implementations, deliberately different:
+
+- **Day — splits.** The block is ~282px wide, so two items sit side by
+  side at half width each and three at thirds, separated by a **1px
+  seam** so they can be counted rather than merely seen. A cluster of four
+  or more collapses to one block plus a `+N` chip, because three is the
+  last count that keeps a readable name; the chip opens the cluster as a
+  list.
+- **Week — marks.** A column is **45px**, so a split would leave 22px and
+  no name at all. The Week marks a conflict — a doubled edge on the block
+  — and lets the Day explain it. This is a deliberate difference, not an
+  inconsistency: the same rule, spent against a different width.
+- **Month — merges.** Two marks closer than ~13 minutes already read as
+  one ("The Month view layout"). That is the view's stated price for
+  comparability and it does not change.
+- **Year — ignores.** Every mark is one pixel ("The Year's fit").
+
+The floor collision above is the same rule's second case: two five-minute
+events twenty minutes apart are drawn touching, and the 1px seam is what
+keeps them countable.
 
 ### The fold
 
-The eight parts do not fit a phone. Measured at 390 × 844 with nothing
-bending, they need **856px** of a **728px** frame — 128px below the fold, with
-only six of the seven scrolling parts fully visible. The section added most
-recently is what tipped it: **Completed costs 138px on its own, more than the
-entire overflow.**
+The eight parts do not fit a phone, and the arithmetic has two shapes now —
+before the Timeline was an axis, and after.
+
+**As a list it was a content-driven height.** Measured at 390 × 844 with nothing
+bending, the eight parts needed **856px** of a **728px** frame — 128px below the
+fold, with only six of the seven scrolling parts fully visible. **Completed cost
+138px on its own**, more than the entire overflow, so the section added most
+recently is what tipped it. That measurement is why the view scrolls at all, and
+it is still the reason.
+
+**As an axis the height is a constant.** The Day's content is the window — a
+fixed **1344px** — whatever the day holds, so the composition is now knowable in
+advance instead of varying with how busy the day was. Measured in
+`design/calendar-lab.html` at the same 390 × 844:
+
+- The instrument is **668px** of the **701px** body: a two-row band, the axis at
+  its 560px viewport, and its caption. The calendar therefore fits the frame
+  exactly, and **the register begins below the fold** — one of the register's six
+  parts is fully visible, because the band and the axis have taken the screen.
+- With a one-row band (item 3 read literally, and no unplaced task) it is two.
+- A wider band **costs the axis room**: the four-row strip needs the viewport at
+  **480px** rather than 560 to stay on screen.
+
+**The overflow did not disappear; it moved, and it moved somewhere better.** The
+parts below the fold were the plan and the record; they are now the note, the
+plan and the record — which is the register, read at the end of the day rather
+than scanned during it.
+
+**Open: whether the register belongs below the axis at all.** This is the one
+question the axis creates and does not settle, and it is deliberately not settled
+here. Two readings are drawn in the lab: keep the four sections below the axis
+(and accept that the instrument is most of the screen), or move the day's
+untimed obligations into the band so the axis is the whole of what has a time.
+ADR 0026 leaves the band's membership open for exactly this reason, and settling
+it needs its own ADR — it must not arrive as a side effect of where the band
+happens to be drawn.
 
 Three rules follow, and they are what make the composition work:
 
@@ -107,16 +246,12 @@ it — and `03-experience/app-shell.md`'s container rules do not apply to it.
 2. **The day header and the now line do not scroll.** They are chrome and an
 instrument respectively, and the now line is specified as always present
 (`06-flows/doing-the-day.md`), which a scrolling view cannot honour otherwise.
-   Everything below them scrolls.
+   Everything below them scrolls. The band is chrome in the same sense: it is
+   pinned above the axis, and the axis scrolls inside itself.
 3. **A section with nothing to show does not render.** An empty timeline draws
    its one line (below); every other section collapses, taking its heading and
    its gap with it. A day with no active protocol has no metric row, and a day
    with nothing finished has no Completed section.
-
-With those rules the fold falls inside the **Completed** list: timeline, due
-row, metric, Daily Note and top three are all above it. That is the right part
-to lose. Completed is a record — read at the end of the day, not scanned during
-it — which is also why it is the last section rather than the first.
 
 ### The Week view layout
 
@@ -127,11 +262,17 @@ would be labelling the same hours anyway.
 1. **Column headers.** Day-of-week abbreviation and date number, with the
    week's own header above them (`Week 39 · 21–27 Sep`). Today's column is
    tinted and its header accented.
-2. **All-day band.** Above the axis, and the one part only this view can draw: an
-   item covering two days needs two days on screen at once.
-3. **The grid.** Events and scheduled tasks as proportional blocks, positioned by
-   clock time across the shared gutter, and a **now rule** spanning all seven
-   columns. The selected column is outlined.
+2. **All-day band.** Above the axis, holding the events that **occupy** the day
+   rather than a moment in it — all-day, or spanning two or more Days
+   (ADR 0026). The Week is where a span becomes *visible*: an item covering two
+   days needs two days on screen at once, so this is the view that can show it
+   whole. It is no longer the only view that draws a band — the Day draws one
+   too.
+3. **The grid.** Events as proportional blocks and placed tasks as points,
+   positioned by clock time across the shared gutter, and a **now rule**
+   spanning all seven columns. Two items in one column are **marked**, not
+   split, because a column is 45px ("Concurrent items"). The selected column
+   is outlined.
 4. **Focus line.** The selected day's date and load, and the way into it. Tapping
    a column selects it and updates this line; tapping the line opens that day.
    One tap cannot both pick a column out and leave the week, so it does not try.

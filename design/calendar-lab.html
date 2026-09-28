@@ -19,6 +19,79 @@
     font-size: var(--type-footnote-size);
   }
 
+  /* ---- the Day as a calendar ----
+     One window, one scale, four views.
+
+     The window is the Day — 04:00 → 04:00, `day-as-unit.md`'s boundary, which
+     `day.opened` now records per Day (ADR 0027) — so the hours below midnight
+     are the NEXT calendar day's clock while still belonging to this Day. The
+     divider says so, because that is the one thing a reader cannot infer.
+
+     The scale is 56px/hour, and it is not a new number: the Week's grid is a
+     560px instrument over its ten-hour crop, so a 30-minute event is 28px in
+     both. The axis is 1344px of content (1440 minutes × 0.933px) in a 560px
+     viewport that scrolls inside itself and opens at now. What that means is
+     that the Day's visible ten hours ARE the Week's ten hours — the Day's
+     viewport is a magnified Week column. */
+  .cal { flex: none; display: flex; flex-direction: column; gap: var(--space-3); }
+
+  .cal-band {
+    flex: none; display: flex; flex-direction: column; gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md); background: var(--surface-2);
+  }
+  .cal-band .bd {
+    display: flex; align-items: center; gap: var(--space-3); min-height: 20px;
+    font-size: var(--type-footnote-size); color: var(--text-secondary);
+  }
+  .cal-band .bd .k {
+    font-size: var(--type-caption-size); letter-spacing: var(--type-caption-track);
+    text-transform: uppercase; color: var(--text-muted);
+  }
+  .cal-band .bd .grow { flex: 1; height: 1px; background: var(--border-subtle); }
+  .cal-band .bd.dim { color: var(--text-muted); }
+
+  .cal-axis {
+    flex: none; height: 560px; overflow-y: auto; overflow-x: hidden;
+    position: relative; border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md); background: var(--bg-base);
+  }
+  .cal-grid { position: relative; }
+  .cal-h { position: absolute; left: 40px; right: 0; border-top: 1px solid var(--border-subtle); }
+  .cal-h span {
+    position: absolute; left: -38px; top: 0; transform: translateY(-50%);
+    padding-right: 3px; background: var(--bg-base);
+    font-family: var(--font-mono); font-size: var(--type-caption-size); color: var(--text-muted);
+  }
+  .cal-mid { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--border-strong); }
+  .cal-mid span {
+    position: absolute; right: var(--space-3); top: 0; transform: translateY(-50%);
+    padding-left: var(--space-3); background: var(--bg-base);
+    font-size: var(--type-caption-size); letter-spacing: var(--type-caption-track);
+    text-transform: uppercase; color: var(--text-muted);
+  }
+  .cal-blk {
+    position: absolute; overflow: hidden; border-radius: var(--radius-xs);
+    background: var(--accent-subtle); border-left: 2px solid var(--accent-default);
+    padding: 0 var(--space-3); color: var(--text-primary);
+    font-size: var(--type-footnote-size); line-height: 1.25;
+  }
+  .cal-blk.mirrored { background: var(--surface-3); border-left-color: var(--border-strong); }
+  .cal-blk.point { background: var(--surface-2); border-left-width: 3px; }
+  .cal-blk .tt { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cal-blk .tm { display: block; color: var(--text-muted); font-family: var(--font-mono); }
+  .cal-now {
+    position: absolute; left: 40px; right: 0; z-index: 2;
+    border-top: 2px solid var(--accent-default);
+  }
+  .cal-now span {
+    position: absolute; right: var(--space-3); top: 0; transform: translateY(-50%);
+    padding: 0 var(--space-2); border-radius: var(--radius-xs);
+    background: var(--accent-default); color: var(--on-fill);
+    font-family: var(--font-mono); font-size: var(--type-caption-size);
+  }
+  .cal-cap { font-size: var(--type-caption-size); color: var(--text-muted); }
+
   /* A week column, for the week view when it arrives. */
   .week { display: grid; grid-template-columns: 44px repeat(7, 1fr); gap: 0 var(--space-2); }
 
@@ -524,7 +597,7 @@
       </p>
     </section>
 
-    <div class="grid">
+    <div class="grid" id="day-comp">
 
       <!-- ================= V1 · baseline ================= -->
       <article class="vc">
@@ -818,6 +891,338 @@
       </article>
 
     </div>
+
+    <!-- ==========================================================
+         THE DAY AS A CALENDAR
+         The eight parts above, with the Timeline drawn the way item 3
+         has always described it: positioned by time. One window —
+         04:00 → 04:00, the Day's own boundary — and one scale, 56px/
+         hour, which is the Week's. See `calendar.md` §The axis.
+         ========================================================== -->
+    <section class="lede" style="margin-top: var(--space-9);">
+      <h2 class="t-title-2">Day view — the same eight parts, drawn as a calendar</h2>
+      <p>
+        `calendar.md`'s Timeline has always said <i>“positioned by time”</i>. Every row above draws it
+        as a list — one row per item, a time in a gutter, and the same height whatever the duration —
+        so a 15-minute standup and a 3-hour workshop are both 52px and differ only in a caption.
+      </p>
+      <p>
+        Below, the Day is a calendar. One window — <b>04:00 → 04:00</b>, the Day's own boundary
+        (`day-as-unit.md`, recorded per Day by ADR 0027) — and one scale, <b>56px per hour</b>, which is
+        not a new number: the Week's grid is a 560px instrument over its ten-hour crop, so a 30-minute
+        event is 28px in <i>both</i>. The Week spends that 28px inside a <b>45px</b> column and has to
+        drop its names — its own panel, above, measures exactly that. The Day spends the same 28px
+        across <b>275px</b>, six times the room, which makes it the only Calendar view that can be
+        proportional <i>and</i> legible. That is not a trick of the Day's design; it is what having
+        <b>one</b> day on screen buys.
+      </p>
+      <p>
+        The axis is <b>1344px</b> of content in a <b>560px</b> viewport: it scrolls inside itself and
+        opens at now, so the hours below midnight cost nothing to skip — and they are the next
+        calendar day's clock while still belonging to this Day, which is what the divider says. The
+        <b>1px seam</b> between two blocks that start at 09:00 is what keeps a conflict countable.
+      </p>
+    </section>
+
+    <div class="grid" id="day-cal">
+
+      <!-- ================= CAL 1 · baseline ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Baseline</span>
+          <p class="vc-stance">Item 3 taken literally: the axis is proportional, and the eight parts keep their order.</p>
+          <span class="vc-read">no lens · the Timeline the doc has always described</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Tue 22 Sep</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 39</span>
+              </div>
+              <div class="nowline" style="flex: none; padding: var(--space-2) var(--space-7); border-bottom: 1px solid var(--border-subtle);">
+                <span class="t-caption" style="color: var(--text-secondary);">11:24</span>
+                <span class="t-footnote" style="color: var(--text-primary);">Design review in 18 min</span>
+                <span class="grow"></span>
+              </div>
+              <div class="ob-body scroll" style="padding: var(--space-4) var(--space-7); gap: var(--space-4);">
+                <div class="cal">
+                  <div class="cal-band">
+                    <div class="bd"><span class="k">All day</span><span class="grow"></span><span>Offsite planning</span></div>
+                  </div>
+                  <div class="cal-axis"><div class="cal-grid"></div></div>
+                  <div class="cal-cap">04:00 → 04:00 · scrolls · opens at now</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: var(--space-5);">
+                  <span class="check"></span><span class="t-body" style="flex: 1;">Meditate</span>
+                  <span class="t-footnote" style="color: var(--text-muted);">1 min</span>
+                </div>
+                <span class="metric-row"><button>1</button><button>2</button><button>3</button><button aria-pressed="true">4</button><button>5</button></span>
+                <div class="note-card">
+                  <span class="t-subhead">Daily note</span>
+                  <span class="t-footnote" style="color: var(--text-secondary);">Felt good after the walk.</span>
+                </div>
+                <div class="list">
+                  <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Draft the Q3 retro</span></div></div>
+                  <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Reply to Priya about the offsite</span></div></div>
+                  <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span></div></div>
+                </div>
+                <div class="list">
+                  <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Send the invoice</span></div></div>
+                  <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Water the plants</span></div></div>
+                </div>
+              </div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+              <div class="clipnote">the register is below the fold</div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>Nothing but the Timeline. The band holds the one item item 3 names — the all-day event — and the axis is the Day drawn to scale. The other seven parts keep their order, their heights and their jobs.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>The axis is most of the screen, so the fold now lands inside the register: <b>habits, the metric, the note, the plan and the record</b> all sit below it. The view becomes a calendar with a register under it rather than a document with a chart in it.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>None — this <i>is</i> item 3, which has said <i>“positioned by time”</i> since the first draft. The list was the thing out of spec.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= CAL 2 · impeccable ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Impeccable</span>
+          <p class="vc-stance">One job per region: the pinned strip is the day's status, the axis is the day's shape.</p>
+          <span class="vc-read">impeccable · operate<br>the now line folds into the strip</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Tue 22 Sep</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 39</span>
+              </div>
+              <div class="ob-body scroll" style="padding: var(--space-4) var(--space-7); gap: var(--space-4);">
+                <div class="cal">
+                  <div class="cal-band">
+                    <div class="bd"><span class="k">All day</span><span class="grow"></span><span>Offsite planning</span></div>
+                    <div class="bd dim"><span class="k">No time</span><span class="grow"></span><span>Book the dentist</span></div>
+                    <div class="bd"><span class="t-caption" style="color: var(--text-secondary);">11:24</span><span class="grow"></span><span style="color: var(--text-primary);">Design review in 18 min</span></div>
+                  </div>
+                  <div class="cal-axis"><div class="cal-grid"></div></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: var(--space-5);">
+                  <span class="check"></span><span class="t-body" style="flex: 1;">Meditate</span>
+                  <span class="t-footnote" style="color: var(--text-muted);">1 min</span>
+                </div>
+                <span class="metric-row"><button>1</button><button>2</button><button>3</button><button aria-pressed="true">4</button><button>5</button></span>
+                <div class="note-card">
+                  <span class="t-subhead">Daily note</span>
+                  <span class="t-footnote" style="color: var(--text-secondary);">Felt good after the walk.</span>
+                </div>
+                <div class="list">
+                  <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Draft the Q3 retro</span></div></div>
+                  <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Reply to Priya about the offsite</span></div></div>
+                  <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span></div></div>
+                </div>
+                <div class="list">
+                  <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Send the invoice</span></div></div>
+                  <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Water the plants</span></div></div>
+                </div>
+              </div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+              <div class="clipnote">the register is below the fold</div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>The now line leaves the chrome and joins the band, so one pinned strip carries everything that is <i>true of the day</i> — the all-day item, the unplaced task, and what is next. The header keeps only the date, and the axis gets that row back.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>The now line is specified as a persistent instrument with <b>six sources</b> (`doing-the-day.md`). Folding it in makes them a third row of a strip that is already two tall, and it puts the day's status <i>inside</i> a container whose membership rule is about placement.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>One. The band's rule is <i>time-bearing items the axis cannot place</i> (ADR 0026), and <i>“Design review in 18 min”</i> is not an item — it is a statement about the axis below it.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= CAL 3 · frontend design ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Frontend design</span>
+          <p class="vc-stance">Everything with no time is one strip; everything with a time is the axis; the record closes it.</p>
+          <span class="vc-read">frontend-design<br>the open question in ADR 0026, drawn</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Tue 22 Sep</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 39</span>
+              </div>
+              <div class="nowline" style="flex: none; padding: var(--space-2) var(--space-7); border-bottom: 1px solid var(--border-subtle);">
+                <span class="t-caption" style="color: var(--text-secondary);">11:24</span>
+                <span class="t-footnote" style="color: var(--text-primary);">Design review in 18 min</span>
+                <span class="grow"></span>
+              </div>
+              <div class="ob-body scroll" style="padding: var(--space-4) var(--space-7); gap: var(--space-4);">
+                <div class="cal">
+                  <div class="cal-band">
+                    <div class="bd"><span class="k">All day</span><span class="grow"></span><span>Offsite planning</span></div>
+                    <div class="bd dim"><span class="k">No time</span><span class="grow"></span><span>Book the dentist</span></div>
+                    <div class="bd"><span class="k">Today</span><span class="grow"></span><span>Meditate</span><span class="metric-row" style="width: 132px; gap: 2px;"><button style="height: 24px;">1</button><button style="height: 24px;">2</button><button style="height: 24px;">3</button><button style="height: 24px;" aria-pressed="true">4</button><button style="height: 24px;">5</button></span></div>
+                    <div class="bd"><span class="k">Plan</span><span class="grow"></span><span>3 planned · 2 done · 1 note</span></div>
+                  </div>
+                  <div class="cal-axis" style="height: 480px;"><div class="cal-grid"></div></div>
+                  <div class="cal-cap">the counts are doors into the four sections below</div>
+                </div>
+                <div class="list">
+                  <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Send the invoice</span></div></div>
+                  <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Water the plants</span></div></div>
+                </div>
+              </div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>The band takes the day's obligations as well as its unplaced items — habits, the metric row, and the plan as a count — so the axis is the <i>whole</i> of what has a time and the record is the <i>whole</i> of what is left. This is the <b>wide band</b>, the variant ADR 0026 deliberately left open.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>It says a habit and an all-day event are the same kind of thing, which they are not: one is <i>due</i>, the other <i>occupies</i>. And the strip grows to four rows, which the <b>axis pays for</b> — <b>480px</b> of viewport instead of 560, because the instrument only earns its room when it is the largest thing on the screen.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>One, and it is the point of the row. ADR 0026's band is <i>events that occupy the day, and unplaced tasks</i>; habits and the metric row are neither, and the ADR says they must not arrive in the band as a side effect of where it is drawn. If this row is right it needs its own ADR — this is evidence, not a violation.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= CAL 4 · design taste ================= -->
+      <article class="vc">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Design taste</span>
+          <p class="vc-stance">A calendar, then one line. The four sections that live elsewhere are doors, not content.</p>
+          <span class="vc-read">design-taste<br>the axis takes the screen it earned</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Tue 22 Sep</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 39</span>
+              </div>
+              <div class="nowline" style="flex: none; padding: var(--space-2) var(--space-7); border-bottom: 1px solid var(--border-subtle);">
+                <span class="t-caption" style="color: var(--text-secondary);">11:24</span>
+                <span class="t-footnote" style="color: var(--text-primary);">Design review in 18 min</span>
+                <span class="grow"></span>
+              </div>
+              <div class="ob-body scroll" style="padding: var(--space-4) var(--space-7); gap: var(--space-4);">
+                <div class="cal">
+                  <div class="cal-band">
+                    <div class="bd"><span class="k">All day</span><span class="grow"></span><span>Offsite planning</span></div>
+                    <div class="bd dim"><span class="k">No time</span><span class="grow"></span><span>Book the dentist</span></div>
+                  </div>
+                  <div class="cal-axis"><div class="cal-grid"></div></div>
+                </div>
+                <div style="display: flex; align-items: baseline; gap: var(--space-4); padding-top: var(--space-2);">
+                  <span class="t-caption" style="color: var(--text-muted);">TODAY</span>
+                  <span class="t-footnote" style="color: var(--text-secondary);">Meditate · sleep 1–5 · 3 planned · 2 done · 1 note</span>
+                </div>
+              </div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>Four sections become one line, and the axis is left holding the screen — still <b>560px</b>, but with nothing competing with it below. Everything removed is one tap from somewhere that owns it.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>The hub stops being a hub, and the objection from the first group stands unchanged: the top three is the ranking the shutdown ritual exists to produce, and hiding it behind a count makes the ritual's output invisible where the day is read.</dd></div>
+          <div class="vc-line rules"><dt>Against rules</dt><dd>One: it deletes four parts `calendar.md` specifies. A lens may argue for that — it cannot decide it.</dd></div>
+        </dl>
+      </article>
+
+      <!-- ================= CAL 5 · recommended ================= -->
+      <article class="vc rec">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Recommended</span>
+          <p class="vc-stance">The eight parts do not change. The Timeline does — and it takes the band's rule with it.</p>
+          <span class="vc-read">baseline's composition + ADR 0026's band + the axis</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone tall">
+            <div class="day">
+              <div class="day-head">
+                <svg class="ic ic-md" style="color: var(--text-secondary);"><use href="#i-back"/></svg>
+                <span class="t-title-2">Tue 22 Sep</span>
+                <span class="t-footnote" style="margin-left: auto; color: var(--text-muted);">week 39</span>
+              </div>
+              <div class="nowline" style="flex: none; padding: var(--space-2) var(--space-7); border-bottom: 1px solid var(--border-subtle);">
+                <span class="t-caption" style="color: var(--text-secondary);">11:24</span>
+                <span class="t-footnote" style="color: var(--text-primary);">Design review in 18 min</span>
+                <span class="grow"></span>
+              </div>
+              <div class="ob-body scroll" style="padding: var(--space-4) var(--space-7); gap: var(--space-4);">
+                <div class="cal">
+                  <div class="cal-band">
+                    <div class="bd"><span class="k">All day</span><span class="grow"></span><span>Offsite planning</span></div>
+                    <div class="bd dim"><span class="k">No time</span><span class="grow"></span><span>Book the dentist</span></div>
+                  </div>
+                  <div class="cal-axis"><div class="cal-grid"></div></div>
+                  <div class="cal-cap">1344px of day in a 560px viewport · opens at now</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: var(--space-5);">
+                  <span class="check"></span><span class="t-body" style="flex: 1;">Meditate</span>
+                </div>
+                <span class="metric-row"><button>1</button><button>2</button><button>3</button><button aria-pressed="true">4</button><button>5</button></span>
+                <div class="note-card">
+                  <span class="t-subhead">Daily note</span>
+                  <span class="t-footnote" style="color: var(--text-secondary);">Felt good after the walk.</span>
+                </div>
+                <div class="list">
+                  <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Draft the Q3 retro</span></div></div>
+                  <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Reply to Priya about the offsite</span></div></div>
+                  <div class="row r-default"><span class="check"></span><div class="r-main"><span class="t-body r-title">Book the dentist</span></div></div>
+                </div>
+                <div class="list">
+                  <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Send the invoice</span></div></div>
+                  <div class="row r-default"><span class="check done"></span><div class="r-main"><span class="t-body r-title" style="color: var(--text-secondary);">Water the plants</span></div></div>
+                </div>
+              </div>
+              <div class="dock">
+                <svg class="ic ic-lg" style="color: var(--accent-default);"><use href="#i-calendar"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-tasks"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-repeat"/></svg>
+                <svg class="ic ic-lg" style="color: var(--text-muted);"><use href="#i-mode-notes"/></svg>
+              </div>
+              <div class="clipnote">the plan and the record are below the fold</div>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for keeping all eight parts and their order — the finding is that the <i>composition</i> needed no change, only the Timeline did. <b>ADR 0026's band rule</b>, which is the one thing baseline is missing: the unplaced task is time-bearing and unplaceable, so it belongs above the axis rather than in a gutter with a blank time. <b>Impeccable</b> for keeping the now <i>rule</i> on the axis while the now <i>line</i> stays in the chrome, because one has six sources and the other has one job.</dd></div>
+          <div class="vc-line cost"><dt>Fixes</dt><dd>Duration becomes visible in the app for the first time: 30 minutes is <b>28px</b> and a 3-hour workshop is <b>168px</b>, where the list drew both at 52px. A conflict becomes countable rather than invisible — two 09:00 blocks at half width with a 1px seam. And the day's height is now a constant (<b>1344px</b> of content, whatever the day holds) instead of a function of how much is in it, which is what made the old fold unpredictable.</dd></div>
+          <div class="vc-line open"><dt>Still needs</dt><dd>Two things this row cannot decide. <b>One:</b> the fold now lands inside the register — the axis is most of the screen — so whether habits, the metric row, the note and the top three stay below it or join the band (the row above) is exactly the composition question ADR 0026 left open. <b>Two:</b> nothing yet sets a task's `scheduled_time` (ADR 0025); the natural gesture is dragging a task onto the axis, and that is this view's own work.</dd></div>
+        </dl>
+      </article>
+
+    </div>
+
+    <section class="lede">
+      <h2 class="t-title-2">The calendar's measurement</h2>
+      <div class="panel" style="margin-top: var(--space-5);">
+        <div class="measure" id="measure-daycal"></div>
+      </div>
+    </section>
 
     <section class="lede">
       <h2 class="t-title-2">The measurement</h2>
@@ -2921,7 +3326,7 @@
   // a transcript.
   function measure() {
     const host = document.getElementById('measure');
-    const rows = [...document.querySelectorAll('#day .vc')];
+    const rows = [...document.querySelectorAll('#day-comp .vc')];
     const out = rows.map(v => {
       const s = v.querySelector('.ob-body');
       return {
@@ -2972,10 +3377,152 @@
     '<div><span class="n">' + (recLast.last || 0) + ' of ' + recLast.of + '</span>' +
     '<span class="l">recommended — parts above the fold before any scroll</span></div>';
 
-    const slot = document.querySelector('#day .tl .slot');
+    const slot = document.querySelector('#day-comp .tl .slot');
     daySlotH = slot ? slot.getBoundingClientRect().height : 0;
   }
+  // ==========================================================================
+  // THE DAY AS A CALENDAR
+  // ==========================================================================
+  // One window, one scale. The window is the Day — `day-as-unit.md` puts its
+  // boundary at 4am by default and `day.opened` records it per Day (ADR 0027) —
+  // so the axis runs 04:00 → 04:00, and the hours below midnight are the next
+  // calendar day's clock while still belonging to this Day.
+  //
+  // The scale is 56px/hour and is NOT a new number: the Week's grid is 560px
+  // over its ten-hour crop, so a 30-minute event is 28px there and 28px here.
+  // That is what makes the pinch between the two a zoom rather than a rescale.
+  const CAL_BOUNDARY = 4 * 60;
+  const CAL_DAY = 24 * 60;
+  const CAL_SCALE = 56 / 60;          // px per minute — the Week's own scale
+  const CAL_FLOOR = 18;               // one line of `type-footnote` (13/18)
+  const CAL_GUTTER = 40;              // the hour labels' column
+  const CAL_PAD = 8;
+  const CAL_NOW = 11 * 60 + 24;
+  const calAt = (h, m) => ((h * 60 + m) - CAL_BOUNDARY + CAL_DAY) % CAL_DAY;
+  const calTop = t => Math.round(t * CAL_SCALE);
+  const calH = mins => Math.max(CAL_FLOOR, Math.round(mins * CAL_SCALE));
+  const calHHMM = (h, m) => (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+  // One decimal, locally. `d1` in `lab.js` does this, but `lab.js` is loaded at the
+  // END of the body — after this script runs — so a call to it here is a load-time
+  // ReferenceError that takes the whole panel down with it.
+  const cal1 = n => (Math.round(n * 10) / 10).toFixed(1);
+  // `mins: 0` is a POINT — a scheduled task placed at an hour with no stated
+  // extent (ADR 0025) — drawn at the floor as a stub rather than as a span.
+  const CAL_FIXTURE = [
+    { h: 8, m: 0, mins: 60, t: 'Gym' },
+    { h: 9, m: 0, mins: 15, t: 'Standup', col: [0, 2] },
+    { h: 9, m: 0, mins: 30, t: '1:1 with Mark', col: [1, 2] },
+    { h: 11, m: 42, mins: 30, t: 'Design review', acc: true },
+    { h: 13, m: 0, mins: 60, t: 'Lunch with Sarah', mirrored: true },
+    { h: 15, m: 0, mins: 0, t: 'Draft the Q3 retro', point: true },
+    { h: 16, m: 30, mins: 60, t: 'Physio' },
+    { h: 19, m: 0, mins: 90, t: 'Dinner with Priya' },
+    { h: 0, m: 45, mins: 30, t: 'Read' }
+  ];
+
+  function buildDayCal() {
+    const grids = [...document.querySelectorAll('.cal-grid')];
+    if (!grids.length) return;
+    grids.forEach(grid => {
+      grid.style.height = calTop(CAL_DAY) + 'px';
+      const w = grid.clientWidth || 342;
+      const track = w - CAL_GUTTER - CAL_PAD;
+      const parts = [];
+      for (let t = 0; t < CAL_DAY; t += 60) {
+        const hr = Math.floor((CAL_BOUNDARY + t) / 60) % 24;
+        parts.push('<div class="cal-h" style="top:' + calTop(t) + 'px"><span>' +
+          (hr < 10 ? '0' : '') + hr + ':00</span></div>');
+      }
+      parts.push('<div class="cal-mid" style="top:' + calTop(calAt(0, 0)) +
+        'px"><span>midnight \u00b7 still Tue 22</span></div>');
+      CAL_FIXTURE.forEach(b => {
+        let left = CAL_GUTTER;
+        let width = track;
+        if (b.col) {
+          const cw = (track - 1) / b.col[1];   // 1px seam between the two
+          left = CAL_GUTTER + b.col[0] * (cw + 1);
+          width = cw;
+        }
+        const h = calH(b.mins);
+        const twoLines = h >= 2 * CAL_FLOOR;
+        parts.push('<div class="cal-blk' + (b.mirrored ? ' mirrored' : '') +
+          (b.point ? ' point' : '') + '" style="top:' + calTop(calAt(b.h, b.m)) +
+          'px;height:' + h + 'px;left:' + Math.round(left) + 'px;width:' + Math.round(width) + 'px">' +
+          '<span class="tt">' + b.t + '</span>' +
+          (twoLines ? '<span class="tm">' + calHHMM(b.h, b.m) + '</span>' : '') +
+          '</div>');
+      });
+      parts.push('<div class="cal-now" style="top:' + calTop(calAt(11, 24)) +
+        'px"><span>11:24</span></div>');
+      grid.innerHTML = parts.join('');
+    });
+    // The axis opens at now, the way a real day view does: every hour is on the
+    // instrument and the night costs nothing to skip past.
+    document.querySelectorAll('.cal-axis').forEach(axis => {
+      axis.scrollTop = Math.max(0, calTop(calAt(11, 24)) - Math.round(axis.clientHeight / 3));
+    });
+  }
+
+  function measureDayCal() {
+    const host = document.getElementById('measure-daycal');
+    const axis = document.querySelector('#day-cal .cal-axis');
+    if (!host || !axis) return;
+    const grid = axis.querySelector('.cal-grid');
+    const rows = [...document.querySelectorAll('#day-cal .vc')];
+    if (!grid || !rows.length) return;
+
+    const perHour = 60 * CAL_SCALE;
+    const track = (grid.clientWidth || 0) - CAL_GUTTER - CAL_PAD;
+    const half = (track - 1) / 2;
+    const content = grid.getBoundingClientRect().height;
+    const view = axis.clientHeight;
+    const crop = view / perHour;
+    const floorMin = CAL_FLOOR / CAL_SCALE;
+    const half30 = 30 * CAL_SCALE;
+
+    const foldOf = v => {
+      const s = v.querySelector('.ob-body');
+      const fold = s.getBoundingClientRect().top + s.clientHeight;
+      let last = null;
+      [...s.children].forEach((c, i) => {
+        if (c.getBoundingClientRect().bottom <= fold + 1) last = i + 1;
+      });
+      return { last: last || 0, of: s.children.length };
+    };
+    const base = foldOf(rows[0]);
+    const rec = foldOf(rows[rows.length - 1]);
+    const floored = [...rows[0].querySelectorAll('.cal-blk')]
+      .filter(p => p.getBoundingClientRect().height <= CAL_FLOOR + 1).length;
+
+    host.innerHTML = [
+      '<div><span class="n">' + cal1(perHour) + 'px</span>' +
+        '<span class="l">one hour, the same on all four axes — adopted, not invented</span></div>',
+      '<div><span class="n">' + Math.round(content) + 'px</span>' +
+        '<span class="l">the Day as content — 1440 minutes, 04:00 to 04:00</span></div>',
+      '<div><span class="n">' + Math.round(view) + 'px</span>' +
+        '<span class="l">the axis viewport — fixed height, scrolls inside itself</span></div>',
+      '<div><span class="n">' + cal1(crop) + 'h</span>' +
+        '<span class="l">the crop it shows — the Week\u2019s ten hours, magnified</span></div>',
+      '<div><span class="n">' + Math.round(track) + 'px</span>' +
+        '<span class="l">a block\u2019s width for the same 30-minute event the Week clips</span></div>',
+      '<div><span class="n">' + Math.round(half) + 'px</span>' +
+        '<span class="l">a block at half width — two things starting at 09:00, still named</span></div>',
+      '<div><span class="n">' + Math.round(CAL_FLOOR) + 'px / ' + Math.round(floorMin) + 'min</span>' +
+        '<span class="l">the floor — under this an event cannot hold its own name</span></div>',
+      '<div><span class="n">' + Math.round(half30) + 'px</span>' +
+        '<span class="l">30 minutes, drawn — the list gave every item ' + Math.round(daySlotH) + 'px, whatever its length</span></div>',
+      '<div><span class="n">' + floored + '</span>' +
+        '<span class="l">blocks in the baseline drawn at the floor, not at their duration</span></div>',
+      '<div><span class="n">' + base.last + ' of ' + base.of + '</span>' +
+        '<span class="l">baseline — parts above the fold, with the axis most of the screen</span></div>',
+      '<div><span class="n">' + rec.last + ' of ' + rec.of + '</span>' +
+        '<span class="l">recommended — the same, because the eight keep their order</span></div>'
+    ].join('');
+  }
+
   measure();
+  buildDayCal();
+  measureDayCal();
 
   // The Week's fit test, which is a WIDTH test. The Day failed on height; the Week
   // fails on width, and for a different reason than it first appears: the problem is

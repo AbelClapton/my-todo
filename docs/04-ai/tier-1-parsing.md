@@ -63,9 +63,10 @@ confidence is silent, medium asks, low falls back to raw.
 
 ### What Tier 1 can parse
 
-**Tasks.** "Call dentist Tuesday" → task with due next Tuesday.
-"Buy milk and eggs" → task. "Email Sarah about the contract" →
-task with Person link (if Sarah is in People).
+**Tasks.** "Call dentist Tuesday" → task with `due` of next Tuesday —
+a bare date is a **deadline**, and `due` is a day. "Buy milk and eggs"
+→ task. "Email Sarah about the contract" → task with Person link (if
+Sarah is in People).
 
 **Events.** "Dentist Tuesday 3pm" → event. "Standup every weekday
 at 9" → recurring event (if the calendar integration supports
@@ -83,6 +84,22 @@ attached to today's Day, tagged "idea."
 Tuesday," "in 3 days," "end of month." Times: "3pm," "15:00,"
 "morning," "after lunch." Recurrence: "every day," "weekly," "3
 times a week," "every other Monday."
+
+**A clock time schedules; a bare date is due.** On a task, a *time of day*
+becomes `scheduled_day` + `scheduled_time` — a placement on that day's
+calendar axis (ADR 0025) — while a date with no time becomes `due`, which is
+a day. So "call dentist Tuesday 3pm" schedules, and "call dentist Tuesday"
+is due. Tier 1 never writes an instant into `due`:
+`02-architecture/object-model.md` types it as a `DateString`, and a time of
+day sitting in a day-shaped field is the defect ADR 0025 was written to
+remove.
+
+**Recorded, not decided: a deadline with a time of day.** "File taxes by 5pm
+Friday" is a `due` with an hour, and `due` has no hour. The candidates are a
+`due_time` field, reading the hour as a placement (which changes what the
+sentence means), or dropping the hour. Recorded here rather than resolved
+because no surface has needed the distinction yet — and the same question is
+already recorded for a missing `end` on an Event (ADR 0026).
 
 **People.** Names matched against the People list. Only if the
 match is unambiguous. "Email Sarah" matches if there is exactly
@@ -212,15 +229,17 @@ device locale.
           type: 'task',
           payload: {
             title: "Call dentist",
-            due: "2026-09-29T15:00:00Z",
+            scheduled_day: "2026-09-29",
+            scheduled_time: "15:00",
             area_id: <inbox>
           },
           confidence: 0.92,
-          explanation: "Task due next Tuesday at 3pm"
+          explanation: "Task on Tue Sep 29 at 3pm"
         }]
       }
 
-    Applied silently. "Parsed" chip appears.
+    Applied silently. "Parsed" chip appears. The task appears at 3pm on that
+    day's calendar axis (ADR 0025).
 
 **Mid-confidence parse (confirmation).**
 
@@ -262,10 +281,10 @@ device locale.
       {
         items: [
           { type: 'task', payload: { title: "Call dentist",
-            due: "2026-09-29T15:00:00Z" }, confidence: 0.88,
+            due: "2026-09-29" }, confidence: 0.88,
             explanation: "Task due Tue Sep 29" },
           { type: 'task', payload: { title: "Pick up dry cleaning",
-            due: "2026-10-02T00:00:00Z" }, confidence: 0.88,
+            due: "2026-10-02" }, confidence: 0.88,
             explanation: "Task due Fri Oct 2" }
         ]
       }

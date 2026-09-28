@@ -106,16 +106,26 @@ the bottom edge. Disappears after 5 seconds with `duration-default`,
 **Calendar zoom.** `duration-slow`, `ease-standard`. Day, week,
 month, and year views cross-scale smoothly. Events hold their
 visual position during the zoom where possible, and "possible" is
-specific rather than a hedge: **day → week** holds horizontal
-position, because a week column *is* a day; **week → month** holds
-vertical position, because a month cell keeps the week's time axis
-(`05-modules/calendar.md`, "The Month view layout"); and
+specific rather than a hedge: **day → week** holds **both** axes —
+horizontal, because a week column *is* a day, and vertical, because the
+Day's axis and the Week's grid share one scale of **56px per hour**
+(`05-modules/calendar.md`, "The axis"), so nothing rescales and the
+zoom only redistributes one day's axis across seven columns;
+**week → month** holds vertical position, because a month cell keeps the
+week's time axis (`05-modules/calendar.md`, "The Month view layout"); and
 **month → year** holds neither, because a year cell is too small to
 position anything in (`05-modules/calendar.md`, "The Year's fit": a
 cell is 44 × 9px against the Month's 50 × 115px, so every mark the
 Month positions by time collapses to a single pixel). Two of the
 three steps hold — which makes this a constraint with a stated
 exception, not a preference.
+
+**What changes across the zoom is the crop, never the clock.** The Day
+draws its whole window — `[day_boundary, day_boundary + 24h)` — and the
+Week and the Month draw one ten-hour crop of it (`05-modules/calendar.md`,
+"The axis"). A view that changed the scale instead would draw the same
+instant in two places, which is the one thing a zoom between time views
+cannot do.
 
 **Shared-element transition (list → detail).** `duration-slow`,
 `ease-standard`. The list row expands into the detail view. The

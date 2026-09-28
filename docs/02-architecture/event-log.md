@@ -90,10 +90,10 @@ not appear in the type list below and are not synced.
 ### The full type list
 
 **Task**
-- `task.created` — { task_id, title, area_id, due?, defer?, priority?, source }
+- `task.created` — { task_id, title, area_id, due?, defer?, scheduled_day?, scheduled_time?, priority?, source }
 - `task.renamed` — { task_id, title }
 - `task.rescheduled` — { task_id, due?, defer? }
-- `task.scheduled_to_day` — { task_id, day }
+- `task.scheduled_to_day` — { task_id, day, time? }
 - `task.unscheduled_from_day` — { task_id, day }
 - `task.reassigned_area` — { task_id, area_id }
 - `task.linked_person` — { task_id, person_id }
@@ -109,13 +109,29 @@ not appear in the type list below and are not synced.
 - `task.unarchived` — { task_id }
 - `task.deleted` — { task_id }  // tombstone; see Data Lifecycle
 
+**Note on `task.created` and the schedule.** A creation carries all four
+temporal fields — `due`, `defer`, `scheduled_day`, `scheduled_time` — and a
+later change goes through the entry that owns it: `task.rescheduled` for the
+first two, `task.scheduled_to_day` for the day and its hour. Until ADR 0025
+the two `scheduled_*` keys were the only pair a creation could not set, even
+though `05-modules/tasks.md` puts the day and the hour on the creation
+surfaces beside the deadline and the defer date. That is the same asymmetry
+`day.planned` had against its sibling `day.plan_skipped` before `source`.
+
 **Calendar (the Event atom)**
-- `calendar.created` — { event_id, title, start, end?, day }
-- `calendar.updated` — { event_id, title?, start?, end? }
+- `calendar.created` — { event_id, title, start, end?, all_day, day }
+- `calendar.updated` — { event_id, title?, start?, end?, all_day? }
 - `calendar.linked_person` — { event_id, person_id }
 - `calendar.unlinked_person` — { event_id, person_id }
 - `calendar.deleted` — { event_id }
-- `calendar.mirrored` — { event_id, source: 'google_calendar' | 'apple_calendar' | ..., retrieved_at, raw }
+- `calendar.mirrored` — { event_id, source: 'google_calendar' | 'apple_calendar' | ..., retrieved_at, all_day, raw }
+
+**Note on `all_day`.** `calendar.mirrored` normalizes the source's own
+all-day flag at retrieval and keeps `raw` unchanged, because the value
+exists upstream and discarding it is what made the band undrawable
+(ADR 0026). A mirrored event written before that decision carries no
+normalized key, so projections read `raw` for those entries — a permanent
+fallback, not a migration that ends.
 
 **Habit**
 - `habit.created` — { habit_id, name, cadence, minimum_viable?, area_id, protocol_id? }
@@ -167,7 +183,16 @@ not appear in the type list below and are not synced.
 - `person.unarchived` — { person_id }
 
 **Day**
-- `day.opened` — { day, tz_offset_minutes }
+- `day.opened` — { day, tz_offset_minutes, boundary_hour }
+
+**Note on `day.opened`.** Both settings that fix a Day at its open are
+recorded on the entry — the timezone and the boundary — rather than one
+being pinned and the other inferred from `system.settings_changed`, which
+can be absent on a replica holding no `sync: false` entries (ADR 0027).
+Entries written before that decision carry no `boundary_hour`; projections
+fall back to the boundary in effect at that entry's `at`, defaulting to
+**4**, and that obligation is permanent in the shape ADR 0012 set for
+`day.note_created`.
 - `day.planned` — { day, top_three: TaskId[], source: 'morning' | 'shutdown' }
 - `day.plan_skipped` — { day, kind: 'morning' | 'shutdown' }
 

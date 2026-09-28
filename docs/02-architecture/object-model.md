@@ -39,11 +39,21 @@ groups, or links them.
       title: string,
       start: ISO-8601 UTC,
       end?: ISO-8601 UTC,
+      all_day: boolean,          // clock values not drawn; see ADR 0026
       day: DateString,           // derived from start in local tz
       source: 'in_app' | 'google_calendar' | 'apple_calendar' | ...,
       people: PersonId[],
       deleted: boolean
     }
+
+**`all_day` is the one Event field that is not a time, and it changes how
+the two time fields are read.** An all-day event still carries `start` at
+its first local midnight, because `day` is derived from it; `all_day: true`
+means the clock values are **not drawn**, and the event belongs in the
+calendar's band rather than on its axis (ADR 0026). A genuine 24-hour timed
+event is `all_day: false` and draws as the longest block of the day. That
+distinction is the field's whole job — and it is what the mirror has to
+preserve rather than flatten into `start`/`end`.
 
 **Task** — anything with a completion state. Field set:
 
@@ -56,35 +66,35 @@ groups, or links them.
       priority: 'now' | 'next' | 'later',
       parent_task_id?: TaskId,
       scheduled_day?: DateString,
+      scheduled_time?: TimeString,  // 'HH:mm' local; needs scheduled_day
       people: PersonId[],
       state: 'open' | 'completed' | 'someday' | 'archived' | 'deleted',
       completed_at?: ISO-8601 UTC,
       completion_note?: string
     }
 
-**All three temporal fields are days, and two of them used to be typed as
-instants.** `05-modules/tasks.md` states the rule: *"`scheduled_day` —
-appears on this day's calendar; `defer` — becomes visible on this day;
-`due` — must be done by this day."* Three days, and `02-architecture/day-as-unit.md`
-is explicit that a Day is a local-timezone `YYYY-MM-DD` and *"not a 24-hour
-window in UTC."* Two fields disagreed with both, and nothing depended on it
-until `disruption.md`'s reflow had to compare a `scheduled_day` against
-today. The one place a task is positioned within a day rather than on it is
-its **scheduled placement on the calendar**, and that is the open question
-below rather than a fourth field here.
+**Three temporal fields are days, and a fourth is a time of day.**
+`05-modules/tasks.md` states the rule: *"`scheduled_day` — appears on this
+day's calendar; `defer` — becomes visible on this day; `due` — must be done
+by this day."* Three days, and `02-architecture/day-as-unit.md` is explicit
+that a Day is a local-timezone `YYYY-MM-DD` and *"not a 24-hour window in
+UTC."* Two fields disagreed with both, and nothing depended on it until
+`disruption.md`'s reflow had to compare a `scheduled_day` against today.
 
-**Open question: a scheduled task's clock time has no field.**
-`05-modules/calendar.md` draws scheduled tasks *"as proportional blocks,
-positioned by clock time across the shared gutter"*, and
-`06-flows/disruption.md`'s reflow shifts *"scheduled tasks that have a
-`scheduled_day` of today and a time after the overrun"*. Both need to know
-*when* a task sits on its day; `scheduled_day?: DateString` says only which
-day. So the app draws and filters on a value it has no field for. This is
-recorded rather than resolved because the fix has a choice in it — a
-`scheduled_time` on the Task, or the reflow and the calendar both reading
-the task's position from somewhere else — and because either route changes a
-log payload and therefore needs an ADR. Noted here so the next reader finds
-it in the field set rather than in the lab that found it.
+`scheduled_time` is the fourth, and it is the only temporal field on any
+atom that is a **time of day** rather than a Day or an instant: local
+wall-clock, meaningful only alongside `scheduled_day`, and a **point rather
+than a span** — there is no duration, because the calendar needs a position
+and the reflow an ordering, and neither needs an extent (ADR 0025).
+
+**A scheduled day has two legal states, and both are common.**
+`scheduled_day` **with** a `scheduled_time` is *placed*: it appears on the
+Day view's axis at that hour. `scheduled_day` **without** one is *scheduled
+but unplaced*: it belongs to the Day, appears in the Day view's band with
+the day's other untimed content, and never on the axis. The second is what
+every writer produces today — capture, the morning plan, shutdown,
+disruption and the parser all supply a day and no time — so it is the
+default case rather than an edge case.
 
 **Note** — anything with a body. Field set:
 
