@@ -175,6 +175,42 @@ body {
 .vc.rec .vc-name { color: var(--accent-text); }
 .vc-line.open dt { color: var(--accent-text); }
 
+/* ---- the row the review ships ----
+   `rec` is the lab's own recommendation. `ship` is the decision taken after the
+   lab was reviewed, and it is not always the same row: a review can adopt the
+   Baseline arm, or one lens, over the synthesis. Exactly one row per screen
+   carries the badge, so a reviewed lab reads "here is what we agreed" rather
+   than five equal options. */
+.vc.ship .vc-name { color: var(--accent-text); }
+.vc.ship > .vc-stage { background: var(--accent-subtle); }
+.vc.ship > .vc-head { box-shadow: inset 3px 0 0 var(--accent-default); padding-left: var(--space-6); }
+.vc.ship > .vc-foot { box-shadow: inset 3px 0 0 var(--accent-default); padding-left: var(--space-6); }
+.vc-badge {
+  display: inline-block; margin-left: var(--space-3); padding: 1px var(--space-3) 2px;
+  border-radius: var(--radius-full); background: var(--accent-default); color: var(--on-fill);
+  font-family: var(--font-mono); font-size: var(--type-caption-size); letter-spacing: 0.06em;
+  text-transform: uppercase; vertical-align: 4px;
+}
+
+/* ---- the variations that lost ----
+   A reviewed screen shows the row that ships; the comparison it was chosen from
+   folds away beneath it, because a comparison's job is to show the options that
+   lost. Native <details>, so there is no script and no state to keep, and the
+   summary stays visible so the reasoning is one click away rather than gone. */
+details.alt { border-top: 1px solid var(--border-default); background: var(--bg-raised); }
+details.alt > summary {
+  cursor: pointer; padding: var(--space-6) var(--space-8);
+  display: flex; align-items: center; gap: var(--space-4); list-style: none;
+  font-family: var(--font-mono); font-size: var(--type-caption-size);
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted);
+}
+details.alt > summary::-webkit-details-marker { display: none; }
+details.alt > summary::before { content: "▸"; color: var(--accent-default); }
+details.alt[open] > summary::before { content: "▾"; }
+details.alt > summary:hover { background: var(--surface-1); color: var(--text-primary); }
+/* The first row inside a fold has the fold's own top border, not a second one. */
+details.alt > .vc:first-of-type { border-top: 0; }
+
 /* ---- the phone ---- */
 
 .phone {

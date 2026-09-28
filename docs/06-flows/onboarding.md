@@ -35,10 +35,12 @@ replace the app shell rather than floating over it
   `accent-default`. It stays seven segments: a variant that grouped them into
   setup · the win · land was rejected, because an unread grouping is noise and
   a read one needs a legend this flow has no room for.
-- "Skip" sits top-trailing where it differs from the screen's own path —
-  screens 2–5. On screens 1 and 6 the screen already carries a decline ("Just
-  let me in", "Not now"), and a second affordance for the same act would need
-  decoding at exactly the wrong moment.
+- "Skip" sits in the action block, directly beneath the primary action — the same
+  position the screen's own decline occupies on screens 1 and 6 ("Just let me
+  in", "Not now"). One action and, where the step needs one, one decline, always
+  in the same two places. A top-trailing Skip was rejected: it put the same offer
+  in two places on one screen, and it made the steps look different from each
+  other.
 - Screen 7 carries no chrome at all — no progress, no skip — because
   there is nowhere left to go.
 - Pages transition with the screen push
@@ -54,7 +56,6 @@ replace the app shell rather than floating over it
     One sentence:
       "A system for running small experiments on your own life."
 
-    One line, `type-footnote`, `text-muted`: "About a minute."
     One action: "Get started."
     One decline: "Just let me in."
 
@@ -63,11 +64,10 @@ The sentence is the identity sentence
 thing the user sees, set at `type-display` and left-aligned, and it is
 the only `type-display` in the flow — a second one would dilute it.
 
-**"About a minute." is the flow's own invariant said out loud.** First-run's
-promise is "first win in 60 seconds" and the flow delivers it, so the line is a
-disclosure rather than a claim. It is also what earns the tap this screen asks
-for: without it the user is asked to spend attention before they know what it
-costs.
+**The sentence is the whole screen.** A duration line — "About a minute." — was
+rejected. First-run's promise is still "first win in 60 seconds", but a claim
+about duration is the one thing a first-run screen cannot verify, and the
+sentence alone is what earns the tap the screen asks for.
 
 **Screen 2 — Areas.**
 
@@ -103,8 +103,6 @@ experiment rather than a confirmation dialog.
 **Screen 3 — One habit.**
 
     "Pick one habit to start."
-    One line above the list, `type-callout`: "All daily, and every one has a
-      version you can finish in a minute."
     A curated list of eight:
       - Meditate
       - Walk
@@ -118,12 +116,16 @@ experiment rather than a confirmation dialog.
     preset.
     Action: "Next."
 
-Every preset is daily and every minimum is deliberately small, so **"daily" is
-said once above the list rather than eight times inside it**, and the column the
-user reads down is the column that differs. Each row's minimum sits on the
-trailing edge at `type-callout` in `text-secondary`: scannable down the list, and
-never louder than the habit's own name. A variant that promoted the minimum above
-the habit name was rejected for reading oddly outside this screen.
+Every preset is daily and every minimum is deliberately small, and **neither is
+taught on this screen.** The row is a habit's name with a quiet minimum on the
+trailing edge at `type-footnote` in `text-muted`: scannable down the list, never
+louder than the name, and eight repetitions of "daily" avoided by not showing the
+cadence at all. A line above the list ("All daily, and every one has a version
+you can finish in a minute.") was rejected: it explains the app's central idea
+well, but `05-modules/habits.md` already carries the minimum on every habit row,
+so teaching it here is a second job on the screen whose only task is to pick one
+thing. A variant that promoted the minimum above the habit name was rejected for
+reading oddly outside this screen.
 
 The order is the spec's order, as listed below. Sorting by size of commitment
 was rejected: a non-obvious order needs a footnote to explain it, and the
@@ -143,7 +145,7 @@ Each habit in the list has a preset cadence and minimum-viable definition
 | Sleep by 11pm | daily | within 30 min |
 | Wake at a consistent time | daily | within 30 min |
 
-The cadence column is why it is said once above the list: every row is `daily`.
+The cadence is not shown: every row is `daily`, so it carries no choice.
 
 The user can accept the preset or decline the screen entirely.
 
@@ -152,20 +154,20 @@ The user can accept the preset or decline the screen entirely.
     "What's one thing you need to do today?"
     One input field, focused on arrival.
     Tier 1 parses it, and the parse appears as a chip as the user types.
-    Action: the keyboard's own return key, labelled "Add it."
+    Action: "Add it," a full-width button below the field.
 
-**The action is the keyboard.** There is no separate button. A button below the
-field would be the first thing the keyboard covers, which is the mistake every
-other layout of this screen makes.
+**The action is a button below the field.** Putting it on the keyboard's own
+return key was rejected. It removes a button from under the thumb, but it leaves
+a screen seen cold with no visible action at all, and every other step in the
+flow keeps one action and one decline in the same two places on the page. The
+button is what the keyboard covers, and that cost is accepted rather than
+designed around — a user who taps the field does one gesture before they can
+continue.
 
-**The field is not focused on arrival.** Programmatic focus does not reliably
-open the keyboard — on iOS it requires a user gesture, so both `focus()` and
-`autofocus` are unreliable inside a WebView, and the flow should not depend on
-behaviour it cannot verify. The field is therefore the screen's affordance: it is
-the only control on a page that asks one question, and tapping it is the gesture
-that raises the keyboard whose return key reads "Add it". The cost is real and
-accepted: a user looking for a button finds none. The field is one tap away, and
-"Skip" is the way out.
+**The field asks for focus on arrival, and nothing depends on it.** A keyboard
+raised by `focus()` or `autofocus` is unreliable inside a WebView on iOS, where
+it needs a user gesture, so the screen has to work whether or not the keyboard
+opens on its own.
 
 **The question stays a heading.** It remains above the field while the user
 types, so the screen keeps answering what it is for.
@@ -194,10 +196,11 @@ the only thing still on screen once the toast has gone. A variant that drew the
 moment after the row left the list was rejected: it removes the proof and leaves
 the sentence carrying alone what a checked checkbox was carrying.
 
-**The action sits above the toast's band.** This is the only screen in the app
-where an undo toast and a flow action are on screen together
-(`03-experience/components.md`), so the action block lifts rather than being
-covered by it.
+**The toast covers the action for its five seconds.** Lifting the action block
+clear of the toast's band was rejected: it fixes a collision that lasts five
+seconds and pays for it with a 96px hole on the one screen whose whole job is a
+sentence and a button. The row stays checked, the toast passes, and "Continue" is
+a tap away when it does.
 
 **No recap and no celebration.** A variant naming the three steps (captured ·
 parsed · completed) was rejected twice over: it explains, which this flow does
@@ -208,29 +211,29 @@ top three, and on day one there is no streak to earn it.
 **Screen 6 — Optional setup.**
 
     "Want to connect your calendar?"
-    Two labelled rows:
-      Reads — events already in your calendar
-      Writes — events you add here
-    One line: "Two-way sync, and you can disconnect anytime."
+    "Your events will appear in the app. Two-way sync. You can disconnect
+      anytime."
     Actions: "Connect calendar" / "Not now."
 
     If "Connect calendar," the OAuth flow runs. If it succeeds,
     today's events appear in the calendar view.
 
-**"Two-way sync" is unpacked into two rows**, because it is the whole consent
-question compressed into two words the user has no way to read. A third row
-covering disconnection was rejected: it repeats "you can disconnect anytime",
-and three rows of terms is a heavier ask than the last screen before the app
-should make. The two button labels are the spec's, word for word.
+**The consent stays three sentences.** Unpacking "two-way sync" into labelled
+Reads and Writes rows was rejected: the rows do state the terms better, but they
+turn the last screen before the app into a terms sheet, and the spec's three
+sentences already say what is read, what is written, and that disconnecting ends
+it. The two button labels are the spec's, word for word. "Not now" is the only
+decline — a second Skip beside it said the same thing twice.
 
 If the user declines, the app still works. The Calendar mode will
 show only in-app events until a calendar is connected.
 
 **Screen 7 — Land.**
 
-    The user lands on the Calendar day view.
-    The day shows the task completed on screen 5, in the Completed
-    section (`05-modules/calendar.md`).
+    The user lands on the Calendar day view: mirrored events, the now
+    line, and the dock.
+    The day shows the task completed on screen 5 wherever the day view
+    shows completed tasks (`05-modules/calendar.md`).
     The now line shows the day's next scheduled item, or
     "Nothing scheduled — [Capture]" if the day is bare
     (`06-flows/doing-the-day.md`).
@@ -238,11 +241,12 @@ show only in-app events until a calendar is connected.
     flow was the day's ritual. It fires on the first open of the
     next day (`06-flows/morning-plan.md`).
 
-**The arrival shows what the last sixty seconds produced.** The task completed on
-screen 5 appears in the day's Completed section, so the flow's first win is the
-first thing the day's record holds rather than something the user has to go
-looking for. This is what makes the arrival continuous with the flow instead of a
-fresh start.
+**The arrival is the day view, unchanged.** A frame built for the arrival — one
+that opened on the task the flow had just completed — was rejected. The Calendar
+day view is the app's primary view, and a first-run flow is not the place to add
+a section to it or to make the day's shape depend on how the user got there. The
+day shows what the day holds, and the completed task is part of that because the
+day view already holds it (`05-modules/calendar.md`).
 
 The user's first morning plan fires on day 2 of use. This is
 deliberate: the user should experience the app once before it asks

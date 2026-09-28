@@ -168,11 +168,14 @@ The seven onboarding screens are full-screen pages, not cards in a stack.
 
 - A progress indicator of seven segments sits at the top, filled by
   `accent-default`.
-- "Skip" sits top-trailing on screens 1–6, and jumps to screen 7
-  (`06-flows/onboarding.md`). Screen 7 has no chrome at all: no
-  progress, no skip, because there is nowhere left to go.
-- Screen 1 carries a secondary "Just let me in" action; the other
-  screens carry their own single primary action.
+- "Skip" sits in the action block, directly beneath the primary action, and
+  jumps to screen 7 (`06-flows/onboarding.md`). Screen 1's decline is "Just let
+  me in" and screen 6's is "Not now"; the steps between carry "Skip". Screen 7
+  has no chrome at all: no progress, no skip, because there is nowhere left to
+  go.
+- One action and one decline, always in the same two positions. A top-trailing
+  Skip was rejected: it put the same offer in two places on one screen, and it
+  made the steps look different from each other.
 
 ### Updates
 

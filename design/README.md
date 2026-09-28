@@ -21,9 +21,10 @@ the bottleneck.
   evidence for decisions already recorded in the specs. It opts out of the
   injected toggle with `<body data-lab-toggle="off">`, because its own controls
   *are* the experiment.
-- `onboarding-lab.html` — the seven first-run screens, five rows each. Links
-  `lab.css`; it used to carry its own copy of the chrome, and those 408 lines
-  were deleted rather than maintained twice.
+- `onboarding-lab.html` — the seven first-run screens. Each puts the row that ships
+  first and folds the four variations it beat away beneath it. Links `lab.css`; it
+  used to carry its own copy of the chrome, and those 408 lines were deleted rather
+  than maintained twice.
 - `calendar-lab.html` — the Calendar's views, one at a time. Links `lab.css`.
 - `nav.js` — the nav between labs, and the light/dark toggle. It injects the nav
   *and its own CSS*, so a lab gets a working bar from one `<script>` tag whether
@@ -33,6 +34,13 @@ the bottleneck.
   then comes down to a z-index nobody chose on purpose.
 - `index.html` — the entry point, and the honest status board: what is designed,
   what is not, and on what evidence.
+- `review-2026-09-28.json` — the review bar's export for the views that were signed
+  off, **quoted verbatim, typos and all**: it records what was decided and by whom,
+  so it is not prose to be tidied. It is committed because the bar keeps its state
+  in `localStorage`, which is per-browser-profile — an export that is not written
+  down can be the only copy and can still be lost (the store was already empty in
+  the profile this lab was last opened in). A later review is a new file, never an
+  edit of this one.
 
 One rule survives from the original arrangement: **a lab links `lab.css` or it
 carries its own chrome, but it never carries a near-copy of it.**
@@ -50,6 +58,14 @@ lines — what it **changed**, what it **cost**, and which of the app's own
 The last row is the **recommended** one. It is not another option: it takes what
 the others agreed on, keeps the moves that survived their costs, and states what
 it still needs before it can ship.
+
+A reviewed lab changes shape. The row marked **Final** moves to the top of its
+screen — the decision first — and the variations it beat fold away beneath it in a
+native `<details>` whose summary says how many there were. **The fold is not
+deletion**: a comparison's job is to show the options that lost, so a row that was
+not adopted keeps its reasoning, its `vc-read` line says `not adopted`, and its
+third line becomes `Set aside`. Exactly one row per screen carries the badge, and
+the folds are closed on load — a reader who wants the argument opens it.
 
 Because the token set is closed, no lens can move type or colour. That is not a
 limitation of the exercise — it is the token set working as intended, and it is

@@ -38,16 +38,18 @@
   <header class="masthead">
     <h1 class="t-title-1">Onboarding lab</h1>
     <p class="t-callout" style="color: var(--text-secondary);">
-      Seven screens, one at a time. Each screen is a table of rows: one per variation, with
-      the <b>markup on the left</b> and everything that explains it on the right. Every row
-      carries the same three lines — what it <b>changed</b>, what it <b>cost</b>, and which
-      of the app's own <b>rules it breaks</b>. "None" is a finding too, so no row leaves that
-      cell empty.
+      Seven screens, one at a time. Each screen puts the row we ship first, then folds the
+      variations it beat away beneath it: <b>markup on the left</b>, everything that explains
+      it on the right. A variation's row carries what it <b>changed</b>, what it <b>cost</b>,
+      and which of the app's own <b>rules it breaks</b> — "None" is a finding too, so that
+      cell is never left empty. The row that ships says what it <b>takes</b>, what it
+      <b>fixes</b>, and what was <b>decided</b>.
     </p>
     <p class="t-callout" style="color: var(--text-secondary);">
-      The fourth row is the <b>recommended</b> one. It is not a fifth option: it takes what
-      the others agreed on, keeps the moves that survived their costs, and states what it
-      still needs before it can ship.
+      The row marked <b>Final</b> is the one we ship: the review took the recommended
+      synthesis on the first two screens, one lens on the third, and the <b>baseline</b>
+      arm on the last four. The variations it beat are folded underneath it, so each screen
+      reads as the decision first and the comparison second.
     </p>
     <p class="tok">
       fixed: token set · palette · type scale · Lucide · row heights · motion rules · copy
@@ -77,16 +79,16 @@
     <h2 class="t-title-2">Screen 1 — The premise</h2>
     <p>
       The spec fixes everything this screen carries: the identity sentence verbatim, one
-      action ("Get started"), one skip ("Just let me in"), a seven-segment indicator, and
-      a top-trailing "Skip" on screens 1–6. There is almost nothing to decide — which is
-      what makes it a good first test of the lenses. What is left is composition, what the
-      indicator means, and whether the screen adds anything at all.
+      action ("Get started"), one decline ("Just let me in"), and a seven-segment indicator.
+      There is almost nothing to decide — which is what makes it a good first test of the
+      lenses. What is left is composition, what the indicator means, and whether the screen
+      adds anything at all.
     </p>
     <p>
       <span class="flag">spec tension</span>
-      &nbsp;"Skip" top-trailing and "Just let me in" are two affordances for the same act on
-      the same screen. Every variation below has to choose: keep both, or keep the one that
-      says what happens.
+      &nbsp;The screen as specified carries two affordances for the same act — a top-trailing
+      "Skip" and "Just let me in". Every variation had to choose: keep both, or keep the one
+      that says what happens.
     </p>
     <p class="tok">
       the lenses, by installed skill name — 2 impeccable · 3 frontend-design · 4 design-taste-frontend
@@ -94,6 +96,36 @@
   </section>
 
   <div class="grid">
+
+      <article class="vc ship">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+          <p class="vc-stance">The sentence, alone. The indicator stays; the duration line goes.</p>
+          <span class="vc-read">baseline's words + design-taste's restraint · adopted</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone">
+            <div class="ob-bar">
+              <span class="seg7"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+            </div>
+            <div class="ob-body stretch">
+              <h2 class="t-display" style="margin: 0;">A system for running<br>small experiments<br>on your own life.</h2>
+            </div>
+            <div class="ob-actions">
+              <button class="btn btn-primary btn-lg btn-block">Get started</button>
+              <button class="btn btn-ghost">Just let me in</button>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for the sentence, verbatim and alone. <b>Design taste</b> for taking an affordance away.</dd></div>
+          <div class="vc-line cost"><dt>Fixes</dt><dd>The duplicate skip: the top one goes and "Just let me in" stays, because it says what happens — and it sits in the action block, where every later step keeps its own decline. The indicator is left exactly as the spec wrote it: frontend-design's grouped version was rejected, because the grouping either goes unread or needs a legend.</dd></div>
+          <div class="vc-line open"><dt>Decided</dt><dd>The duration line is <b>out</b>. "First win in 60 seconds" is still the flow's promise, but the screen no longer spends a line making it — a claim about duration is the one thing a first-run screen cannot verify, and the sentence is the whole screen. The seven-segment indicator stays; the grouped version was rejected because an unread grouping is noise and a read one needs a legend.</dd></div>
+        </dl>
+      </article>
+
+    <details class="alt">
+      <summary>4 variations considered — rejected</summary>
 
     <!-- ================= V1 · baseline ================= -->
     <article class="vc">
@@ -233,34 +265,7 @@
         <div class="vc-line rules"><dt>Against rules</dt><dd>One, and it is small: dropping the top-trailing Skip deviates from the spec, though it makes the screen smaller rather than bigger.</dd></div>
       </dl>
       </article>
-
-      <article class="vc rec">
-        <div class="vc-head">
-          <span class="vc-name t-title-3">Recommended</span>
-          <p class="vc-stance">The sentence, and one true line. The indicator earns its place or it goes.</p>
-          <span class="vc-read">baseline's words + impeccable's line + frontend-design's indicator</span>
-        </div>
-        <div class="vc-stage">
-          <div class="phone">
-            <div class="ob-bar">
-              <span class="seg7"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
-            </div>
-            <div class="ob-body stretch" style="justify-content: center; gap: var(--space-5);">
-              <h2 class="t-display" style="margin: 0;">A system for running<br>small experiments<br>on your own life.</h2>
-              <p class="t-footnote" style="margin: 0; color: var(--text-muted);">About a minute.</p>
-            </div>
-            <div class="ob-actions">
-              <button class="btn btn-primary btn-lg btn-block">Get started</button>
-              <button class="btn btn-ghost">Just let me in</button>
-            </div>
-          </div>
-        </div>
-        <dl class="vc-foot">
-          <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for the sentence, verbatim and alone. <b>Impeccable</b> for one line of honest commitment — the flow's own invariant is a sixty-second promise, so saying it is a disclosure rather than a claim. <b>Design taste</b> for taking an affordance away.</dd></div>
-          <div class="vc-line cost"><dt>Fixes</dt><dd>The duplicate skip: the top one goes and "Just let me in" stays, because it says what happens. And the tap is earned — the user knows what it costs before spending it. The indicator is left exactly as the spec wrote it: frontend-design's grouped version was rejected, because the grouping either goes unread or needs a legend.</dd></div>
-          <div class="vc-line open"><dt>Decided</dt><dd>"About a minute." is in. It is the flow's own invariant — first win in 60 seconds — said out loud, so the line is a disclosure rather than a claim. The seven-segment indicator stays; the grouped version was rejected because an unread grouping is noise and a read one needs a legend.</dd></div>
-        </dl>
-      </article>
+    </details>
   </div>
 
   <section class="lede">
@@ -309,6 +314,45 @@
     </section>
 
     <div class="grid">
+      <article class="vc ship">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Recommended<span class="vc-badge">Final</span></span>
+          <p class="vc-stance">The question, the four with their glyphs, the Inbox disclosed, and Add as a chip.</p>
+          <span class="vc-read">impeccable's disclosure + frontend-design's glyphs + design-taste's control · adopted</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone">
+            <div class="ob-bar">
+              <span class="seg7"><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></span>
+            </div>
+            <div class="ob-body top" style="padding-top: var(--space-7); gap: var(--space-6);">
+              <h2 class="t-title-1" style="margin: 0;">Which parts of your life do you want to track?</h2>
+              <div class="wrap">
+                <span class="chip chip-on"><svg class="ic ic-xs"><use href="#i-health"/></svg>Health</span>
+                <span class="chip chip-on"><svg class="ic ic-xs"><use href="#i-work"/></svg>Work</span>
+                <span class="chip chip-on"><svg class="ic ic-xs"><use href="#i-home"/></svg>Home</span>
+                <span class="chip chip-on"><svg class="ic ic-xs"><use href="#i-learn"/></svg>Learning</span>
+                <span class="chip chip-lock">Inbox · always on</span>
+                <button class="chip" style="cursor: pointer; font: inherit; font-size: var(--type-caption-size); background: none; border: 1px dashed var(--border-strong); color: var(--text-secondary);"><svg class="ic ic-xs"><use href="#i-plus"/></svg>Add</button>
+              </div>
+              <p class="t-footnote" style="margin: 0; color: var(--text-muted);">Inbox catches anything you have not filed.</p>
+            </div>
+            <div class="ob-actions">
+              <button class="btn btn-primary btn-lg btn-block">Next</button>
+              <button class="btn btn-ghost">Skip</button>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Takes</dt><dd><b>Impeccable</b> for showing the Inbox rather than creating it silently. <b>Frontend design</b> for the glyphs — placed in the chips, where the icon rules already allow one, instead of in a tile that repeats the word. <b>Design taste</b> for making "add" a chip in the same row rather than a second control type.</dd></div>
+          <div class="vc-line cost"><dt>Fixes</dt><dd>The Inbox is disclosed before a task can land in it, and the iconography is taught on screen 2 without the 2×2 grid that cost twice the height and broke the icon rule. The top Skip moves into the action block, so every step keeps its decline in the same place.</dd></div>
+          <div class="vc-line open"><dt>Decided</dt><dd>The question stays a question — the statement rewrite is rejected. The chips are pre-filled either way, so a statement saves no tap, and asking is what makes this screen the first act rather than a confirmation dialog. Inbox was previously created silently; <code>onboarding.md</code> now shows it.</dd></div>
+        </dl>
+      </article>
+
+      <details class="alt">
+        <summary>4 variations considered — rejected</summary>
+
       <article class="vc">
         <div class="vc-head">
           <span class="vc-name t-title-3">Baseline</span>
@@ -449,42 +493,7 @@
           <div class="vc-line rules"><dt>Against rules</dt><dd>None. An unlabelled control is a risk, not a rule break, and <code>components.md</code> already permits a glyph inside a chip.</dd></div>
         </dl>
       </article>
-
-      <article class="vc rec">
-        <div class="vc-head">
-          <span class="vc-name t-title-3">Recommended</span>
-          <p class="vc-stance">State the four, show the fifth, and put the glyphs where the rules already allow them.</p>
-          <span class="vc-read">impeccable's statement + frontend-design's glyphs + design-taste's control</span>
-        </div>
-        <div class="vc-stage">
-          <div class="phone">
-            <div class="ob-bar">
-              <span class="seg7"><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></span>
-              <button class="ob-skip">Skip</button>
-            </div>
-            <div class="ob-body top" style="padding-top: var(--space-7); gap: var(--space-6);">
-              <h2 class="t-title-1" style="margin: 0;">Four areas to start.</h2>
-              <div class="wrap">
-                <span class="chip chip-on"><svg class="ic ic-xs"><use href="#i-health"/></svg>Health</span>
-                <span class="chip chip-on"><svg class="ic ic-xs"><use href="#i-work"/></svg>Work</span>
-                <span class="chip chip-on"><svg class="ic ic-xs"><use href="#i-home"/></svg>Home</span>
-                <span class="chip chip-on"><svg class="ic ic-xs"><use href="#i-learn"/></svg>Learning</span>
-                <span class="chip chip-lock">Inbox · always on</span>
-                <button class="chip" style="cursor: pointer; font: inherit; font-size: var(--type-caption-size); background: none; border: 1px dashed var(--border-strong); color: var(--text-secondary);"><svg class="ic ic-xs"><use href="#i-plus"/></svg>Add</button>
-              </div>
-              <p class="t-footnote" style="margin: 0; color: var(--text-muted);">Inbox catches anything you have not filed.</p>
-            </div>
-            <div class="ob-actions">
-              <button class="btn btn-primary btn-lg btn-block">Next</button>
-            </div>
-          </div>
-        </div>
-        <dl class="vc-foot">
-          <div class="vc-line"><dt>Takes</dt><dd><b>Impeccable</b> for turning the question into a statement and for showing the Inbox. <b>Frontend design</b> for the glyphs — but placed in the chips, where the icon rules already allow one, instead of in a tile that repeats the word. <b>Design taste</b> for making "add" a chip in the same row rather than a second control type.</dd></div>
-          <div class="vc-line cost"><dt>Fixes</dt><dd>The screen no longer quizzes the user about a decision it has already made. The Inbox is disclosed before a task can land in it. And the iconography is taught on screen 2 without the 2×2 grid that cost twice the height and broke the icon rule.</dd></div>
-          <div class="vc-line open"><dt>Decided</dt><dd>The question stays a question — rejecting this row's own statement rewrite. The chips are pre-filled either way, so the statement saves no tap, and asking is what makes this screen the first act rather than a confirmation dialog. What was taken is the Inbox disclosure, the glyphs, and "Add" as a chip. Inbox was previously created silently; <code>onboarding.md</code> now shows it.</dd></div>
-        </dl>
-      </article>
+      </details>
     </div>
   </section>
   <!-- /s2 -->
@@ -507,6 +516,46 @@
     </section>
 
     <div class="grid">
+      <article class="vc ship">
+        <div class="vc-head">
+          <span class="vc-name t-title-3">Design taste<span class="vc-badge">Final</span></span>
+          <p class="vc-stance">A dense list, not eight cards. Remove the line the screen does not need.</p>
+          <span class="vc-read">design-taste-frontend<br>variance 3 · motion 2 · density 3 · adopted</span>
+        </div>
+        <div class="vc-stage">
+          <div class="phone">
+            <div class="ob-bar">
+              <span class="seg7"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></span>
+            </div>
+            <div class="ob-body top" style="padding: var(--space-6) 0 0; gap: var(--space-5);">
+              <h2 class="t-title-1" style="margin: 0; padding: 0 var(--space-7);">Pick one habit to start.</h2>
+              <div class="list" style="border-left: 0; border-right: 0; border-radius: 0;">
+                <button class="pick" aria-pressed="true"><span class="t-body">Meditate</span><span class="preset t-footnote" style="color: var(--text-muted);">1 minute</span><span class="radio"></span></button>
+                <button class="pick"><span class="t-body">Walk</span><span class="preset t-footnote" style="color: var(--text-muted);">to the mailbox</span><span class="radio"></span></button>
+                <button class="pick"><span class="t-body">Read</span><span class="preset t-footnote" style="color: var(--text-muted);">1 page</span><span class="radio"></span></button>
+                <button class="pick"><span class="t-body">Drink water</span><span class="preset t-footnote" style="color: var(--text-muted);">1 glass</span><span class="radio"></span></button>
+                <button class="pick"><span class="t-body">Stretch</span><span class="preset t-footnote" style="color: var(--text-muted);">1 minute</span><span class="radio"></span></button>
+                <button class="pick"><span class="t-body">Journal</span><span class="preset t-footnote" style="color: var(--text-muted);">1 sentence</span><span class="radio"></span></button>
+                <button class="pick"><span class="t-body">Sleep by 11pm</span><span class="preset t-footnote" style="color: var(--text-muted);">within 30 min</span><span class="radio"></span></button>
+                <button class="pick"><span class="t-body">Wake at a consistent time</span><span class="preset t-footnote" style="color: var(--text-muted);">within 30 min</span><span class="radio"></span></button>
+              </div>
+            </div>
+            <div class="ob-actions">
+              <button class="btn btn-primary btn-lg btn-block">Next</button>
+              <button class="btn btn-ghost">Skip</button>
+            </div>
+          </div>
+        </div>
+        <dl class="vc-foot">
+          <div class="vc-line"><dt>Changed</dt><dd>"daily" dropped, minimum demoted to <code>type-footnote</code> in <code>text-muted</code>, radio kept on the trailing edge, and no line above the list.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>The list reads as eight interchangeable names, which loses the one thing the screen is choosing between. This is the calmest and the least informative of the four.</dd></div>
+          <div class="vc-line open"><dt>Decided</dt><dd><b>Adopted over the synthesis.</b> The screen's job is to pick one thing, not to compare eight commitments — and the minimum is already carried on every habit row in Habits, so teaching it here is a second job the first-run screen does not need. The Skip returns, in the action block with Next, where every step keeps it.</dd></div>
+        </dl>
+      </article>
+
+      <details class="alt">
+        <summary>4 variations considered — rejected</summary>
+
       <article class="vc">
         <div class="vc-head">
           <span class="vc-name t-title-3">Baseline</span>
@@ -625,45 +674,9 @@
 
       <article class="vc">
         <div class="vc-head">
-          <span class="vc-name t-title-3">Design taste</span>
-          <p class="vc-stance">A dense list, not eight cards. Remove the accessory the screen does not need.</p>
-          <span class="vc-read">design-taste-frontend<br>variance 3 · motion 2 · density 3</span>
-        </div>
-        <div class="vc-stage">
-          <div class="phone">
-            <div class="ob-bar">
-              <span class="seg7"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></span>
-            </div>
-            <div class="ob-body top" style="padding: var(--space-6) 0 0; gap: var(--space-5);">
-              <h2 class="t-title-1" style="margin: 0; padding: 0 var(--space-7);">Pick one habit to start.</h2>
-              <div class="list" style="border-left: 0; border-right: 0; border-radius: 0;">
-                <button class="pick" aria-pressed="true"><span class="t-body">Meditate</span><span class="preset t-footnote" style="color: var(--text-muted);">1 minute</span><span class="radio"></span></button>
-                <button class="pick"><span class="t-body">Walk</span><span class="preset t-footnote" style="color: var(--text-muted);">to the mailbox</span><span class="radio"></span></button>
-                <button class="pick"><span class="t-body">Read</span><span class="preset t-footnote" style="color: var(--text-muted);">1 page</span><span class="radio"></span></button>
-                <button class="pick"><span class="t-body">Drink water</span><span class="preset t-footnote" style="color: var(--text-muted);">1 glass</span><span class="radio"></span></button>
-                <button class="pick"><span class="t-body">Stretch</span><span class="preset t-footnote" style="color: var(--text-muted);">1 minute</span><span class="radio"></span></button>
-                <button class="pick"><span class="t-body">Journal</span><span class="preset t-footnote" style="color: var(--text-muted);">1 sentence</span><span class="radio"></span></button>
-                <button class="pick"><span class="t-body">Sleep by 11pm</span><span class="preset t-footnote" style="color: var(--text-muted);">within 30 min</span><span class="radio"></span></button>
-                <button class="pick"><span class="t-body">Wake at a consistent time</span><span class="preset t-footnote" style="color: var(--text-muted);">within 30 min</span><span class="radio"></span></button>
-              </div>
-            </div>
-            <div class="ob-actions">
-              <button class="btn btn-primary btn-lg btn-block">Next</button>
-            </div>
-          </div>
-        </div>
-        <dl class="vc-foot">
-          <div class="vc-line"><dt>Changed</dt><dd>"daily" dropped, minimum demoted to <code>type-footnote</code> and muted, radio kept on the trailing edge, and the top "Skip" removed because the flow already has a skip path.</dd></div>
-          <div class="vc-line cost"><dt>Cost</dt><dd>Demoting the minimum makes the list read as eight interchangeable names, which loses the one thing the screen is choosing between. This variant is the calmest and the least informative.</dd></div>
-          <div class="vc-line rules"><dt>Against rules</dt><dd>One: it drops the top Skip. Demoting the minimum is a judgement, not a rule break.</dd></div>
-        </dl>
-      </article>
-
-      <article class="vc rec">
-        <div class="vc-head">
           <span class="vc-name t-title-3">Recommended</span>
           <p class="vc-stance">Say "daily" once, keep the spec's order, and let the minimum be scannable without outranking the name.</p>
-          <span class="vc-read">impeccable's column + baseline's order + design-taste's calm</span>
+          <span class="vc-read">impeccable's column + baseline's order + design-taste's calm · not adopted</span>
         </div>
         <div class="vc-stage">
           <div class="phone">
@@ -695,9 +708,10 @@
         <dl class="vc-foot">
           <div class="vc-line"><dt>Takes</dt><dd><b>Impeccable</b> for the insight: the minimum is what the user is choosing, and it deserves its own column. <b>Baseline</b> for keeping the spec's order and the spec's full preset. <b>Design taste</b> for the radio on the trailing edge and no chrome beyond it.</dd></div>
           <div class="vc-line cost"><dt>Fixes</dt><dd>"daily" is said once instead of eight times. The minimum is set at <code>type-callout</code> in <code>text-secondary</code> — scannable down the column, but no longer outranking the habit's name. No reordering to explain, and no prose in the mono face.</dd></div>
-          <div class="vc-line open"><dt>Decided</dt><dd>The line is in. It is the only thing on this screen that teaches why the minimums are small, which is the app's actual idea, and it buys the removal of eight repetitions of "daily".</dd></div>
+          <div class="vc-line"><dt>Set aside</dt><dd>The line above the list is the best argument for the synthesis, but the screen ships without it: Habits already teaches the minimum on every row, and a first-run screen asked to pick one habit is not the place to explain the idea behind all eight.</dd></div>
         </dl>
       </article>
+      </details>
     </div>
   </section>
   <!-- /s3 -->
@@ -720,17 +734,16 @@
     </section>
 
     <div class="grid">
-      <article class="vc">
+      <article class="vc ship">
         <div class="vc-head">
-          <span class="vc-name t-title-3">Baseline</span>
-          <p class="vc-stance">Question, field, action. The keyboard is not drawn.</p>
-          <span class="vc-read">no lens · the control arm</span>
+          <span class="vc-name t-title-3">Baseline<span class="vc-badge">Final</span></span>
+          <p class="vc-stance">Question, field, button. The keyboard is not drawn.</p>
+          <span class="vc-read">no lens · the control arm · adopted</span>
         </div>
         <div class="vc-stage">
           <div class="phone">
             <div class="ob-bar">
               <span class="seg7"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span>
-              <button class="ob-skip">Skip</button>
             </div>
             <div class="ob-body top" style="padding-top: var(--space-7); gap: var(--space-6);">
               <h2 class="t-title-1" style="margin: 0;">What's one thing you need to do today?</h2>
@@ -741,15 +754,19 @@
             </div>
             <div class="ob-actions">
               <button class="btn btn-primary btn-lg btn-block">Add it</button>
+              <button class="btn btn-ghost">Skip</button>
             </div>
           </div>
         </div>
         <dl class="vc-foot">
-          <div class="vc-line"><dt>Changed</dt><dd>Nothing. The action is a button below the field.</dd></div>
-          <div class="vc-line cost"><dt>Cost</dt><dd>On a phone the keyboard covers the bottom half of the screen, so the button the user needs is the first thing hidden. This mock hides that by not drawing it.</dd></div>
-          <div class="vc-line rules"><dt>Against rules</dt><dd>None. Hiding the keyboard is the mock's problem, not the screen's — but it is where every other variant went wrong.</dd></div>
+          <div class="vc-line"><dt>Changed</dt><dd>Nothing but the Skip, which moves from the header into the action block below the button.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>On a phone the keyboard covers the bottom half of the screen, so "Add it" is the first thing hidden and the user must dismiss the keyboard to reach it. The Skip sits with it and is covered the same way.</dd></div>
+          <div class="vc-line open"><dt>Decided</dt><dd><b>Adopted over the synthesis.</b> Moving the action onto the keyboard's return key buys one thing — no button under the keyboard — and spends the flow's only visible action before the field is tapped, which is a screen that cannot be acted on cold. The plain button returns, and the Skip keeps it company in the action block.</dd></div>
         </dl>
       </article>
+
+      <details class="alt">
+        <summary>4 variations considered — rejected</summary>
 
       <article class="vc">
         <div class="vc-head">
@@ -848,11 +865,11 @@
         </dl>
       </article>
 
-      <article class="vc rec">
+      <article class="vc">
         <div class="vc-head">
           <span class="vc-name t-title-3">Recommended</span>
           <p class="vc-stance">The action is the keyboard's key, and the field is the affordance that raises it.</p>
-          <span class="vc-read">design-taste's keyboard + impeccable's live chip + baseline's heading</span>
+          <span class="vc-read">design-taste's keyboard + impeccable's live chip + baseline's heading · not adopted</span>
         </div>
         <div class="vc-stage">
           <div class="phone">
@@ -880,9 +897,10 @@
         <dl class="vc-foot">
           <div class="vc-line"><dt>Takes</dt><dd><b>Design taste</b> for the realisation that the keyboard already has the action on it. <b>Impeccable</b> for showing the parse as it happens rather than describing it. <b>Baseline</b> for keeping the question on screen as a heading, where it survives typing.</dd></div>
           <div class="vc-line cost"><dt>Fixes</dt><dd>No button competes with the keyboard, because the keyboard carries the action. The heading stays, so the screen keeps answering what it is for. And the parse chip sits above the keyboard, where nothing covers it.</dd></div>
-          <div class="vc-line open"><dt>Decided</dt><dd>One copy, not two: the only difference between the phases is whether the chip appears, so no line may refer to the parse. And the field is <b>not</b> focused on arrival — programmatic focus does not reliably open the keyboard on iOS, so the design must not need it. That leaves one cost accepted rather than fixed: before the tap there is no visible action. The field is the only control on a page asking one question, and "Skip" is the way out.</dd></div>
+          <div class="vc-line"><dt>Set aside</dt><dd>The keyboard already carries an action, which is why this row came close: it removes a button from under the thumb. But the flow's steps all have one visible action and one decline in the same place, and a step whose only button arrives with the keyboard has neither until it is tapped.</dd></div>
         </dl>
       </article>
+      </details>
     </div>
   </section>
   <!-- /s4 -->
@@ -905,11 +923,11 @@
     </section>
 
     <div class="grid">
-      <article class="vc">
+      <article class="vc ship">
         <div class="vc-head">
-          <span class="vc-name t-title-3">Baseline</span>
+          <span class="vc-name t-title-3">Baseline<span class="vc-badge">Final</span></span>
           <p class="vc-stance">The instant after the tap: row checked, toast up, line below.</p>
-          <span class="vc-read">no lens · the control arm</span>
+          <span class="vc-read">no lens · the control arm · adopted</span>
         </div>
         <div class="vc-stage">
           <div class="phone">
@@ -930,16 +948,20 @@
             </div>
             <div class="ob-actions">
               <button class="btn btn-primary btn-lg btn-block">Continue</button>
+              <button class="btn btn-ghost">Skip</button>
             </div>
             <div class="toast"><span class="grow">Completed</span><button>Undo</button></div>
           </div>
         </div>
         <dl class="vc-foot">
-          <div class="vc-line"><dt>Changed</dt><dd>Nothing. The row stays visible, checked, and the toast sits over the action area.</dd></div>
-          <div class="vc-line cost"><dt>Cost</dt><dd>The toast covers the bottom of the screen where Continue is, for five seconds. The one thing the user is meant to do next is behind the confirmation of what they just did.</dd></div>
-          <div class="vc-line rules"><dt>Against rules</dt><dd>None.</dd></div>
+          <div class="vc-line"><dt>Changed</dt><dd>Nothing but the Skip, which sits in the action block below Continue.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>The toast covers the bottom of the screen where Continue is, for five seconds. The one thing the user is meant to do next sits behind the confirmation of what they just did — and the Skip is covered with it.</dd></div>
+          <div class="vc-line open"><dt>Decided</dt><dd><b>Adopted over the synthesis.</b> Lifting the action clear of the toast's band fixes a collision that lasts five seconds, and pays for it with a 96px hole on the one screen whose whole job is a sentence and a button. The simpler frame wins: the row stays checked, the toast passes, and Continue is a tap away when it does.</dd></div>
         </dl>
       </article>
+
+      <details class="alt">
+        <summary>4 variations considered — rejected</summary>
 
       <article class="vc">
         <div class="vc-head">
@@ -1042,11 +1064,11 @@
         </dl>
       </article>
 
-      <article class="vc rec">
+      <article class="vc">
         <div class="vc-head">
           <span class="vc-name t-title-3">Recommended</span>
           <p class="vc-stance">Keep the proof, name the loop, and move the toast so it is not sitting on the action.</p>
-          <span class="vc-read">baseline's moment + impeccable's chips + a fixed collision</span>
+          <span class="vc-read">baseline's moment + impeccable's chips + a fixed collision · not adopted</span>
         </div>
         <div class="vc-stage">
           <div class="phone">
@@ -1079,9 +1101,10 @@
         <dl class="vc-foot">
           <div class="vc-line"><dt>Takes</dt><dd><b>Baseline</b> for the moment: the row stays, checked, because the proof is the point. <b>Impeccable</b> for the three chips that name what just happened, without its forbidden footnote. <b>Frontend design</b> for the sentence's prominence — at <code>type-title-1</code>, not a second <code>type-display</code>.</dd></div>
           <div class="vc-line cost"><dt>Fixes</dt><dd>The toast and the action no longer occupy the same place: the action area lifts so the toast sits below it. The line is loud enough to be the answer without competing with the identity sentence. The proof of the win stays on screen after the toast has gone.</dd></div>
-          <div class="vc-line open"><dt>Decided</dt><dd>The action lifts above the toast's band, and this is recorded as the only screen in the app where an undo toast and a flow action share the screen. The recap chips were dropped twice over: they explain, and "parsed" names a concept the flow must not depend on before Tier 1 ships.</dd></div>
+          <div class="vc-line"><dt>Set aside</dt><dd>The fixed collision is real but it lasts five seconds, and the chips were dropped anyway: they explain, and "parsed" names a concept the flow must not depend on before Tier 1 ships. Nothing here survives that the Baseline arm does not already do.</dd></div>
         </dl>
       </article>
+      </details>
     </div>
   </section>
   <!-- /s4b -->
@@ -1104,17 +1127,16 @@
     </section>
 
     <div class="grid">
-      <article class="vc">
+      <article class="vc ship">
         <div class="vc-head">
-          <span class="vc-name t-title-3">Baseline</span>
+          <span class="vc-name t-title-3">Baseline<span class="vc-badge">Final</span></span>
           <p class="vc-stance">The question, the explanation, two actions.</p>
-          <span class="vc-read">no lens · the control arm</span>
+          <span class="vc-read">no lens · the control arm · adopted</span>
         </div>
         <div class="vc-stage">
           <div class="phone">
             <div class="ob-bar">
               <span class="seg7"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>
-              <button class="ob-skip">Skip</button>
             </div>
             <div class="ob-body stretch" style="gap: var(--space-6);">
               <h2 class="t-title-1" style="margin: 0;">Want to connect your calendar?</h2>
@@ -1127,11 +1149,14 @@
           </div>
         </div>
         <dl class="vc-foot">
-          <div class="vc-line"><dt>Changed</dt><dd>Nothing. The spec's three sentences and two buttons.</dd></div>
-          <div class="vc-line cost"><dt>Cost</dt><dd>"Two-way sync" is the whole consent question compressed into two words the user has no way to unpack. And "Skip" at the top duplicates "Not now" — the same problem screen 1 has.</dd></div>
-          <div class="vc-line rules"><dt>Against rules</dt><dd>One: two ways to decline. And it asks for a permission in the same breath it fails to say what the permission is for.</dd></div>
+          <div class="vc-line"><dt>Changed</dt><dd>Nothing but the top Skip, which goes — "Not now" is the decline and it already sits in the action block.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>"Two-way sync" is the whole consent question compressed into two words the user has no way to unpack, and the screen asks for a permission without unpacking it.</dd></div>
+          <div class="vc-line open"><dt>Decided</dt><dd><b>Adopted over the synthesis.</b> The labelled Reads/Writes rows state the terms more clearly, but they turn the last screen before the app into a terms sheet, and the spec's own three sentences already say read, write and disconnect. One decline is kept, not two.</dd></div>
         </dl>
       </article>
+
+      <details class="alt">
+        <summary>4 variations considered — rejected</summary>
 
       <article class="vc">
         <div class="vc-head">
@@ -1235,11 +1260,11 @@
         </dl>
       </article>
 
-      <article class="vc rec">
+      <article class="vc">
         <div class="vc-head">
           <span class="vc-name t-title-3">Recommended</span>
           <p class="vc-stance">The spec's words, plus two rows that say what the permission actually does.</p>
-          <span class="vc-read">baseline's copy + frontend-design's consent table, trimmed</span>
+          <span class="vc-read">baseline's copy + frontend-design's consent table, trimmed · not adopted</span>
         </div>
         <div class="vc-stage">
           <div class="phone">
@@ -1265,9 +1290,10 @@
         <dl class="vc-foot">
           <div class="vc-line"><dt>Takes</dt><dd><b>Frontend design</b> for treating the permission as the screen's subject rather than a footnote to a benefit. <b>Baseline</b> for keeping the spec's question and both button labels exactly as written. <b>Design taste</b> for cutting the line count — but the cut is the third row, not the terms.</dd></div>
           <div class="vc-line cost"><dt>Fixes</dt><dd>"Two-way sync" stops being a phrase and becomes two labelled rows. The top Skip goes, so there is one way to decline rather than two. And nothing promises anything about the server, so the screen cannot be inaccurate.</dd></div>
-          <div class="vc-line open"><dt>Decided</dt><dd>The two rows are in and the third is out, because it only repeated "you can disconnect anytime". No claim is made about what the server keeps, so the screen cannot be inaccurate — and the check this row asked for is therefore not needed yet.</dd></div>
+          <div class="vc-line"><dt>Set aside</dt><dd>The two rows are a better consent than three sentences, and this is the narrowest of the four reversions — but the flow's last screen is not the place to introduce a table, and the rows restate a promise the spec already makes in prose.</dd></div>
         </dl>
       </article>
+      </details>
     </div>
   </section>
   <!-- /s6 -->
@@ -1291,11 +1317,11 @@
     </section>
 
     <div class="grid">
-      <article class="vc">
+      <article class="vc ship">
         <div class="vc-head">
-          <span class="vc-name t-title-3">Baseline</span>
+          <span class="vc-name t-title-3">Baseline<span class="vc-badge">Final</span></span>
           <p class="vc-stance">A populated day: mirrored events, the now line, the dock.</p>
-          <span class="vc-read">no lens · the control arm</span>
+          <span class="vc-read">no lens · the control arm · adopted</span>
         </div>
         <div class="vc-stage">
           <div class="phone">
@@ -1327,11 +1353,14 @@
           </div>
         </div>
         <dl class="vc-foot">
-          <div class="vc-line"><dt>Changed</dt><dd>Nothing. The day as it looks once a calendar is connected.</dd></div>
-          <div class="vc-line cost"><dt>Cost</dt><dd>It draws the state most users will not have. Someone who tapped "Not now" on screen 6 lands on a day with one line and no events, and this mock never shows it.</dd></div>
-          <div class="vc-line rules"><dt>Against rules</dt><dd>None.</dd></div>
+          <div class="vc-line"><dt>Changed</dt><dd>Nothing. The day as it looks once a calendar is connected — and the same frame, one line shorter, for a user who declined.</dd></div>
+          <div class="vc-line cost"><dt>Cost</dt><dd>It draws the state most users will not have. Someone who tapped "Not now" on screen 6 lands on a day with one line and no events, and this mock shows the connected case.</dd></div>
+          <div class="vc-line open"><dt>Decided</dt><dd><b>Adopted over the synthesis.</b> Opening the day on the task the flow just produced makes the arrival continuous, but the day view is the app's primary view and a first-run flow should not be the thing that decides what else lives in it. The arrival is the day: mirrored events, the now line, the dock.</dd></div>
         </dl>
       </article>
+
+      <details class="alt">
+        <summary>4 variations considered — rejected</summary>
 
       <article class="vc">
         <div class="vc-head">
@@ -1441,11 +1470,11 @@
         </dl>
       </article>
 
-      <article class="vc rec">
+      <article class="vc">
         <div class="vc-head">
           <span class="vc-name t-title-3">Recommended</span>
           <p class="vc-stance">Land on what the last sixty seconds produced, and keep the instrument quiet.</p>
-          <span class="vc-read">impeccable's continuity + baseline's restraint</span>
+          <span class="vc-read">impeccable's continuity + baseline's restraint · not adopted</span>
         </div>
         <div class="vc-stage">
           <div class="phone">
@@ -1478,9 +1507,10 @@
         <dl class="vc-foot">
           <div class="vc-line"><dt>Takes</dt><dd><b>Impeccable</b> for the continuity — the task the flow just completed is the first thing the day view shows, so the flow's first win becomes the app's first log entry. <b>Baseline</b> for keeping the now line a marker rather than a message.</dd></div>
           <div class="vc-line cost"><dt>Fixes</dt><dd>The arrival is not a fresh start: the user sees what they just did in the place it now lives. And the now line stays silent about gaps, so it measures the day instead of commenting on it.</dd></div>
-          <div class="vc-line open"><dt>Decided</dt><dd>Both questions answered, and both answers were already implied by other docs. <code>calendar.md</code> gains a section 8, Completed, which renders <code>tasks_completed</code> — a projection field that had no surface. And the empty case is the timeline's, not the view's: every Day has a Daily Note, so the Calendar has no whole-view empty state at all, and the action lives in the now line.</dd></div>
+          <div class="vc-line"><dt>Set aside</dt><dd>Both questions this row asked were already answered by other docs, and both answers cost the day view a job it does not need on day one. A new Calendar section and a first-open exception are not the size of decision a landing screen should force.</dd></div>
         </dl>
       </article>
+      </details>
     </div>
   </section>
   <!-- /s7 -->
