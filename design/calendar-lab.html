@@ -2898,7 +2898,11 @@
   // reports zero for everything — so the Day's timeline height is captured while
   // it is still on screen.
   let daySlotH = 0;
+  // Each view keeps its own place, so switching back returns to where you were.
+  const place = {};
   function go(id) {
+    const out = document.querySelector('.screen:not([hidden])');
+    if (out && out.id !== id) place[out.id] = window.scrollY;
     screens.forEach(s => { s.hidden = s.id !== id; });
     tabs.forEach(t => t.setAttribute('aria-selected', String(t.dataset.go === id)));
     if (id === 'week' && !weekMeasured) { measureWeek(); weekMeasured = true; }
@@ -2908,7 +2912,9 @@
     if (id === 'new' && !newMeasured) { measureNew(); newMeasured = true; }
     if (id === 'picker' && !pickerMeasured) { measurePicker(); pickerMeasured = true; }
     if (id === 'machine' && !machineMeasured) { measureMachine(); machineMeasured = true; }
-    window.scrollTo({ top: 0 });
+    // The restore is last: the measures above write numbers into the page, so the
+    // layout this clamps against has to be the one they left behind.
+    window.scrollTo(0, place[id] || 0);
   }
   tabs.forEach(t => t.addEventListener('click', () => go(t.dataset.go)));
 

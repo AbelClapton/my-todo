@@ -1519,13 +1519,19 @@
 
 <script>
   // One screen at a time. Only the visible screen's phones need to lay out, which
-  // is what keeps a 28-phone document usable.
+  // is what keeps a 35-phone document usable.
   const tabs = [...document.querySelectorAll('.tab[data-go]')];
   const screens = [...document.querySelectorAll('.screen')];
+  // Each screen keeps its own place. Switching away used to jump to the top, so
+  // coming back meant re-finding your position; a screen you have not opened yet still
+  // starts at the top, because it has no place of its own to return to.
+  const place = {};
   function go(id) {
+    const out = document.querySelector('.screen:not([hidden])');
+    if (out && out.id !== id) place[out.id] = window.scrollY;
     screens.forEach(s => { s.hidden = s.id !== id; });
     tabs.forEach(t => t.setAttribute('aria-selected', String(t.dataset.go === id)));
-    window.scrollTo({ top: 0 });
+    window.scrollTo(0, place[id] || 0);
   }
   tabs.forEach(t => t.addEventListener('click', () => go(t.dataset.go)));
 
