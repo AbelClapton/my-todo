@@ -210,6 +210,10 @@ details.alt[open] > summary::before { content: "▾"; }
 details.alt > summary:hover { background: var(--surface-1); color: var(--text-primary); }
 /* The first row inside a fold has the fold's own top border, not a second one. */
 details.alt > .vc:first-of-type { border-top: 0; }
+/* A screen's cross-cutting summary of the comparison folds in with it, because it
+   is about the variations rather than about the row that ships. It keeps `.lede`'s
+   reading measure — the fold is wider than a paragraph should be. */
+details.alt > .lede { margin: 0; padding: var(--space-7) var(--space-8); border-top: 1px solid var(--border-default); }
 
 /* ---- the phone ---- */
 
