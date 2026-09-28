@@ -2898,15 +2898,9 @@
   // reports zero for everything — so the Day's timeline height is captured while
   // it is still on screen.
   let daySlotH = 0;
-  // Each view keeps its own place, so switching back returns to where you were; a view
-  // you have not opened inherits the offset you are at, because going to the top is the
-  // thing that made you scroll down again.
-  const place = {};
+  // Switching a view does not scroll, on purpose: the offset carries over, so the page
+  // never moves under the reader. There is deliberately no `window.scrollTo` here.
   function go(id) {
-    const out = document.querySelector('.screen:not([hidden])');
-    if (out && out.id === id) return;
-    const from = window.scrollY;
-    if (out) place[out.id] = from;
     screens.forEach(s => { s.hidden = s.id !== id; });
     tabs.forEach(t => t.setAttribute('aria-selected', String(t.dataset.go === id)));
     if (id === 'week' && !weekMeasured) { measureWeek(); weekMeasured = true; }
@@ -2916,9 +2910,6 @@
     if (id === 'new' && !newMeasured) { measureNew(); newMeasured = true; }
     if (id === 'picker' && !pickerMeasured) { measurePicker(); pickerMeasured = true; }
     if (id === 'machine' && !machineMeasured) { measureMachine(); machineMeasured = true; }
-    // The restore is last: the measures above write numbers into the page, so the
-    // layout this clamps against has to be the one they left behind.
-    window.scrollTo(0, place[id] !== undefined ? place[id] : from);
   }
   tabs.forEach(t => t.addEventListener('click', () => go(t.dataset.go)));
 
