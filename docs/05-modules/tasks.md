@@ -65,6 +65,21 @@ due within N days, by completion date (for the completed log).
 
 ### The task row
 
+**The layout below is the chip row, and it is what the shipped row replaces.**
+`design/tasks-lab.html`'s recommended row is chosen: **the title owns the first
+line and wraps to a second when it needs one; one context line beneath it carries
+the section on the left as a glyph and a word, and every other fact on the right
+as a glyph alone** — no chip, no word and no value — at `space-4` (12px) of the
+row's own side padding, with no frame around the list and no priority dot.
+Measured on it, the row is **66px** (inside `row-rich`, and 90px when a title
+wraps) and the context line's content is **114px of 332px**.
+
+The bullets below are kept because they are the record of what this retires — the
+cap of two, the priority order that decides which two survive, and the trailing
+chips — and the cap figures further down are why it retires them. **An ADR is owed
+for the row's anatomy**, because the cap, the priority order and the fifth fact's
+missing slot all live inside it.
+
     [checkbox] Title                         [metadata]
                Area · due Tue · 1 note · @Sarah
 
@@ -77,9 +92,29 @@ due within N days, by completion date (for the completed log).
   row, which `03-experience/components.md` forbids because it breaks the
   checkbox column and repeats a word already on the line. Only the four
   seeded Areas have one; Inbox and every user-created Area are name-only.
+
+**Open: whether the note count and the person carry a glyph too.**
+`03-experience/components.md`'s inventory places `paperclip` at "the note
+count in a task row's metadata line" and `user` at "a linked person", which
+reads as an inline glyph in this line in both cases. The row drawn in
+`design/tasks-lab.html` carries the **Area's** glyph only, because
+`design/palette-lab.html` panel F is the density check on exactly this
+question — *"two glyphs in a 13px line… this is where the idea either holds
+or collapses"* — and the panel that survived it (D) kept the category glyph
+and nothing else. A line carrying three glyphs, one per fragment, has never
+been drawn. Recorded rather than decided.
 - **Priority indicator.** `priority: now` shows a small dot in
   `accent-default`. `next` and `later` have no indicator (their
   absence is the signal).
+
+**Open: the list now carries no priority signal at all.** Both the dot and the
+accent border the lab drew for it were removed on instruction, because in a
+borderless row the dot sat in a gutter the row no longer has. So the rule above
+describes something **nothing draws**: the only priority indicator in the module
+is gone, and `03-experience/components.md`'s row composition still lists it
+(*"checkbox, title, identity metadata line, priority dot, and at most two time
+chips"*). Either the dot returns in a form that survives a borderless row, or
+the field stops being visible outside the detail. Recorded rather than decided.
 - **Time chips.** Every time fact is a chip on the trailing edge, not
   text in the metadata line: **due** ("due Thu"), **scheduled**
   ("15:00"), **duration** ("40m"), **cadence** ("weekly"), and
@@ -90,17 +125,74 @@ due within N days, by completion date (for the completed log).
   the metadata line to one job and makes the chips a column the eye
   can scan down.
 
-**The row shows at most two chips.** The cap is a measurement rather
-than a taste, and the measurement has been re-taken at 390px with real
-chips (38–62px wide): one chip leaves the title **210px**, two leave it
-**172px**, and three leave it **110px**. The rule holds — every chip
-costs the title about 40px — but the figures the cap was drawn with
-(195 / 144 / 60) imply a uniform 65px chip, and **three chips do not
-wrap**: the title truncates. Since the row height is fixed, the pressure
-never shows as overflow — it shows as **title starvation**, which looks
-fine at a glance and is therefore worse. Anything beyond the cap lives
-in the detail view. (`design/tasks-lab.html`, "The list", measures all
-three, and the clipped-title count in each variant with them.)
+**The row shows at most two chips.** The cap is a measurement rather than a
+taste, and it depends entirely on how wide the row's content box is. Three
+things have to be fixed before a figure means anything: the row is drawn at the
+real **390px**; every chip carries the `icon-xs` glyph it is drawn with, which
+makes a chip 54–62px wide rather than the 38–62px a word alone suggests; and
+the row's content box is **332px** — the phone's 388px of content, minus the
+documented `space-5` screen inset twice and the row's own `space-4` side padding
+twice, because the row is a band whose content is inset inside it exactly as the
+scope control above it is.
+
+On that row the title gets **216px** with one chip, **162px** with two, and
+**84px** with three.
+
+**Three chips do not wrap**: the title truncates, so the cap of two holds. But
+it holds less hard than this doc used to claim, and the figures it carried
+before — 195 / 144 / 60, taken from `design/palette-lab.html` — are **not
+comparable to these**, because that lab insets its rows differently. Neither
+number is wrong; neither doc said which row it measured; and that is why this
+passage has been corrected **four times**.
+
+**So the row's own inset is stated here, which was the missing quantity.** A list
+row **adds `space-4` (12px) of its own side padding inside the screen inset**, so
+the row's band starts on the screen inset — the same line the scope control's band
+starts on above it — and the content inside the band is inset in turn, exactly as
+the scope control's selected pill is. `design/palette-lab.html` insets its rows
+by `space-6` (20px) instead: 4px more, an 8px narrower content box, and titles
+8–13px narrower. Either is defensible on its own; what is not defensible is
+quoting a title width without saying which row it was measured on.
+
+**Open: whether the cap survives at 332px.** Three chips leave the title
+**84px**, so the third chip still costs the title most of its room and the cap of
+two holds — but the case is now a matter of degrees rather than the cliff the
+original 60px implied. The recommended row in `design/tasks-lab.html` retires the
+cap altogether, because a row whose title owns its own line has no width to
+defend.
+the row height is fixed, the pressure never shows as overflow — it shows
+as **title starvation**, which looks fine at a glance and is therefore
+worse. Anything beyond the cap lives in the detail view.
+(`design/tasks-lab.html`, "The list", measures all three, and the
+clipped-title count in each variant with them.)
+
+**Withdrawn: an earlier pass of that lab measured 210 / 172 / 110**, and
+this doc recorded that the stated figures did not reproduce. The lab was
+drawing its chips **without the `icon-xs` glyph every chip carries**
+(`design/palette-lab.html`, V4: *"the time glyph moved into the chip"*),
+so its chips were up to 16px narrower than the app's and its titles
+correspondingly wider — a measurement of a chip the app does not draw.
+The doc's figures were right and the correction was the error — though the two
+sets were never comparable in the first place, which is the finding above.
+
+**The title owns its own row, and that is now chosen.** The layout above puts the
+chips on the **title's** line and the identity line beneath it, which is why three
+chips starve the title at all. Moving **all** of the row's context into the second
+line gives the title the full width and lets it wrap, and the starvation disappears.
+
+What this passage first feared was that the pressure would simply move from the
+title to the context line. Drawn and measured in `design/tasks-lab.html`, it does
+not — because the facts on that line are **glyphs and not chips**: the widest
+context line is **114px of 332px**. The row is **66px**, inside `row-rich` (72px)
+with 6px to spare, and **90px** only when a title wraps — which is 1 of the lab's 7
+fixtures — and 90px matches no token, since
+`03-experience/design-tokens.md` ends its row-height table with *"Every list uses
+one of these four. No custom row heights."*
+
+So the cost is not space at all: it is that an icon-only fact says **which kinds of
+time a task has, and not one of their values**. That and the height are recorded at
+the head of this section, and the **ADR this row's anatomy needs is owed — it is
+not written yet.**
 
 When a task has more than two time facts, the cap keeps them in this
 order: **deferred, overdue, due, cadence, duration**. The signals that
@@ -158,8 +250,8 @@ It replaces the row that announces an empty field: drawn that way, a
 half-filled task spent **four of its seven rows** saying *Not set*. The
 alternative — a chip carrying the glyph *and* the word — is the form
 `03-experience/components.md` permitted without a decision, and it measures
-**335px** of a 340px column against the rail's **168px**, leaving **5px**
-of headroom where the rail leaves 172. The rail is therefore the one thing
+**335px** of a 356px column against the rail's **168px**, leaving **21px**
+of headroom where the rail leaves 188. The rail is therefore the one thing
 on this screen that exists because of a measurement rather than a rule.
 
 **Open: the slot's height.** Drawn at 36px it resolves to no control

@@ -22,10 +22,10 @@ already gave each of them a glyph: `calendar`, `clock`, `user`, `paperclip`.
 **The measurement is what made the decision unavoidable**, because the rule-clean answer is not the
 best one:
 
-| Form | Width of the same four fields | Headroom on the 340px column |
+| Form | Width of the same four fields | Headroom on the 356px column |
 |---|---|---|
-| Bare glyphs, unlabelled | **168px** | **172px** |
-| Glyph + word in a chip | **335px** | **5px** |
+| Bare glyphs, unlabelled | **168px** | **188px** |
+| Glyph + word in a chip | **335px** | **21px** |
 
 Two further positions were measured and rejected: putting the rail on the **title line** leaves the
 title **128px of the 307px it needs — 42%**, so the task's own name truncates; and drawing **no
@@ -33,7 +33,7 @@ rail** (one word, *Add…*, at the foot) costs almost nothing but makes the fiel
 invisible, which is the one thing the reference gets right.
 
 So the worded rail was the recommendation **because it required no decision** — not because it was
-better. It fits with 5px to spare and only because *Schedule · Defer · Person · Note* are all short.
+better. It fits with 21px to spare and only because *Schedule · Defer · Person · Note* are all short.
 
 One objection raised while reviewing the reference is withdrawn here, because the decision must not
 rest on it: `clock` was called ambiguous between *deferred to* and *completed at*. The inventory
@@ -64,7 +64,7 @@ drawn under this ADR, and the worded rail stays as the variant above it.
 
 **Positive.**
 
-- The four fields cost **168px instead of 335px**, so the rail has 172px of headroom instead of 5 and
+- The four fields cost **168px instead of 335px**, so the rail has 188px of headroom instead of 21 and
   survives a long word where the worded form would wrap to a second row — which would cost exactly
   the height the whole inversion exists to save.
 - The rule "a glyph either replaces a word or marks a slot" now has its exception written down **with
@@ -103,8 +103,8 @@ drawn under this ADR, and the worded rail stays as the variant above it.
 ## Alternatives considered
 
 **Words in chips — the previous recommendation.** Rule-clean with no decision needed: the glyph sits
-*inside* a chip, which the table already allowed. Rejected on **5px of headroom** in a 340px column,
-which is a coincidence rather than a design. Still drawn, as the variant above the recommended row.
+*inside* a chip, which the table already allowed. Rejected on **21px of headroom** in a 356px column,
+which is enough for these four words and not for a fifth — decided by the words rather than by the rule. Still drawn, as the variant above the recommended row.
 
 **No rail: one word, `Add…`.** The cheapest form (~40px) and the only other rule-clean one. Rejected
 because it makes invisible the thing the reference gets right — that the *offers* are the affordance,
