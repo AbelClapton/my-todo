@@ -1,0 +1,17 @@
+node_modules/
+dist/
+build/
+.next/
+.tanstack/
+coverage/
+playwright-report/
+test-results/
+*.local
+.env
+.env.*
+!.env.example
+.DS_Store
+*.sqlite
+*.sqlite-journal
+*.db
+.vite/

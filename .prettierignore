@@ -1,0 +1,11 @@
+# The doc set and the design labs are hand-formatted, and their tables and
+# ASCII diagrams are load-bearing. Prettier rewrites both.
+docs/
+design/
+
+# Generated or third-party
+pnpm-lock.yaml
+node_modules/
+coverage/
+playwright-report/
+test-results/
