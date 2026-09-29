@@ -90,7 +90,7 @@ not appear in the type list below and are not synced.
 ### The full type list
 
 **Task**
-- `task.created` — { task_id, title, area_id, due?, defer?, scheduled_day?, scheduled_time?, priority?, source }
+- `task.created` — { task_id, title, area_id, due?, defer?, scheduled_day?, scheduled_time?, estimated_minutes?, priority?, source }
 - `task.renamed` — { task_id, title }
 - `task.rescheduled` — { task_id, due?, defer? }
 - `task.scheduled_to_day` — { task_id, day, time? }
@@ -101,6 +101,7 @@ not appear in the type list below and are not synced.
 - `task.set_parent` — { task_id, parent_task_id }
 - `task.cleared_parent` — { task_id }
 - `task.priority_changed` — { task_id, priority: 'now' | 'next' | 'later' }
+- `task.estimated` — { task_id, estimated_minutes? }  // absent key clears it
 - `task.completed` — { task_id, completed_at, note? }
 - `task.uncompleted` — { task_id }
 - `task.marked_someday` — { task_id }
@@ -117,6 +118,15 @@ the two `scheduled_*` keys were the only pair a creation could not set, even
 though `05-modules/tasks.md` puts the day and the hour on the creation
 surfaces beside the deadline and the defer date. That is the same asymmetry
 `day.planned` had against its sibling `day.plan_skipped` before `source`.
+
+**`task.created` also carries the estimate, and a later change is its own
+entry.** `estimated_minutes` is a **span** — an integer number of minutes —
+where `task.scheduled_time` is a **point** on a day, and the two are not
+substitutes (ADR 0025, ADR 0031). `task.estimated` is the one type that
+changes it, because an estimate a creation could set and nothing could
+revise would be the only field on the atom the log cannot change. Its key
+follows the same rule as every other optional key: **absent means *not
+estimated***, and `{ task_id }` with no key clears it.
 
 **Calendar (the Event atom)**
 - `calendar.created` — { event_id, title, start, end?, all_day, day }
@@ -313,11 +323,18 @@ union.
       task_id: "01HX...",
       title: "Call contractor",
       area_id: "01HX...",
-      due?: "2026-09-25T17:00:00Z",
-      defer?: "2026-09-23T00:00:00Z",
+      due?: "2026-09-25",          // a day, not an instant
+      defer?: "2026-09-23",
+      scheduled_day?: "2026-09-24",
+      scheduled_time?: "15:00",    // 'HH:mm' local; needs scheduled_day
+      estimated_minutes?: 30,      // a span; NOT a position
       priority?: "next",
       source: "user" | "ai.tier1"
     }
+
+    // task.estimated — set, then cleared
+    { task_id: "01HX...", estimated_minutes: 30 }
+    { task_id: "01HX..." }   // absent key = not estimated
 
     // habit.checked
     {

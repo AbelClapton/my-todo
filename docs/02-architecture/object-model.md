@@ -67,6 +67,7 @@ preserve rather than flatten into `start`/`end`.
       parent_task_id?: TaskId,
       scheduled_day?: DateString,
       scheduled_time?: TimeString,  // 'HH:mm' local; needs scheduled_day
+      estimated_minutes?: number,   // minutes; a span, not a position
       people: PersonId[],
       state: 'open' | 'completed' | 'someday' | 'archived' | 'deleted',
       completed_at?: ISO-8601 UTC,
@@ -86,6 +87,12 @@ atom that is a **time of day** rather than a Day or an instant: local
 wall-clock, meaningful only alongside `scheduled_day`, and a **point rather
 than a span** — there is no duration, because the calendar needs a position
 and the reflow an ordering, and neither needs an extent (ADR 0025).
+
+**One field on the Task is a span, and it is the estimate.**
+`estimated_minutes` is minutes — how long the work takes — which is why it
+is the one temporal field that appears in no scope, on no axis and in no
+chip order: it dates nothing. It is deliberately not `scheduled_time` under
+another name (ADR 0031).
 
 **A scheduled day has two legal states, and both are common.**
 `scheduled_day` **with** a `scheduled_time` is *placed*: it appears on the

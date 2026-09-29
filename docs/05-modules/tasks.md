@@ -154,7 +154,8 @@ by `space-6` (20px) instead: 4px more, an 8px narrower content box, and titles
 8–13px narrower. Either is defensible on its own; what is not defensible is
 quoting a title width without saying which row it was measured on.
 
-**Open: whether the cap survives at 332px.** Three chips leave the title
+**Retired with the cap (ADR 0030) — whether the cap survives at 332px.**
+Three chips leave the title
 **84px**, so the third chip still costs the title most of its room and the cap of
 two holds — but the case is now a matter of degrees rather than the cliff the
 original 60px implied. The recommended row in `design/tasks-lab.html` retires the
@@ -200,7 +201,8 @@ change what the user does next are the ones that survive. `scheduled`
 belongs in that list and has **no rank in it yet** — which is the open
 question below.
 
-**Open: the cap, or a column?** A task due Friday and placed at 15:00 has
+**Retired with the cap (ADR 0030) — the column.**
+A task due Friday and placed at 15:00 has
 two facts and the cap is already spent, so the fifth fact does not starve
 the title — it **displaces** one of the two that were there. The two
 answers (`design/tasks-lab.html`, "The list") are a cap that decides what
@@ -210,8 +212,12 @@ the two the column holds, and duration and deferral show only when those
 are empty. The column costs the same 76px on a row carrying nothing,
 which is why this is a decision and not a correction.
 
-Row height is `row-rich` (72px) when metadata is present,
-`row-default` (56px) when it is not.
+Row height is `row-rich` (72px) when the row carries a context line and
+`row-default` (56px) when it does not. **A row token is a minimum, not a fixed
+height** (ADR 0031): 66px of content inside `row-rich` draws at 72px, and the
+same row with a wrapped title measures **90px** and draws at 90 — which is what
+the wrapped title always needed, and what the note row (34px over), the
+protocol card (14 over) and the person row (3 over) had already been doing.
 
 **The checked state is the accent, not a separate green.** A checked box fills
 with `accent-default` and carries a white tick (`on-fill`). This is the
@@ -261,14 +267,18 @@ difference", `03-experience/design-tokens.md`). So the slot has to be told
 which token it is, and `control-md` with a padded hit area is the
 proposal (ADR 0029).
 
-**Open: what the hour control is.** Every control the set gives for
-putting a task on a day is **day-granular** — this screen's action is
-*"Schedule to day"*, which *"opens date picker"*, and the defer sheet's
-rows are relative days. `scheduled_time` (ADR 0025) therefore has **no
-control anywhere except Tier 1 parsing**. The lab proposes four hour
-chips at `control-sm`'s scale, appearing only once a day is set; whether
-that is a new control or an instance of the segmented control is part of
-the same undecided question.
+**The hour control is a chip row (ADR 0031).** Every control the set gave for
+putting a task on a day was **day-granular** — this screen's action is
+*"Schedule to day"*, which *"opens date picker"*, and the defer sheet's rows
+are relative days — so `scheduled_time` (ADR 0025) had **no control anywhere
+except Tier 1 parsing**. It has one now: a single-select chip row at
+`control-sm`, drawn only once a day is set, opening with `No time` — which
+clears the hour and returns the task to *scheduled but unplaced* — and closing
+with `Other…`, which opens the time picker. It writes
+`task.scheduled_to_day { task_id, day, time? }`, so setting, changing and
+clearing the hour are one type with three payloads, and it is the same control
+`05-modules/calendar.md`'s New event screen uses. The values between those two
+ends are a suggestion set no doc fixes.
 
 **Capture.** Pull down from the list; also available from the
 command palette. Inline parsing (Tier 1).
@@ -465,6 +475,16 @@ estimate** — "you said 30 minutes; it took 50" — and not a running score,
 and it is not a nudge: `03-experience/attention-budget.md`'s test would give
 it a `SurfaceId`, a toggle and a budget line, which is a much larger
 decision than the field.
+
+**The field is decided (ADR 0031); the surface is not.** `estimated_minutes`
+is a **positive integer of minutes** on the Task — a **span**, where
+`scheduled_time` is a point. `task.created` carries it and
+`task.estimated { task_id, estimated_minutes? }` changes it, with the absent key
+clearing it, because an estimate a creation could set and nothing could revise
+would be the only field on the atom the log cannot change. `tasks.md`'s
+constraint above still governs the surface, and so does a second gap this
+change does not close: **nothing records how long the work actually took**, so
+the completion prompt still has no second number to compare against.
 
 ### The completion log
 

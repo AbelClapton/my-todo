@@ -163,8 +163,11 @@ exist." There is no registry file. The union itself is the registry.
       task_id: z.string().ulid(),
       title: z.string().min(1).max(500),
       area_id: z.string().ulid(),
-      due: z.string().datetime().optional(),
-      defer: z.string().datetime().optional(),
+      due: DateStringSchema.optional(),             // a day, not an instant
+      defer: DateStringSchema.optional(),
+      scheduled_day: DateStringSchema.optional(),
+      scheduled_time: TimeStringSchema.optional(),  // 'HH:mm'; needs the day
+      estimated_minutes: z.number().int().positive().optional(),
       priority: z.enum(['now', 'next', 'later']).optional(),
       source: z.enum(['user', 'ai.tier1']),
     });

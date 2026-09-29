@@ -34,7 +34,7 @@ Four row heights exist and every list uses one of them
 
 | Component | Height token | Defined in | Notes |
 |---|---|---|---|
-| Task row | `row-rich` (72) with metadata, `row-default` (56) without | `05-modules/tasks.md` | Carries checkbox, title, identity metadata line, priority dot, and at most two time chips |
+| Task row | `row-rich` (72) with a context line, `row-default` (56) without | `05-modules/tasks.md` | Checkbox, a title that owns its line and wraps, and one context line — no frame, no priority dot, no chips (ADR 0030) |
 | Habit row | `row-default` (56) | `05-modules/habits.md` | Checkbox, name, cadence · area, compliance count, minimum underline |
 | Note row | `row-rich` (72) | `05-modules/notes.md` | Title or first line, two-line preview, attachment chip, "Edited 2d ago" |
 | Person row | `row-default` (56) | `05-modules/people.md` | Name, last activity, links summary |
@@ -71,18 +71,25 @@ Four row heights exist and every list uses one of them
 | Capture field | `control-lg` | `06-flows/capture.md` — the primary CTA on every screen |
 | Mic button | `control-md` | `06-flows/capture.md` |
 | Inline completion-note field | `control-md` | `06-flows/completion.md` |
+| Field row (`[label] [value]`) | `control-md` | `05-modules/tasks.md` — the Task detail; measured at **40px** |
+| Hour chip row (`No time` … `Other…`) | `control-sm` | `05-modules/tasks.md`, `05-modules/calendar.md` (ADR 0031) |
 
 A checkbox fills with `accent-default` and a white tick when checked. There is no
 separate "checked" colour: the accent is the app's way of saying "this is on",
 and a second one would compete with the priority dot that sits in the same row.
 
-**A field row is not in this table, and the Task detail needs one.** A detail
-screen is nine `[label] [value]` rows (`05-modules/tasks.md` §Surfaces) and this
-is where a control's height is decided, so the absence is the reason the detail
-has no specified anatomy. The row the lab measured comes out at **40px** —
-`control-md`, which is what a `[label] [value]` row costs at `type-body` with
-`space-4` of padding — and the Task detail's three temporal fields are the part
-of that screen where the height actually matters.
+**A field row is in this table now, and its absence was load-bearing.** A
+detail screen is nine `[label] [value]` rows (`05-modules/tasks.md` §Surfaces)
+and this is where a control's height is decided — so while the row was missing
+here, the detail had no specified anatomy. The row the lab measured comes out
+at **40px**, `control-md`, which is what a `[label] [value]` row costs at
+`type-body` with `space-4` of padding.
+
+**The hour chip row is one control, not one per screen.** A single-select chip
+row at `control-sm`, drawn only once a day is set, opening on `No time` — the
+state a segmented control cannot draw, and the hour's default — and closing on
+`Other…`, which opens the picker (ADR 0031). The Task detail and the New event
+screen both use it.
 
 ### Overlays
 
@@ -116,11 +123,13 @@ of that screen where the height actually matters.
 | Deferred chip | `05-modules/tasks.md` | "deferred 2d" |
 | Overdue chip | `06-flows/disruption.md` | "overdue 3d" — `text-secondary`, never red |
 
-A row carries **at most two chips**, because three of them starve the title at
-390px. `05-modules/tasks.md` owns the cap and the priority order that decides
-which two survive. Chips may carry a leading glyph at `icon-xs`, which is how a
-time chip stays readable at a glance — the glyph and the word each carry the
-meaning, so neither has to be learned alone.
+**The cap of two is retired** (ADR 0030). The shipped task row carries one
+context line — the section as a glyph and a word on the left, every other fact
+as a glyph alone on the right — and no chips at all, so nothing competes for
+the title's width and there is nothing to cap. A chip remains the vocabulary of
+a **time fact** wherever one is drawn as a value rather than a mark, and
+`05-modules/tasks.md` owns which. Chips may carry a leading glyph at `icon-xs`,
+which is how a time chip stays readable at a glance.
 
 ### Ambient and data display
 

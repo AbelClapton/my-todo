@@ -341,7 +341,16 @@ difference.
 | `row-rich` | 72 | List row with subtitle (task with due, person with context) |
 | `row-hero` | 96 | Featured card (protocol card) |
 
-Every list uses one of these four. No custom row heights.
+**A row's token is its minimum height, not its height.** A row declares one
+of these four and draws at it unless its content is taller, in which case the
+content wins — a title that wraps to a second line, or a card whose chrome and
+text exceed the token. No custom row heights: a row never chooses a height
+outside the set, and the set is closed at four. The accepted task row is where
+this becomes visible: **66px of content inside `row-rich` draws at 72px**, and
+the same row with a wrapped title is **90px** and draws at 90 (ADR 0030,
+ADR 0031). Three rows had already been over their tokens for as long as the
+tokens existed — the note row by 34px, the protocol card by 14, the person row
+by 3 — so the fixed-height reading was false before the wrapped title arrived.
 
 ### Duration and easing
 
