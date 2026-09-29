@@ -43,9 +43,7 @@ export function createTestLog(options: TestLogOptions = {}): TestLog {
   return {
     store,
     append,
-    // The store keeps BaseEntry; every entry here was written through `append`,
-    // so the payload is validated and the narrowing is sound.
-    entries: () => store.snapshot() as readonly LogEntry[],
+    entries: () => store.snapshot(),
   };
 }
 

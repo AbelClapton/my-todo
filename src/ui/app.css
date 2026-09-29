@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Nothing else belongs here.
+ *
+ * Every visual value is a token (`03-experience/design-tokens.md`), so this file
+ * carries the three Tailwind layers and no declarations of its own. The token
+ * custom properties are emitted from `src/ui/tokens.ts` at render time rather
+ * than written out here, so there is no second copy of a colour to drift.
+ *
+ * An arbitrary value in a class name — `p-[17px]`, `text-[15.5px]`,
+ * `bg-[#f3f3f3]` — fails `eslint-plugin-tailwindcss`'s `no-arbitrary-value`.
+ */

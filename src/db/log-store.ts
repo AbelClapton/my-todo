@@ -1,83 +1,65 @@
-import { sql, type SQL } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
+import type { SqliteRemoteDatabase } from 'drizzle-orm/sqlite-proxy';
 
-import { logEntries } from '@drizzle/schema';
+import { logEntries, type LogEntryRow, type NewLogEntryRow } from '@drizzle/schema';
 
-import type { BaseEntry, LogEntry } from '@/domain/events';
+import type { LogEntry } from '@/domain/events';
 import { parseLogEntry } from '@/domain/events';
 import type { LogStore } from '@/domain/log/store';
 
 /**
- * The `LogStore` over SQLite (`drizzle/schema.ts` holds the table, and
+ * The `LogStore` over SQLite (`drizzle/schema.ts` holds the table;
  * `drizzle/migrations/` holds the DDL and the append-only triggers).
  *
- * The parameter is **structural** — `run` and `all` are the two operations the
- * log needs — so the WASM proxy, a Node driver and an in-memory double all
- * satisfy it without this file importing any of them. That is also why the
- * column list is written out: a raw statement names its columns, and the table
- * name still comes from the schema so the two cannot drift.
+ * **The reads go through the query builder, and that is not a style choice.**
+ * `sqlite-proxy` hands Drizzle rows as *arrays*, paired with the column list the
+ * query declared — so a hand-written `SELECT` has no column names and every
+ * field arrives `undefined`. That is exactly what the first compensation did in
+ * the browser: `parseLogEntry` refused the row rather than letting a shapeless
+ * object into the log, which is the boundary doing its job. The query builder is
+ * what supplies the columns.
  *
- * The column list here and `drizzle/schema.ts` are the one duplicated fact in
- * this file. It is bounded, visible, and checked by the migration test.
+ * The parameter is the driver's own database type rather than a hand-written
+ * port, because the point above is a property of the driver.
  */
-export type SqliteHandle = {
-  readonly run: (query: SQL) => Promise<unknown>;
-  readonly all: <T>(query: SQL) => Promise<T[]>;
-};
-
-type LogRow = {
-  readonly id: string;
-  readonly type: string;
-  readonly timestamp: string;
-  readonly actor_type: string;
-  readonly actor_id: string | null;
-  readonly payload: unknown;
-  readonly compensation_for: string | null;
-  readonly schema_version: number;
-  readonly device_id: string;
-  readonly seq: number;
-  /** SQLite has no boolean; the driver may hand back either shape. */
-  readonly sync: number | boolean;
-};
-
-export function createSqliteLogStore(db: SqliteHandle): LogStore {
+export function createSqliteLogStore(db: SqliteRemoteDatabase): LogStore {
   return {
-    append: async (entry: BaseEntry) => {
-      await db.run(sql`
-        INSERT INTO ${logEntries}
-          (id, type, timestamp, actor_type, actor_id, payload,
-           compensation_for, schema_version, device_id, seq, sync)
-        VALUES (
-          ${entry.id},
-          ${entry.type},
-          ${entry.timestamp},
-          ${entry.actor.type},
-          ${entry.actor.id ?? null},
-          ${JSON.stringify(entry.payload)},
-          ${entry.compensation_for ?? null},
-          ${entry.schema_version},
-          ${entry.device_id},
-          ${entry.seq},
-          ${entry.sync === false ? 0 : 1}
-        )
-      `);
+    append: async (entry: LogEntry) => {
+      await db.insert(logEntries).values(toRow(entry));
     },
 
     readAll: async () => {
-      const rows = await db.all<LogRow>(sql`
-        SELECT id, type, timestamp, actor_type, actor_id, payload,
-               compensation_for, schema_version, device_id, seq, sync
-        FROM ${logEntries}
-        ORDER BY timestamp, device_id, seq
-      `);
+      const rows = await db
+        .select()
+        .from(logEntries)
+        .orderBy(logEntries.timestamp, logEntries.deviceId, logEntries.seq);
       return rows.map(rowToEntry);
     },
 
     lastSeq: async (deviceId: string) => {
-      const rows = await db.all<{ seq: number | null }>(sql`
-        SELECT MAX(seq) AS seq FROM ${logEntries} WHERE device_id = ${deviceId}
-      `);
+      const rows = await db
+        .select({ seq: sql<number | null>`max(${logEntries.seq})` })
+        .from(logEntries)
+        .where(eq(logEntries.deviceId, deviceId));
       return rows[0]?.seq ?? 0;
     },
+  };
+}
+
+function toRow(entry: LogEntry): NewLogEntryRow {
+  return {
+    id: entry.id,
+    type: entry.type,
+    timestamp: entry.timestamp,
+    actorType: entry.actor.type,
+    actorId: entry.actor.id ?? null,
+    payload: entry.payload,
+    compensationFor: entry.compensation_for ?? null,
+    schemaVersion: entry.schema_version,
+    deviceId: entry.device_id,
+    seq: entry.seq,
+    // Routing, not payload: an absent `sync` means the default, which is true.
+    sync: entry.sync !== false,
   };
 }
 
@@ -85,19 +67,18 @@ export function createSqliteLogStore(db: SqliteHandle): LogStore {
  * Storage is a boundary, so the row is **validated** rather than trusted: the
  * log is the source of truth, and a value that cannot be validated is not one.
  */
-function rowToEntry(row: LogRow): LogEntry {
-  const payload = typeof row.payload === 'string' ? JSON.parse(row.payload) : row.payload;
+function rowToEntry(row: LogEntryRow): LogEntry {
   return parseLogEntry({
     id: row.id,
     type: row.type,
     timestamp: row.timestamp,
     actor:
-      row.actor_id === null ? { type: row.actor_type } : { type: row.actor_type, id: row.actor_id },
-    payload,
-    ...(row.compensation_for === null ? {} : { compensation_for: row.compensation_for }),
-    schema_version: row.schema_version,
-    device_id: row.device_id,
+      row.actorId === null ? { type: row.actorType } : { type: row.actorType, id: row.actorId },
+    payload: row.payload,
+    ...(row.compensationFor === null ? {} : { compensation_for: row.compensationFor }),
+    schema_version: row.schemaVersion,
+    device_id: row.deviceId,
     seq: row.seq,
-    ...(row.sync === 0 || row.sync === false ? { sync: false } : {}),
+    ...(row.sync ? {} : { sync: false }),
   });
 }

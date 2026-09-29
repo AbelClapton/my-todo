@@ -2,13 +2,17 @@ import type { Config } from 'tailwindcss';
 
 import {
   colorVarReferences,
+  controlHeight,
   duration,
   easing,
   elevation,
   fontFamily,
   fontSize,
+  iconSize,
   radius,
+  rowHeight,
   spacing,
+  touchTarget,
 } from './src/ui/tokens';
 
 /**
@@ -57,21 +61,42 @@ const typeScale = Object.fromEntries(
   ]),
 );
 
+/**
+ * Radius keys drop the `radius-` prefix, so the class is `rounded-md` — which is
+ * how `03-experience/design-tokens.md`'s own example writes it. That is the one
+ * place the doc's example does not keep the full token name: it writes
+ * `px-space-5` and `text-text-inverse` (prefix kept) but `rounded-md` (prefix
+ * dropped). Radius follows the example, and every other scale keeps the prefix,
+ * so a class always contains its token name verbatim.
+ */
 const radiusScale = Object.fromEntries(
-  Object.entries(radius).map(([name, value]) => [name, value === 9999 ? '9999px' : px(value)]),
+  Object.entries(radius).map(([name, value]) => [
+    name.replace(/^radius-/, ''),
+    value === 9999 ? '9999px' : px(value),
+  ]),
 );
 
-/** Control, row, icon and touch heights are spacing-like scales of their own. */
+/**
+ * Heights and widths, keyed by token **name**, so `h-control-md`,
+ * `min-h-row-rich`, `w-icon-xs` and `min-h-touch-min` all resolve. Five token
+ * scales feed this — spacing, control heights, row heights, icon sizes and touch
+ * targets — and none of them is a raw number.
+ */
 const sizeScale = Object.fromEntries(
   Object.entries({
     ...spacing,
-    ...Object.fromEntries(Object.entries(radius).filter(([, v]) => v !== 9999)),
-  }).map(([, value]) => [value, px(value as number)]),
+    ...controlHeight,
+    ...rowHeight,
+    ...iconSize,
+    ...touchTarget,
+  }).map(([name, value]) => [name, px(value)]),
 );
 
 export default {
   content: ['./src/**/*.{ts,tsx,html}'],
-  darkMode: ['class'],
+  // `.dark` is also the selector `src/ui/theme.ts` writes the dark variables
+  // behind, so a `dark:` variant and a token switch together.
+  darkMode: 'class',
   theme: {
     // Closed sets: nothing outside these keys is a valid class.
     spacing: spacingScale,

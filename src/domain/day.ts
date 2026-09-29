@@ -43,6 +43,28 @@ export function isSameDay(a: DateString, b: DateString): boolean {
  * minutes east of UTC (the shape `day.opened` records).
  */
 export function localDayOf(instant: Instant, tzOffsetMinutes: number): DateString {
-  const local = new Date(Date.parse(instant) + tzOffsetMinutes * 60_000);
-  return local.toISOString().slice(0, 10) as DateString;
+  return dayAt(instant, tzOffsetMinutes, 0);
 }
+
+/**
+ * The Day a moment belongs to, given the boundary that frames Days (ADR 0027).
+ *
+ * With the shipping 4am boundary, an instant at 02:00 belongs to **yesterday**.
+ * That is the whole reason the boundary is recorded on `day.opened` and passed
+ * through here rather than assumed to be midnight — and why a call site that
+ * has no recorded boundary must pass the default (`DEFAULT_DAY_BOUNDARY_HOUR`)
+ * and say so.
+ */
+export function dayAt(
+  instant: Instant,
+  tzOffsetMinutes: number,
+  boundaryHour: number,
+): DateString {
+  const shifted = new Date(
+    Date.parse(instant) + tzOffsetMinutes * 60_000 - boundaryHour * 3_600_000,
+  );
+  return shifted.toISOString().slice(0, 10) as DateString;
+}
+
+/** The boundary ADR 0027 makes the default, for a replica with no `day.opened`. */
+export const DEFAULT_DAY_BOUNDARY_HOUR = 4;
