@@ -36,6 +36,20 @@ type ToastState = {
   readonly undo?: { readonly taskId: string; readonly entryId: string };
 };
 
+/**
+ * What to say when there is no durable storage — and it is two different things.
+ *
+ * The second is the one worth naming. OPFS allows **one access handle per file**,
+ * so a second tab cannot open the log and neither can a reload that arrives
+ * before the previous document has let go. "This browser gave the app no
+ * storage" would be false in that case and would send the user looking for a
+ * setting; naming the tab tells them what to do about it.
+ */
+const STORAGE_NOTICES: Readonly<Record<'no_opfs' | 'in_use', string>> = {
+  no_opfs: 'This browser gave the app no storage, so the log will not survive a reload.',
+  in_use: 'Another tab of this app has the log open, so this tab’s log will not survive a reload.',
+};
+
 export function TasksMode() {
   const [scope, setScope] = useState<TaskScope>('today');
   const [draft, setDraft] = useState('');
@@ -44,7 +58,7 @@ export function TasksMode() {
 
   const { rows } = useTasks(scope);
   const areaName = useAreaNames();
-  const { isPersistent } = useLog();
+  const { storageReason } = useLog();
   const { canWrite, createTask, completeTask, undoCompletion } = useTaskWrites();
 
   const dismissToast = useCallback(() => {
@@ -115,18 +129,17 @@ export function TasksMode() {
         </button>
       </form>
 
-      {canWrite && !isPersistent ? (
+      {storageReason === 'ok' ? null : (
         // A status line, not a repair: nothing is failing and nothing can be
         // retried. It exists because a log that empties on reload looks
         // identical to one that does not, right up until it matters.
         //
-        // It waits for `canWrite`, which is the moment the open **finished**.
-        // Keyed on `isPersistent` alone it also appeared while the log was still
-        // opening, claiming the browser had no storage before it had asked.
-        <p className="text-type-footnote text-text-muted">
-          This browser gave the app no storage, so the log will not survive a reload.
-        </p>
-      ) : null}
+        // The log stays `ok` until it has actually asked for storage, so this
+        // says nothing while the WASM compiles. An earlier version keyed on "not
+        // persistent" and accused the browser of having no storage before the
+        // question had been put to it.
+        <p className="text-type-footnote text-text-muted">{STORAGE_NOTICES[storageReason]}</p>
+      )}
 
       {rows.length === 0 ? (
         <EmptyStateBlock

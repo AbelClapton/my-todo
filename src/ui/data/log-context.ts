@@ -1,5 +1,6 @@
 import { createContext } from 'react';
 
+import type { StorageReason } from '@/db/sqlite-protocol';
 import type { LogEntry } from '@/domain/events';
 import type { Append } from '@/domain/log/append';
 
@@ -17,12 +18,15 @@ export type LogContextValue = {
   /** Every entry, in the app's total order. */
   readonly entries: readonly LogEntry[];
   /**
-   * False when the browser gave no OPFS, so the log lives only until a reload.
-   * Surfaced rather than swallowed: a log that empties on reload is not the
-   * local-first promise, and the user is the only one who can tell the
-   * difference from the outside.
+   * `ok` when the log is durable, and otherwise **which** failure it was.
+   *
+   * A boolean was not enough: "this browser gave the app no storage" and "another
+   * tab has it" are the same `persistent: false` and different sentences, and
+   * only one of them sends the user somewhere useful. `ok` is also the state
+   * while the log is still opening, which is why the UI can render this without
+   * also having to ask whether the open has finished.
    */
-  readonly isPersistent: boolean;
+  readonly storageReason: StorageReason;
   /**
    * The only path to state change. It throws when the log is not open, so a
    * caller cannot lose a write by ignoring a status.

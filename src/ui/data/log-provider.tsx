@@ -3,13 +3,15 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { ordered, type LogEntry } from '@/domain/events';
 import { createAppend, type Append, type PendingEntry } from '@/domain/log/append';
 
+import type { StorageReason } from '@/db/sqlite-protocol';
+
 import { readOrCreateDeviceId } from './device-id';
 import { LogContext, type LogContextValue, type LogStatus } from './log-context';
 
 type LogState = {
   readonly status: LogStatus;
   readonly entries: readonly LogEntry[];
-  readonly isPersistent: boolean;
+  readonly storageReason: StorageReason;
 };
 
 /**
@@ -23,7 +25,9 @@ export function LogProvider({ children }: { readonly children: ReactNode }) {
   const [state, setState] = useState<LogState>({
     status: 'opening',
     entries: [],
-    isPersistent: false,
+    // `ok` until the log has actually asked for storage, so nothing is claimed
+    // during the WASM compile.
+    storageReason: 'ok',
   });
   const appendRef = useRef<Append | undefined>(undefined);
 
@@ -55,11 +59,11 @@ export function LogProvider({ children }: { readonly children: ReactNode }) {
         // back is an entry and not merely a row.
         const entries = await log.store.readAll();
         appendRef.current = append;
-        setState({ status: 'ready', entries: ordered(entries), isPersistent: log.persistent });
+        setState({ status: 'ready', entries: ordered(entries), storageReason: log.reason });
       } catch {
         // No storage: the app still renders and every write is refused. Telling
         // the user is a repair banner, which is a later pass.
-        setState({ status: 'unavailable', entries: [], isPersistent: false });
+        setState({ status: 'unavailable', entries: [], storageReason: 'no_opfs' });
       }
     })();
 
@@ -84,10 +88,10 @@ export function LogProvider({ children }: { readonly children: ReactNode }) {
     () => ({
       status: state.status,
       entries: state.entries,
-      isPersistent: state.isPersistent,
+      storageReason: state.storageReason,
       append,
     }),
-    [append, state.entries, state.isPersistent, state.status],
+    [append, state.entries, state.storageReason, state.status],
   );
 
   return <LogContext.Provider value={value}>{children}</LogContext.Provider>;
