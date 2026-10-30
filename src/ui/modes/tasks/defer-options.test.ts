@@ -3,7 +3,8 @@ import { describe, expect, it } from 'vitest';
 import type { Task } from '@/domain/atoms/task';
 import type { DateString } from '@/domain/ids';
 
-import { deferDateChoices, formatDay, nextMonday, reschedulePayload } from './defer-options';
+import { deferDateChoices, nextMonday, reschedulePayload } from './defer-options';
+import { formatDay } from '@/ui/format';
 
 /** 2026-09-28 is a Monday, which is the case where "next week" could go wrong. */
 const MONDAY: DateString = '2026-09-28';

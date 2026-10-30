@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router';
 import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 
@@ -9,8 +10,10 @@ import { FOCUS_RING } from '@/ui/components/focus-ring';
 import { haptic } from '@/ui/haptics';
 import { iconSize } from '@/ui/tokens';
 
-import { formatDay } from '../tasks/defer-options';
+import { formatDay } from '@/ui/format';
+
 import { useDay } from './use-day';
+import { useDayOpen } from './use-day-open';
 import { useDayWrites } from './use-day-writes';
 import {
   HOUR_HEIGHT_PX,
@@ -43,6 +46,8 @@ export function DayScreen() {
   const day = useDay();
   const writes = useDayWrites();
   const { view } = day;
+
+  useDayOpen(view, { isToday: day.isToday, tzOffsetMinutes: day.tzOffsetMinutes });
 
   const band: readonly { readonly id: string; readonly title: string; readonly hint: string }[] = [
     ...view.events
@@ -126,6 +131,15 @@ export function DayScreen() {
             Today
           </button>
         )}
+        {/* The `+` is present in every Calendar view, because the Calendar creates
+            something (`03-experience/app-shell.md` §The header). */}
+        <Link
+          to="/event/new"
+          aria-label="New event"
+          className={`flex min-h-touch-min items-center justify-center self-end rounded-md border border-border-default px-space-4 text-type-subhead text-text-primary ${FOCUS_RING}`}
+        >
+          +
+        </Link>
       </header>
 
       {/* The now line: chrome, and it does not scroll (`06-flows/doing-the-day.md`). */}
@@ -146,7 +160,9 @@ export function DayScreen() {
       )}
 
       {clusters.length === 0 ? (
-        <p className="text-type-body text-text-secondary">Nothing placed in this day.</p>
+        // One muted line in place, and no action: the action belongs to the now
+        // line (`05-modules/calendar.md` §Empty, waiting, error).
+        <p className="text-type-body text-text-secondary">Nothing scheduled.</p>
       ) : (
         <Timeline
           boundaryHour={view.boundary_hour}

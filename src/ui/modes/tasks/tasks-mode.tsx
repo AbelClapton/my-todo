@@ -10,7 +10,8 @@ import { haptic } from '@/ui/haptics';
 import { usePrefersReducedMotion } from '@/ui/use-reduced-motion';
 
 import { DeferSheet } from './defer-sheet';
-import { formatDay, reschedulePayload } from './defer-options';
+import { reschedulePayload } from './defer-options';
+import { formatDay } from '@/ui/format';
 import { EMPTY_STATES, type EmptyState } from './empty-states';
 import { COMPLETION_MS, TaskRow } from './task-row';
 import { TOAST_HOLDS, Toast } from './toast';

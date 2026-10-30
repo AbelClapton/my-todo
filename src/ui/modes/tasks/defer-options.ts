@@ -1,7 +1,10 @@
 import type { Task } from '@/domain/atoms/task';
+import { weekdayOf } from '@/domain/cadence';
 import { addDays } from '@/domain/day';
 import type { DateString } from '@/domain/ids';
 import type { TaskRescheduledPayload } from '@/domain/events/task';
+
+import { formatDay } from '@/ui/format';
 
 /**
  * The defer sheet's answers, resolved to dates.
@@ -24,40 +27,13 @@ import type { TaskRescheduledPayload } from '@/domain/events/task';
  * different question.
  */
 
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
-const MONTHS = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-] as const;
-
-/** Parses a Day at UTC midnight, the same anchor `domain/day.ts` uses. */
-function utcDay(day: DateString): Date {
-  return new Date(`${day}T00:00:00Z`);
-}
-
-/** `Wed 1 Oct` — the lab's own format, spelled out rather than localised. */
-export function formatDay(day: DateString): string {
-  const date = utcDay(day);
-  return `${WEEKDAYS[date.getUTCDay()]} ${date.getUTCDate()} ${MONTHS[date.getUTCMonth()]}`;
-}
-
 /**
  * The next calendar week's Monday — at least tomorrow, so the answer is never
  * "today" (which would not defer anything). This is the lab's `nextMonday()`.
  */
 export function nextMonday(today: DateString): DateString {
   let day = addDays(today, 1);
-  while (utcDay(day).getUTCDay() !== 1) {
+  while (weekdayOf(day) !== 'mon') {
     day = addDays(day, 1);
   }
   return day;

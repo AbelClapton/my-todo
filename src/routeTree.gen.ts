@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TasksRouteImport } from './routes/tasks'
+import { Route as EventNewRouteImport } from './routes/event.new'
 import { Route as TaskTaskIdRouteImport } from './routes/task.$taskId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +24,11 @@ const TasksRoute = TasksRouteImport.update({
   path: '/tasks',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventNewRoute = EventNewRouteImport.update({
+  id: '/event/new',
+  path: '/event/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TaskTaskIdRoute = TaskTaskIdRouteImport.update({
   id: '/task/$taskId',
   path: '/task/$taskId',
@@ -32,30 +38,34 @@ const TaskTaskIdRoute = TaskTaskIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/tasks': typeof TasksRoute
+  '/event/new': typeof EventNewRoute
   '/task/$taskId': typeof TaskTaskIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/tasks': typeof TasksRoute
+  '/event/new': typeof EventNewRoute
   '/task/$taskId': typeof TaskTaskIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/tasks': typeof TasksRoute
+  '/event/new': typeof EventNewRoute
   '/task/$taskId': typeof TaskTaskIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/tasks' | '/task/$taskId'
+  fullPaths: '/' | '/tasks' | '/event/new' | '/task/$taskId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/tasks' | '/task/$taskId'
-  id: '__root__' | '/' | '/tasks' | '/task/$taskId'
+  to: '/' | '/tasks' | '/event/new' | '/task/$taskId'
+  id: '__root__' | '/' | '/tasks' | '/event/new' | '/task/$taskId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   TasksRoute: typeof TasksRoute
+  EventNewRoute: typeof EventNewRoute
   TaskTaskIdRoute: typeof TaskTaskIdRoute
 }
 
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TasksRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/event/new': {
+      id: '/event/new'
+      path: '/event/new'
+      fullPath: '/event/new'
+      preLoaderRoute: typeof EventNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/task/$taskId': {
       id: '/task/$taskId'
       path: '/task/$taskId'
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   TasksRoute: TasksRoute,
+  EventNewRoute: EventNewRoute,
   TaskTaskIdRoute: TaskTaskIdRoute,
 }
 export const routeTree = rootRouteImport

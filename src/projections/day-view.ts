@@ -40,6 +40,8 @@ export type DayViewParams = {
 
 /** What the five `day.*` entries say about one Day. */
 export type DayRecord = {
+  /** `day.opened` landed, which is what makes rollover idempotent. */
+  readonly opened?: boolean;
   readonly boundary_hour?: DayBoundaryHour;
   readonly daily_note_id?: string;
   readonly top_three?: readonly TaskId[];
@@ -228,6 +230,7 @@ function applyDayEntry(
     case 'day.opened':
       return patchDay(days, entry.payload.day, (record) => ({
         ...record,
+        opened: true,
         ...(entry.payload.boundary_hour === undefined
           ? {}
           : { boundary_hour: entry.payload.boundary_hour }),
@@ -285,6 +288,8 @@ export type DayHabit = {
 
 export type DayView = {
   readonly date: DateString;
+  /** True once `day.opened` is in the log — the rollover guard. */
+  readonly opened: boolean;
   /** From `day.opened` (ADR 0027), falling back to the shipping default. */
   readonly boundary_hour: DayBoundaryHour;
   readonly closed: boolean;
@@ -358,6 +363,7 @@ export function selectDayView(state: DayViewState, params: DayViewParams): DayVi
 
   return {
     date,
+    opened: record?.opened === true,
     boundary_hour: record?.boundary_hour ?? DEFAULT_DAY_BOUNDARY_HOUR,
     closed: record?.closed === true,
     events,

@@ -1,6 +1,15 @@
 import { expect, test } from '@playwright/test';
 
-import { capture, openDeferSheet, openTasks, rowFor, seed, showAll, swipe } from './support';
+import {
+  capture,
+  openCalendar,
+  openDeferSheet,
+  openTasks,
+  rowFor,
+  seed,
+  showAll,
+  swipe,
+} from './support';
 
 /**
  * The two Phase 0 flows `10-engineering/testing.md` requires — *"Capture → task
@@ -17,6 +26,28 @@ import { capture, openDeferSheet, openTasks, rowFor, seed, showAll, swipe } from
 async function toastGone(page: Parameters<typeof openTasks>[0]): Promise<void> {
   await expect(page.getByRole('status')).toHaveCount(0, { timeout: 10_000 });
 }
+
+test('the Day opens with a Daily Note, and a new event lands on the axis', async ({ page }) => {
+  await openCalendar(page);
+  // Rollover: `day.opened` and the Daily Note are written by the view itself.
+  await expect(page.getByRole('heading', { name: 'Notes' })).toBeVisible();
+  await expect(page.getByText('Mon, Sep 28')).toBeVisible();
+
+  await page.getByRole('link', { name: 'New event' }).click();
+  await expect(page.getByRole('heading', { name: 'New event' })).toBeVisible();
+
+  // The three canned answers, each showing the moment it resolves to.
+  await expect(page.getByRole('button', { name: /^Now/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Tomorrow/ })).toBeVisible();
+
+  await page.getByRole('textbox').fill('Design review');
+  await page.getByRole('button', { name: 'Add event' }).click();
+
+  await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible();
+  // The block on the axis, and the now line that now names it.
+  await expect(page.getByLabel('Timeline').getByText('Design review')).toBeVisible();
+  await expect(page.getByText(/Design review in \d+ min/)).toBeVisible();
+});
 
 test('capture, complete and undo', async ({ page }) => {
   await openTasks(page);
