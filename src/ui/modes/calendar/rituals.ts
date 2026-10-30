@@ -1,5 +1,6 @@
 import type { LogEntry } from '@/domain/events';
 import type { PendingEntry } from '@/domain/log/append';
+import type { FiringId } from '@/domain/attention/catalog';
 import { addDays } from '@/domain/day';
 import type { DateString } from '@/domain/ids';
 import type { DayView } from '@/projections/day-view';
@@ -47,6 +48,31 @@ export function morningPlanDue(view: DayView, hour: number, hasOnboarded: boolea
 /** Whether the shutdown should surface. A closed Day, or a skip, ends it. */
 export function shutdownDue(view: DayView, hour: number): boolean {
   return view.opened && !view.closed && !view.skipped.includes('shutdown') && hour >= SHUTDOWN_HOUR;
+}
+
+/**
+ * Which ritual may greet the user, if either — the triggers and the budget
+ * together.
+ *
+ * The two are checked in this order because a Day can be closed early and a closed
+ * Day is not waiting to be planned. `maySurface` is the attention budget's answer
+ * (`03-experience/attention-budget.md`): when the hourly slot is full, or quiet
+ * hours are on, or the user is in focus or in an event, the invitation does not
+ * appear at all.
+ */
+export function ritualInvitation(
+  view: DayView,
+  hour: number,
+  maySurface: boolean,
+  hasOnboarded = true,
+): FiringId | null {
+  if (!maySurface) {
+    return null;
+  }
+  if (shutdownDue(view, hour)) {
+    return 'shutdown';
+  }
+  return morningPlanDue(view, hour, hasOnboarded) ? 'morning_plan' : null;
 }
 
 /**

@@ -1,6 +1,8 @@
 import { Link } from '@tanstack/react-router';
 import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
+import type { FiringId } from '@/domain/attention/catalog';
 
 import type { CalendarEvent } from '@/domain/atoms/calendar-event';
 import type { Task } from '@/domain/atoms/task';
@@ -10,13 +12,14 @@ import type { DayView } from '@/projections/day-view';
 
 import { FOCUS_RING } from '@/ui/components/focus-ring';
 import { TOAST_HOLDS, Toast } from '@/ui/components/toast';
+import { useNudgeBudget } from '@/ui/data/use-nudge-budget';
 import { haptic } from '@/ui/haptics';
 import { iconSize } from '@/ui/tokens';
 
 import { formatDay } from '@/ui/format';
 
 import { clearPendingUndo, usePendingUndo } from './ritual-undo';
-import { morningPlanDue, shutdownDue, undoBatch } from './rituals';
+import { ritualInvitation, undoBatch } from './rituals';
 import { useCalendarZoom } from './use-calendar-zoom';
 import { useDay } from './use-day';
 import { useDayOpen } from './use-day-open';
@@ -52,6 +55,7 @@ export function DayScreen({ initialDate }: { readonly initialDate?: DateString }
   const day = useDay(initialDate);
   const writes = useDayWrites();
   const undo = usePendingUndo();
+  const invitation = useRitualInvitation(day.view, new Date().getHours());
   const { view } = day;
 
   useDayOpen(view, { isToday: day.isToday, tzOffsetMinutes: day.tzOffsetMinutes });
@@ -156,7 +160,7 @@ export function DayScreen({ initialDate }: { readonly initialDate?: DateString }
           invitation is how a ritual is reached: it tests the same triggers the
           automatic surface will, and it is on the Day view because that is where
           both flows land. */}
-      {day.isToday ? <RitualInvitation view={view} /> : null}
+      {day.isToday && invitation !== null ? <RitualInvitationCard firing={invitation} /> : null}
 
       {/* The now line: chrome, and it does not scroll (`06-flows/doing-the-day.md`). */}
       <p className="flex items-baseline gap-space-2 text-type-body text-text-secondary">
@@ -311,38 +315,65 @@ export function DayScreen({ initialDate }: { readonly initialDate?: DateString }
 }
 
 /**
- * Which ritual, if either, is due right now.
+ * Which ritual, if either, may greet the user — the triggers and the budget
+ * together.
  *
- * The two are mutually exclusive in practice — the morning window is 7–11 and the
- * shutdown's hour is 9pm — and the shutdown is checked first because a Day can be
- * closed early and a closed Day is not waiting to be planned.
+ * The triggers say whether a ritual is *due*; the budget says whether the app is
+ * allowed to say so (`03-experience/attention-budget.md`). Both have to agree.
  *
- * **`hasOnboarded` is passed as `true`.** Onboarding (Phase 0 step 0.7) does not
- * exist yet, so a flag that is always true is the honest reading of "the plan is
- * suppressed until onboarding finishes": there is nothing to finish.
+ * **The decision is made once and then kept**, which is why it is a ref rather than
+ * a re-read. Recording the firing fills the hourly slot immediately, so a decision
+ * re-derived after the record would hide the very card that just fired. And the
+ * decision is *not* made at mount: rollover writes `day.opened` on the same visit,
+ * so at mount the morning plan is not yet due — the invitation appears a render
+ * later, when it is.
+ *
+ * Showing it consumes a slot, because the invitation is the unprompted surface: a
+ * user who taps "Plan" on the Day view is not opening it deliberately, they are
+ * answering the app. Opening `/plan` or `/shutdown` from elsewhere costs nothing
+ * (ADR 0013).
+ *
+ * **`hasOnboarded` is `true`.** Onboarding (Phase 0 step 0.7) does not exist yet, so
+ * a flag that is always true is the honest reading of "the plan is suppressed until
+ * onboarding finishes": there is nothing to finish.
  */
-function RitualInvitation({ view }: { readonly view: DayView }) {
-  const hour = new Date().getHours();
-  const closing = shutdownDue(view, hour);
-  const planning = !closing && morningPlanDue(view, hour, true);
+function useRitualInvitation(view: DayView, hour: number): FiringId | null {
+  const [now] = useState(() => new Date().toISOString());
+  const budget = useNudgeBudget(now);
+  const [shown, setShown] = useState<FiringId | null>(null);
+  const recorded = useRef(false);
 
-  if (!closing && !planning) {
-    return null;
-  }
+  const due = ritualInvitation(view, hour, budget.maySurface);
+  const { block } = budget;
+
+  useEffect(() => {
+    if (due === null || recorded.current) {
+      return;
+    }
+    recorded.current = true;
+    setShown(due);
+    block(due);
+  }, [due, block]);
+
+  return shown;
+}
+
+function RitualInvitationCard({ firing }: { readonly firing: FiringId }) {
+  const isShutdown = firing === 'shutdown';
 
   return (
     <section
-      aria-label={closing ? 'Close the day' : 'Plan today'}
+      aria-label={isShutdown ? 'Close the day' : 'Plan today'}
       className="flex items-center justify-between gap-space-3 rounded-lg border border-border-subtle bg-surface-1 p-space-4"
     >
       <p className="min-w-0 flex-1 text-type-body text-text-primary">
-        {closing ? 'Close the day?' : 'Plan today?'}
+        {isShutdown ? 'Close the day?' : 'Plan today?'}
       </p>
       <Link
-        to={closing ? '/shutdown' : '/plan'}
+        to={isShutdown ? '/shutdown' : '/plan'}
         className={`shrink-0 rounded-md px-space-4 py-space-2 text-type-subhead text-accent-text ${FOCUS_RING}`}
       >
-        {closing ? 'Close day' : 'Plan'}
+        {isShutdown ? 'Close day' : 'Plan'}
       </Link>
     </section>
   );

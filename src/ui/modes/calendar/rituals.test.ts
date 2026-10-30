@@ -8,6 +8,7 @@ import { computeDayView, type DayView } from '@/projections/day-view';
 import {
   morningBatch,
   morningPlanDue,
+  ritualInvitation,
   shutdownBatch,
   shutdownDue,
   tomorrowOf,
@@ -63,6 +64,23 @@ describe('the morning plan trigger', () => {
   it('does not fire again after its own skip — but a shutdown skip says nothing', () => {
     expect(morningPlanDue(view({ opened: true, skipped: ['shutdown'] }), 8, true)).toBe(true);
     expect(morningPlanDue(view({ opened: true, skipped: ['morning'] }), 8, true)).toBe(false);
+  });
+});
+
+describe('the invitation is the triggers and the budget together', () => {
+  it('shows the shutdown before the morning plan when both are due', () => {
+    expect(ritualInvitation(view({ opened: true }), 22, true)).toBe('shutdown');
+    expect(ritualInvitation(view({ opened: true }), 8, true)).toBe('morning_plan');
+  });
+
+  it('stays silent when the budget has no slot, however due the ritual is', () => {
+    expect(ritualInvitation(view({ opened: true }), 22, false)).toBeNull();
+    expect(ritualInvitation(view({ opened: true }), 8, false)).toBeNull();
+  });
+
+  it('stays silent when neither ritual is due', () => {
+    expect(ritualInvitation(view({ opened: true }), 15, true)).toBeNull();
+    expect(ritualInvitation(view({ opened: false }), 8, true)).toBeNull();
   });
 });
 

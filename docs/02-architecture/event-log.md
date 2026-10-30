@@ -321,6 +321,15 @@ The `SurfaceId` union is the attention budget catalog
 (`03-experience/attention-budget.md`). Adding a surface requires
 updating both this doc and that one.
 
+**The two rituals are not in it, and still consume budget.** ADR 0013
+makes the morning plan and the shutdown budget-governed — *"the plan
+consumes a slot when it fires unprompted"* — but neither has a TTL, a
+priority score, a merge, or a per-surface toggle, so neither is a
+catalog entry and no queue candidate can be one. They are recorded as
+firings (`FiringId` in `src/domain/attention/catalog.ts`) because the
+caps count firings, and a firing is local — the diagnostics buffer, not
+this log.
+
 The `NotificationChannel` union is the three global notification
 channels (`05-modules/settings.md`). Channels are app-wide, not
 per-surface.

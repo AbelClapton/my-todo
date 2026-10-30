@@ -224,3 +224,33 @@ test('the shutdown closes the Day, plans tomorrow, and lets go of both', async (
   await page.getByRole('button', { name: 'Undo' }).click();
   await expect(page.getByRole('heading', { name: 'Top three' })).toHaveCount(0);
 });
+
+/**
+ * The budget's first real surface. A fixed clock at 09:00Z is 9am only in UTC, so
+ * the timezone is pinned here rather than assumed � the point of the test is the
+ * budget, not the runner's offset.
+ */
+test.describe('the attention budget', () => {
+  test.use({ timezoneId: 'UTC' });
+
+  test('the morning plan greets at nine, and spends the hour doing it', async ({ page }) => {
+    await openCalendar(page);
+    await expect(page.getByRole('link', { name: 'Plan' })).toBeVisible();
+
+    // Showing it consumed the hour's slot (`03-experience/attention-budget.md`), and
+    // the ledger is local so it survives a reload.
+    await page.reload();
+    await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Plan' })).toHaveCount(0);
+  });
+
+  test('opening the plan deliberately costs nothing', async ({ page }) => {
+    // A user-initiated surface is not a nudge (ADR 0013), so a direct route takes
+    // no slot: the invitation is still there when they come back.
+    await openCalendar(page);
+    await page.goto('/plan');
+    await expect(page.getByRole('heading', { name: 'Plan today' })).toBeVisible();
+    await page.goto('/');
+    await expect(page.getByRole('link', { name: 'Plan' })).toBeVisible();
+  });
+});
