@@ -37,6 +37,13 @@ suite, working.
 so the platform's framework detection cannot disagree with ours about how the app
 is built.
 
+**`vercel.json` names the build command for the deploys that are not prebuilt.**
+Linking the project also connected the GitHub repository, so a push triggers a Vercel
+build — and the detector reads this app as Nitro, whose `nitro build` is not a script
+here. `framework: null` turns the detection off and `buildCommand` points at
+`pnpm build:deploy`, which produces the same Build Output API directory in Vercel's
+own build as `pnpm deploy` produces locally. The file is inert for `--prebuilt`.
+
 **Cloudflare stays the plan.** This ADR does not supersede ADR 0018: it names a
 working target for now, and the migration to Workers is a change of preset and a
 `wrangler.jsonc` when the domain is bought. What ADR 0018 gets right is unchanged —
@@ -65,9 +72,9 @@ including the Hobby plan's terms, which is the one cost this decision takes on.
   viewable only by the account that owns it. That is a project setting rather than
   a code property, and disabling it is a decision with a security meaning — so it
   is not in the build.
-- The project was created with the GitHub repository connected, so a push can
-  trigger a Vercel build; those builds must run `pnpm build:deploy`, because the
-  detected `nitro build` is not a script that exists.
+- The project was created with the GitHub repository connected, so a push triggers a
+  Vercel build. `vercel.json` is what keeps those builds honest — the detector reads
+  this app as Nitro, and `nitro build` is not a script here.
 
 **Neutral.**
 
