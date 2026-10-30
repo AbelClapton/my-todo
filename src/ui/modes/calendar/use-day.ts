@@ -42,7 +42,7 @@ const MINUTE_MS = 60_000;
 /** The now line is a foreground instrument; a minute is as fine as it needs. */
 const NOW_TICK_MS = MINUTE_MS;
 
-export function useDay(): UseDay {
+export function useDay(initialDate?: DateString): UseDay {
   const { entries } = useLog();
 
   const tzOffsetMinutes = useMemo(() => -new Date().getTimezoneOffset(), []);
@@ -51,7 +51,7 @@ export function useDay(): UseDay {
     return dayAt(now.toISOString(), tzOffsetMinutes, DEFAULT_DAY_BOUNDARY_HOUR);
   }, [tzOffsetMinutes]);
 
-  const [date, setDate] = useState<DateString>(today);
+  const [date, setDate] = useState<DateString>(initialDate ?? today);
   const [now, setNow] = useState(() => new Date().toISOString());
 
   useEffect(() => {

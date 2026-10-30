@@ -22,6 +22,23 @@ import {
  * would pass while the screen showed nothing.
  */
 
+test('the zoom moves between the Day and the Week on the keyboard', async ({ page }) => {
+  await openCalendar(page);
+  await expect(page.getByRole('heading', { name: 'Notes' })).toBeVisible();
+
+  await page.keyboard.press('Control+=');
+  await expect(page.getByText(/^Week \d+ ·/)).toBeVisible();
+
+  await page.keyboard.press('Control+-');
+  await expect(page.getByRole('heading', { name: 'Notes' })).toBeVisible();
+
+  // The Week's focus line is the way into a Day.
+  await page.keyboard.press('Control+=');
+  await page.getByRole('button', { name: 'Open day' }).click();
+  await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Notes' })).toBeVisible();
+});
+
 /** A capture leaves a two-second confirmation toast; let it go before asserting. */
 async function toastGone(page: Parameters<typeof openTasks>[0]): Promise<void> {
   await expect(page.getByRole('status')).toHaveCount(0, { timeout: 10_000 });

@@ -25,6 +25,14 @@ export async function openCalendar(page: Page): Promise<void> {
   await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible();
 }
 
+/** The Week, reached the way the query string reaches it. */
+export async function openWeek(page: Page): Promise<void> {
+  await page.clock.setFixedTime(FIXED_NOW);
+  await page.goto('/?view=week');
+  await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible();
+  await expect(page.getByText(/^Week \d+ ·/)).toBeVisible();
+}
+
 export async function openTasks(page: Page): Promise<void> {
   await page.clock.setFixedTime(FIXED_NOW);
   // The Calendar is the entry route now; Tasks is a place you navigate to.

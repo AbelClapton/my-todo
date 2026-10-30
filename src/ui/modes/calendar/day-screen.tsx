@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'react';
 import type { CalendarEvent } from '@/domain/atoms/calendar-event';
 import type { Task } from '@/domain/atoms/task';
 import { isoWeekNumber } from '@/domain/day';
+import type { DateString } from '@/domain/ids';
 
 import { FOCUS_RING } from '@/ui/components/focus-ring';
 import { haptic } from '@/ui/haptics';
@@ -12,6 +13,7 @@ import { iconSize } from '@/ui/tokens';
 
 import { formatDay } from '@/ui/format';
 
+import { useCalendarZoom } from './use-calendar-zoom';
 import { useDay } from './use-day';
 import { useDayOpen } from './use-day-open';
 import { useDayWrites } from './use-day-writes';
@@ -42,12 +44,13 @@ import {
 
 const MARK_SIZE = iconSize['icon-xs'];
 
-export function DayScreen() {
-  const day = useDay();
+export function DayScreen({ initialDate }: { readonly initialDate?: DateString }) {
+  const day = useDay(initialDate);
   const writes = useDayWrites();
   const { view } = day;
 
   useDayOpen(view, { isToday: day.isToday, tzOffsetMinutes: day.tzOffsetMinutes });
+  useCalendarZoom('day', day.date);
 
   const band: readonly { readonly id: string; readonly title: string; readonly hint: string }[] = [
     ...view.events
