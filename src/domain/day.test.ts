@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { addDays, dayAt, daysBetween, localDayOf } from './day';
+import { addDays, dayAt, daysBetween, isoWeekNumber, localDayOf } from './day';
 import type { Instant } from './ids';
 
 /**
@@ -35,5 +35,19 @@ describe('Day arithmetic', () => {
   it('adds and subtracts days', () => {
     expect(addDays('2026-09-28', 1)).toBe('2026-09-29');
     expect(addDays('2026-09-01', -1)).toBe('2026-08-31');
+  });
+});
+
+describe('the ISO week number', () => {
+  it('numbers the week that holds the Day’s Thursday', () => {
+    expect(isoWeekNumber('2026-09-28')).toBe(40);
+    expect(isoWeekNumber('2026-10-04')).toBe(40);
+    expect(isoWeekNumber('2026-10-05')).toBe(41);
+  });
+
+  it('gives the first days of January the previous year’s last week', () => {
+    // 2026-01-01 is a Thursday, so it opens week 1 — and 2025-12-29 belongs to it.
+    expect(isoWeekNumber('2026-01-01')).toBe(1);
+    expect(isoWeekNumber('2025-12-29')).toBe(1);
   });
 });

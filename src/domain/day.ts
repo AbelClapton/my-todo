@@ -55,11 +55,7 @@ export function localDayOf(instant: Instant, tzOffsetMinutes: number): DateStrin
  * has no recorded boundary must pass the default (`DEFAULT_DAY_BOUNDARY_HOUR`)
  * and say so.
  */
-export function dayAt(
-  instant: Instant,
-  tzOffsetMinutes: number,
-  boundaryHour: number,
-): DateString {
+export function dayAt(instant: Instant, tzOffsetMinutes: number, boundaryHour: number): DateString {
   const shifted = new Date(
     Date.parse(instant) + tzOffsetMinutes * 60_000 - boundaryHour * 3_600_000,
   );
@@ -68,3 +64,21 @@ export function dayAt(
 
 /** The boundary ADR 0027 makes the default, for a replica with no `day.opened`. */
 export const DEFAULT_DAY_BOUNDARY_HOUR = 4;
+
+/**
+ * The ISO-8601 week number of a Day.
+ *
+ * The Day header prints it (`05-modules/calendar.md` §The Day view layout), and
+ * it is arithmetic on the calendar date rather than on an instant — so it uses
+ * the same UTC anchor as everything else here. The algorithm is the standard
+ * Thursday rule: a week belongs to the year that holds its Thursday.
+ */
+export function isoWeekNumber(day: DateString): number {
+  const date = new Date(dayToUtcMs(day));
+  // Move to the Thursday of this week: Sunday is 0, so Monday is 1.
+  const weekday = date.getUTCDay() === 0 ? 7 : date.getUTCDay();
+  date.setUTCDate(date.getUTCDate() + 4 - weekday);
+
+  const yearStart = Date.parse(`${date.getUTCFullYear()}-01-01T00:00:00Z`);
+  return Math.floor((date.getTime() - yearStart) / (7 * MS_PER_DAY)) + 1;
+}

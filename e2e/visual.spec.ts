@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { openDeferSheet, openTasks, rowFor, seed } from './support';
+import { openCalendar, openDeferSheet, openTasks, rowFor, seed } from './support';
 
 /**
  * Every screen, at every viewport and mode the config names — *"Screenshots are
@@ -20,6 +20,11 @@ import { openDeferSheet, openTasks, rowFor, seed } from './support';
 async function settle(page: Page): Promise<void> {
   await expect(page.getByRole('status')).toHaveCount(0, { timeout: 10_000 });
 }
+
+test('the Calendar Day view', async ({ page }) => {
+  await openCalendar(page);
+  await expect(page).toHaveScreenshot('calendar-day.png');
+});
 
 test('the Tasks screen, empty', async ({ page }) => {
   await openTasks(page);

@@ -208,6 +208,19 @@ export const rowHeight = {
   'row-hero': 96,
 } as const;
 
+/**
+ * The Day view's timeline crop.
+ *
+ * Not a row height and not a control: it is *how much of a 1344px Day the frame
+ * affords*. `05-modules/calendar.md` §The fold measures it at **560px**, and names
+ * a **480px** crop for when the band is four rows — which is why this is its own
+ * scale rather than a fifth row token.
+ */
+export const timelineCrop = {
+  'timeline-crop': 560,
+  'timeline-crop-short': 480,
+} as const;
+
 export const duration = {
   'duration-instant': '100ms',
   'duration-fast': '150ms',

@@ -352,6 +352,19 @@ ADR 0031). Three rows had already been over their tokens for as long as the
 tokens existed — the note row by 34px, the protocol card by 14, the person row
 by 3 — so the fixed-height reading was false before the wrapped title arrived.
 
+### The timeline crop
+
+| Token | px | Used for |
+|---|---|---|
+| `timeline-crop` | 560 | The Day view's axis viewport |
+| `timeline-crop-short` | 480 | The same viewport when the band is four rows |
+
+**This is not a fifth row height**, which is why it is its own scale: it is not
+how tall something is, it is **how much of a 1344px Day the frame affords**
+(`05-modules/calendar.md` §The fold). Both numbers are measurements from
+`design/calendar-lab.html` at 390 × 844, and the second exists because *"a wider
+band costs the axis room"* — the crop and the band divide one screen between them.
+
 ### Duration and easing
 
 Defined fully in `03-experience/motion-vocabulary.md`. Tokens:

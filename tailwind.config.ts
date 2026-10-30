@@ -12,6 +12,7 @@ import {
   radius,
   rowHeight,
   spacing,
+  timelineCrop,
   touchTarget,
 } from './src/ui/tokens';
 
@@ -87,6 +88,7 @@ const sizeScale = Object.fromEntries(
     ...spacing,
     ...controlHeight,
     ...rowHeight,
+    ...timelineCrop,
     ...iconSize,
     ...touchTarget,
   }).map(([name, value]) => [name, px(value)]),

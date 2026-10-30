@@ -3,6 +3,7 @@ import { useEffect, type ReactNode } from 'react';
 
 import '@/ui/app.css';
 import { LogProvider } from '@/ui/data/log-provider';
+import { ModeNav } from '@/ui/modes/mode-nav';
 import { THEME_STYLE_ID, tokenStyleSheet } from '@/ui/theme';
 
 export const Route = createRootRoute({
@@ -54,7 +55,12 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         <HeadContent />
       </head>
       <body className="bg-bg-base font-sans text-text-primary text-type-body">
-        <LogProvider>{children}</LogProvider>
+        <LogProvider>
+          {/* The dock is fixed, so the content clears it once, here, rather than
+              every screen remembering to. */}
+          <div className="pb-space-10">{children}</div>
+          <ModeNav />
+        </LogProvider>
         <Scripts />
       </body>
     </html>

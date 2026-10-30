@@ -19,9 +19,16 @@ import { expect, type Locator, type Page } from '@playwright/test';
 /** A Monday at 09:00 UTC — the same Day in every timezone within ±14h of it. */
 export const FIXED_NOW = new Date('2026-09-28T09:00:00.000Z');
 
-export async function openTasks(page: Page): Promise<void> {
+export async function openCalendar(page: Page): Promise<void> {
   await page.clock.setFixedTime(FIXED_NOW);
   await page.goto('/');
+  await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible();
+}
+
+export async function openTasks(page: Page): Promise<void> {
+  await page.clock.setFixedTime(FIXED_NOW);
+  // The Calendar is the entry route now; Tasks is a place you navigate to.
+  await page.goto('/tasks');
   await expect(page.getByRole('heading', { name: 'Tasks' })).toBeVisible();
   // The capture field is enabled only once the log has opened, which is the
   // app's own signal that a write will survive.

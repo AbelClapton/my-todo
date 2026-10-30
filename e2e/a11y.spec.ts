@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 
-import { openDeferSheet, openTasks, rowFor, seed } from './support';
+import { openCalendar, openDeferSheet, openTasks, rowFor, seed } from './support';
 
 /**
  * axe against every screen, at every viewport and mode — *"Failures block the
@@ -31,6 +31,11 @@ async function expectNoViolations(page: Page): Promise<void> {
 
   expect(summarised).toEqual([]);
 }
+
+test('the Calendar Day view', async ({ page }) => {
+  await openCalendar(page);
+  await expectNoViolations(page);
+});
 
 test('the Tasks screen, empty', async ({ page }) => {
   await openTasks(page);
