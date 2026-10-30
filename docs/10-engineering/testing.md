@@ -55,17 +55,23 @@ A test that breaks when you rename a variable is a bad test.
 
 For every projection:
 
-    import { computeTaskList, applyTaskList } from './task-list';
+    import { applyTaskList, computeTaskListState, emptyTaskList } from './task-list';
+    import { FIXTURES, logFromFixture } from '@/test-support/fixtures';
 
-    test('compute and apply agree for task_list', () => {
-      const log = loadFixture('task-lifecycle.json');
-      const params = { scope: 'today' };
+    test('compute and apply agree for task_list', async () => {
+      const log = await logFromFixture(FIXTURES['task-lifecycle']);
 
-      const computed = computeTaskList(log, params);
-      const incremental = log.reduce(applyTaskList, emptyTaskList());
+      const computed = computeTaskListState(log.entries());
+      const incremental = log.entries().reduce(applyTaskList, emptyTaskList());
 
-      expect(incremental).toEqual(computed);
+      expect(incremental.tasks).toEqual(computed.tasks);
+      expect(incremental.note_targets).toEqual(computed.note_targets);
     });
+
+The comparison is **state to state**. A view (`computeTaskList`) has a
+different shape from the state an `apply` builds — it is filtered by
+scope and params — so a view is asserted against its scope
+expectations separately, and never against the reducer.
 
 This test runs for every projection, against every fixture. It is
 the single most important test in the codebase.

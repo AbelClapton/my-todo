@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { DateString } from '@/domain/ids';
 import type { PayloadFor } from '@/domain/events';
 import { INBOX_AREA_ID } from '@/domain/layers/area';
+import { FIXTURES, SCOPES, logFromFixture } from '@/test-support/fixtures';
 import { createTestLog, taskIdFor, type TestLog } from '@/test-support/log';
 
 import {
@@ -199,5 +200,80 @@ describe('apply agrees with a fresh fold', () => {
 
     const after = computeTaskListState(log.entries());
     expect(after.tasks).toEqual(state.tasks);
+  });
+});
+
+/**
+ * The fixtures (`build-order.md` step 0.5, `10-engineering/testing.md`
+ * §Fixtures) — the format and the loader live in `@/test-support/fixtures`,
+ * because `task_detail` asserts the same invariant over the same files.
+ */
+describe('every fixture satisfies the compute/apply invariant', () => {
+  for (const [name, entries] of Object.entries(FIXTURES)) {
+    it(`agrees for ${name}`, async () => {
+      const log = await logFromFixture(entries);
+      const written = log.entries();
+
+      const once = computeTaskListState(written);
+      const incremental = written.reduce(applyTaskList, emptyTaskList());
+
+      expect(incremental.tasks).toEqual(once.tasks);
+      expect([...incremental.note_targets.entries()]).toEqual([...once.note_targets.entries()]);
+    });
+  }
+});
+
+describe('the empty fixture', () => {
+  it('is empty in every scope', async () => {
+    const log = await logFromFixture(FIXTURES.empty);
+    for (const scope of SCOPES) {
+      expect(computeTaskList(log.entries(), { scope, today: TODAY })).toEqual([]);
+    }
+  });
+});
+
+describe('the lifecycle fixture', () => {
+  it('leaves three open tasks, one of them compensated back to open', async () => {
+    const log = await logFromFixture(FIXTURES['task-lifecycle']);
+    const state = computeTaskListState(log.entries());
+
+    expect(state.tasks).toHaveLength(3);
+    expect(state.tasks.every((task) => task.state === 'open')).toBe(true);
+  });
+
+  it('keeps the deadline when a defer date is set, which is what the sheet writes', async () => {
+    const log = await logFromFixture(FIXTURES['task-lifecycle']);
+    const taxed = computeTaskListState(log.entries()).tasks.find(
+      (task) => task.title === 'File Q4 taxes',
+    );
+
+    expect(taxed?.due).toBe('2026-10-09');
+    expect(taxed?.defer).toBe('2026-09-28');
+    expect(taxed?.estimated_minutes).toBe(45);
+    expect(taxed?.people).toHaveLength(1);
+  });
+
+  it('counts the note against the task it is attached to', async () => {
+    const log = await logFromFixture(FIXTURES['task-lifecycle']);
+    const all = computeTaskList(log.entries(), { scope: 'all', today: TODAY });
+
+    expect(all.find((row) => row.task.title === 'File Q4 taxes')?.note_count).toBe(1);
+  });
+
+  it('scopes the three tasks the way the fold says it should', async () => {
+    const log = await logFromFixture(FIXTURES['task-lifecycle']);
+    const views = Object.fromEntries(
+      SCOPES.map((scope) => [
+        scope,
+        computeTaskList(log.entries(), { scope, today: TODAY }).map((row) => row.task.title),
+      ]),
+    );
+
+    // The deferred-past task and the scheduled-today task are Today's; the
+    // deadline-only task is Next's; nothing is parked once Someday is undone.
+    expect(views['today']).toEqual(['File Q4 taxes', 'Buy groceries']);
+    expect(views['next']).toEqual(['Call contractor']);
+    expect(views['someday']).toEqual([]);
+    expect(views['all']).toHaveLength(3);
   });
 });

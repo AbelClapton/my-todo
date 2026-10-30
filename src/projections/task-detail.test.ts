@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { INBOX_AREA_ID } from '@/domain/layers/area';
+import { FIXTURES, logFromFixture } from '@/test-support/fixtures';
 import { createTestLog, taskIdFor } from '@/test-support/log';
 
 import {
@@ -137,4 +138,19 @@ describe('task_detail', () => {
     expect(incremental.tasks).toEqual(once.tasks);
     expect(incremental.notes).toEqual(once.notes);
   });
+});
+
+describe('every fixture satisfies the compute/apply invariant', () => {
+  for (const [name, entries] of Object.entries(FIXTURES)) {
+    it(`agrees for ${name}`, async () => {
+      const log = await logFromFixture(entries);
+      const written = log.entries();
+
+      const once = computeTaskDetailState(written);
+      const incremental = written.reduce(applyTaskDetail, emptyTaskDetail());
+
+      expect(incremental.tasks).toEqual(once.tasks);
+      expect(incremental.notes).toEqual(once.notes);
+    });
+  }
 });

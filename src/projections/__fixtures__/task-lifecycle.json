@@ -1,0 +1,81 @@
+[
+  {
+    "type": "task.created",
+    "payload": {
+      "task_id": "01J0TASK000000000000000001",
+      "title": "File Q4 taxes",
+      "area_id": "01J0AREASEED00000000000003",
+      "due": "2026-10-09",
+      "priority": "next",
+      "source": "user"
+    }
+  },
+  {
+    "type": "task.rescheduled",
+    "payload": {
+      "task_id": "01J0TASK000000000000000001",
+      "due": "2026-10-09",
+      "defer": "2026-09-28"
+    }
+  },
+  {
+    "type": "note.created",
+    "payload": {
+      "note_id": "01J0NTES000000000000000001",
+      "body": "Ask the accountant about the home-office share.",
+      "attached_to": { "type": "task", "id": "01J0TASK000000000000000001" }
+    }
+  },
+  {
+    "type": "task.linked_person",
+    "payload": {
+      "task_id": "01J0TASK000000000000000001",
+      "person_id": "01J0PERS000000000000000001"
+    }
+  },
+  {
+    "type": "task.estimated",
+    "payload": { "task_id": "01J0TASK000000000000000001", "estimated_minutes": 45 }
+  },
+  {
+    "type": "task.created",
+    "payload": {
+      "task_id": "01J0TASK000000000000000002",
+      "title": "Call contractor",
+      "area_id": "01J0AREASEED00000000000001",
+      "due": "2026-10-02",
+      "source": "user"
+    }
+  },
+  {
+    "type": "task.completed",
+    "payload": {
+      "task_id": "01J0TASK000000000000000002",
+      "completed_at": "2026-09-28T14:12:00.000Z"
+    }
+  },
+  {
+    "type": "task.uncompleted",
+    "payload": { "task_id": "01J0TASK000000000000000002" },
+    "compensation_for_step": 6
+  },
+  {
+    "type": "task.created",
+    "payload": {
+      "task_id": "01J0TASK000000000000000003",
+      "title": "Buy groceries",
+      "area_id": "01J0AREASEED00000000000001",
+      "scheduled_day": "2026-09-28",
+      "scheduled_time": "18:00",
+      "source": "user"
+    }
+  },
+  {
+    "type": "task.marked_someday",
+    "payload": { "task_id": "01J0TASK000000000000000003" }
+  },
+  {
+    "type": "task.unmarked_someday",
+    "payload": { "task_id": "01J0TASK000000000000000003" }
+  }
+]
