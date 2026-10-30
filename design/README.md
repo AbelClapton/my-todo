@@ -476,6 +476,16 @@ rule is load-bearing (Someday's suppression of the metadata line is a visible
 difference, not a technicality), and the accent reads correctly as a priority dot
 at 8px — its smallest use in the app.
 
+**Resolved, 2026-10-30.** The defer sheet's *Still needs* asked for two decisions
+the sheet could not make for itself, and both are now made in **ADR 0032**:
+"Next week" is the next calendar week's Monday, and `Pick a date…` opens a native
+date input until the Calendar overlay exists. The lab's own contribution stands —
+it proved a definition was needed and drew the two readings side by side; it did
+not, and does not, choose between them. Block F is also no longer a drawing: the
+four reveals, the 40% threshold, the lock-in and the completion sequence are
+implemented in `src/ui/modes/tasks/`, so the lab's numbers are the ones in the
+build rather than a prediction of them.
+
 ## Icons, in the lab
 
 **Lucide is adopted**, and the lab now inlines the real icon data (0.469.0, ISC

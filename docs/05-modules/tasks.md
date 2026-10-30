@@ -302,11 +302,13 @@ scrim: measured, the sheet is **258px**, **31%** of the phone, covering
 own object and then says only *"becomes visible on this day"* is asking
 to be trusted with an invisible noun.
 
-**Open: what "Next week" resolves to.** Nothing in the set defines it,
-and it is the one row that is not a date picker — so it is the row a user
-has to trust. Its two readings (`+7 days`, or the next calendar week's
-Monday) are **1 to 6 days apart** depending on the weekday, which is the
-size of the ambiguity rather than a rounding difference.
+**What "Next week" resolves to is decided (ADR 0032).** It is **the next
+calendar week's Monday**, never today — defer means *when the task becomes
+visible*, so the phrase names the first day of the next week rather than a
+seven-day delay. Every dated row carries the date it resolves to, drawn beside
+the label, so the promise is kept on screen rather than in the reader's head.
+`Pick a date…` opens a native date input until the Calendar overlay exists; it
+is a stand-in that is replaced, not kept.
 
 **Someday pile.** The Someday scope is a flat list with no dates
 and no metadata line. It is a parking lot, not a backlog.
@@ -371,7 +373,7 @@ which is why no scope needs its own layout argument.
 | Action | Gesture | Result |
 |---|---|---|
 | Complete | Swipe right, tap checkbox | `task.completed`, undoable |
-| Defer | Swipe left | Defer sheet |
+| Defer | Swipe left | Defer sheet → `task.rescheduled` (or `task.marked_someday`), undoable |
 | Attach | Swipe up | Attachment picker (`03-experience/gesture-vocabulary.md`) |
 | Remove | Swipe down | `task.marked_someday`, undoable |
 | Open detail | Tap | Detail view |
