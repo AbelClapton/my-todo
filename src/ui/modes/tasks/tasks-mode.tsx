@@ -97,8 +97,16 @@ export function TasksMode() {
       if (!canWrite) {
         return;
       }
-      await createTask(draft);
+      const title = draft.trim();
+      if (title === '') {
+        return;
+      }
+      // Clear **before** the await. The append is asynchronous, and a field that
+      // empties itself after it resolves would swallow whatever was typed while
+      // the write was in flight — which is exactly when a capture-heavy user is
+      // already typing the next one.
       setDraft('');
+      await createTask(title);
       // The confirmation toast: a two-second hold and **no action**, because
       // there is nothing to undo (`03-experience/components.md`).
       setToast({ message: 'Captured to Inbox', holdMs: TOAST_HOLDS.confirm });
@@ -251,7 +259,7 @@ export function TasksMode() {
         // says nothing while the WASM compiles. An earlier version keyed on "not
         // persistent" and accused the browser of having no storage before the
         // question had been put to it.
-        <p className="text-type-footnote text-text-muted">{STORAGE_NOTICES[storageReason]}</p>
+        <p className="text-type-footnote text-text-secondary">{STORAGE_NOTICES[storageReason]}</p>
       )}
 
       {rows.length === 0 ? (
@@ -380,8 +388,11 @@ function EmptyStateBlock({
       <p className="max-w-prose text-type-body text-text-secondary">{state.detail}</p>
       {isToday ? (
         // Today's detail line is deliberate: capture puts a task in Inbox, not
-        // on today, so the line says what actually puts one here.
-        <p className="text-type-footnote text-text-muted">
+        // on today, so the line says what actually puts one here. It is
+        // `text-secondary` because it is text a user reads — `text-muted` is the
+        // placeholder-and-disabled token, and only those may sit under 4.5:1
+        // (`03-experience/design-tokens.md` §Colour).
+        <p className="text-type-footnote text-text-secondary">
           Capture puts a task in Inbox, not on today.
         </p>
       ) : null}

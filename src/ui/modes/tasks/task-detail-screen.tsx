@@ -136,7 +136,7 @@ function Field({ label, value }: { readonly label: string; readonly value: strin
       <dt className="shrink-0 text-type-subhead text-text-secondary">{label}</dt>
       <dd
         className={
-          value === null ? 'text-type-body text-text-muted' : 'text-type-body text-text-primary'
+          value === null ? 'text-type-body text-text-secondary' : 'text-type-body text-text-primary'
         }
       >
         {value ?? 'Not set'}

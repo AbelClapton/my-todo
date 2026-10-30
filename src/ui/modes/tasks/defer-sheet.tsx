@@ -93,7 +93,7 @@ export function DeferSheet({ task, today, onClose, onDefer, onSomeday }: DeferSh
             <ChoiceRow label="Pick a date…" onClick={() => setPicking(true)} />
           )}
 
-          <p className="mt-space-2 px-space-2 pb-space-1 text-type-footnote text-text-muted">
+          <p className="mt-space-2 px-space-2 pb-space-1 text-type-footnote text-text-secondary">
             Then
           </p>
 
@@ -125,7 +125,7 @@ function ChoiceRow({
     >
       <span className="text-type-body text-text-primary">{label}</span>
       {hint === undefined ? null : (
-        <span className="text-type-footnote tabular-nums text-text-muted">{hint}</span>
+        <span className="text-type-footnote tabular-nums text-text-secondary">{hint}</span>
       )}
     </button>
   );

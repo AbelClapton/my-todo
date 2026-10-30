@@ -19,6 +19,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "e2e": "playwright test",
+    "test:e2e": "playwright test e2e/flows.spec.ts",
+    "test:visual": "playwright test e2e/visual.spec.ts",
+    "test:a11y": "playwright test e2e/a11y.spec.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate"
   },
@@ -39,6 +42,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@eslint/js": "^9.17.0",
     "@playwright/test": "^1.63.0",
     "@types/node": "^22.10.2",
