@@ -1,12 +1,18 @@
-import { useCallback, useRef, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 
+import type { Task } from '@/domain/atoms/task';
+import type { DateString } from '@/domain/ids';
 import type { TaskListRow, TaskScope } from '@/projections/task-list';
 
 import { FOCUS_RING } from '@/ui/components/focus-ring';
 import { useLog } from '@/ui/data/use-log';
+import { haptic } from '@/ui/haptics';
+import { usePrefersReducedMotion } from '@/ui/use-reduced-motion';
 
+import { DeferSheet } from './defer-sheet';
+import { formatDay, reschedulePayload } from './defer-options';
 import { EMPTY_STATES, type EmptyState } from './empty-states';
-import { TaskRow } from './task-row';
+import { COMPLETION_MS, TaskRow } from './task-row';
 import { TOAST_HOLDS, Toast } from './toast';
 import { useTaskWrites } from './use-task-writes';
 import { useAreaNames, useTasks } from './use-tasks';
@@ -33,7 +39,12 @@ const SCOPE_LABELS: Readonly<Record<TaskScope, string>> = {
 type ToastState = {
   readonly message: string;
   readonly holdMs: number;
-  readonly undo?: { readonly taskId: string; readonly entryId: string };
+  /**
+   * The reversal. Every mutating action carries one, because Invariant 1 is
+   * about the action rather than about the toast: the copy differs by action and
+   * the undo does not (`01-foundation/principles.md`, ADR 0010).
+   */
+  readonly undo?: () => Promise<void>;
 };
 
 /**
@@ -54,12 +65,27 @@ export function TasksMode() {
   const [scope, setScope] = useState<TaskScope>('today');
   const [draft, setDraft] = useState('');
   const [toast, setToast] = useState<ToastState | null>(null);
+  /** The row mid-exit. The log write waits for the animation to finish. */
+  const [completing, setCompleting] = useState<TaskListRow | null>(null);
+  /** The task the defer sheet is about, or `null` when it is closed. */
+  const [deferring, setDeferring] = useState<Task | null>(null);
   const captureRef = useRef<HTMLInputElement>(null);
+  const reduced = usePrefersReducedMotion();
 
-  const { rows } = useTasks(scope);
+  const { rows, today } = useTasks(scope);
   const areaName = useAreaNames();
   const { storageReason } = useLog();
-  const { canWrite, createTask, completeTask, undoCompletion } = useTaskWrites();
+  const {
+    canWrite,
+    createTask,
+    completeTask,
+    uncompleteTask,
+    undoCompletion,
+    deferTask,
+    restoreSchedule,
+    markSomeday,
+    undoMarkSomeday,
+  } = useTaskWrites();
 
   const dismissToast = useCallback(() => {
     setToast(null);
@@ -80,19 +106,104 @@ export function TasksMode() {
     [canWrite, createTask, draft],
   );
 
-  const handleComplete = useCallback(
+  /**
+   * Completion runs in the order `05-modules/tasks.md` §Completion gives it:
+   * the haptic fires at the moment of commit, the animation plays, and **the
+   * entry is appended when it ends** — which is also why the row is held in
+   * `completing` rather than disappearing on the first render.
+   */
+  const handleToggle = useCallback(
     async (row: TaskListRow) => {
-      const entry = await completeTask(row.task.id);
-      // "Completed. Undo?" is the copy `06-flows/completion.md` specifies for the
-      // five-second undo toast, which is how Invariant 1 holds: every completion
-      // is undoable, and the undo is a compensation rather than a deletion.
+      if (!canWrite) {
+        return;
+      }
+      // The checkbox is a toggle: on a completed row the same tap reopens it.
+      if (row.task.state === 'completed') {
+        await uncompleteTask(row.task.id);
+        return;
+      }
+      if (completing !== null) {
+        return;
+      }
+      haptic('completion');
+      setCompleting(row);
+    },
+    [canWrite, completing, uncompleteTask],
+  );
+
+  useEffect(() => {
+    if (completing === null) {
+      return;
+    }
+    const row = completing;
+    const timer = window.setTimeout(
+      () => {
+        void (async () => {
+          const entry = await completeTask(row.task.id);
+          // "Completed. Undo?" is the copy `06-flows/completion.md` specifies for
+          // the five-second undo toast, which is how Invariant 1 holds: every
+          // completion is undoable, and the undo is a compensation rather than a
+          // deletion.
+          setCompleting(null);
+          setToast({
+            message: 'Completed. Undo?',
+            holdMs: TOAST_HOLDS.undo,
+            undo: () => undoCompletion(row.task.id, entry.id),
+          });
+        })();
+      },
+      reduced ? 0 : COMPLETION_MS,
+    );
+    return () => window.clearTimeout(timer);
+  }, [completing, completeTask, reduced, undoCompletion]);
+
+  /**
+   * Swipe left opens the sheet, and opening a sheet is the **mode-switch**
+   * haptic — *"Open sheet | Mode switch | Sheet entry (200ms)"*
+   * (`03-experience/haptic-vocabulary.md` §Pairing table).
+   */
+  const openDefer = useCallback((task: Task) => {
+    haptic('mode-switch');
+    setDeferring(task);
+  }, []);
+
+  const handleDefer = useCallback(
+    async (task: Task, day: DateString) => {
+      if (!canWrite) {
+        return;
+      }
+      // The snapshot is the undo: re-stating the pair the task had is a
+      // compensation built from the event's own vocabulary.
+      const restoration = reschedulePayload(task, task.defer);
+      await deferTask(task, day);
+      setDeferring(null);
       setToast({
-        message: 'Completed. Undo?',
+        message: `Deferred to ${formatDay(day)}. Undo?`,
         holdMs: TOAST_HOLDS.undo,
-        undo: { taskId: row.task.id, entryId: entry.id },
+        undo: async () => {
+          await restoreSchedule(restoration);
+        },
       });
     },
-    [completeTask],
+    [canWrite, deferTask, restoreSchedule],
+  );
+
+  const handleSomeday = useCallback(
+    async (task: Task) => {
+      if (!canWrite) {
+        return;
+      }
+      await markSomeday(task.id);
+      setDeferring(null);
+      setToast({
+        message: 'Moved to Someday. Undo?',
+        holdMs: TOAST_HOLDS.undo,
+        undo: async () => {
+          await undoMarkSomeday(task.id);
+        },
+      });
+    },
+    [canWrite, markSomeday, undoMarkSomeday],
   );
 
   const handleUndo = useCallback(async () => {
@@ -100,9 +211,11 @@ export function TasksMode() {
     if (undo === undefined) {
       return;
     }
-    await undoCompletion(undo.taskId, undo.entryId);
+    // "Undo | Mode switch | Toast dismissal" — the same tick as opening a sheet.
+    haptic('mode-switch');
+    await undo();
     setToast(null);
-  }, [toast, undoCompletion]);
+  }, [toast]);
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col gap-space-6 px-space-5 py-space-8">
@@ -154,13 +267,31 @@ export function TasksMode() {
               key={row.task.id}
               row={row}
               areaName={areaName(row.task.area_id)}
+              completing={completing?.task.id === row.task.id}
               onToggleDone={() => {
-                void handleComplete(row);
+                void handleToggle(row);
+              }}
+              onDefer={() => {
+                openDefer(row.task);
               }}
             />
           ))}
         </ul>
       )}
+
+      <DeferSheet
+        task={deferring}
+        today={today}
+        onClose={() => {
+          setDeferring(null);
+        }}
+        onDefer={(task, day) => {
+          void handleDefer(task, day);
+        }}
+        onSomeday={(task) => {
+          void handleSomeday(task);
+        }}
+      />
 
       {toast === null ? null : (
         <Toast

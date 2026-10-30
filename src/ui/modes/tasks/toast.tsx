@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { FOCUS_RING } from '@/ui/components/focus-ring';
+import { haptic } from '@/ui/haptics';
 
 /**
  * The toast: **fixed, sliding up from the bottom edge at `elevation-4`**
@@ -39,21 +40,31 @@ export function Toast({ message, holdMs, onDismiss, actionLabel, onAction }: Toa
     // from, rather than the toast simply already being there.
     const frame = window.requestAnimationFrame(() => setEntered(true));
     const expiry = window.setTimeout(onDismiss, holdMs);
+    // "An undo window expiring without user action (soft warning)": the Error
+    // haptic fires 500ms before the toast leaves — t=4.5s of a five-second hold
+    // (`03-experience/haptic-vocabulary.md` §Examples).
+    const warning =
+      onAction === undefined
+        ? undefined
+        : window.setTimeout(() => haptic('error'), Math.max(0, holdMs - 500));
     return () => {
       window.cancelAnimationFrame(frame);
       window.clearTimeout(expiry);
+      if (warning !== undefined) {
+        window.clearTimeout(warning);
+      }
     };
-  }, [holdMs, message, onDismiss]);
+  }, [holdMs, message, onAction, onDismiss]);
 
   return (
     <div
       role="status"
       aria-live="polite"
       className={[
-        'fixed inset-x-space-5 bottom-space-5 z-50 flex items-center gap-space-3 rounded-lg border border-border-subtle bg-raised px-space-5 py-space-4 shadow-elevation-4',
+        'fixed inset-x-space-5 bottom-space-5 z-50 flex items-center gap-space-3 rounded-lg border border-border-subtle bg-bg-raised px-space-5 py-space-4 shadow-elevation-4',
         'text-type-body text-text-primary',
         'transition-transform duration-duration-default ease-ease-standard',
-        entered ? 'translate-y-0' : 'translate-y-full',
+        entered ? 'translate-y-space-0' : 'translate-y-full',
       ].join(' ')}
     >
       <span className="min-w-0 flex-1">{message}</span>

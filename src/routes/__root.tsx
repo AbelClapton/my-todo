@@ -53,7 +53,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         <style id={THEME_STYLE_ID}>{tokenStyleSheet()}</style>
         <HeadContent />
       </head>
-      <body className="bg-base font-sans text-text-primary text-type-body">
+      <body className="bg-bg-base font-sans text-text-primary text-type-body">
         <LogProvider>{children}</LogProvider>
         <Scripts />
       </body>
