@@ -88,6 +88,7 @@ Runs on every PR. All must pass.
 | Check | Tool | Fails on |
 |---|---|---|
 | Lint | ESLint | Any lint error |
+| Doc lint | `pnpm docs:lint` | A spec doc missing a section or out of shape, an ADR missing its header or its number, a doc absent from the reading order |
 | Tailwind | `eslint-plugin-tailwindcss` | Any arbitrary value |
 | Type | `tsc --noEmit` | Any type error |
 | Unit + integration | Vitest | Any test failure |
