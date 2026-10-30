@@ -11,10 +11,13 @@ import type { DateString } from '@/domain/ids';
  * platform notes then say what a web build owes: *"Gestures are pointer-based where
  * supported, but keyboard equivalents are the primary path."*
  *
- * **Only Day and Week exist so far.** The zoom clamps at Week rather than pretending
- * Month is one keypress away; Month and Year are the views that have not been built.
+ * **Year is the level that does not exist yet.** The zoom walks the levels that have
+ * been built and clamps at the end of that list, rather than pretending Year is one
+ * keypress away.
  */
-export type CalendarLevel = 'day' | 'week';
+export type CalendarLevel = 'day' | 'week' | 'month';
+
+const LEVELS: readonly CalendarLevel[] = ['day', 'week', 'month'];
 
 export function useCalendarZoom(level: CalendarLevel, date: DateString | undefined): void {
   const navigate = useNavigate();
@@ -30,8 +33,12 @@ export function useCalendarZoom(level: CalendarLevel, date: DateString | undefin
         return;
       }
       event.preventDefault();
-      const target: CalendarLevel = zoomIn ? 'week' : 'day';
-      void navigate({ to: '/', search: { view: target, ...(date === undefined ? {} : { date }) } });
+      const at = LEVELS.indexOf(level);
+      const next = LEVELS[Math.max(0, Math.min(LEVELS.length - 1, at + (zoomIn ? 1 : -1)))];
+      if (next === undefined || next === level) {
+        return;
+      }
+      void navigate({ to: '/', search: { view: next, ...(date === undefined ? {} : { date }) } });
     };
 
     window.addEventListener('keydown', onKeyDown);

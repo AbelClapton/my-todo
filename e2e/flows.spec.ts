@@ -29,6 +29,12 @@ test('the zoom moves between the Day and the Week on the keyboard', async ({ pag
   await page.keyboard.press('Control+=');
   await expect(page.getByText(/^Week \d+ ·/)).toBeVisible();
 
+  // The zoom walks Day → Week → Month, and back.
+  await page.keyboard.press('Control+=');
+  await expect(page.getByText(/^[A-Z][a-z]+ \d{4}$/)).toBeVisible();
+  await page.keyboard.press('Control+-');
+  await expect(page.getByText(/^Week \d+ ·/)).toBeVisible();
+
   await page.keyboard.press('Control+-');
   await expect(page.getByRole('heading', { name: 'Notes' })).toBeVisible();
 

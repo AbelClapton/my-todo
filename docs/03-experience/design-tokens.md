@@ -358,12 +358,16 @@ by 3 — so the fixed-height reading was false before the wrapped title arrived.
 |---|---|---|
 | `timeline-crop` | 560 | The Day view's axis viewport |
 | `timeline-crop-short` | 480 | The same viewport when the band is four rows |
+| `month-cell` | 115 | The Month view's cell height |
 
-**This is not a fifth row height**, which is why it is its own scale: it is not
-how tall something is, it is **how much of a 1344px Day the frame affords**
-(`05-modules/calendar.md` §The fold). Both numbers are measurements from
-`design/calendar-lab.html` at 390 × 844, and the second exists because *"a wider
-band costs the axis room"* — the crop and the band divide one screen between them.
+**These are not a fifth row height**, which is why they are their own scale: a row
+token says how tall something is, these say **how much of a Day the frame affords**
+(`05-modules/calendar.md` §The fold) and **how tall a Month cell is at six fixed
+rows** (§The Month's fit, where the cell measures 50 × 115px and the fixed row count
+is what makes a mark mean the same thing in January as in June). The first two are
+measurements from `design/calendar-lab.html` at 390 × 844, and the second exists
+because *"a wider band costs the axis room"* — the crop and the band divide one
+screen between them.
 
 ### Duration and easing
 

@@ -33,6 +33,14 @@ export async function openWeek(page: Page): Promise<void> {
   await expect(page.getByText(/^Week \d+ ·/)).toBeVisible();
 }
 
+/** The Month, reached the same way. */
+export async function openMonth(page: Page): Promise<void> {
+  await page.clock.setFixedTime(FIXED_NOW);
+  await page.goto('/?view=month');
+  await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible();
+  await expect(page.getByText(/^[A-Z][a-z]+ \d{4}$/)).toBeVisible();
+}
+
 export async function openTasks(page: Page): Promise<void> {
   await page.clock.setFixedTime(FIXED_NOW);
   // The Calendar is the entry route now; Tasks is a place you navigate to.

@@ -219,6 +219,13 @@ export const rowHeight = {
 export const timelineCrop = {
   'timeline-crop': 560,
   'timeline-crop-short': 480,
+  /**
+   * The Month view's cell height. Also a measurement rather than a component
+   * height: `05-modules/calendar.md` §The Month's fit measures the cell at
+   * 50 × 115px on a 390px phone, and the *fixed* six-row grid is what makes a
+   * mark mean the same thing in January as in June.
+   */
+  'month-cell': 115,
 } as const;
 
 export const duration = {

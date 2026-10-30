@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import type { DateString } from '@/domain/ids';
 
 import { DayScreen } from '@/ui/modes/calendar/day-screen';
+import { MonthScreen } from '@/ui/modes/calendar/month-screen';
 import { WeekScreen } from '@/ui/modes/calendar/week-screen';
 
 /**
@@ -15,13 +16,13 @@ import { WeekScreen } from '@/ui/modes/calendar/week-screen';
  * (`05-modules/calendar.md`, `06-flows/onboarding.md` §Screen 7).
  */
 type CalendarSearch = {
-  readonly view?: 'day' | 'week';
+  readonly view?: 'day' | 'week' | 'month';
   readonly date?: DateString;
 };
 
 export const Route = createFileRoute('/')({
   validateSearch: (search: Record<string, unknown>): CalendarSearch => ({
-    view: search['view'] === 'week' ? 'week' : 'day',
+    view: search['view'] === 'week' ? 'week' : search['view'] === 'month' ? 'month' : 'day',
     ...(typeof search['date'] === 'string' ? { date: search['date'] as DateString } : {}),
   }),
   component: CalendarRoute,
@@ -29,9 +30,13 @@ export const Route = createFileRoute('/')({
 
 function CalendarRoute() {
   const { view, date } = Route.useSearch();
-  return view === 'week' ? (
-    <WeekScreen {...(date === undefined ? {} : { date })} />
-  ) : (
-    <DayScreen {...(date === undefined ? {} : { initialDate: date })} />
-  );
+  const props = date === undefined ? {} : { date };
+
+  if (view === 'month') {
+    return <MonthScreen {...props} />;
+  }
+  if (view === 'week') {
+    return <WeekScreen {...props} />;
+  }
+  return <DayScreen {...(date === undefined ? {} : { initialDate: date })} />;
 }

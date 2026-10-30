@@ -46,6 +46,24 @@ export function WeekScreen({ date }: { readonly date?: DateString }) {
   const week = computeWeekView(entries, { date: anchor, today, tz_offset_minutes: offset });
   const labels = hourLabels(WEEK_WINDOW_START_HOUR);
 
+  /**
+   * The now rule, spanning all seven columns.
+   *
+   * It is drawn only when today is one of the seven *and* the clock is inside the
+   * crop: a rule outside 08:00–18:00 would sit over a region the grid does not
+   * draw, and a rule on a week that does not contain today would be a second
+   * clock for another day.
+   */
+  const now = new Date();
+  const minutesIntoDay = now.getHours() * 60 + now.getMinutes();
+  const cropStart = WEEK_WINDOW_START_HOUR * 60;
+  const nowTopPx =
+    week.days.some((day) => day.isToday) &&
+    minutesIntoDay >= cropStart &&
+    minutesIntoDay < cropStart + WEEK_WINDOW_HOURS * 60
+      ? ((minutesIntoDay - cropStart) / 60) * HOUR_HEIGHT_PX
+      : undefined;
+
   const openDay = (day: DateString) => {
     void navigate({ to: '/', search: { view: 'day', date: day } });
   };
@@ -146,6 +164,14 @@ export function WeekScreen({ date }: { readonly date?: DateString }) {
                 style={{ top: hour.topPx }}
               />
             ))}
+
+            {nowTopPx === undefined ? null : (
+              <div
+                aria-label="Now"
+                className="pointer-events-none absolute inset-x-space-0 border-t-2 border-accent-default"
+                style={{ top: nowTopPx }}
+              />
+            )}
 
             <ul className="grid h-full grid-cols-7">
               {week.days.map((day) => {
