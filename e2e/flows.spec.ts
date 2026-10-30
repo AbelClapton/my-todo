@@ -22,15 +22,24 @@ import {
  * would pass while the screen showed nothing.
  */
 
-test('the zoom moves between the Day and the Week on the keyboard', async ({ page }) => {
+test('the zoom walks Day, Week, Month and Year on the keyboard', async ({ page }) => {
   await openCalendar(page);
   await expect(page.getByRole('heading', { name: 'Notes' })).toBeVisible();
 
   await page.keyboard.press('Control+=');
   await expect(page.getByText(/^Week \d+ ·/)).toBeVisible();
 
-  // The zoom walks Day → Week → Month, and back.
+  // The zoom walks Day → Week → Month → Year, and back.
   await page.keyboard.press('Control+=');
+  await expect(page.getByText(/^[A-Z][a-z]+ \d{4}$/)).toBeVisible();
+
+  await page.keyboard.press('Control+=');
+  await expect(page.getByText(/^20\d{2}$/)).toBeVisible();
+  // Year is the end of the list, so a fourth press stays there.
+  await page.keyboard.press('Control+=');
+  await expect(page.getByText(/^20\d{2}$/)).toBeVisible();
+
+  await page.keyboard.press('Control+-');
   await expect(page.getByText(/^[A-Z][a-z]+ \d{4}$/)).toBeVisible();
   await page.keyboard.press('Control+-');
   await expect(page.getByText(/^Week \d+ ·/)).toBeVisible();
@@ -201,7 +210,8 @@ test('the shutdown closes the Day, plans tomorrow, and lets go of both', async (
     .getByRole('textbox', { name: 'One line for the Daily Note' })
     .fill('shipped the draft');
 
-  await page.getByRole('searchbox', { name: 'Search tasks' }).fill('renew');  await page.getByRole('button', { name: 'Keep Renew passport' }).click();
+  await page.getByRole('searchbox', { name: 'Search tasks' }).fill('renew');
+  await page.getByRole('button', { name: 'Keep Renew passport' }).click();
   await page.getByRole('button', { name: 'Close day' }).click();
 
   // The user lands on tomorrow (`06-flows/shutdown.md` �The commit), and the

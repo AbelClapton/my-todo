@@ -363,6 +363,10 @@ read as a whole or not at all, and every part of it is `type-caption`.
    last — against the row's full height. Load is the cell's own height, so a heavy week
    is a ridge and a quiet one a floor. A day with nothing on it still marks its place,
    or the strip's gaps read as missing days rather than as quiet ones.
+
+   **Load is the number of events on the Day.** Tasks placed on a Day have no extent to
+   measure (`05-modules/calendar.md` §The band), so counting them would give the
+   instrument a unit it cannot draw.
 3. **Today.** Marked in the strip with the accent. There is no now rule at this scale:
    with no time axis left, there is nothing for one to cross.
 4. **The month total.** The trailing figure, accented for the current month.

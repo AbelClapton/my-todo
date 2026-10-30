@@ -5,6 +5,7 @@ import type { DateString } from '@/domain/ids';
 import { DayScreen } from '@/ui/modes/calendar/day-screen';
 import { MonthScreen } from '@/ui/modes/calendar/month-screen';
 import { WeekScreen } from '@/ui/modes/calendar/week-screen';
+import { YearScreen } from '@/ui/modes/calendar/year-screen';
 
 /**
  * The Calendar's entry route.
@@ -16,13 +17,20 @@ import { WeekScreen } from '@/ui/modes/calendar/week-screen';
  * (`05-modules/calendar.md`, `06-flows/onboarding.md` §Screen 7).
  */
 type CalendarSearch = {
-  readonly view?: 'day' | 'week' | 'month';
+  readonly view?: 'day' | 'week' | 'month' | 'year';
   readonly date?: DateString;
 };
 
 export const Route = createFileRoute('/')({
   validateSearch: (search: Record<string, unknown>): CalendarSearch => ({
-    view: search['view'] === 'week' ? 'week' : search['view'] === 'month' ? 'month' : 'day',
+    view:
+      search['view'] === 'week'
+        ? 'week'
+        : search['view'] === 'month'
+          ? 'month'
+          : search['view'] === 'year'
+            ? 'year'
+            : 'day',
     ...(typeof search['date'] === 'string' ? { date: search['date'] as DateString } : {}),
   }),
   component: CalendarRoute,
@@ -32,6 +40,9 @@ function CalendarRoute() {
   const { view, date } = Route.useSearch();
   const props = date === undefined ? {} : { date };
 
+  if (view === 'year') {
+    return <YearScreen {...props} />;
+  }
   if (view === 'month') {
     return <MonthScreen {...props} />;
   }

@@ -226,6 +226,12 @@ export const timelineCrop = {
    * mark mean the same thing in January as in June.
    */
   'month-cell': 115,
+  /**
+   * The Year's row height. Twelve rows have to fit one screen, and the row is the
+   * unit that is compared: `05-modules/calendar.md` §The Year view layout makes the
+   * day's height carry amount rather than time, so the row is a measurement too.
+   */
+  'year-row': 28,
 } as const;
 
 export const duration = {

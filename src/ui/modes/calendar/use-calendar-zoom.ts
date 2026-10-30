@@ -11,13 +11,12 @@ import type { DateString } from '@/domain/ids';
  * platform notes then say what a web build owes: *"Gestures are pointer-based where
  * supported, but keyboard equivalents are the primary path."*
  *
- * **Year is the level that does not exist yet.** The zoom walks the levels that have
- * been built and clamps at the end of that list, rather than pretending Year is one
- * keypress away.
+ * **All four levels exist**, so the zoom walks Day ↔ Week ↔ Month ↔ Year in one
+ * list and clamps at each end.
  */
-export type CalendarLevel = 'day' | 'week' | 'month';
+export type CalendarLevel = 'day' | 'week' | 'month' | 'year';
 
-const LEVELS: readonly CalendarLevel[] = ['day', 'week', 'month'];
+const LEVELS: readonly CalendarLevel[] = ['day', 'week', 'month', 'year'];
 
 export function useCalendarZoom(level: CalendarLevel, date: DateString | undefined): void {
   const navigate = useNavigate();

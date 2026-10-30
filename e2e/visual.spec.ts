@@ -6,6 +6,7 @@ import {
   openMonth,
   openTasks,
   openWeek,
+  openYear,
   rowFor,
   seed,
 } from './support';
@@ -42,6 +43,11 @@ test('the Calendar Week view', async ({ page }) => {
 test('the Calendar Month view', async ({ page }) => {
   await openMonth(page);
   await expect(page).toHaveScreenshot('calendar-month.png');
+});
+
+test('the Calendar Year view', async ({ page }) => {
+  await openYear(page);
+  await expect(page).toHaveScreenshot('calendar-year.png');
 });
 
 test('the Tasks screen, empty', async ({ page }) => {
