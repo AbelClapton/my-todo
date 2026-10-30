@@ -34,6 +34,8 @@ import {
   DayOpenedSchema,
   DayPlannedSchema,
   DayPlanSkippedSchema,
+  DayReopenedSchema,
+  DayUnplannedSchema,
 } from './day';
 import { BaseEntrySchema, type EventEntry } from './entry';
 import {
@@ -189,8 +191,10 @@ export const EVENT_TYPES = [
   // day
   'day.opened',
   'day.planned',
+  'day.unplanned',
   'day.plan_skipped',
   'day.closed',
+  'day.reopened',
   'day.note_created',
   // ai
   'ai.proposed',
@@ -279,8 +283,10 @@ export const PAYLOAD_SCHEMAS = {
   'person.unarchived': PersonUnarchivedSchema,
   'day.opened': DayOpenedSchema,
   'day.planned': DayPlannedSchema,
+  'day.unplanned': DayUnplannedSchema,
   'day.plan_skipped': DayPlanSkippedSchema,
   'day.closed': DayClosedSchema,
+  'day.reopened': DayReopenedSchema,
   'day.note_created': DayNoteCreatedSchema,
   'ai.proposed': AiProposedSchema,
   'ai.applied': AiAppliedSchema,

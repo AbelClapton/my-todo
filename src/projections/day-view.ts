@@ -16,8 +16,9 @@ import { applyTaskEntry } from './task-fold';
  * `02-architecture/object-model.md` §The Day).
  *
  * The Day is *"the atomic product unit"* and it is **derived**: only
- * `day.opened`, `day.planned`, `day.plan_skipped`, `day.closed` and
- * `day.note_created` are logged about it, and everything else is a fold over the
+ * `day.opened`, `day.planned`, `day.plan_skipped`, `day.closed`,
+ * `day.note_created` and the two undo entries ADR 0033 adds (`day.unplanned`,
+ * `day.reopened`) are logged about it, and everything else is a fold over the
  * other domains. So this projection is the place the app's whole model meets —
  * which is why it reuses `applyTaskEntry` rather than folding tasks again: two
  * folds would be two answers to "what does completed mean".
@@ -38,6 +39,9 @@ export type DayViewParams = {
   readonly tz_offset_minutes?: number;
 };
 
+/** Which ritual wrote a plan, and which one was skipped (`day.plan_skipped.kind`). */
+export type RitualKind = 'morning' | 'shutdown';
+
 /** What the five `day.*` entries say about one Day. */
 export type DayRecord = {
   /** `day.opened` landed, which is what makes rollover idempotent. */
@@ -45,6 +49,15 @@ export type DayRecord = {
   readonly boundary_hour?: DayBoundaryHour;
   readonly daily_note_id?: string;
   readonly top_three?: readonly TaskId[];
+  /**
+   * The ritual that wrote the plan. **A shutdown plan is a draft, not a
+   * confirmed plan** (`06-flows/morning-plan.md` §The trigger), which is why the
+   * source travels with it rather than being inferable from the entries.
+   */
+  readonly planned_source?: RitualKind;
+  /** Days can be skipped by both rituals; the kind keeps them from suppressing
+   * each other (`06-flows/shutdown.md` §Skipping). */
+  readonly skipped?: readonly RitualKind[];
   readonly closed?: boolean;
 };
 
@@ -239,9 +252,30 @@ function applyDayEntry(
       return patchDay(days, entry.payload.day, (record) => ({
         ...record,
         top_three: entry.payload.top_three,
+        planned_source: entry.payload.source,
+      }));
+    case 'day.plan_skipped':
+      return patchDay(days, entry.payload.day, (record) => ({
+        ...record,
+        skipped: [...(record.skipped ?? []), entry.payload.kind],
       }));
     case 'day.closed':
       return patchDay(days, entry.payload.day, (record) => ({ ...record, closed: true }));
+
+    // Undo for `day.planned` and `day.closed` (ADR 0033). Each states the
+    // inverse rather than relying on being filtered out as a compensation, for
+    // the same reason `task.uncompleted` does.
+    case 'day.unplanned': {
+      const next = { ...(days.get(entry.payload.day) ?? {}) };
+      delete next.top_three;
+      delete next.planned_source;
+      const patched = new Map(days);
+      patched.set(entry.payload.day, next);
+      return patched;
+    }
+
+    case 'day.reopened':
+      return patchDay(days, entry.payload.day, (record) => ({ ...record, closed: false }));
     case 'day.note_created':
       return patchDay(days, entry.payload.day, (record) => ({
         ...record,
@@ -300,6 +334,9 @@ export type DayView = {
   readonly tasks_completed: readonly Task[];
   readonly habits_due: readonly DayHabit[];
   readonly top_three: readonly Task[];
+  /** Which ritual set the plan, so a shutdown draft is not read as a commitment. */
+  readonly planned_source?: RitualKind;
+  readonly skipped: readonly RitualKind[];
   readonly daily_note_id?: string;
 };
 
@@ -371,6 +408,8 @@ export function selectDayView(state: DayViewState, params: DayViewParams): DayVi
     tasks_completed,
     habits_due,
     top_three,
+    skipped: record?.skipped ?? [],
+    ...(record?.planned_source === undefined ? {} : { planned_source: record.planned_source }),
     ...(record?.daily_note_id === undefined ? {} : { daily_note_id: record.daily_note_id }),
   };
 }

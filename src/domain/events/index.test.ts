@@ -16,8 +16,8 @@ describe('the event registry', () => {
     expect(Object.keys(PAYLOAD_SCHEMAS).sort()).toEqual([...EVENT_TYPES].sort());
   });
 
-  it('names 80 types across exactly 11 domains', () => {
-    expect(EVENT_TYPES).toHaveLength(80);
+  it('names 82 types across exactly 11 domains', () => {
+    expect(EVENT_TYPES).toHaveLength(82);
 
     const domains = new Set(EVENT_TYPES.map((type) => type.split('.')[0]));
     expect([...domains].sort()).toEqual([

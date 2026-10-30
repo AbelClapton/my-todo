@@ -5,9 +5,9 @@ import { DateStringSchema, UlidSchema } from '../ids';
 /**
  * The `day` domain — the app's atomic product unit (ADR 0002).
  *
- * Only five things are logged about a Day; everything else on it is derived.
- * Both rituals write `day.planned` and `day.plan_skipped`, which is why both
- * carry the ritual that wrote them.
+ * Only five things are logged about a Day, plus the two undo entries ADR 0033
+ * adds; everything else on it is derived. Both rituals write `day.planned` and
+ * `day.plan_skipped`, which is why both carry the ritual that wrote them.
  */
 
 /**
@@ -50,6 +50,16 @@ export const DayPlanSkippedSchema = z.object({
 
 export const DayClosedSchema = z.object({ day: DateStringSchema });
 
+/**
+ * Undo for `day.planned` (ADR 0033). A plan cannot be re-stated as empty —
+ * `TopThreeSchema` is one-to-three items, and an empty plan is a skip, not a
+ * plan — so reversing one needs its own entry.
+ */
+export const DayUnplannedSchema = z.object({ day: DateStringSchema });
+
+/** Undo for `day.closed` (ADR 0033): the same day, open again. */
+export const DayReopenedSchema = z.object({ day: DateStringSchema });
+
 /** Written as `daily_note.created` before ADR 0012. Projections accept both. */
 export const DayNoteCreatedSchema = z.object({
   note_id: UlidSchema,
@@ -61,4 +71,6 @@ export type DayOpenedPayload = z.infer<typeof DayOpenedSchema>;
 export type DayPlannedPayload = z.infer<typeof DayPlannedSchema>;
 export type DayPlanSkippedPayload = z.infer<typeof DayPlanSkippedSchema>;
 export type DayClosedPayload = z.infer<typeof DayClosedSchema>;
+export type DayUnplannedPayload = z.infer<typeof DayUnplannedSchema>;
+export type DayReopenedPayload = z.infer<typeof DayReopenedSchema>;
 export type DayNoteCreatedPayload = z.infer<typeof DayNoteCreatedSchema>;

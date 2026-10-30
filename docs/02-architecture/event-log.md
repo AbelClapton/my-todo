@@ -204,6 +204,7 @@ fall back to the boundary in effect at that entry's `at`, defaulting to
 **4**, and that obligation is permanent in the shape ADR 0012 set for
 `day.note_created`.
 - `day.planned` — { day, top_three: TaskId[], source: 'morning' | 'shutdown' }
+- `day.unplanned` — { day }
 - `day.plan_skipped` — { day, kind: 'morning' | 'shutdown' }
 
 **Both events carry the ritual that wrote them, and both must.** Two
@@ -214,7 +215,18 @@ user made, while `day.planned { source: 'shutdown' }` is a
 tomorrow-plan they set up the night before. Neither the trigger nor
 the Calendar can tell those apart from `day` and `top_three` alone.
 - `day.closed` — { day }
+- `day.reopened` — { day }
 - `day.note_created` — { note_id, day }
+
+**Note on `day.unplanned` and `day.reopened`.** Both rituals commit as one
+atomic batch and that batch is undoable (Invariant 1, ADR 0010), but the
+first cut of this set had no way to state the inverse of a plan or of a
+close: `top_three` is one-to-three items, so a plan cannot be re-stated as
+empty, and a closed Day had no entry that opened it again (ADR 0033). Both
+are compensations in the ordinary way — the undo appends one of these and
+points `compensation_for` at the entry it reverses — and both also state
+the inverse in the fold, so an undo survives being read beside its target
+rather than depending on the filter that drops the target.
 
 **Note on `day.note_created`.** This type was written as
 `daily_note.created` before ADR 0012. The old string remains valid:
@@ -356,10 +368,20 @@ union.
       source: "morning" | "shutdown"
     }
 
+    // day.unplanned
+    {
+      day: "2026-09-22"   // undo for day.planned; compensation_for its id
+    }
+
     // day.plan_skipped
     {
       day: "2026-09-22",
       kind: "morning" | "shutdown"
+    }
+
+    // day.reopened
+    {
+      day: "2026-09-22"   // undo for day.closed; compensation_for its id
     }
 
     // protocol.proposed

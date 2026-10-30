@@ -211,10 +211,60 @@ describe('day_view', () => {
     expect(today.top_three.map((task) => task.title)).toEqual(['Standup notes', 'File Q4 taxes']);
     expect(today.daily_note_id).toBe(taskIdFor(40));
     expect(today.closed).toBe(true);
+    // Which ritual wrote it is part of the plan: a shutdown plan is a draft.
+    expect(today.planned_source).toBe('morning');
+    expect(today.skipped).toEqual([]);
 
     expect(yesterday.top_three).toEqual([]);
+    expect(yesterday.planned_source).toBeUndefined();
     expect(yesterday.daily_note_id).toBeUndefined();
     expect(yesterday.closed).toBe(false);
+  });
+
+  it('takes a plan back, and reopens a closed Day, through the undo entries', async () => {
+    const user = { type: 'user' } as const;
+    const log = await seed();
+    const planned = log.entries().find((entry) => entry.type === 'day.planned');
+    const closed = log.entries().find((entry) => entry.type === 'day.closed');
+    if (planned === undefined || closed === undefined) {
+      throw new Error('the seed must have planned and closed the Day');
+    }
+
+    await log.append({
+      type: 'day.unplanned',
+      actor: user,
+      payload: { day: TODAY },
+      compensation_for: planned?.id,
+    });
+    await log.append({
+      type: 'day.reopened',
+      actor: user,
+      payload: { day: TODAY },
+      compensation_for: closed?.id,
+    });
+
+    const view = computeDayView(log.entries(), { date: TODAY });
+    expect(view.top_three).toEqual([]);
+    expect(view.planned_source).toBeUndefined();
+    expect(view.closed).toBe(false);
+  });
+
+  it('keeps the two rituals from suppressing each other', async () => {
+    const user = { type: 'user' } as const;
+    const log = await seed();
+    await log.append({
+      type: 'day.plan_skipped',
+      actor: user,
+      payload: { day: TODAY, kind: 'shutdown' },
+    });
+    await log.append({
+      type: 'day.plan_skipped',
+      actor: user,
+      payload: { day: TODAY, kind: 'morning' },
+    });
+    // The shutdown's draft plan stays a plan; skipping is what is recorded, and
+    // a skip is per ritual.
+    expect(computeDayView(log.entries(), { date: TODAY }).skipped).toEqual(['shutdown', 'morning']);
   });
 
   it('schedules habits by cadence, anchored at creation, and skips the archived', async () => {
