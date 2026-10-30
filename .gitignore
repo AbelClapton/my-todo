@@ -15,3 +15,8 @@ test-results/
 *.sqlite-journal
 *.db
 .vite/
+.vercel/
+.nitro/
+.output/
+.vercel
+.env*

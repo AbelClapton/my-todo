@@ -22,7 +22,7 @@ number. Two existing examples: ADR 0016 amends ADR 0011's note mapping,
 and ADR 0019 records a decision ADR 0005's shape would have used.
 
 **Numbering.** Sequential, four digits, never reused. The next one is
-**0034**.
+**0035**.
 
 ## The index
 
@@ -62,6 +62,8 @@ and ADR 0019 records a decision ADR 0005's shape would have used.
 | 0032 | **The defer sheet's dates, and its undo.** **"Next week" is the next calendar week's Monday** — defer means *when the task becomes visible*, and `+7 days` on a Friday defers to another Friday, which is not what the phrase says — and **every dated row shows the date it resolves to**, which is what makes the phrase a fact on screen. **`Pick a date…` reveals a native `<input type="date">` until the Calendar overlay exists**, as a stand-in that is replaced rather than kept. **Deferring is undoable by toast**, and `task.rescheduled` is its own compensation: re-stating the `due`/`defer` pair, because an absent key clears a field and a payload carrying only `defer` would drop the deadline. |
 
 | 0033 | **The rituals' undo needed two entries.** Both rituals commit as one atomic batch that is undoable for five seconds, and the shutdown's batch contains two writes the log could not reverse: `day.planned` cannot be re-stated as empty (`top_three` is one-to-three items on purpose), and `day.closed` had no inverse at all. Two entries join the `day` domain — **`day.unplanned` and `day.reopened`, each carrying only `{ day }`** — used as ordinary compensations *and* folded as stated inverses, the way `task.uncompleted` is. `day.plan_skipped` gets no inverse: skipping is one tap and the flow never offers it back. `day_view` gains `planned_source` and `skipped` in the same change, because a shutdown plan is a draft and the two rituals' skips must not suppress each other. |
+
+| 0034 | **Deployed on Vercel, for now.** The app had no host: `gh-pages` publishes the design labs and nothing published the app. **The target is Vercel**, which contradicts ADR 0018 on one of its grounds — the Hobby plan is not licensed for commercial use — so the trade is taken knowingly and recorded rather than folded into the stack table. Nitro's `vercel` preset is added **only** in `vite build --mode deploy`, because Start emits a `{ fetch }` handler and no `index.html`: there is nothing static to upload, so the host runs the handler. The default build is untouched, which is what keeps `vite preview` and the Playwright suite working. Cloudflare stays the plan; migrating is a preset change and a `wrangler.jsonc` when the domain is bought. |
 
 ## Decisions with no ADR
 

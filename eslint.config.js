@@ -21,6 +21,11 @@ export default tseslint.config(
       'coverage/**',
       'playwright-report/**',
       'test-results/**',
+      // The deploy's build output: Nitro writes the host's own directory, and
+      // linting a minified bundle is not a finding.
+      '.vercel/**',
+      '.nitro/**',
+      '.output/**',
       // The design labs are disposable evaluation artifacts, not the app.
       'design/**',
       'docs/**',
