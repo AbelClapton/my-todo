@@ -44,6 +44,18 @@ here. `framework: null` turns the detection off and `buildCommand` points at
 `pnpm build:deploy`, which produces the same Build Output API directory in Vercel's
 own build as `pnpm deploy` produces locally. The file is inert for `--prebuilt`.
 
+**The production URL is `https://my-todo-sable-eight.vercel.app`.** Vercel assigns a
+suffixed domain when the obvious one is taken, so `my-todo.vercel.app` is somebody
+else's project and `my-todo-<team>.vercel.app` is **not** this project's domain —
+it answers 200 with a Vercel page, which is exactly how it was mistaken for a failed
+deploy. The authoritative source is `productionUrl` in the deploy output.
+
+**The two URLs differ in who can open them.** Deployment URLs
+(`my-todo-<hash>-<team>.vercel.app`) are behind Vercel Authentication, which is what
+`deploymentProtection: ["vercel_authentication"]` reports; the production alias is
+public, because that is Vercel's standard protection. So "the app is protected" is
+true of previews and false of production, and the phrase has to name which.
+
 **Cloudflare stays the plan.** This ADR does not supersede ADR 0018: it names a
 working target for now, and the migration to Workers is a change of preset and a
 `wrangler.jsonc` when the domain is bought. What ADR 0018 gets right is unchanged —
@@ -68,19 +80,25 @@ including the Hobby plan's terms, which is the one cost this decision takes on.
   blocker the day it does.
 - **Two hosts to keep in mind.** The design labs publish to `gh-pages` and the app
   publishes to Vercel, so "where does the project live" now has two answers.
-- **Deployment protection is on by default**, which makes the production URL
-  viewable only by the account that owns it. That is a project setting rather than
-  a code property, and disabling it is a decision with a security meaning — so it
-  is not in the build.
+- **Deployment protection is on for previews only**, which makes the deployment URL
+  viewable by the account that owns it and the production alias public. That is a
+  project setting rather than a code property, and disabling it is a decision with a
+  security meaning — so it is not in the build.
 - The project was created with the GitHub repository connected, so a push triggers a
   Vercel build. `vercel.json` is what keeps those builds honest — the detector reads
   this app as Nitro, and `nitro build` is not a script here.
 
 **Neutral.**
 
-- `nitro@2` is marked deprecated in favour of a v3 release candidate. The TanStack
-  plugin for it is still `nitro-v2-vite-plugin`, so the pair matches today and will
-  move together.
+- The `nitro@2` pair is marked deprecated in favour of a v3 release candidate. The
+  TanStack plugin for it is still `nitro-v2-vite-plugin`, so the pair matches today
+  and will move together.
+- **A page loaded while the previous one is still holding the log falls back to
+  ephemeral storage**, and says so in a banner. That is the app's existing
+  `StorageReason` path rather than anything the host does — the same banner appears
+  on `vite preview` — but it is worth naming here because verifying a deploy by
+  reloading quickly produces it, and the lost capture then reads as broken
+  persistence. A reload after the first tab settles opens the persistent log.
 
 ## Alternatives considered
 
