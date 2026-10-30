@@ -6,13 +6,17 @@ import type { CalendarEvent } from '@/domain/atoms/calendar-event';
 import type { Task } from '@/domain/atoms/task';
 import { isoWeekNumber } from '@/domain/day';
 import type { DateString } from '@/domain/ids';
+import type { DayView } from '@/projections/day-view';
 
 import { FOCUS_RING } from '@/ui/components/focus-ring';
+import { TOAST_HOLDS, Toast } from '@/ui/components/toast';
 import { haptic } from '@/ui/haptics';
 import { iconSize } from '@/ui/tokens';
 
 import { formatDay } from '@/ui/format';
 
+import { clearPendingUndo, usePendingUndo } from './ritual-undo';
+import { morningPlanDue, shutdownDue, undoBatch } from './rituals';
 import { useCalendarZoom } from './use-calendar-zoom';
 import { useDay } from './use-day';
 import { useDayOpen } from './use-day-open';
@@ -47,6 +51,7 @@ const MARK_SIZE = iconSize['icon-xs'];
 export function DayScreen({ initialDate }: { readonly initialDate?: DateString }) {
   const day = useDay(initialDate);
   const writes = useDayWrites();
+  const undo = usePendingUndo();
   const { view } = day;
 
   useDayOpen(view, { isToday: day.isToday, tzOffsetMinutes: day.tzOffsetMinutes });
@@ -144,6 +149,14 @@ export function DayScreen({ initialDate }: { readonly initialDate?: DateString }
           +
         </Link>
       </header>
+
+      {/* The two rituals surface once a day, subject to the attention budget
+          (`06-flows/morning-plan.md`, `06-flows/shutdown.md`). The budget and the
+          command palette are Phase 1 items 7 and 9, so until they land this
+          invitation is how a ritual is reached: it tests the same triggers the
+          automatic surface will, and it is on the Day view because that is where
+          both flows land. */}
+      {day.isToday ? <RitualInvitation view={view} /> : null}
 
       {/* The now line: chrome, and it does not scroll (`06-flows/doing-the-day.md`). */}
       <p className="flex items-baseline gap-space-2 text-type-body text-text-secondary">
@@ -276,7 +289,62 @@ export function DayScreen({ initialDate }: { readonly initialDate?: DateString }
           ))}
         </section>
       )}
+
+      {/* The ritual's undo, drawn here because the ritual navigates here the
+          moment it commits and its own screen is gone by then. */}
+      {undo === null ? null : (
+        <Toast
+          message={undo.message}
+          holdMs={TOAST_HOLDS.undo}
+          onDismiss={clearPendingUndo}
+          actionLabel="Undo"
+          onAction={() => {
+            void (async () => {
+              await undo.compensate(undoBatch(undo.appended, undo.before));
+              clearPendingUndo();
+            })();
+          }}
+        />
+      )}
     </main>
+  );
+}
+
+/**
+ * Which ritual, if either, is due right now.
+ *
+ * The two are mutually exclusive in practice — the morning window is 7–11 and the
+ * shutdown's hour is 9pm — and the shutdown is checked first because a Day can be
+ * closed early and a closed Day is not waiting to be planned.
+ *
+ * **`hasOnboarded` is passed as `true`.** Onboarding (Phase 0 step 0.7) does not
+ * exist yet, so a flag that is always true is the honest reading of "the plan is
+ * suppressed until onboarding finishes": there is nothing to finish.
+ */
+function RitualInvitation({ view }: { readonly view: DayView }) {
+  const hour = new Date().getHours();
+  const closing = shutdownDue(view, hour);
+  const planning = !closing && morningPlanDue(view, hour, true);
+
+  if (!closing && !planning) {
+    return null;
+  }
+
+  return (
+    <section
+      aria-label={closing ? 'Close the day' : 'Plan today'}
+      className="flex items-center justify-between gap-space-3 rounded-lg border border-border-subtle bg-surface-1 p-space-4"
+    >
+      <p className="min-w-0 flex-1 text-type-body text-text-primary">
+        {closing ? 'Close the day?' : 'Plan today?'}
+      </p>
+      <Link
+        to={closing ? '/shutdown' : '/plan'}
+        className={`shrink-0 rounded-md px-space-4 py-space-2 text-type-subhead text-accent-text ${FOCUS_RING}`}
+      >
+        {closing ? 'Close day' : 'Plan'}
+      </Link>
+    </section>
   );
 }
 

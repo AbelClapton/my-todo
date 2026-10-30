@@ -41,6 +41,21 @@ Shutdown surfaces:
   previous day was not closed (see "Closing yesterday").
 - Via the command palette: "Close day."
 
+**Until the palette and the attention budget exist (Phase 1 items 7 and
+9), the Day view carries the invitation.** It tests the same triggers —
+the Day is open, not closed, not skipped, and it is after the shutdown
+hour — and it links here. It is a stand-in for the palette entry rather
+than a second surface: it is one line on the Day view, it appears only
+when the surface would have fired anyway, and it goes when the palette
+lands.
+
+**The three prompts are shared with the morning plan, and both read the
+same picker.** That is why the picker's fourth source — *"anything the
+user searches for"* — is not optional: without it a picker can only
+offer tasks the Day already knows about, and the first plan anyone
+makes has nothing in it, because nothing in the app schedules a task to
+a day except this flow.
+
 ### The 90-second structure
 
 Three prompts, each optional, plus a preview.

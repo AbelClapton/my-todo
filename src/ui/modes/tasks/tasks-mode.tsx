@@ -14,7 +14,7 @@ import { reschedulePayload } from './defer-options';
 import { formatDay } from '@/ui/format';
 import { EMPTY_STATES, type EmptyState } from './empty-states';
 import { COMPLETION_MS, TaskRow } from './task-row';
-import { TOAST_HOLDS, Toast } from './toast';
+import { TOAST_HOLDS, Toast } from '@/ui/components/toast';
 import { useTaskWrites } from './use-task-writes';
 import { useAreaNames, useTasks } from './use-tasks';
 

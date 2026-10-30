@@ -76,6 +76,10 @@ full-screen is about the ritual, not about exemption.
 Outside the morning window, the plan is accessible via the command
 palette ("Plan today") but does not surface automatically.
 
+**Until the palette lands, the Day view carries the invitation**, on the
+same trigger and for the same reason the shutdown's does
+(`06-flows/shutdown.md` §The trigger).
+
 ### The 60-second structure
 
 Three steps, each optional, and **"three" is a target rather than a

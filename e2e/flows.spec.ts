@@ -165,3 +165,52 @@ test('the undo window expires and the completion stands', async ({ page }) => {
   await toastGone(page);
   await expect(rowFor(page, 'Buy groceries')).toHaveCount(0);
 });
+
+test('the morning plan commits a task to the Day, and the undo takes it back', async ({ page }) => {
+  await openTasks(page);
+  await seed(page, ['Draft the Q4 plan']);
+
+  await page.goto('/plan');
+  await expect(page.getByRole('heading', { name: 'Plan today' })).toBeVisible();
+  // Nothing is on the Day yet, and the picker is empty rather than wrong: the
+  // fourth candidate source is the search.
+  await expect(page.getByRole('button', { name: 'Done' })).toBeDisabled();
+
+  await page.getByRole('searchbox', { name: 'Search tasks' }).fill('draft');
+  await page.getByRole('button', { name: 'Keep Draft the Q4 plan' }).click();
+  await expect(page.getByRole('heading', { name: /1 of 3/ })).toBeVisible();
+
+  await page.getByRole('button', { name: 'Done' }).click();
+
+  // It lands on the Day, with the plan on it and the reversal still reachable.
+  await expect(page.getByRole('heading', { name: 'Top three' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible();
+  await expect(page.getByRole('status')).toContainText('Planned. Undo?');
+
+  await page.getByRole('button', { name: 'Undo' }).click();
+  await expect(page.getByRole('heading', { name: 'Top three' })).toHaveCount(0);
+});
+
+test('the shutdown closes the Day, plans tomorrow, and lets go of both', async ({ page }) => {
+  await openTasks(page);
+  await seed(page, ['Renew passport']);
+
+  await page.goto('/shutdown');
+  await expect(page.getByRole('heading', { name: 'Close day' })).toBeVisible();
+  await page
+    .getByRole('textbox', { name: 'One line for the Daily Note' })
+    .fill('shipped the draft');
+
+  await page.getByRole('searchbox', { name: 'Search tasks' }).fill('renew');  await page.getByRole('button', { name: 'Keep Renew passport' }).click();
+  await page.getByRole('button', { name: 'Close day' }).click();
+
+  // The user lands on tomorrow (`06-flows/shutdown.md` �The commit), and the
+  // plan they set up the night before is already on it.
+  await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible();
+  await expect(page.getByText('Tue 29 Sep')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Top three' })).toBeVisible();
+  await expect(page.getByRole('status')).toContainText('Day closed. Undo?');
+
+  await page.getByRole('button', { name: 'Undo' }).click();
+  await expect(page.getByRole('heading', { name: 'Top three' })).toHaveCount(0);
+});
